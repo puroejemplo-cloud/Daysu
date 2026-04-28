@@ -5,7 +5,8 @@ import { Pool } from "pg";
 const globalForPrisma = globalThis as unknown as { prisma: PrismaClient | undefined };
 
 function createPrismaClient(): PrismaClient {
-  const connectionString = process.env.DATABASE_URL;
+  // Neon (Vercel Marketplace) expone POSTGRES_URL; DATABASE_URL es el fallback local
+  const connectionString = process.env.POSTGRES_URL ?? process.env.DATABASE_URL;
   if (!connectionString) throw new Error("DATABASE_URL no está configurada");
 
   const isRemote = !connectionString.includes("localhost") && !connectionString.includes("127.0.0.1");

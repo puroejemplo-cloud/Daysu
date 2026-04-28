@@ -9,6 +9,7 @@ export default defineConfig({
     path: "prisma/migrations",
   },
   datasource: {
-    url: process.env["DATABASE_URL"],
+    // Neon (Vercel Marketplace) → POSTGRES_URL; local Docker → DATABASE_URL
+    url: process.env["POSTGRES_URL"] ?? process.env["DATABASE_URL"],
   },
 });
