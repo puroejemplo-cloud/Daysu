@@ -32,12 +32,12 @@ export default async function ChecklistsPage() {
   };
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-10">
-      <p className="section-label">Módulo 4</p>
-      <h1 className="bebas text-white mb-1" style={{ fontSize: "2.5rem" }}>Checklists de Logística</h1>
-      <p className="mb-8" style={{ color: "#94A3B8" }}>
-        Eventos confirmados — verifica salida y entrada de equipo.
-      </p>
+    <div className="admin-page">
+      <header className="admin-page-header">
+        <p className="admin-label">Logística</p>
+        <h1 className="admin-page-title">Checklists de Logística</h1>
+        <p className="admin-page-desc">Eventos confirmados — verifica salida y entrada de equipo.</p>
+      </header>
 
       {bookings.length === 0 && (
         <div className="aura-card p-12 text-center" style={{ color: "#475569" }}>

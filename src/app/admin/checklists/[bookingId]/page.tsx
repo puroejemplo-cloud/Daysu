@@ -24,32 +24,30 @@ export default async function ChecklistPage({ params }: { params: Promise<{ book
   if (!booking) notFound();
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-10">
-      {/* Back */}
-      <Link href="/admin/checklists" className="text-sm font-bold mb-6 inline-flex items-center gap-1"
-        style={{ color: "#94A3B8", textDecoration: "none" }}>
-        ← Todos los eventos
+    <div className="admin-page" style={{ maxWidth: "48rem" }}>
+      <Link href="/admin/checklists" className="inline-flex items-center gap-1.5 text-xs font-medium mb-8"
+        style={{ color: "#52525b", textDecoration: "none" }}>
+        ← Checklists
       </Link>
 
-      {/* Header del evento */}
-      <div className="aura-card p-6 mb-8" style={{ borderColor: "rgba(201,168,76,0.3)" }}>
-        <p className="section-label mb-1">Checklist de logística</p>
-        <h1 className="bebas text-white mb-2" style={{ fontSize: "2rem" }}>{booking.eventName}</h1>
-        <div className="grid grid-cols-2 gap-3 text-sm" style={{ color: "#94A3B8" }}>
+      <div className="aura-card p-6 mb-6">
+        <p className="admin-label mb-3">Checklist de logística</p>
+        <h1 className="admin-page-title mb-4">{booking.eventName}</h1>
+        <div className="grid grid-cols-2 gap-4 text-sm">
           <div>
-            <span className="text-xs font-black uppercase tracking-widest" style={{ color: "#7C3AED" }}>Cliente</span>
-            <p className="text-white">{booking.client.fullName}</p>
-            {booking.client.phone && <p>{booking.client.phone}</p>}
+            <p className="admin-label mb-1">Cliente</p>
+            <p style={{ color: "#d4d4d8" }}>{booking.client.fullName}</p>
+            {booking.client.phone && <p style={{ color: "#71717a" }}>{booking.client.phone}</p>}
           </div>
           <div>
-            <span className="text-xs font-black uppercase tracking-widest" style={{ color: "#7C3AED" }}>Fecha y hora</span>
-            <p className="text-white">{format(new Date(booking.setupAt), "d MMMM yyyy", { locale: es })}</p>
-            <p>{format(new Date(booking.setupAt), "HH:mm")}h – {format(new Date(booking.teardownAt), "HH:mm")}h</p>
+            <p className="admin-label mb-1">Fecha y hora</p>
+            <p style={{ color: "#d4d4d8" }}>{format(new Date(booking.setupAt), "d MMMM yyyy", { locale: es })}</p>
+            <p style={{ color: "#71717a" }}>{format(new Date(booking.setupAt), "HH:mm")}h – {format(new Date(booking.teardownAt), "HH:mm")}h</p>
           </div>
           {booking.venueAddress && (
             <div className="col-span-2">
-              <span className="text-xs font-black uppercase tracking-widest" style={{ color: "#7C3AED" }}>Lugar</span>
-              <p className="text-white">{booking.venueAddress}</p>
+              <p className="admin-label mb-1">Lugar</p>
+              <p style={{ color: "#d4d4d8" }}>{booking.venueAddress}</p>
             </div>
           )}
         </div>

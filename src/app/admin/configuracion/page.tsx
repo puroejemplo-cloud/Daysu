@@ -9,12 +9,12 @@ export const metadata: Metadata = {
 
 export default function ConfiguracionPage() {
   return (
-    <div className="max-w-3xl mx-auto px-4 py-10">
-      <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: "#7C3AED" }}>⚙ Sistema</p>
-      <h1 className="text-3xl font-black text-white mb-1">Configuración</h1>
-      <p className="mb-8 text-sm" style={{ color: "#94A3B8" }}>
-        Parámetros operativos del sistema. Cambios aplicados inmediatamente.
-      </p>
+    <div className="admin-page" style={{ maxWidth: "48rem" }}>
+      <header className="admin-page-header">
+        <p className="admin-label">Sistema</p>
+        <h1 className="admin-page-title">Configuración</h1>
+        <p className="admin-page-desc">Parámetros operativos. Los cambios se aplican inmediatamente.</p>
+      </header>
       <ConfigPanel />
     </div>
   );

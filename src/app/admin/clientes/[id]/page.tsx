@@ -27,10 +27,10 @@ export default async function ClientePage({ params }: { params: Promise<{ id: st
   if (!client) notFound();
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-10">
-      <Link href="/admin/clientes" className="text-sm font-bold mb-6 inline-flex items-center gap-1"
-        style={{ color: "#94A3B8", textDecoration: "none" }}>
-        ← Todos los clientes
+    <div className="admin-page" style={{ maxWidth: "56rem" }}>
+      <Link href="/admin/clientes" className="inline-flex items-center gap-1.5 text-xs font-medium mb-8"
+        style={{ color: "#52525b", textDecoration: "none" }}>
+        ← Clientes
       </Link>
       <ClientProfile client={JSON.parse(JSON.stringify(client))} />
     </div>

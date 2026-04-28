@@ -19,9 +19,11 @@ export default async function CalendarioPage() {
   });
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-10">
-      <p className="section-label">Agenda</p>
-      <h1 className="bebas text-white mb-6" style={{ fontSize: "2.5rem" }}>Calendario de Eventos</h1>
+    <div className="admin-page">
+      <header className="admin-page-header">
+        <p className="admin-label">Agenda</p>
+        <h1 className="admin-page-title">Calendario de Eventos</h1>
+      </header>
       <CalendarView bookings={bookings.map((b) => ({
         id:        b.id,
         eventName: b.eventName,

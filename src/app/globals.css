@@ -318,6 +318,39 @@ input, select, textarea {
   font-family: var(--font-dm);
 }
 
+/* ── Admin page layout — espaciado generoso ─────────────────────────────── */
+.admin-page {
+  max-width: 80rem;
+  margin: 0 auto;
+  padding: 2.5rem 1.25rem 4rem;
+}
+@media (min-width: 640px) {
+  .admin-page { padding: 3rem 2rem 4rem; }
+}
+@media (min-width: 1024px) {
+  .admin-page { padding: 3.5rem 3rem 5rem; }
+}
+
+/* Admin page header — tipografía delgada y elegante */
+.admin-page-header {
+  margin-bottom: 2.5rem;
+}
+.admin-page-title {
+  font-size: 1.625rem;
+  font-weight: 500;
+  letter-spacing: -0.025em;
+  color: #f4f4f5;
+  line-height: 1.2;
+  margin-top: 0.35rem;
+}
+.admin-page-desc {
+  font-size: 0.85rem;
+  color: #71717a;
+  margin-top: 0.4rem;
+  line-height: 1.65;
+  max-width: 52ch;
+}
+
 /* ── Admin premium utilities ─────────────────────────────────────────────── */
 .admin-surface {
   background: #09090b;

@@ -114,17 +114,17 @@ export default function AdminDashboard() {
   const unread    = bookings.reduce((n, b) => n + b.notifications.filter((n) => !n.isRead).length, 0);
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-6">
       {/* Toasts */}
-      <div style={{ position: "fixed", bottom: "1.5rem", right: "1.5rem", zIndex: 9999, display: "flex", flexDirection: "column", gap: "0.5rem", pointerEvents: "none" }}
+      <div style={{ position: "fixed", bottom: "2rem", right: "2rem", zIndex: 9999, display: "flex", flexDirection: "column", gap: "0.5rem", pointerEvents: "none" }}
         aria-live="polite">
         {toasts.map((t) => (
           <div key={t.id} role="status"
             style={{
-              padding: "0.65rem 1.1rem",
+              padding: "0.7rem 1.2rem",
               borderRadius: 8,
               fontSize: "0.82rem",
-              fontWeight: 600,
+              fontWeight: 500,
               background: t.type === "success" ? "#14532d" : "#450a0a",
               border: `1px solid ${t.type === "success" ? "rgba(22,163,74,.3)" : "rgba(220,38,38,.3)"}`,
               color: t.type === "success" ? "#86efac" : "#fca5a5",
@@ -138,30 +138,32 @@ export default function AdminDashboard() {
       <NotificationPermission />
 
       {/* Accesos rápidos */}
-      <div className="grid grid-cols-4 sm:grid-cols-8 gap-2">
+      <div className="grid grid-cols-4 sm:grid-cols-8 gap-3">
         {QUICK_LINKS.map((item) => (
           <Link key={item.href} href={item.href}
-            className="aura-card flex flex-col items-center justify-center gap-1.5 p-3 text-center hover:border-white/15 transition-all active:scale-95"
-            style={{ textDecoration: "none", minHeight: 76 }}>
-            <item.Icon size={18} style={{ color: "#a1a1aa" }} aria-hidden="true" />
-            <span style={{ fontSize: "0.62rem", fontWeight: 600, letterSpacing: "0.05em", color: "#71717a", lineHeight: 1.3 }}>
+            className="aura-card flex flex-col items-center justify-center gap-2.5 p-4 text-center hover:border-white/15 transition-all active:scale-95"
+            style={{ textDecoration: "none", minHeight: 90 }}>
+            <item.Icon size={18} style={{ color: "#71717a" }} aria-hidden="true" />
+            <span style={{ fontSize: "0.65rem", fontWeight: 500, color: "#52525b", lineHeight: 1.35 }}>
               {item.label}
             </span>
           </Link>
         ))}
       </div>
 
-      {/* Stats */}
+      {/* Stats — número ligero, espaciado generoso */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         {[
           { label: "Holds activos",  value: pending,         accent: "#ca8a04" },
           { label: "Confirmadas",    value: confirmed,       accent: "#16a34a" },
           { label: "Sin leer",       value: unread,          accent: "#dc2626" },
-          { label: "Total visibles", value: bookings.length, accent: "#a1a1aa" },
+          { label: "Total visibles", value: bookings.length, accent: "#71717a" },
         ].map((s) => (
-          <div key={s.label} className="aura-card p-4 text-center">
-            <p className="text-2xl font-black" style={{ color: s.accent }}>{s.value}</p>
-            <p className="admin-label mt-1">{s.label}</p>
+          <div key={s.label} className="aura-card p-6">
+            <p style={{ fontSize: "2.5rem", fontWeight: 300, letterSpacing: "-0.04em", color: s.accent, lineHeight: 1 }}>
+              {s.value}
+            </p>
+            <p className="admin-label mt-3">{s.label}</p>
           </div>
         ))}
       </div>
@@ -214,7 +216,7 @@ export default function AdminDashboard() {
             const isExpired = b.expiresAt && new Date(b.expiresAt) < new Date();
             const isActing  = acting === b.id;
             return (
-              <div key={b.id} className="aura-card px-5 py-4 flex flex-col md:flex-row md:items-center gap-4"
+              <div key={b.id} className="aura-card px-6 py-5 flex flex-col md:flex-row md:items-center gap-5"
                 style={{ opacity: isActing ? 0.6 : 1, transition: "opacity 0.2s" }}>
 
                 {/* Info */}
