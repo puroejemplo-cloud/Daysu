@@ -183,12 +183,12 @@ export default function CatalogClient({
             onClick={() => setCatFilter(c.id)}
             style={{
               padding: "0.5rem 1.3rem", borderRadius: 999,
-              fontSize: "0.82rem", fontWeight: 700, minHeight: 40,
+              fontSize: "0.78rem", fontWeight: 600, minHeight: 40,
               border: "1px solid", cursor: "pointer", transition: "all 0.2s",
               WebkitTapHighlightColor: "transparent",
-              background: catFilter === c.id ? "linear-gradient(135deg,#7C3AED,#9333EA)" : "rgba(255,255,255,0.05)",
-              borderColor: catFilter === c.id ? "#7C3AED" : "rgba(124,58,237,.3)",
-              color: catFilter === c.id ? "#fff" : "#94A3B8",
+              background: catFilter === c.id ? "var(--gold)" : "rgba(255,255,255,0.04)",
+              borderColor: catFilter === c.id ? "var(--gold)" : "rgba(255,255,255,0.1)",
+              color: catFilter === c.id ? "#05051a" : "#71717a",
             }}>
             {c.name}
           </button>
@@ -286,22 +286,8 @@ export default function CatalogClient({
               const brand    = asset.ownerName ?? PKG_OWNERS[asset.sku] ?? "Aura Producciones";
 
               return (
-                <div key={asset.id} style={{
-                  position: "relative", overflow: "hidden",
-                  display: "flex", flexDirection: "column",
-                  background: "#0a0a18",
-                  border: `1px solid rgba(255,255,255,0.06)`,
-                  transition: "transform 0.3s, box-shadow 0.3s",
-                  opacity: checked && !isAvail ? 0.5 : 1,
-                }}
-                  onMouseEnter={(e) => {
-                    (e.currentTarget as HTMLDivElement).style.transform = "translateY(-4px)";
-                    (e.currentTarget as HTMLDivElement).style.boxShadow = `0 20px 60px rgba(0,0,0,0.5), 0 0 0 1px ${accent}40`;
-                  }}
-                  onMouseLeave={(e) => {
-                    (e.currentTarget as HTMLDivElement).style.transform = "";
-                    (e.currentTarget as HTMLDivElement).style.boxShadow = "";
-                  }}>
+                <div key={asset.id}
+                  className={`pkg-card-v2${checked && !isAvail ? " unavailable" : ""}`}>
 
                   {/* Carrusel de fotos */}
                   {gallery.length > 0 && (
@@ -314,25 +300,16 @@ export default function CatalogClient({
 
                   {/* Panel de contenido */}
                   <div style={{
-                    flex: 1, padding: "1.4rem 1.5rem 1.6rem",
+                    flex: 1, padding: "1.25rem 1.5rem 1.5rem",
                     display: "flex", flexDirection: "column",
-                    borderTop: `1px solid ${accent}25`,
-                    position: "relative",
+                    borderTop: "1px solid rgba(255,255,255,0.07)",
                   }}>
-                    {/* Línea de acento superior */}
-                    <div style={{
-                      position: "absolute", top: 0, left: 0, right: 0, height: 2,
-                      background: `linear-gradient(90deg, #7C3AED, ${accent})`,
-                    }} />
-
-                    {/* Categoría de evento (badge) */}
+                    {/* Categoría — label neutro */}
                     {asset.categoryName && (
                       <span style={{
-                        display: "inline-block", marginBottom: "0.5rem",
-                        fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.1em",
-                        textTransform: "uppercase", padding: "0.2rem 0.7rem",
-                        borderRadius: 999, border: `1px solid ${accent}50`,
-                        background: `${accent}15`, color: accent,
+                        display: "inline-block", marginBottom: "0.6rem",
+                        fontSize: "0.6rem", fontWeight: 600, letterSpacing: "0.12em",
+                        textTransform: "uppercase", color: "#52525b",
                       }}>
                         {asset.categoryName}
                       </span>
@@ -357,85 +334,86 @@ export default function CatalogClient({
 
                     {/* Nombre */}
                     <h3 style={{
-                      fontFamily: "var(--font-bebas)", fontSize: "2rem", lineHeight: 1,
-                      color: "var(--cream)", letterSpacing: "0.03em", marginBottom: "0.25rem",
+                      fontSize: "1.1rem", fontWeight: 600, lineHeight: 1.2,
+                      color: "#f4f4f5", letterSpacing: "-0.01em", marginBottom: "0.5rem",
                     }}>
                       {asset.name}
                     </h3>
 
-                    {/* Descripción del admin */}
+                    {/* Descripción */}
                     {descLines.length > 0 && (
-                      <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: "0.2rem", marginBottom: "0.6rem" }}>
+                      <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: "0.25rem", marginBottom: "0.75rem" }}>
                         {descLines.slice(0, 4).map((line, li) => (
                           <li key={li} style={{
-                            fontSize: "0.72rem", color: "rgba(245,240,232,0.8)",
-                            display: "flex", alignItems: "flex-start", gap: "0.4rem", lineHeight: 1.4,
+                            fontSize: "0.75rem", color: "#71717a",
+                            display: "flex", alignItems: "flex-start", gap: "0.5rem", lineHeight: 1.5,
                           }}>
-                            <span style={{ color: accent, fontSize: "0.52rem", marginTop: "0.2rem", flexShrink: 0 }}>✦</span>
+                            <span style={{ color: "rgba(201,168,76,0.5)", fontSize: "0.5rem", marginTop: "0.35rem", flexShrink: 0 }}>—</span>
                             {line}
                           </li>
                         ))}
                       </ul>
                     )}
 
-                    {/* Precio */}
+                    {/* Precio — tipografía editorial */}
                     {(() => {
                       const hTiers = getHourlyTiers(asset.sku, asset.pricingTiers);
                       const cTiers = getCapacityTiers(asset.sku, asset.pricingTiers);
                       return hTiers ? (
-                      /* Cabina fotográfica — tabla de precios por hora */
-                      <div style={{ marginBottom: "0.8rem", padding: "0.75rem", borderRadius: 10, background: "rgba(124,58,237,.07)", border: "1px solid rgba(124,58,237,.2)" }}>
-                        <p style={{ fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase", color: "#7C3AED", marginBottom: "0.6rem" }}>
-                          🕐 Renta por hora
+                      /* Por hora */
+                      <div style={{ marginBottom: "0.75rem", padding: "0.75rem", borderRadius: 8, background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)" }}>
+                        <p style={{ fontSize: "0.6rem", fontWeight: 600, letterSpacing: "0.12em", textTransform: "uppercase", color: "#52525b", marginBottom: "0.6rem" }}>
+                          Por hora
                         </p>
-                        <div style={{ display: "flex", flexDirection: "column", gap: "0.35rem" }}>
+                        <div style={{ display: "flex", flexDirection: "column", gap: "0.3rem" }}>
                           {hTiers.map((tier) => (
-                            <div key={tier.label} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "0.3rem 0", borderBottom: "1px solid rgba(255,255,255,.04)" }}>
-                              <span style={{ fontSize: "0.82rem", color: "var(--cream)", fontWeight: 600 }}>{tier.label}</span>
-                              <span style={{ fontSize: "0.95rem", fontWeight: 800, color: "var(--gold)" }}>
+                            <div key={tier.label} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "0.3rem 0", borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
+                              <span style={{ fontSize: "0.8rem", color: "#a1a1aa" }}>{tier.label}</span>
+                              <span style={{ fontSize: "1rem", fontWeight: 400, color: "#d4af37", letterSpacing: "-0.02em" }}>
                                 ${tier.price.toLocaleString("es-MX")}
-                                <span style={{ fontSize: "0.65rem", fontWeight: 400, color: "var(--muted)", marginLeft: "0.25rem" }}>MXN</span>
+                                <span style={{ fontSize: "0.6rem", color: "#52525b", marginLeft: "0.2rem" }}>MXN</span>
                               </span>
                             </div>
                           ))}
                         </div>
                       </div>
                     ) : cTiers ? (
-                      /* Carrito Maruchan — precios por capacidad */
-                      <div style={{ marginBottom: "0.8rem", padding: "0.75rem", borderRadius: 10, background: "rgba(124,58,237,.07)", border: "1px solid rgba(124,58,237,.2)" }}>
-                        <p style={{ fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase", color: "#7C3AED", marginBottom: "0.6rem" }}>
-                          👥 Precio por capacidad
+                      /* Por capacidad */
+                      <div style={{ marginBottom: "0.75rem", padding: "0.75rem", borderRadius: 8, background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)" }}>
+                        <p style={{ fontSize: "0.6rem", fontWeight: 600, letterSpacing: "0.12em", textTransform: "uppercase", color: "#52525b", marginBottom: "0.6rem" }}>
+                          Por capacidad
                         </p>
-                        <div style={{ display: "flex", flexDirection: "column", gap: "0.35rem" }}>
+                        <div style={{ display: "flex", flexDirection: "column", gap: "0.3rem" }}>
                           {cTiers.map((opt) => (
-                            <div key={opt.label} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "0.3rem 0", borderBottom: "1px solid rgba(255,255,255,.04)" }}>
-                              <span style={{ fontSize: "0.82rem", color: "var(--cream)", fontWeight: 600 }}>{opt.label}</span>
-                              <span style={{ fontSize: "0.95rem", fontWeight: 800, color: opt.price > 0 ? "var(--gold)" : "#475569" }}>
+                            <div key={opt.label} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "0.3rem 0", borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
+                              <span style={{ fontSize: "0.8rem", color: "#a1a1aa" }}>{opt.label}</span>
+                              <span style={{ fontSize: "1rem", fontWeight: 400, color: opt.price > 0 ? "#d4af37" : "#3f3f46", letterSpacing: "-0.02em" }}>
                                 {opt.price > 0 ? `$${opt.price.toLocaleString("es-MX")}` : "Por confirmar"}
-                                {opt.price > 0 && <span style={{ fontSize: "0.65rem", fontWeight: 400, color: "var(--muted)", marginLeft: "0.25rem" }}>MXN</span>}
+                                {opt.price > 0 && <span style={{ fontSize: "0.6rem", color: "#52525b", marginLeft: "0.2rem" }}>MXN</span>}
                               </span>
                             </div>
                           ))}
                         </div>
                       </div>
                     ) : (
-                      /* Precio estándar */
-                      <div style={{ display: "flex", alignItems: "baseline", gap: "0.5rem", flexWrap: "wrap", marginBottom: "0.8rem" }}>
+                      /* Precio estándar — elegante, no supermercado */
+                      <div style={{ marginBottom: "0.75rem" }}>
                         {asset.originalPrice && Number(asset.originalPrice) > Number(asset.dailyRate) && (
-                          <span style={{ fontSize: "0.78rem", color: "#6b7280", textDecoration: "line-through" }}>
-                            ${Number(asset.originalPrice).toLocaleString("es-MX")}
-                          </span>
+                          <p style={{ fontSize: "0.78rem", color: "#52525b", textDecoration: "line-through", marginBottom: "0.1rem" }}>
+                            ${Number(asset.originalPrice).toLocaleString("es-MX")} MXN
+                          </p>
                         )}
-                        <p style={{ fontSize: "0.9rem", fontWeight: 700, color: "var(--cream)", display: "flex", alignItems: "baseline", gap: "0.3rem", margin: 0 }}>
-                          <span style={{ color: asset.originalPrice ? "#f87171" : "var(--gold)", fontSize: "0.8rem" }}>$</span>
-                          {Number(asset.dailyRate).toLocaleString("es-MX")}
-                          <span style={{ color: "var(--muted)", fontWeight: 400, fontSize: "0.7rem" }}>MXN</span>
-                        </p>
-                        {asset.originalPrice && Number(asset.originalPrice) > Number(asset.dailyRate) && (
-                          <span style={{ fontSize: "0.65rem", fontWeight: 700, padding: "0.1rem 0.5rem", borderRadius: 999, background: "rgba(220,38,38,0.2)", color: "#fca5a5", border: "1px solid rgba(220,38,38,0.3)" }}>
-                            OFERTA
+                        <div style={{ display: "flex", alignItems: "baseline", gap: "0.4rem" }}>
+                          <span style={{ fontSize: "1.75rem", fontWeight: 300, letterSpacing: "-0.04em", color: "#d4af37", lineHeight: 1 }}>
+                            ${Number(asset.dailyRate).toLocaleString("es-MX")}
                           </span>
-                        )}
+                          <span style={{ fontSize: "0.65rem", color: "#52525b", fontWeight: 400 }}>MXN</span>
+                          {asset.originalPrice && Number(asset.originalPrice) > Number(asset.dailyRate) && (
+                            <span style={{ fontSize: "0.65rem", color: "#71717a", padding: "0.15rem 0.5rem", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 4 }}>
+                              Oferta
+                            </span>
+                          )}
+                        </div>
                       </div>
                     );
                     })()}

@@ -206,23 +206,41 @@ export default function BookingWizard() {
   }, 0);
 
   const outOfZone = isOutOfZone(venue);
-  const muted    = { color: "#94A3B8" } as React.CSSProperties;
-  const gold     = { color: "#D4AF37" } as React.CSSProperties;
-  const lb       = "block text-xs font-bold uppercase tracking-widest mb-1.5";
+  const muted    = { color: "#71717a" } as React.CSSProperties;
+  const gold     = { color: "#d4af37" } as React.CSSProperties;
+  const lb       = "block text-xs font-semibold uppercase tracking-widest mb-2";
+  // Input con focus gold — aplicado inline para no depender de clase global
+  const inputStyle: React.CSSProperties = {
+    background: "#18181b",
+    border: "1px solid rgba(255,255,255,0.08)",
+    borderRadius: "0.5rem",
+    padding: "0.75rem 1rem",
+    color: "var(--cream)",
+    fontSize: "1rem",          // ≥16px → evita zoom en iOS
+    width: "100%",
+    outline: "none",
+    fontFamily: "var(--font-dm)",
+    minHeight: 48,             // touch target mínimo
+    transition: "border-color 0.2s",
+  };
   const dl       = eventDate ? format(new Date(eventDate + "T12:00:00"), "EEEE d 'de' MMMM yyyy", { locale: es }) : "";
 
   return (
     <div>
-      {/* STEPPER */}
+      {/* STEPPER — minimalista */}
       <div className="flex items-center gap-2 mb-8 flex-wrap">
         {STEPS.map((s, i) => (
           <div key={i} className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-black flex-shrink-0"
-              style={{ background: i < step ? "#16a34a" : i === step ? "linear-gradient(135deg,#7C3AED,#9333EA)" : "rgba(124,58,237,.15)", color: i <= step ? "#fff" : "#94A3B8", boxShadow: i === step ? "0 0 16px rgba(124,58,237,.5)" : "none" }}>
+            <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold flex-shrink-0"
+              style={{
+                background: i < step ? "rgba(22,163,74,0.15)" : i === step ? "var(--gold)" : "rgba(255,255,255,0.05)",
+                color: i < step ? "#4ade80" : i === step ? "#05051a" : "#52525b",
+                border: `1px solid ${i < step ? "rgba(22,163,74,0.3)" : i === step ? "var(--gold)" : "rgba(255,255,255,0.08)"}`,
+              }}>
               {i < step ? "✓" : i + 1}
             </div>
-            <span className="text-sm font-bold" style={{ color: i === step ? "#D4AF37" : "#475569" }}>{s}</span>
-            {i < STEPS.length - 1 && <div className="w-5 h-px flex-shrink-0" style={{ background: "rgba(124,58,237,.2)" }} />}
+            <span className="text-xs font-medium" style={{ color: i === step ? "#e4e4e7" : "#52525b" }}>{s}</span>
+            {i < STEPS.length - 1 && <div className="w-6 h-px flex-shrink-0" style={{ background: "rgba(255,255,255,0.06)" }} />}
           </div>
         ))}
       </div>
@@ -230,7 +248,7 @@ export default function BookingWizard() {
       {/* ══ PASO 0: DATOS ══ */}
       {step === 0 && (
         <div className="aura-card p-6 space-y-5">
-          <p className="text-xs font-bold uppercase tracking-widest mb-1" style={gold}>👤 Cuéntanos de ti</p>
+          <p className="text-xs font-semibold uppercase tracking-widest mb-1" style={{ color: "#52525b" }}>Tus datos</p>
           {prefillError && (
             <div className="px-3 py-2 rounded-lg text-sm" style={{ background: "rgba(245,158,11,.1)", border: "1px solid rgba(245,158,11,.3)", color: "#fde68a" }} role="alert">
               ⚠️ {prefillError}
