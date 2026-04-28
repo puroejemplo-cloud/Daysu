@@ -1,7 +1,7 @@
 import HomeClient from "@/components/home/HomeClient";
 import { prisma } from "@/lib/prisma";
 
-export const revalidate = 3600; // recalcula cada hora, no en cada visita
+export const revalidate = 60; // revalida cada minuto
 
 export default async function HomePage() {
   const packages = await prisma.asset.findMany({
