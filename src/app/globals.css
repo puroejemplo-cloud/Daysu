@@ -281,15 +281,19 @@ input, select, textarea {
   font-size: max(1rem, 16px);
 }
 
-/* ── Aura card (dark UI) ── */
+/* ── Aura card (dark UI) — admin premium ── */
 .aura-card {
-  background: #0d0d2b;
-  border: 1px solid rgba(124,58,237,0.25);
-  border-radius: 1rem;
+  background: #0f0f13;
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 0.75rem;
+  transition: border-color 0.2s;
+}
+.aura-card:hover {
+  border-color: rgba(255,255,255,0.11);
 }
 .aura-input {
-  background: #13133a;
-  border: 1px solid rgba(124,58,237,0.25);
+  background: #18181b;
+  border: 1px solid rgba(255,255,255,0.08);
   border-radius: .5rem;
   padding: .5rem .75rem;
   color: var(--cream);
@@ -299,12 +303,12 @@ input, select, textarea {
   transition: border-color .2s;
   font-family: var(--font-dm);
 }
-.aura-input:focus { border-color: var(--purple); }
-.aura-input::placeholder { color: #888; }
+.aura-input:focus { border-color: rgba(255,255,255,0.2); }
+.aura-input::placeholder { color: #52525b; }
 
 .aura-select {
-  background: #13133a;
-  border: 1px solid rgba(124,58,237,0.25);
+  background: #18181b;
+  border: 1px solid rgba(255,255,255,0.08);
   border-radius: .5rem;
   padding: .5rem .75rem;
   color: var(--cream);
@@ -312,6 +316,35 @@ input, select, textarea {
   width: 100%;
   outline: none;
   font-family: var(--font-dm);
+}
+
+/* ── Admin premium utilities ─────────────────────────────────────────────── */
+.admin-surface {
+  background: #09090b;
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 0.75rem;
+}
+.admin-divider {
+  border: none;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  margin: 1.25rem 0;
+}
+.admin-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #52525b;
+}
+.admin-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
 }
 
 /* ── DayPicker dark ── */

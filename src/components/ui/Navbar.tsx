@@ -42,39 +42,37 @@ export default function Navbar() {
   const navLinks = isLoggedIn ? ADMIN_LINKS : PUBLIC_LINKS;
 
   return (
-    <header className="sticky top-0 z-50 border-b"
-      style={{ background: "rgba(5,5,26,0.95)", backdropFilter: "blur(16px)", borderColor: "rgba(201,168,76,0.15)" }}>
-      <div className="max-w-7xl mx-auto px-4 py-3 flex items-center gap-4">
+    <header className="sticky top-0 z-50 border-b safe-top"
+      style={{ background: isLoggedIn ? "rgba(9,9,11,0.97)" : "rgba(5,5,26,0.95)", backdropFilter: "blur(16px)", borderColor: "rgba(255,255,255,0.07)" }}>
+      <div className="max-w-7xl mx-auto px-4 py-2.5 flex items-center gap-4">
 
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2.5 flex-shrink-0" style={{ textDecoration: "none" }} aria-label="Aura Producciones — inicio">
-          <div className="w-8 h-8 rounded-full flex items-center justify-center font-black text-sm flex-shrink-0"
-            style={{ background: "var(--gold)", color: "#05051a", boxShadow: "0 0 12px rgba(201,168,76,.4)" }}
+        <Link href="/" className="flex items-center gap-2 flex-shrink-0" style={{ textDecoration: "none" }} aria-label="Aura Producciones — inicio">
+          <div className="w-7 h-7 rounded-full flex items-center justify-center font-black text-xs flex-shrink-0"
+            style={{ background: "var(--gold)", color: "#05051a" }}
             aria-hidden="true">
             A
           </div>
           <div className="leading-tight hidden sm:block">
             <span className="text-sm tracking-widest uppercase" style={{ fontFamily: "var(--font-bebas)", color: "var(--cream)", letterSpacing: "0.15em" }}>Aura</span>
-            <span className="block text-[9px] tracking-[.2em] uppercase" style={{ color: "var(--gold)" }}>Producciones VIP</span>
+            <span className="block text-[9px] tracking-[.2em] uppercase" style={{ color: "#71717a" }}>Producciones VIP</span>
           </div>
         </Link>
 
         {/* Nav links — desktop */}
-        <nav className="hidden lg:flex items-center gap-1.5 flex-1" aria-label="Navegación principal">
+        <nav className="hidden lg:flex items-center gap-0.5 flex-1" aria-label="Navegación principal">
           {navLinks.map((l) => {
             const active = isActive(l.href);
             const Icon   = (l as { Icon?: React.ComponentType<{ size?: number }> }).Icon;
             return (
               <Link key={l.href} href={l.href}
                 aria-current={active ? "page" : undefined}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-black uppercase tracking-wide transition-all border"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-all"
                 style={{
-                  color:          active ? "#05051a"                    : "#94A3B8",
-                  background:     active ? "var(--gold)"                : "rgba(255,255,255,.04)",
-                  borderColor:    active ? "var(--gold)"                : "rgba(255,255,255,.08)",
+                  color:          active ? "#e4e4e7" : "#52525b",
+                  background:     active ? "rgba(255,255,255,0.07)" : "transparent",
                   textDecoration: "none",
-                  letterSpacing:  "0.06em",
-                  boxShadow:      active ? "0 0 12px rgba(201,168,76,.3)" : "none",
+                  letterSpacing:  "0.03em",
                 }}>
                 {Icon && <Icon size={13} aria-hidden="true" />}
                 {l.label}
@@ -84,10 +82,12 @@ export default function Navbar() {
           {isSuperAdmin && (
             <Link href="/superadmin/admins"
               aria-current={path.startsWith("/superadmin") ? "page" : undefined}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-black uppercase tracking-wide border transition-all"
-              style={{ color: "#9333EA", background: "rgba(124,58,237,.1)", borderColor: "rgba(124,58,237,.3)", textDecoration: "none" }}>
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-all"
+              style={{ color: "#52525b", textDecoration: "none" }}
+              onMouseEnter={(e) => (e.currentTarget.style.color = "#a1a1aa")}
+              onMouseLeave={(e) => (e.currentTarget.style.color = "#52525b")}>
               <Settings size={13} aria-hidden="true" />
-              Administradores
+              Admins
             </Link>
           )}
         </nav>
@@ -129,21 +129,23 @@ export default function Navbar() {
         <div className="hidden lg:flex items-center gap-3 flex-shrink-0">
           {isLoggedIn ? (
             <>
-              <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg border"
-                style={{ borderColor: "rgba(201,168,76,.35)", background: "rgba(201,168,76,.1)", boxShadow: "0 0 8px rgba(201,168,76,.15)" }}>
-                <span className="text-xs font-black px-2 py-0.5 rounded-md"
-                  style={{ background: "var(--gold)", color: "#05051a", letterSpacing: "0.1em" }}>
+              <div className="flex items-center gap-2 px-3 py-1.5 rounded-md border"
+                style={{ borderColor: "rgba(255,255,255,0.09)", background: "rgba(255,255,255,0.04)" }}>
+                <span className="text-xs font-bold px-1.5 py-0.5 rounded"
+                  style={{ background: "var(--gold)", color: "#05051a", letterSpacing: "0.06em", fontSize: "0.6rem" }}>
                   {user?.suffix}
                 </span>
-                <span className="text-sm font-black" style={{ color: "var(--cream)" }}>
+                <span className="text-xs font-semibold" style={{ color: "#a1a1aa" }}>
                   {user?.name?.split(" ")[0]}
                 </span>
               </div>
               <form action={logoutAction}>
                 <button type="submit"
-                  className="flex items-center gap-1.5 text-xs font-black px-3 py-1.5 rounded-lg border transition-all"
-                  style={{ borderColor: "rgba(239,68,68,.4)", color: "#EF4444", background: "rgba(239,68,68,.08)" }}>
-                  <LogOut size={13} aria-hidden="true" />
+                  className="flex items-center gap-1 text-xs font-semibold px-3 py-1.5 rounded-md border transition-all"
+                  style={{ borderColor: "rgba(255,255,255,0.07)", color: "#52525b", background: "transparent" }}
+                  onMouseEnter={(e) => (e.currentTarget.style.color = "#a1a1aa")}
+                  onMouseLeave={(e) => (e.currentTarget.style.color = "#52525b")}>
+                  <LogOut size={12} aria-hidden="true" />
                   Salir
                 </button>
               </form>
