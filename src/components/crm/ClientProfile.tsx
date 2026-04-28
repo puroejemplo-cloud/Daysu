@@ -3,6 +3,7 @@ import { useState } from "react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import Link from "next/link";
+import { Pencil, X } from "lucide-react";
 
 interface SpecialDate { id: number; label: string; month: number; day: number; year: number | null; notes: string | null }
 interface BookingItem { quantity: number; asset: { name: string } }
@@ -17,13 +18,13 @@ interface Client {
 }
 
 const MONTHS = ["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"];
-const STATUS_LABEL: Record<string, { label: string; color: string }> = {
-  confirmed:       { label: "Confirmada",     color: "#22c55e" },
-  completed:       { label: "Completada",     color: "#94A3B8" },
-  pending_payment: { label: "Pend. pago",     color: "#D4AF37" },
-  cancelled:       { label: "Cancelada",      color: "#EF4444" },
-  expired:         { label: "Vencida",        color: "#475569" },
-  in_progress:     { label: "En curso",       color: "#7C3AED" },
+const STATUS_BADGE: Record<string, { label: string; dot: string }> = {
+  confirmed:       { label: "Confirmada",  dot: "#16a34a" },
+  completed:       { label: "Completada", dot: "#52525b" },
+  pending_payment: { label: "Pend. pago", dot: "#ca8a04" },
+  cancelled:       { label: "Cancelada",  dot: "#dc2626" },
+  expired:         { label: "Vencida",    dot: "#3f3f46" },
+  in_progress:     { label: "En curso",   dot: "#3b82f6" },
 };
 
 export default function ClientProfile({ client: initial }: { client: Client }) {
@@ -81,65 +82,66 @@ export default function ClientProfile({ client: initial }: { client: Client }) {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="aura-card p-6 flex flex-col md:flex-row md:items-center gap-5">
-        <div className="w-16 h-16 rounded-full flex-shrink-0 flex items-center justify-center font-black text-2xl"
-          style={{ background: "linear-gradient(135deg,#7C3AED,#9333EA)", color: "#fff" }}>
+      <div className="aura-card p-5 flex flex-col md:flex-row md:items-center gap-4">
+        <div className="w-12 h-12 rounded-full flex-shrink-0 flex items-center justify-center font-bold text-base"
+          style={{ background: "#18181b", border: "1px solid rgba(255,255,255,0.1)", color: "#a1a1aa" }}>
           {client.fullName.charAt(0).toUpperCase()}
         </div>
         <div className="flex-1 min-w-0">
-          <h1 className="bebas text-white mb-1" style={{ fontSize: "2rem" }}>{client.fullName}</h1>
-          <p style={{ color: "#94A3B8" }}>{client.email}{client.phone && ` · ${client.phone}`}</p>
-          {client.company && <p className="text-sm" style={{ color: "#475569" }}>{client.company}</p>}
+          <h1 className="text-xl font-bold text-white">{client.fullName}</h1>
+          <p className="text-sm mt-0.5" style={{ color: "#71717a" }}>{client.email}{client.phone && ` · ${client.phone}`}</p>
+          {client.company && <p className="text-xs mt-0.5" style={{ color: "#52525b" }}>{client.company}</p>}
         </div>
-        <div className="flex gap-4 text-center flex-shrink-0">
+        <div className="flex gap-5 text-center flex-shrink-0">
           <div>
-            <p className="text-2xl font-black" style={{ color: "#7C3AED" }}>{client.bookings.length}</p>
-            <p className="text-xs uppercase tracking-widest" style={{ color: "#475569" }}>Eventos</p>
+            <p className="text-xl font-bold" style={{ color: "#e4e4e7" }}>{client.bookings.length}</p>
+            <p className="admin-label">Eventos</p>
           </div>
           <div>
-            <p className="text-2xl font-black" style={{ color: "#D4AF37" }}>${totalGastado.toLocaleString("es-MX")}</p>
-            <p className="text-xs uppercase tracking-widest" style={{ color: "#475569" }}>Total</p>
+            <p className="text-xl font-bold" style={{ color: "#d4af37" }}>${totalGastado.toLocaleString("es-MX")}</p>
+            <p className="admin-label">Total</p>
           </div>
         </div>
         <button onClick={() => setEditing(!editing)}
-          className="text-sm font-bold px-4 py-2 rounded-lg border transition-colors flex-shrink-0"
-          style={{ borderColor: "rgba(124,58,237,.3)", color: "#94A3B8" }}>
-          {editing ? "Cancelar" : "✎ Editar"}
+          className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-md border transition-all flex-shrink-0"
+          style={{ borderColor: "rgba(255,255,255,0.08)", color: "#71717a", background: "transparent" }}>
+          <Pencil size={13} />
+          {editing ? "Cancelar" : "Editar"}
         </button>
       </div>
 
       {/* Formulario edición */}
       {editing && (
-        <div className="aura-card p-6 space-y-4">
-          <p className="text-xs font-black uppercase tracking-widest mb-2" style={{ color: "#7C3AED" }}>Editar datos</p>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="aura-card p-5 space-y-4">
+          <p className="admin-label">Editar datos</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {[
-              { label: "Nombre completo", key: "fullName" },
-              { label: "Teléfono",        key: "phone" },
-              { label: "Empresa",         key: "company" },
-              { label: "RFC / ID fiscal", key: "taxId" },
+              { label: "Nombre completo",    key: "fullName" },
+              { label: "Teléfono",           key: "phone" },
+              { label: "Empresa",            key: "company" },
+              { label: "RFC / ID fiscal",    key: "taxId" },
               { label: "¿Cómo nos encontró?", key: "referredBy" },
             ].map(({ label, key }) => (
               <div key={key}>
-                <label className="block text-xs font-bold uppercase tracking-widest mb-1" style={{ color: "#94A3B8" }}>{label}</label>
+                <label className="admin-label block mb-1.5">{label}</label>
                 <input value={(form as never)[key] as string} onChange={(e) => setForm((f) => ({ ...f, [key]: e.target.value }))}
                   className="aura-input" />
               </div>
             ))}
           </div>
           <div>
-            <label className="block text-xs font-bold uppercase tracking-widest mb-1" style={{ color: "#94A3B8" }}>Preferencias / Estilo del cliente</label>
+            <label className="admin-label block mb-1.5">Preferencias / Estilo</label>
             <textarea value={form.preferencias} onChange={(e) => setForm((f) => ({ ...f, preferencias: e.target.value }))}
-              rows={2} className="aura-input resize-none" placeholder="Colores favoritos, tipo de música, estilo de evento..." />
+              rows={2} className="aura-input resize-none" placeholder="Colores, música, estilo de evento..." />
           </div>
           <div>
-            <label className="block text-xs font-bold uppercase tracking-widest mb-1" style={{ color: "#94A3B8" }}>Notas internas (CRM)</label>
+            <label className="admin-label block mb-1.5">Notas internas (CRM)</label>
             <textarea value={form.crmNotes} onChange={(e) => setForm((f) => ({ ...f, crmNotes: e.target.value }))}
-              rows={2} className="aura-input resize-none" placeholder="Notas privadas del equipo sobre este cliente..." />
+              rows={2} className="aura-input resize-none" placeholder="Notas privadas del equipo..." />
           </div>
           <button onClick={saveClient} disabled={saving}
-            className="font-black px-6 py-2.5 rounded-lg text-sm disabled:opacity-50"
-            style={{ background: "linear-gradient(135deg,#7C3AED,#9333EA)", color: "#fff" }}>
+            className="font-semibold px-5 py-2.5 rounded-lg text-sm disabled:opacity-50"
+            style={{ background: "var(--gold)", color: "#05051a" }}>
             {saving ? "Guardando..." : "Guardar cambios"}
           </button>
         </div>
@@ -150,20 +152,20 @@ export default function ClientProfile({ client: initial }: { client: Client }) {
         <div className="aura-card p-5 grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
           {client.referredBy && (
             <div>
-              <p className="text-xs font-black uppercase tracking-widest mb-1" style={{ color: "#7C3AED" }}>Nos encontró por</p>
-              <p className="text-white">{client.referredBy}</p>
+              <p className="admin-label mb-1">Nos encontró por</p>
+              <p style={{ color: "#d4d4d8" }}>{client.referredBy}</p>
             </div>
           )}
           {client.preferencias && (
             <div>
-              <p className="text-xs font-black uppercase tracking-widest mb-1" style={{ color: "#7C3AED" }}>Preferencias</p>
-              <p style={{ color: "#94A3B8" }}>{client.preferencias}</p>
+              <p className="admin-label mb-1">Preferencias</p>
+              <p style={{ color: "#71717a" }}>{client.preferencias}</p>
             </div>
           )}
           {client.crmNotes && (
             <div>
-              <p className="text-xs font-black uppercase tracking-widest mb-1" style={{ color: "#7C3AED" }}>Notas internas</p>
-              <p style={{ color: "#94A3B8" }}>{client.crmNotes}</p>
+              <p className="admin-label mb-1">Notas internas</p>
+              <p style={{ color: "#71717a" }}>{client.crmNotes}</p>
             </div>
           )}
         </div>
@@ -173,10 +175,10 @@ export default function ClientProfile({ client: initial }: { client: Client }) {
         {/* Fechas especiales */}
         <div className="space-y-3">
           <div className="flex items-center justify-between">
-            <p className="text-xs font-black uppercase tracking-widest" style={{ color: "#D4AF37" }}>🎂 Fechas especiales</p>
+            <p className="admin-label">Fechas especiales</p>
             <button onClick={() => setAddingDate(!addingDate)}
-              className="text-xs font-bold px-3 py-1 rounded-lg border transition-colors"
-              style={{ borderColor: "rgba(212,175,55,.3)", color: "#D4AF37" }}>
+              className="text-xs font-medium px-3 py-1.5 rounded-md border transition-all"
+              style={{ borderColor: "rgba(255,255,255,0.08)", color: "#71717a", background: "transparent" }}>
               {addingDate ? "Cancelar" : "+ Agregar"}
             </button>
           </div>
@@ -217,52 +219,53 @@ export default function ClientProfile({ client: initial }: { client: Client }) {
             const soon = days <= 30;
 
             return (
-              <div key={d.id} className="flex items-center gap-3 p-3 rounded-xl border"
-                style={{ background: soon ? "rgba(212,175,55,.07)" : "var(--bg-card)", borderColor: soon ? "rgba(212,175,55,.3)" : "rgba(124,58,237,.15)" }}>
-                <div className="w-10 h-10 rounded-lg flex flex-col items-center justify-center flex-shrink-0"
-                  style={{ background: soon ? "var(--gold)" : "rgba(124,58,237,.15)" }}>
-                  <span className="text-xs font-black leading-none" style={{ color: soon ? "#05051a" : "#7C3AED" }}>{MONTHS[d.month - 1]}</span>
-                  <span className="text-lg font-black leading-none" style={{ color: soon ? "#05051a" : "#f5f0e8" }}>{d.day}</span>
+              <div key={d.id} className="aura-card flex items-center gap-3 p-3">
+                <div className="w-9 h-9 rounded-lg flex flex-col items-center justify-center flex-shrink-0"
+                  style={{ background: soon ? "rgba(212,175,55,0.12)" : "#18181b", border: `1px solid ${soon ? "rgba(212,175,55,0.25)" : "rgba(255,255,255,0.07)"}` }}>
+                  <span className="text-xs leading-none" style={{ color: soon ? "#d4af37" : "#52525b" }}>{MONTHS[d.month - 1]}</span>
+                  <span className="text-sm font-bold leading-none" style={{ color: soon ? "#d4af37" : "#a1a1aa" }}>{d.day}</span>
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-black text-white">{d.label}</p>
-                  <p className="text-xs" style={{ color: soon ? "#D4AF37" : "#475569" }}>
-                    {soon ? `🎉 En ${days} día${days !== 1 ? "s" : ""}` : `En ${days} días`}
+                  <p className="text-sm font-medium" style={{ color: "#d4d4d8" }}>{d.label}</p>
+                  <p className="text-xs" style={{ color: soon ? "#a16207" : "#52525b" }}>
+                    En {days} día{days !== 1 ? "s" : ""}
                     {d.year && ` · ${next.getFullYear() - d.year} años`}
                   </p>
                 </div>
-                <button onClick={() => deleteDate(d.id)} className="text-xs" style={{ color: "#475569" }}>✕</button>
+                <button onClick={() => deleteDate(d.id)}>
+                  <X size={14} style={{ color: "#3f3f46" }} />
+                </button>
               </div>
             );
           })}
         </div>
 
         {/* Historial de eventos */}
-        <div className="space-y-3">
-          <p className="text-xs font-black uppercase tracking-widest" style={{ color: "#7C3AED" }}>📋 Historial de eventos</p>
+        <div className="space-y-2">
+          <p className="admin-label">Historial de eventos</p>
           {client.bookings.length === 0 && (
-            <p className="text-sm" style={{ color: "#475569" }}>Sin eventos registrados.</p>
+            <p className="text-sm" style={{ color: "#52525b" }}>Sin eventos registrados.</p>
           )}
           {client.bookings.map((b) => {
-            const st = STATUS_LABEL[b.status] ?? { label: b.status, color: "#94A3B8" };
+            const st = STATUS_BADGE[b.status] ?? { label: b.status, dot: "#52525b" };
             return (
               <Link key={b.id} href={`/reserva/${b.id}`}
-                className="flex items-start gap-3 p-3 rounded-xl border transition-colors hover:border-[var(--gold)]"
-                style={{ background: "var(--bg-card)", borderColor: "rgba(124,58,237,.15)", textDecoration: "none" }}>
+                className="aura-card flex items-start gap-3 p-3 hover:border-white/15 transition-all block"
+                style={{ textDecoration: "none" }}>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-black text-white truncate">{b.eventName}</p>
-                  <p className="text-xs mt-0.5" style={{ color: "#94A3B8" }}>
+                  <p className="text-sm font-medium text-white truncate">{b.eventName}</p>
+                  <p className="text-xs mt-0.5" style={{ color: "#52525b" }}>
                     {format(new Date(b.setupAt), "d MMM yyyy", { locale: es })}
-                  </p>
-                  <p className="text-xs mt-0.5" style={{ color: "#475569" }}>
-                    {b.items.map((i) => i.asset.name).join(", ")}
                   </p>
                 </div>
                 <div className="text-right flex-shrink-0">
-                  <p className="text-sm font-black" style={{ color: "#D4AF37" }}>
+                  <p className="text-sm font-semibold" style={{ color: "#d4af37" }}>
                     ${Number(b.totalAmount).toLocaleString("es-MX")}
                   </p>
-                  <p className="text-xs font-bold" style={{ color: st.color }}>{st.label}</p>
+                  <p className="text-xs flex items-center justify-end gap-1 mt-0.5">
+                    <span style={{ width: 5, height: 5, borderRadius: "50%", background: st.dot, display: "inline-block" }} />
+                    <span style={{ color: "#71717a" }}>{st.label}</span>
+                  </p>
                 </div>
               </Link>
             );

@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState, useCallback } from "react";
+import { Plus, ShieldCheck, User } from "lucide-react";
 
 interface AdminUser {
   id: number; username: string; email: string; fullName: string;
@@ -9,11 +10,11 @@ interface AdminUser {
 const emptyForm = { username: "", email: "", fullName: "", suffix: "", password: "", role: "admin" };
 
 export default function SuperAdminPanel() {
-  const [admins, setAdmins]   = useState<AdminUser[]>([]);
-  const [form, setForm]       = useState(emptyForm);
+  const [admins,  setAdmins]  = useState<AdminUser[]>([]);
+  const [form,    setForm]    = useState(emptyForm);
   const [loading, setLoading] = useState(true);
-  const [saving, setSaving]   = useState(false);
-  const [error, setError]     = useState("");
+  const [saving,  setSaving]  = useState(false);
+  const [error,   setError]   = useState("");
   const [success, setSuccess] = useState("");
 
   const load = useCallback(async () => {
@@ -50,11 +51,11 @@ export default function SuperAdminPanel() {
   };
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-5">
       {/* Crear admin */}
-      <form onSubmit={handleCreate} className="aura-card p-6 space-y-4">
-        <p className="text-xs font-black uppercase tracking-widest mb-2" style={{ color: "#7C3AED" }}>Nuevo administrador</p>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <form onSubmit={handleCreate} className="aura-card p-5 space-y-4">
+        <p className="admin-label">Nuevo administrador</p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           {[
             { label: "Nombre completo", key: "fullName",  placeholder: "Daysi Hernández" },
             { label: "Usuario (login)", key: "username",  placeholder: "daysi" },
@@ -63,14 +64,14 @@ export default function SuperAdminPanel() {
             { label: "Suffix (máx 8)", key: "suffix",    placeholder: "DAY" },
           ].map(({ label, key, placeholder, type }) => (
             <div key={key}>
-              <label className="block text-xs font-bold uppercase tracking-widest mb-1" style={{ color: "#94A3B8" }}>{label}</label>
+              <label className="admin-label block mb-1.5">{label}</label>
               <input type={type ?? "text"} value={(form as never)[key] as string}
                 onChange={(e) => setForm((f) => ({ ...f, [key]: e.target.value }))}
                 placeholder={placeholder} required className="aura-input" />
             </div>
           ))}
           <div>
-            <label className="block text-xs font-bold uppercase tracking-widest mb-1" style={{ color: "#94A3B8" }}>Rol</label>
+            <label className="admin-label block mb-1.5">Rol</label>
             <select value={form.role} onChange={(e) => setForm((f) => ({ ...f, role: e.target.value }))} className="aura-select">
               <option value="admin">Admin</option>
               <option value="superadmin">Superadmin</option>
@@ -78,45 +79,54 @@ export default function SuperAdminPanel() {
           </div>
         </div>
 
-        {error   && <p className="text-sm font-bold" style={{ color: "#EF4444" }}>{error}</p>}
-        {success && <p className="text-sm font-bold" style={{ color: "#22c55e" }}>{success}</p>}
+        {error   && <p className="text-xs" style={{ color: "#f87171" }}>{error}</p>}
+        {success && <p className="text-xs" style={{ color: "#4ade80" }}>{success}</p>}
 
         <button type="submit" disabled={saving}
-          className="font-black px-6 py-2.5 rounded-lg text-sm disabled:opacity-50"
+          className="flex items-center gap-2 font-semibold px-5 py-2.5 rounded-lg text-sm disabled:opacity-50"
           style={{ background: "var(--gold)", color: "#05051a" }}>
-          {saving ? "Creando..." : "+ Crear administrador"}
+          <Plus size={15} />
+          {saving ? "Creando..." : "Crear administrador"}
         </button>
       </form>
 
       {/* Lista de admins */}
       <div className="aura-card overflow-hidden">
-        <div className="px-6 py-4 border-b" style={{ borderColor: "rgba(124,58,237,.2)" }}>
-          <p className="text-xs font-black uppercase tracking-widest" style={{ color: "#7C3AED" }}>
-            Administradores ({admins.length})
-          </p>
+        <div className="px-5 py-3 border-b" style={{ borderColor: "rgba(255,255,255,0.06)" }}>
+          <p className="admin-label">Administradores · {admins.length}</p>
         </div>
-        {loading && <p className="p-6 text-sm" style={{ color: "#94A3B8" }}>Cargando...</p>}
-        <div className="divide-y" style={{ borderColor: "rgba(124,58,237,.08)" }}>
+        {loading && <p className="p-5 text-sm" style={{ color: "#52525b" }}>Cargando...</p>}
+        <div className="divide-y" style={{ borderColor: "rgba(255,255,255,0.05)" }}>
           {admins.map((a) => (
-            <div key={a.id} className="flex items-center gap-4 px-6 py-4">
-              <div className="w-10 h-10 rounded-xl flex items-center justify-center font-black text-sm flex-shrink-0"
-                style={{ background: a.role === "superadmin" ? "var(--gold)" : "rgba(124,58,237,.2)", color: a.role === "superadmin" ? "#05051a" : "#9333EA" }}>
+            <div key={a.id} className="flex items-center gap-4 px-5 py-4">
+              <div className="w-9 h-9 rounded-lg flex items-center justify-center text-xs font-bold flex-shrink-0"
+                style={{ background: a.role === "superadmin" ? "var(--gold)" : "#18181b", color: a.role === "superadmin" ? "#05051a" : "#71717a", border: "1px solid rgba(255,255,255,0.08)" }}>
                 {a.suffix}
               </div>
               <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2">
-                  <p className="font-black text-white">{a.fullName}</p>
-                  <span className="text-xs px-2 py-0.5 rounded-full font-bold"
-                    style={{ background: a.role === "superadmin" ? "rgba(212,175,55,.15)" : "rgba(124,58,237,.15)", color: a.role === "superadmin" ? "#D4AF37" : "#9333EA" }}>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="text-sm font-semibold" style={{ color: "#e4e4e7" }}>{a.fullName}</span>
+                  <span className="flex items-center gap-1 text-xs px-2 py-0.5 rounded"
+                    style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.07)", color: "#71717a" }}>
+                    {a.role === "superadmin"
+                      ? <ShieldCheck size={11} style={{ color: "#d4af37" }} />
+                      : <User size={11} />}
                     {a.role}
                   </span>
-                  {!a.isActive && <span className="text-xs text-red-400">Inactivo</span>}
+                  {!a.isActive && (
+                    <span className="text-xs px-2 py-0.5 rounded"
+                      style={{ background: "rgba(220,38,38,0.08)", color: "#f87171", border: "1px solid rgba(220,38,38,0.15)" }}>
+                      Inactivo
+                    </span>
+                  )}
                 </div>
-                <p className="text-sm" style={{ color: "#94A3B8" }}>@{a.username} · {a.email}</p>
+                <p className="text-xs mt-0.5" style={{ color: "#52525b" }}>@{a.username} · {a.email}</p>
               </div>
               <button onClick={() => toggleActive(a)}
-                className="text-xs font-bold px-3 py-1.5 rounded-lg border transition-colors"
-                style={{ borderColor: a.isActive ? "rgba(239,68,68,.3)" : "rgba(34,197,94,.3)", color: a.isActive ? "#EF4444" : "#22c55e" }}>
+                className="text-xs font-medium px-3 py-1.5 rounded-md border transition-all"
+                style={{ borderColor: "rgba(255,255,255,0.08)", color: "#52525b", background: "transparent" }}
+                onMouseEnter={(e) => (e.currentTarget.style.color = "#a1a1aa")}
+                onMouseLeave={(e) => (e.currentTarget.style.color = "#52525b")}>
                 {a.isActive ? "Desactivar" : "Activar"}
               </button>
             </div>
