@@ -3,23 +3,9 @@
 export interface PricingTierItem { label: string; price: number }
 export type PricingConfig = { type: "hourly" | "capacity"; tiers: PricingTierItem[] };
 
-// ── Fallbacks hardcodeados (cuando la BD no tiene tiers configurados) ──────────
-const HOURLY_FALLBACK: Record<string, PricingTierItem[]> = {
-  "CAB-FOTO-OFERTA": [
-    { label: "1 hora",  price: 2_000 },
-    { label: "2 horas", price: 3_000 },
-    { label: "3 horas", price: 3_500 },
-  ],
-};
-
-const CAPACITY_FALLBACK: Record<string, PricingTierItem[]> = {
-  "DAY-MARUCHAN": [
-    { label: "50 personas",  price: 0 },   // admin debe configurar precios reales
-    { label: "100 personas", price: 0 },
-    { label: "150 personas", price: 0 },
-    { label: "200 personas", price: 0 },
-  ],
-};
+// Sin fallbacks hardcodeados — el admin configura los tiers desde el panel
+const HOURLY_FALLBACK:   Record<string, PricingTierItem[]> = {};
+const CAPACITY_FALLBACK: Record<string, PricingTierItem[]> = {};
 
 // ── Helpers: BD primero, fallback después ──────────────────────────────────────
 export function getHourlyTiers(sku: string, db?: PricingConfig | null): PricingTierItem[] | null {
