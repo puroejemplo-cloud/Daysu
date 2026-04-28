@@ -595,6 +595,20 @@ input, select, textarea {
   html { scroll-behavior: auto; }
 }
 
+/* ── Photo Carousel — contenedor de imagen ─────────────────────────── */
+.carousel-img-wrap {
+  /* móvil: altura proporcional al ancho de pantalla (aprox 4:3) */
+  width: 100%;
+  height: min(75vw, 400px);
+}
+@media (min-width: 640px) {
+  .carousel-img-wrap {
+    height: auto;
+    min-height: 380px;
+    max-height: 70vh;
+  }
+}
+
 /* ── ANIMACIONES MÓVIL ─────────────────────────────────────────────── */
 /* Asegurar que las fade-up sean visibles desde el inicio en móvil */
 @media (max-width: 767px) {

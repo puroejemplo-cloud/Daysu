@@ -121,21 +121,21 @@ export default function PhotoCarousel() {
           <div style={{ position: "absolute", inset: 0, background: "rgba(5,5,15,.55)", zIndex: 1 }} />
 
           {/* Foto — completa, sin recorte, encima del video */}
-          <div style={{
-            position: "relative", zIndex: 2,
-            display: "flex", alignItems: "center", justifyContent: "center",
-            minHeight: 320, maxHeight: "70vh", overflow: "hidden",
-            transition: "opacity 0.18s ease", opacity: fade ? 1 : 0,
-          }}>
+          <div
+            className="carousel-img-wrap"
+            style={{
+              position: "relative", zIndex: 2,
+              display: "flex", alignItems: "center", justifyContent: "center",
+              overflow: "hidden",
+              transition: "opacity 0.18s ease", opacity: fade ? 1 : 0,
+            }}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={`${photo.src}?v=${V}`}
               alt={photo.alt}
               style={{
-                maxWidth: "100%",
-                maxHeight: "70vh",
-                width: "auto",
-                height: "auto",
+                width: "100%",
+                height: "100%",
                 display: "block",
                 objectFit: "contain",
               }}
