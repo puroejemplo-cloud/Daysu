@@ -36,6 +36,9 @@ export default function Navbar() {
   const isSuperAdmin = user?.role === "superadmin";
   const isLoggedIn   = status === "authenticated";
 
+  // En rutas admin/superadmin el sidebar maneja toda la navegación
+  if (path.startsWith("/admin") || path.startsWith("/superadmin")) return null;
+
   const isActive = (href: string) =>
     href === "/" ? path === "/" : path.startsWith(href);
 
