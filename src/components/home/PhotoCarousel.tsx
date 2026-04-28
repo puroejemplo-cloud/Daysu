@@ -2,22 +2,22 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 
 const PHOTOS = [
-  { src: "/galeria/robot1.webp",                    alt: "Show Robot LED en vivo",           event: "Show Robot LED"        },
-  { src: "/galeria/robot03.webp",                   alt: "Robot LED — efectos especiales",   event: "Show Robot LED"        },
-  { src: "/galeria/robot04.webp",                   alt: "Robot LED interactivo",            event: "Show Robot LED"        },
-  { src: "/galeria/robot05.webp",                   alt: "Robot LED con iluminación",        event: "Show Robot LED"        },
-  { src: "/galeria/robot06.webp",                   alt: "Robot LED show completo",          event: "Show Robot LED"        },
-  { src: "/galeria/cabezones-robot-led.webp",       alt: "Cabezones + Robot LED",            event: "Cabezones + Robot LED" },
-  { src: "/galeria/cabezon-pirotecnia.webp",        alt: "Cabezón + Pirotecnia fría",        event: "Pirotecnia Fría"       },
-  { src: "/galeria/cabezones-03.webp",              alt: "Show Cabezones en evento",         event: "Show Cabezones"        },
-  { src: "/galeria/cabezones02.webp",               alt: "Cabezones animando el evento",     event: "Show Cabezones"        },
-  { src: "/galeria/cabezones-carrito-de-shots.webp",alt: "Cabezones + Carrito de Shots",     event: "Shots Iluminados"      },
-  { src: "/galeria/carrito-de-shots01.webp",        alt: "Carrito de shots iluminados",      event: "Shots Iluminados"      },
-  { src: "/galeria/carrito-de-shot-02.webp",        alt: "Shots RGB en evento",              event: "Shots Iluminados"      },
-  { src: "/galeria/limbo-led.webp",                 alt: "Limbo LED interactivo",            event: "Limbo LED"             },
-  { src: "/galeria/sonido01.webp",                  alt: "Sistema de sonido profesional",    event: "Sonido Profesional"    },
-  { src: "/galeria/sonido01-2.webp",                alt: "Audio profesional en evento",      event: "Sonido Profesional"    },
-  { src: "/galeria/sonido03.webp",                  alt: "DJ y sonido en vivo",              event: "DJ en Vivo"            },
+  { src: "/Galeria/robot1.webp",                    alt: "Show Robot LED en vivo",           event: "Show Robot LED"        },
+  { src: "/Galeria/robot03.webp",                   alt: "Robot LED — efectos especiales",   event: "Show Robot LED"        },
+  { src: "/Galeria/robot04.webp",                   alt: "Robot LED interactivo",            event: "Show Robot LED"        },
+  { src: "/Galeria/robot05.webp",                   alt: "Robot LED con iluminación",        event: "Show Robot LED"        },
+  { src: "/Galeria/robot06.webp",                   alt: "Robot LED show completo",          event: "Show Robot LED"        },
+  { src: "/Galeria/cabezones-robot-led.webp",       alt: "Cabezones + Robot LED",            event: "Cabezones + Robot LED" },
+  { src: "/Galeria/cabezon-pirotecnia.webp",        alt: "Cabezón + Pirotecnia fría",        event: "Pirotecnia Fría"       },
+  { src: "/Galeria/cabezones-03.webp",              alt: "Show Cabezones en evento",         event: "Show Cabezones"        },
+  { src: "/Galeria/cabezones02.webp",               alt: "Cabezones animando el evento",     event: "Show Cabezones"        },
+  { src: "/Galeria/cabezones-carrito-de-shots.webp",alt: "Cabezones + Carrito de Shots",     event: "Shots Iluminados"      },
+  { src: "/Galeria/carrito-de-shots01.webp",        alt: "Carrito de shots iluminados",      event: "Shots Iluminados"      },
+  { src: "/Galeria/carrito-de-shot-02.webp",        alt: "Shots RGB en evento",              event: "Shots Iluminados"      },
+  { src: "/Galeria/limbo-led.webp",                 alt: "Limbo LED interactivo",            event: "Limbo LED"             },
+  { src: "/Galeria/sonido01.webp",                  alt: "Sistema de sonido profesional",    event: "Sonido Profesional"    },
+  { src: "/Galeria/sonido01-2.webp",                alt: "Audio profesional en evento",      event: "Sonido Profesional"    },
+  { src: "/Galeria/sonido03.webp",                  alt: "DJ y sonido en vivo",              event: "DJ en Vivo"            },
 ];
 
 // Agrupar por tipo para los filtros
