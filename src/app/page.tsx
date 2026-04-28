@@ -6,12 +6,9 @@ export const revalidate = 60; // revalida cada minuto
 export default async function HomePage() {
   const packages = await prisma.asset.findMany({
     where: {
-      isActive: true, isRentable: true,
-      OR: [
-        { sku: { startsWith: "PKG-" } },
-        { sku: { startsWith: "CAB-" } },
-        { sku: { startsWith: "DAY-DJ-AUDIO-" } },
-      ],
+      isActive: true,
+      isRentable: true,
+      assetType: "package",
     },
     select: {
       id: true, name: true, dailyRate: true, originalPrice: true,

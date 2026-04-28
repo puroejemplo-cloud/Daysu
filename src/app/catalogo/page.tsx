@@ -14,23 +14,12 @@ export const metadata: Metadata = {
   },
 };
 
-// Categorías que se muestran en el catálogo (las más representativas con productos reales)
-const FEATURED_CATS = [
-  "XV Años",
-  "Bodas",
-  "Fiestas & Cumpleaños",
-  "Entretenimiento",
-  "Sonido",
-  "Fotografía",
-  "Eventos VIP",
-  "Especiales",
-];
 
 export default async function CatalogoPage() {
   const [allCategories, assets, componentLinks] = await Promise.all([
     prisma.assetCategory.findMany({ orderBy: { name: "asc" } }),
     prisma.asset.findMany({
-      where: { isActive: true, isRentable: true },
+      where: { isActive: true, isRentable: true, assetType: { in: ["package", "product"] } },
       select: {
         id: true, name: true, sku: true, dailyRate: true, originalPrice: true,
         categoryId: true, description: true,
@@ -88,10 +77,8 @@ export default async function CatalogoPage() {
   // IDs de categorías que realmente tienen productos rentables
   const activeCatIds = new Set(assets.map((a) => a.categoryId));
 
-  // Solo mostrar categorías featured que tengan al menos 1 producto
-  const categories = allCategories.filter(
-    (c) => FEATURED_CATS.includes(c.name) && activeCatIds.has(c.id)
-  );
+  // Solo categorías que tienen al menos 1 producto activo y rentable
+  const categories = allCategories.filter((c) => activeCatIds.has(c.id));
 
   return (
     <Suspense fallback={<div style={{ background: "#05051a", minHeight: "100vh" }} />}>
