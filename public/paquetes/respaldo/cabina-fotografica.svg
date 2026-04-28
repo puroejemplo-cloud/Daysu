@@ -1,0 +1,193 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450">
+  <defs>
+    <radialGradient id="bg" cx="30%" cy="50%" r="65%">
+      <stop offset="0%" stop-color="#1e0a3c"/>
+      <stop offset="55%" stop-color="#0d0018"/>
+      <stop offset="100%" stop-color="#000000"/>
+    </radialGradient>
+    <radialGradient id="boothGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#9333ea" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#000" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="doorGlow" cx="50%" cy="100%" r="80%">
+      <stop offset="0%" stop-color="#7c3aed" stop-opacity="0.7"/>
+      <stop offset="100%" stop-color="#000" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="boothFace" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f5f0ff"/>
+      <stop offset="40%" stop-color="#ede9fe"/>
+      <stop offset="100%" stop-color="#c4b5fd"/>
+    </linearGradient>
+    <linearGradient id="boothSide" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#c084fc"/>
+      <stop offset="100%" stop-color="#7c3aed"/>
+    </linearGradient>
+    <linearGradient id="slv" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="35%" stop-color="#e2e8f0"/>
+      <stop offset="65%" stop-color="#64748b"/>
+      <stop offset="100%" stop-color="#e2e8f0"/>
+    </linearGradient>
+    <linearGradient id="gld" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#fde68a"/>
+      <stop offset="100%" stop-color="#d97706"/>
+    </linearGradient>
+    <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="8" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="glow2" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="4" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="softBlur">
+      <feGaussianBlur stdDeviation="12"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="800" height="450" fill="url(#bg)"/>
+
+  <!-- Atmospheric background glow -->
+  <ellipse cx="250" cy="220" rx="220" ry="190" fill="url(#boothGlow)" filter="url(#softBlur)"/>
+
+  <!-- Floor shine -->
+  <ellipse cx="280" cy="430" rx="190" ry="18" fill="#7c3aed" opacity="0.18"/>
+
+  <!-- PHOTO BOOTH ILLUSTRATION -->
+
+  <!-- Booth top face (isometric) -->
+  <polygon points="165,112 430,112 460,82 195,82" fill="#f0ebff" opacity="0.7"/>
+
+  <!-- Booth front face -->
+  <rect x="165" y="112" width="265" height="295" rx="6" fill="url(#boothFace)" opacity="0.88"/>
+
+  <!-- Booth right side face -->
+  <polygon points="430,112 460,82 460,348 430,378" fill="url(#boothSide)" opacity="0.55"/>
+
+  <!-- LED color strip on top of booth -->
+  <rect x="168" y="110" width="259" height="5" rx="2" fill="#1a0035"/>
+  <circle cx="185" cy="113" r="4.5" fill="#f472b6" filter="url(#glow2)"/>
+  <circle cx="205" cy="113" r="4.5" fill="#38bdf8" filter="url(#glow2)"/>
+  <circle cx="225" cy="113" r="4.5" fill="#a78bfa" filter="url(#glow2)"/>
+  <circle cx="245" cy="113" r="4.5" fill="#34d399" filter="url(#glow2)"/>
+  <circle cx="265" cy="113" r="4.5" fill="#fbbf24" filter="url(#glow2)"/>
+  <circle cx="285" cy="113" r="4.5" fill="#f472b6" filter="url(#glow2)"/>
+  <circle cx="305" cy="113" r="4.5" fill="#38bdf8" filter="url(#glow2)"/>
+  <circle cx="325" cy="113" r="4.5" fill="#e879f9" filter="url(#glow2)"/>
+  <circle cx="345" cy="113" r="4.5" fill="#34d399" filter="url(#glow2)"/>
+  <circle cx="365" cy="113" r="4.5" fill="#fbbf24" filter="url(#glow2)"/>
+  <circle cx="385" cy="113" r="4.5" fill="#f472b6" filter="url(#glow2)"/>
+  <circle cx="405" cy="113" r="4.5" fill="#38bdf8" filter="url(#glow2)"/>
+
+  <!-- Booth neon frame glow -->
+  <rect x="162" y="109" width="272" height="302" rx="8" fill="none"
+    stroke="#9333ea" stroke-width="3" filter="url(#glow)"/>
+
+  <!-- Doorway opening -->
+  <rect x="245" y="215" width="125" height="192" rx="3" fill="#050008"/>
+  <!-- Door frame neon -->
+  <rect x="243" y="213" width="129" height="196" rx="4" fill="none"
+    stroke="#9333ea" stroke-width="2.5" filter="url(#glow2)"/>
+
+  <!-- Purple light spill from door -->
+  <polygon points="243,407 372,407 395,450 220,450" fill="#7c3aed" opacity="0.12"/>
+  <polygon points="265,407 350,407 360,450 255,450" fill="#9333ea" opacity="0.18"/>
+
+  <!-- Light beam from inside the booth door -->
+  <polygon points="268,310 344,310 380,407 232,407" fill="url(#doorGlow)" opacity="0.4"/>
+
+  <!-- Inner booth content (visible through door) -->
+  <rect x="255" y="225" width="105" height="120" fill="#1a0035" opacity="0.6"/>
+  <ellipse cx="307" cy="310" rx="35" ry="20" fill="#7c3aed" opacity="0.4" filter="url(#glow2)"/>
+
+  <!-- PHOTO PROPS (foreground, left of booth) -->
+  <!-- Stick -->
+  <rect x="138" y="320" width="4" height="90" fill="#374151" rx="2"/>
+  <!-- Sign prop "¡LA FIESTA!" -->
+  <rect x="105" y="285" width="72" height="48" rx="6" fill="#111827" stroke="#4b5563" stroke-width="1.5"/>
+  <text x="141" y="307" text-anchor="middle" font-family="Arial" font-size="10" font-weight="700" fill="#f472b6">¡LA FIESTA</text>
+  <text x="141" y="322" text-anchor="middle" font-family="Arial" font-size="10" font-weight="700" fill="#f472b6">COMIENZA!</text>
+
+  <!-- Party hat (right of booth) -->
+  <g transform="translate(453,135)">
+    <polygon points="25,0 0,65 50,65" fill="#e879f9" opacity="0.85"/>
+    <polygon points="25,5 3,62 47,62" fill="none" stroke="#fbbf24" stroke-width="1" stroke-dasharray="5,3"/>
+    <ellipse cx="25" cy="65" rx="25" ry="8" fill="#c026d3" opacity="0.7"/>
+    <circle cx="25" cy="0" r="5" fill="#fbbf24" filter="url(#glow2)"/>
+    <!-- Polka dots -->
+    <circle cx="15" cy="30" r="3" fill="#fbbf24" opacity="0.7"/>
+    <circle cx="32" cy="22" r="2.5" fill="#ffffff" opacity="0.6"/>
+    <circle cx="20" cy="48" r="2" fill="#ffffff" opacity="0.5"/>
+  </g>
+
+  <!-- Glasses prop -->
+  <g transform="translate(455,280)">
+    <rect x="0" y="4" width="18" height="12" rx="3" fill="none" stroke="#f472b6" stroke-width="2"/>
+    <rect x="22" y="4" width="18" height="12" rx="3" fill="none" stroke="#f472b6" stroke-width="2"/>
+    <line x1="18" y1="10" x2="22" y2="10" stroke="#f472b6" stroke-width="2"/>
+    <line x1="0" y1="10" x2="-6" y2="8" stroke="#f472b6" stroke-width="2"/>
+    <line x1="40" y1="10" x2="46" y2="8" stroke="#f472b6" stroke-width="2"/>
+  </g>
+
+  <!-- Sparkles -->
+  <circle cx="470" cy="210" r="3" fill="#fbbf24" opacity="0.9" filter="url(#glow2)"/>
+  <circle cx="140" cy="200" r="2.5" fill="#e879f9" opacity="0.8" filter="url(#glow2)"/>
+  <circle cx="490" cy="320" r="2" fill="#38bdf8" opacity="0.7"/>
+  <circle cx="125" cy="150" r="2" fill="#a78bfa" opacity="0.7"/>
+  <circle cx="480" cy="390" r="2.5" fill="#f472b6" opacity="0.6"/>
+  <!-- Star sparkle -->
+  <g transform="translate(108,240) scale(0.6)">
+    <polygon points="10,0 12,7 19,7 14,11 16,18 10,14 4,18 6,11 1,7 8,7" fill="#fbbf24" opacity="0.7"/>
+  </g>
+  <g transform="translate(462,160) scale(0.45)">
+    <polygon points="10,0 12,7 19,7 14,11 16,18 10,14 4,18 6,11 1,7 8,7" fill="#e879f9" opacity="0.7"/>
+  </g>
+
+  <!-- RIGHT SIDE TEXT PANEL -->
+  <rect x="510" y="0" width="290" height="450" fill="#000" opacity="0.25"/>
+
+  <!-- Camera icon top -->
+  <g transform="translate(525,55)" fill="none" stroke="#e879f9" stroke-width="2.5">
+    <rect x="0" y="10" width="38" height="28" rx="4"/>
+    <circle cx="19" cy="24" r="10"/>
+    <circle cx="19" cy="24" r="5" fill="#e879f9" opacity="0.4" stroke="none"/>
+    <path d="M11 10 L14 4 L24 4 L27 10"/>
+    <circle cx="32" cy="15" r="3.5" fill="#e879f9" stroke="none"/>
+  </g>
+
+  <!-- Category label -->
+  <text x="525" y="122" font-family="Arial, sans-serif" font-size="13"
+    letter-spacing="3" fill="#e879f9" font-weight="600">PAQUETE</text>
+
+  <!-- Main title -->
+  <text x="525" y="168" font-family="'Arial Black', Arial, sans-serif"
+    font-size="42" font-weight="900" fill="url(#slv)">CABINA</text>
+  <text x="525" y="210" font-family="'Arial Black', Arial, sans-serif"
+    font-size="26" font-weight="900" letter-spacing="1" fill="url(#slv)">FOTOGRÁFICA</text>
+
+  <!-- Neon divider -->
+  <line x1="525" y1="228" x2="775" y2="228"
+    stroke="#9333ea" stroke-width="1.5" opacity="0.8" filter="url(#glow2)"/>
+
+  <!-- Feature bullets -->
+  <g font-family="Arial, sans-serif" font-size="14" fill="#e2e8f0">
+    <circle cx="537" cy="255" r="3" fill="#e879f9"/>
+    <text x="550" y="260">Cabina inflable LED</text>
+    <circle cx="537" cy="284" r="3" fill="#e879f9"/>
+    <text x="550" y="289">Props y accesorios incluidos</text>
+    <circle cx="537" cy="313" r="3" fill="#e879f9"/>
+    <text x="550" y="318">Impresión y galería digital</text>
+    <circle cx="537" cy="342" r="3" fill="#e879f9"/>
+    <text x="550" y="347">Servicio de 4 a 6 horas</text>
+  </g>
+
+  <!-- Gold separator -->
+  <line x1="525" y1="368" x2="775" y2="368" stroke="#f59e0b" stroke-width="1" opacity="0.6"/>
+
+  <!-- Brand footer -->
+  <text x="525" y="392" font-family="Arial, sans-serif" font-size="11"
+    letter-spacing="2" fill="#f59e0b" opacity="0.9">AURA PRODUCCIONES</text>
+  <text x="525" y="412" font-family="Georgia, serif" font-style="italic" font-size="11"
+    fill="#94a3b8" opacity="0.7">Creamos momentos inolvidables</text>
+</svg>

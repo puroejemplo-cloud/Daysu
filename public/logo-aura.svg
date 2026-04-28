@@ -1,0 +1,170 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="38%" r="60%">
+      <stop offset="0%" stop-color="#150528"/>
+      <stop offset="65%" stop-color="#06000f"/>
+      <stop offset="100%" stop-color="#000000"/>
+    </radialGradient>
+    <linearGradient id="aGrd" x1="50%" y1="0%" x2="50%" y2="100%">
+      <stop offset="0%" stop-color="#e9d5ff"/>
+      <stop offset="20%" stop-color="#c084fc"/>
+      <stop offset="50%" stop-color="#9333ea"/>
+      <stop offset="80%" stop-color="#7c3aed"/>
+      <stop offset="100%" stop-color="#3b0764"/>
+    </linearGradient>
+    <linearGradient id="aShine" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0"/>
+      <stop offset="45%" stop-color="#e9d5ff" stop-opacity="0.45"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="slv" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="30%" stop-color="#e2e8f0"/>
+      <stop offset="60%" stop-color="#64748b"/>
+      <stop offset="85%" stop-color="#e2e8f0"/>
+      <stop offset="100%" stop-color="#94a3b8"/>
+    </linearGradient>
+    <linearGradient id="gld" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#fde68a"/>
+      <stop offset="50%" stop-color="#f59e0b"/>
+      <stop offset="100%" stop-color="#92400e"/>
+    </linearGradient>
+    <linearGradient id="gldLine" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#92400e" stop-opacity="0"/>
+      <stop offset="25%" stop-color="#f59e0b"/>
+      <stop offset="75%" stop-color="#fde68a"/>
+      <stop offset="100%" stop-color="#92400e" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="7" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="glow2" x="-25%" y="-25%" width="150%" height="150%">
+      <feGaussianBlur stdDeviation="4" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="glow3" x="-15%" y="-15%" width="130%" height="130%">
+      <feGaussianBlur stdDeviation="2" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <clipPath id="cc"><circle cx="250" cy="250" r="243"/></clipPath>
+  </defs>
+
+  <!-- Outer ring -->
+  <circle cx="250" cy="250" r="250" fill="#000"/>
+  <!-- Background fill -->
+  <circle cx="250" cy="250" r="243" fill="url(#bg)"/>
+  <!-- Subtle aura cloud behind A -->
+  <ellipse cx="250" cy="148" rx="100" ry="88" fill="#5b21b6" opacity="0.13" clip-path="url(#cc)"/>
+  <ellipse cx="220" cy="130" rx="70" ry="55" fill="#7c3aed" opacity="0.08" clip-path="url(#cc)"/>
+
+  <!-- NEON BORDER – purple left half -->
+  <path d="M 250,7 A 243,243 0 0,0 250,493" fill="none"
+    stroke="#7c3aed" stroke-width="7" opacity="0.6" filter="url(#glow)"/>
+  <path d="M 250,7 A 243,243 0 0,0 250,493" fill="none"
+    stroke="#c084fc" stroke-width="2.5"/>
+
+  <!-- NEON BORDER – gold right half -->
+  <path d="M 250,7 A 243,243 0 0,1 250,493" fill="none"
+    stroke="#b45309" stroke-width="7" opacity="0.6" filter="url(#glow)"/>
+  <path d="M 250,7 A 243,243 0 0,1 250,493" fill="none"
+    stroke="#fbbf24" stroke-width="2.5"/>
+
+  <!-- THE "A" — left leg -->
+  <polygon points="250,68 146,236 178,236" fill="url(#aGrd)" filter="url(#glow2)"/>
+  <!-- THE "A" — right leg -->
+  <polygon points="250,68 322,236 354,236" fill="url(#aGrd)" filter="url(#glow2)"/>
+  <!-- THE "A" — crossbar -->
+  <rect x="206" y="153" width="88" height="25" rx="3" fill="url(#aGrd)" filter="url(#glow2)"/>
+  <!-- Metallic shine overlay on A -->
+  <polygon points="250,68 146,236 178,236" fill="url(#aShine)" opacity="0.55"/>
+  <polygon points="250,68 322,236 354,236" fill="url(#aShine)" opacity="0.35"/>
+
+  <!-- "AURA" text -->
+  <text x="250" y="304" text-anchor="middle"
+    font-family="'Arial Black', Arial, sans-serif"
+    font-size="78" font-weight="900" letter-spacing="10"
+    fill="url(#slv)">AURA</text>
+
+  <!-- "PRODUCCIONES" text -->
+  <text x="250" y="333" text-anchor="middle"
+    font-family="Arial, sans-serif"
+    font-size="19.5" letter-spacing="7" font-weight="500"
+    fill="url(#gld)">PRODUCCIONES</text>
+
+  <!-- Gold separator line -->
+  <line x1="90" y1="349" x2="410" y2="349"
+    stroke="url(#gldLine)" stroke-width="1.5"/>
+
+  <!-- SERVICE ICONS — 4 equally spaced -->
+
+  <!-- Icon 1: Camera / Cabina Fotográfica (center ~x=135) -->
+  <g transform="translate(119,361)">
+    <g fill="none" stroke="#e879f9" stroke-width="2">
+      <rect x="1" y="9" width="29" height="20" rx="3"/>
+      <circle cx="15.5" cy="19" r="7"/>
+      <circle cx="15.5" cy="19" r="3.5" fill="#e879f9" opacity="0.5" stroke="none"/>
+      <path d="M9 9 L11.5 4 L19.5 4 L22 9"/>
+      <circle cx="25" cy="13" r="2.5" fill="#e879f9" stroke="none"/>
+    </g>
+    <text x="15.5" y="42" text-anchor="middle" font-family="Arial" font-size="7.5" fill="#e879f9" font-weight="700">CABINA</text>
+    <text x="15.5" y="52" text-anchor="middle" font-family="Arial" font-size="7.5" fill="#e879f9" font-weight="700">FOTOGRÁFICA</text>
+  </g>
+
+  <!-- Divider -->
+  <line x1="168" y1="364" x2="168" y2="408" stroke="#2a2a2a" stroke-width="1.2"/>
+
+  <!-- Icon 2: Shot glass / Shots Iluminados (center ~x=195) -->
+  <g transform="translate(180,361)">
+    <g fill="none" stroke="#f472b6" stroke-width="2">
+      <path d="M5 5 L8 28 L23 28 L26 5 Z"/>
+      <line x1="6.5" y1="13" x2="24.5" y2="13"/>
+    </g>
+    <rect x="8.5" y="13" width="14" height="15" fill="#f472b6" opacity="0.2"/>
+    <ellipse cx="15.5" cy="29" rx="5" ry="3" fill="#f472b6" opacity="0.35" filter="url(#glow3)"/>
+    <text x="15.5" y="44" text-anchor="middle" font-family="Arial" font-size="7.5" fill="#f472b6" font-weight="700">SHOTS</text>
+    <text x="15.5" y="54" text-anchor="middle" font-family="Arial" font-size="7.5" fill="#f472b6" font-weight="700">ILUMINADOS</text>
+  </g>
+
+  <!-- Divider -->
+  <line x1="229" y1="364" x2="229" y2="408" stroke="#2a2a2a" stroke-width="1.2"/>
+
+  <!-- Icon 3: Speaker / Sonido e Iluminación (center ~x=256) -->
+  <g transform="translate(238,361)">
+    <g fill="none" stroke="#38bdf8" stroke-width="2">
+      <rect x="0" y="3" width="30" height="26" rx="3"/>
+      <circle cx="11" cy="16" r="8"/>
+      <circle cx="11" cy="16" r="4" fill="#38bdf8" opacity="0.45" stroke="none"/>
+      <circle cx="23" cy="9" r="4"/>
+      <circle cx="23" cy="9" r="2" fill="#38bdf8" opacity="0.4" stroke="none"/>
+      <rect x="8" y="24" width="6" height="5" rx="1"/>
+    </g>
+    <text x="15" y="42" text-anchor="middle" font-family="Arial" font-size="7.5" fill="#38bdf8" font-weight="700">SONIDO</text>
+    <text x="15" y="52" text-anchor="middle" font-family="Arial" font-size="7.5" fill="#38bdf8" font-weight="700">E ILUMINACIÓN</text>
+  </g>
+
+  <!-- Divider -->
+  <line x1="288" y1="364" x2="288" y2="408" stroke="#2a2a2a" stroke-width="1.2"/>
+
+  <!-- Icon 4: Balloon / Todo para tu evento (center ~x=318) -->
+  <g transform="translate(298,361)">
+    <g fill="none" stroke="#a78bfa" stroke-width="2">
+      <ellipse cx="15" cy="13" rx="12" ry="12.5"/>
+      <ellipse cx="9" cy="8" rx="4" ry="2.5" fill="#a78bfa" opacity="0.28" stroke="none" transform="rotate(-30,9,8)"/>
+      <path d="M15 25.5 Q13 30 15 34 Q17 30 15 25.5"/>
+      <line x1="15" y1="34" x2="15" y2="37"/>
+    </g>
+    <text x="15" y="51" text-anchor="middle" font-family="Arial" font-size="7.5" fill="#a78bfa" font-weight="700">TODO PARA</text>
+    <text x="15" y="61" text-anchor="middle" font-family="Arial" font-size="7.5" fill="#a78bfa" font-weight="700">TU EVENTO</text>
+  </g>
+
+  <!-- Tagline -->
+  <text x="250" y="432" text-anchor="middle"
+    font-family="Georgia, 'Times New Roman', serif"
+    font-style="italic" font-size="14.5"
+    fill="#f59e0b">Creamos momentos, diseñamos experiencias</text>
+  <text x="250" y="450" text-anchor="middle"
+    font-family="Arial, sans-serif"
+    font-size="10" letter-spacing="4.5" font-weight="300"
+    fill="#e2e8f0" opacity="0.7">INOLVIDABLES</text>
+</svg>

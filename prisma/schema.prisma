@@ -1,0 +1,328 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─── AUTENTICACIÓN ADMIN ─────────────────────────────────────────────────────
+
+model AdminUser {
+  id        Int       @id @default(autoincrement())
+  username  String    @unique @db.VarChar(50)
+  email     String    @unique @db.VarChar(200)
+  password  String    @db.VarChar(200) // bcrypt hash
+  fullName  String    @map("full_name") @db.VarChar(200)
+  suffix    String    @unique @db.VarChar(8) // ej: "DAY", "IVN" — identifica propiedad de activos
+  role      AdminRole @default(admin)
+  isActive  Boolean   @default(true) @map("is_active")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  createdBy Int?      @map("created_by") // superadmin que lo creó
+
+  ownedAssets Asset[] @relation("AssetOwner")
+
+  @@map("admin_users")
+}
+
+enum AdminRole {
+  superadmin
+  admin
+}
+
+// ─── MÓDULO 1: GESTIÓN DE ACTIVOS Y KITS (BOM) ───────────────────────────────
+
+model AssetCategory {
+  id          Int      @id @default(autoincrement())
+  name        String   @db.VarChar(100)
+  description String?  @db.Text
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  assets Asset[]
+
+  @@map("asset_categories")
+}
+
+model Asset {
+  id          Int      @id @default(autoincrement())
+  categoryId  Int      @map("category_id")
+  name        String   @db.VarChar(200)
+  sku         String   @unique @db.VarChar(50)
+  description String?  @db.Text
+  totalUnits  Int      @map("total_units")
+  dailyRate     Decimal  @map("daily_rate")      @db.Decimal(10, 2)
+  originalPrice Decimal? @map("original_price") @db.Decimal(10, 2)
+  maxGuests     Int?     @map("max_guests")
+  assetType     String   @default("product") @map("asset_type") @db.VarChar(20)
+  // "package" | "product" | "component"
+  isRentable    Boolean  @default(true) @map("is_rentable")
+  isActive      Boolean  @default(true) @map("is_active")
+  pricingTiers  Json?    @map("pricing_tiers")
+  imageUrl      String?  @map("image_url")      @db.VarChar(500)
+  imageGallery  Json?    @map("image_gallery")  // string[] — URLs de las fotos del carrusel
+  ownerAdminId  Int?     @map("owner_admin_id") // qué admin es dueño del equipo
+  ownerSuffix  String?  @map("owner_suffix") @db.VarChar(8) // copia del suffix para display rápido
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  category           AssetCategory          @relation(fields: [categoryId], references: [id])
+  ownerAdmin         AdminUser?             @relation("AssetOwner", fields: [ownerAdminId], references: [id])
+  components         AssetComponent[]       @relation("ParentAsset")
+  usedIn             AssetComponent[]       @relation("ChildAsset")
+  availabilityBlocks AvailabilityBlock[]
+  staffAssignments   StaffAssetAssignment[]
+  bookingItems       BookingItem[]
+  upsellAsSource     UpsellRule[]           @relation("UpsellSource")
+  upsellAsSuggestion UpsellRule[]           @relation("UpsellSuggestion")
+
+  @@map("assets")
+}
+
+// Tabla BOM (Bill of Materials) — relación Padre → Hijo plana (un solo nivel)
+// Restricción de negocio: child.isRentable debe ser false (validado en API)
+model AssetComponent {
+  id            Int     @id @default(autoincrement())
+  parentAssetId Int     @map("parent_asset_id")
+  childAssetId  Int     @map("child_asset_id")
+  quantity      Int
+  isRequired    Boolean @default(true) @map("is_required")
+
+  overridePrice Decimal? @map("override_price") @db.Decimal(10,2)
+  // Precio fijo para este item en el paquete (tiers de hora/capacidad)
+
+  parentAsset Asset @relation("ParentAsset", fields: [parentAssetId], references: [id])
+  childAsset  Asset @relation("ChildAsset",  fields: [childAssetId],  references: [id])
+
+  @@unique([parentAssetId, childAssetId])
+  @@map("asset_components")
+}
+
+// ─── STAFF (sin roles, asignado a activos) ───────────────────────────────────
+
+model StaffUser {
+  id        Int      @id @default(autoincrement())
+  fullName  String   @map("full_name") @db.VarChar(200)
+  email     String   @unique @db.VarChar(200)
+  phone     String?  @db.VarChar(30)
+  isActive  Boolean  @default(true) @map("is_active")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  assetAssignments StaffAssetAssignment[]
+
+  @@map("staff_users")
+}
+
+model StaffAssetAssignment {
+  id          Int      @id @default(autoincrement())
+  staffId     Int      @map("staff_id")
+  assetId     Int      @map("asset_id")
+  assignedAt  DateTime @default(now()) @map("assigned_at")
+
+  staff StaffUser @relation(fields: [staffId], references: [id])
+  asset Asset     @relation(fields: [assetId], references: [id])
+
+  @@unique([staffId, assetId])
+  @@map("staff_asset_assignments")
+}
+
+// ─── MÓDULO 2: MOTOR DE DISPONIBILIDAD ───────────────────────────────────────
+
+model AvailabilityBlock {
+  id        Int       @id @default(autoincrement())
+  assetId   Int?      @map("asset_id")  // NULL = bloqueo global
+  blockType BlockType @map("block_type")
+  startAt   DateTime  @map("start_at")
+  endAt     DateTime  @map("end_at")
+  notes     String?   @db.Text
+  createdAt DateTime  @default(now()) @map("created_at")
+
+  asset Asset? @relation(fields: [assetId], references: [id])
+
+  @@map("availability_blocks")
+}
+
+enum BlockType {
+  maintenance
+  logistics
+  transit
+  other
+}
+
+// ─── MÓDULO 3: CLIENTES Y RESERVAS ───────────────────────────────────────────
+
+model Client {
+  id           Int      @id @default(autoincrement())
+  fullName     String   @map("full_name") @db.VarChar(200)
+  email        String   @unique @db.VarChar(200)
+  phone        String?  @db.VarChar(30)
+  company      String?  @db.VarChar(200)
+  taxId        String?  @map("tax_id") @db.VarChar(50)
+  // CRM
+  crmNotes     String?  @map("crm_notes") @db.Text   // notas internas del admin
+  preferencias String?  @db.Text                      // gustos, colores, estilo del cliente
+  referredBy   String?  @map("referred_by") @db.VarChar(200) // ¿cómo nos encontró?
+  // Legacy
+  notes        String?  @db.Text
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  bookings     Booking[]
+  specialDates ClientSpecialDate[]
+
+  @@map("clients")
+}
+
+model ClientSpecialDate {
+  id        Int      @id @default(autoincrement())
+  clientId  Int      @map("client_id")
+  label     String   @db.VarChar(100)  // "Cumpleaños", "Aniversario de boda", etc.
+  month     Int                         // 1-12
+  day       Int                         // 1-31
+  year      Int?                        // año original (para calcular cuántos años)
+  notes     String?  @db.VarChar(300)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  client Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  @@map("client_special_dates")
+}
+
+model Booking {
+  id                String        @id @default(uuid())
+  clientId          Int           @map("client_id")
+  eventName         String        @map("event_name") @db.VarChar(200)
+  eventDate         DateTime      @map("event_date") @db.Date
+  setupAt           DateTime      @map("setup_at")       // inicio real uso del equipo
+  teardownAt        DateTime      @map("teardown_at")    // fin real uso del equipo
+  venueAddress      String?       @map("venue_address") @db.Text
+  status            BookingStatus @default(pending_payment)
+  totalAmount       Decimal       @map("total_amount") @db.Decimal(10, 2)
+  depositAmount     Decimal       @map("deposit_amount") @db.Decimal(10, 2)
+  expiresAt         DateTime?     @map("expires_at")
+  stripeSessionId   String?       @unique @map("stripe_session_id")
+  notes             String?       @db.Text
+  createdAt         DateTime      @default(now()) @map("created_at")
+  updatedAt         DateTime      @updatedAt @map("updated_at")
+
+  client        Client              @relation(fields: [clientId], references: [id])
+  items         BookingItem[]
+  notifications AdminNotification[]
+  checklists    EventChecklist[]
+
+  @@map("bookings")
+}
+
+enum BookingStatus {
+  draft            // cliente armando solicitud
+  pending_payment  // solicitud enviada, hold activo, esperando depósito
+  confirmed        // depósito pagado, bloqueo permanente
+  in_progress      // evento en curso
+  completed        // evento finalizado, equipo devuelto
+  expired          // venció sin pago, stock liberado
+  cancelled        // cancelado manualmente
+}
+
+model BookingItem {
+  id                  Int      @id @default(autoincrement())
+  bookingId           String   @map("booking_id")
+  assetId             Int      @map("asset_id")
+  quantity            Int
+  unitPrice           Decimal  @map("unit_price") @db.Decimal(10, 2) // snapshot al reservar
+  isAutoBlocked       Boolean  @default(false) @map("is_auto_blocked") // generado por BOM
+  parentBookingItemId Int?     @map("parent_booking_item_id") // qué padre BOM lo originó
+
+  booking Booking @relation(fields: [bookingId], references: [id])
+  asset   Asset   @relation(fields: [assetId], references: [id])
+
+  @@map("booking_items")
+}
+
+// ─── NOTIFICACIONES ADMINISTRATIVAS ──────────────────────────────────────────
+
+model AdminNotification {
+  id        Int              @id @default(autoincrement())
+  bookingId String           @map("booking_id")
+  type      NotificationType
+  message   String           @db.Text
+  isRead    Boolean          @default(false) @map("is_read")
+  createdAt DateTime         @default(now()) @map("created_at")
+
+  booking Booking @relation(fields: [bookingId], references: [id])
+
+  @@map("admin_notifications")
+}
+
+enum NotificationType {
+  hold_created
+  payment_received
+  hold_expired
+  force_cancelled
+}
+
+// ─── MÓDULO 3: UPSELLING ─────────────────────────────────────────────────────
+
+model UpsellRule {
+  id                Int     @id @default(autoincrement())
+  sourceAssetId     Int     @map("source_asset_id")
+  suggestedAssetId  Int     @map("suggested_asset_id")
+  discountPercent   Decimal @map("discount_percent") @db.Decimal(5, 2)
+  label             String? @db.VarChar(200) // texto del banner, ej: "¡Combínalo con iluminación!"
+  isActive          Boolean @default(true) @map("is_active")
+  createdAt         DateTime @default(now()) @map("created_at")
+
+  sourceAsset    Asset @relation("UpsellSource",      fields: [sourceAssetId],    references: [id])
+  suggestedAsset Asset @relation("UpsellSuggestion",  fields: [suggestedAssetId], references: [id])
+
+  @@unique([sourceAssetId, suggestedAssetId])
+  @@map("upsell_rules")
+}
+
+// ─── MÓDULO 4: LOGÍSTICA — CHECKLIST ─────────────────────────────────────────
+
+model EventChecklist {
+  id          Int            @id @default(autoincrement())
+  bookingId   String         @map("booking_id")
+  phase       ChecklistPhase
+  completedAt DateTime?      @map("completed_at")
+  notes       String?        @db.Text
+  createdAt   DateTime       @default(now()) @map("created_at")
+  updatedAt   DateTime       @updatedAt @map("updated_at")
+
+  booking Booking         @relation(fields: [bookingId], references: [id])
+  items   ChecklistItem[]
+
+  @@unique([bookingId, phase])
+  @@map("event_checklists")
+}
+
+model ChecklistItem {
+  id          Int       @id @default(autoincrement())
+  checklistId Int       @map("checklist_id")
+  label       String    @db.VarChar(300)
+  category    String    @default("equipo") @db.VarChar(50) // equipo | tarea
+  checked     Boolean   @default(false)
+  checkedAt   DateTime? @map("checked_at")
+  sortOrder   Int       @default(0) @map("sort_order")
+
+  checklist EventChecklist @relation(fields: [checklistId], references: [id], onDelete: Cascade)
+
+  @@map("checklist_items")
+}
+
+enum ChecklistPhase {
+  salida  // antes de salir: ¿llevamos todo?
+  entrada // al regresar: ¿regresó todo en buen estado?
+}
+
+// Relación inversa en Booking
+// ─── CONFIGURACIÓN DEL SISTEMA ────────────────────────────────────────────────
+
+model SystemSetting {
+  key       String   @id @db.VarChar(100)
+  value     String   @db.VarChar(500)
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("system_settings")
+}

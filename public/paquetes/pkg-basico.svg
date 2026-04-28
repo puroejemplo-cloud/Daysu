@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" width="800" height="450">
+<defs>
+  <radialGradient id="b-bg" cx="50%" cy="35%" r="75%">
+    <stop offset="0%" stop-color="#120428"/><stop offset="100%" stop-color="#03020a"/>
+  </radialGradient>
+  <linearGradient id="b-gold" x1="0%" y1="0%" x2="100%" y2="0%">
+    <stop offset="0%" stop-color="#f59e0b" stop-opacity="0"/><stop offset="30%" stop-color="#f59e0b"/>
+    <stop offset="70%" stop-color="#fbbf24"/><stop offset="100%" stop-color="#f59e0b" stop-opacity="0"/>
+  </linearGradient>
+  <filter id="b-neo" x="-60%" y="-60%" width="220%" height="220%">
+    <feGaussianBlur stdDeviation="12" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+  </filter>
+  <filter id="b-glow" x="-40%" y="-40%" width="180%" height="180%">
+    <feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+  </filter>
+</defs>
+
+<rect width="800" height="450" fill="url(#b-bg)"/>
+<ellipse cx="400" cy="160" rx="360" ry="180" fill="#9333ea" fill-opacity="0.05"/>
+<rect x="0" y="0" width="800" height="2" fill="url(#b-gold)"/>
+
+<!-- Header -->
+<text x="400" y="44" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" font-weight="700" fill="#c084fc" letter-spacing="9">PAQUETE · SONIDO DAYSU</text>
+<text x="400" y="96" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="58" font-weight="900" fill="#9333ea" fill-opacity="0.5" letter-spacing="2" filter="url(#b-neo)">BÁSICO</text>
+<text x="400" y="96" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="58" font-weight="900" fill="#ffffff" letter-spacing="2">BÁSICO</text>
+
+<line x1="80" y1="113" x2="720" y2="113" stroke="url(#b-gold)" stroke-width="1.2"/>
+
+<!-- Price -->
+<text x="400" y="150" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="32" font-weight="900" fill="#fbbf24" filter="url(#b-glow)">$4,600 MXN</text>
+<text x="400" y="170" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" fill="#94a3b8" letter-spacing="3">5 HRS + 1 RECEPCIÓN · HASTA 200 PERSONAS</text>
+
+<line x1="160" y1="183" x2="640" y2="183" stroke="url(#b-gold)" stroke-width="0.7" stroke-opacity="0.4"/>
+
+<!-- Features -->
+<text x="220" y="210" font-family="Arial,sans-serif" font-size="14" fill="#9333ea">✦</text>
+<text x="244" y="210" font-family="Arial,sans-serif" font-size="14" fill="#e2e8f0">DJ Versátil + Audio básico profesional</text>
+<text x="220" y="236" font-family="Arial,sans-serif" font-size="14" fill="#9333ea">✦</text>
+<text x="244" y="236" font-family="Arial,sans-serif" font-size="14" fill="#e2e8f0">Cabina Fotográfica LED</text>
+<text x="220" y="262" font-family="Arial,sans-serif" font-size="14" fill="#9333ea">✦</text>
+<text x="244" y="262" font-family="Arial,sans-serif" font-size="14" fill="#e2e8f0">Souvenirs de animación (globos)</text>
+<text x="220" y="288" font-family="Arial,sans-serif" font-size="13" fill="#7c3aed">✦</text>
+<text x="244" y="288" font-family="Arial,sans-serif" font-size="13" fill="#94a3b8" font-style="italic">Ideal: bautizos, cumpleaños, eventos de día</text>
+
+<!-- Bottom strip -->
+<rect x="0" y="302" width="800" height="148" fill="#080512"/>
+<line x1="0" y1="302" x2="800" y2="302" stroke="url(#b-gold)" stroke-width="1.2"/>
+
+<!-- ICON: DJ Console (headphones + mixer) -->
+<g transform="translate(340, 318)">
+  <!-- Mixer surface -->
+  <rect x="0" y="50" width="120" height="60" rx="5" fill="#1a0535" stroke="#9333ea" stroke-width="1.5"/>
+  <!-- Left turntable -->
+  <circle cx="28" cy="68" r="20" fill="#0f0020" stroke="#9333ea" stroke-width="1.2"/>
+  <circle cx="28" cy="68" r="12" fill="#1a0535" stroke="#7c3aed" stroke-width="1"/>
+  <circle cx="28" cy="68" r="5" fill="#9333ea" fill-opacity="0.7"/>
+  <!-- Right turntable -->
+  <circle cx="92" cy="68" r="20" fill="#0f0020" stroke="#9333ea" stroke-width="1.2"/>
+  <circle cx="92" cy="68" r="12" fill="#1a0535" stroke="#7c3aed" stroke-width="1"/>
+  <circle cx="92" cy="68" r="5" fill="#9333ea" fill-opacity="0.7"/>
+  <!-- Faders -->
+  <rect x="52" y="55" width="16" height="50" rx="2" fill="#120025"/>
+  <rect x="55" y="60" width="10" height="3" rx="1" fill="#9333ea"/>
+  <rect x="55" y="72" width="10" height="3" rx="1" fill="#7c3aed"/>
+  <rect x="55" y="84" width="10" height="3" rx="1" fill="#9333ea"/>
+  <!-- Knobs -->
+  <circle cx="58" cy="96" r="3" fill="#c084fc" filter="url(#b-glow)"/>
+  <circle cx="66" cy="96" r="3" fill="#9333ea" filter="url(#b-glow)"/>
+  <!-- Headphones arc -->
+  <path d="M10 50 Q60 -5 110 50" fill="none" stroke="#9333ea" stroke-width="3" stroke-linecap="round"/>
+  <!-- Ear cups -->
+  <rect x="2" y="38" width="16" height="22" rx="5" fill="#1a0535" stroke="#9333ea" stroke-width="1.5"/>
+  <rect x="102" y="38" width="16" height="22" rx="5" fill="#1a0535" stroke="#9333ea" stroke-width="1.5"/>
+  <!-- Glow -->
+  <ellipse cx="60" cy="112" rx="55" ry="6" fill="#9333ea" fill-opacity="0.2" filter="url(#b-glow)"/>
+</g>
+
+<text x="400" y="438" text-anchor="middle" font-family="Arial,sans-serif" font-size="9" font-weight="700" fill="#c084fc" letter-spacing="3">DJ + AUDIO PROFESIONAL</text>
+<rect x="0" y="448" width="800" height="2" fill="url(#b-gold)"/>
+</svg>

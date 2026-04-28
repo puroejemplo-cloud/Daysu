@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="40%" r="70%">
+      <stop offset="0%" stop-color="#1a0428"/>
+      <stop offset="100%" stop-color="#05051a"/>
+    </radialGradient>
+    <linearGradient id="aGrd" x1="50%" y1="0%" x2="50%" y2="100%">
+      <stop offset="0%" stop-color="#e9d5ff"/>
+      <stop offset="30%" stop-color="#c084fc"/>
+      <stop offset="65%" stop-color="#9333ea"/>
+      <stop offset="100%" stop-color="#6b21a8"/>
+    </linearGradient>
+    <linearGradient id="goldLine" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#f59e0b" stop-opacity="0"/>
+      <stop offset="30%" stop-color="#f59e0b"/>
+      <stop offset="70%" stop-color="#fbbf24"/>
+      <stop offset="100%" stop-color="#f59e0b" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <!-- Fondo -->
+  <rect width="512" height="512" rx="92.16" fill="url(#bg)"/>
+  <!-- A shape -->
+  <g transform="translate(256,256)">
+    <!-- Escala relativa al tamaño -->
+    <polygon points="-143.36,128 -40.96,128" fill="url(#aGrd)"/>
+    <!-- Left leg -->
+    <polygon points="0,-143.36 -143.36,128 -87.04,128" fill="url(#aGrd)"/>
+    <!-- Right leg -->
+    <polygon points="0,-143.36 143.36,128 87.04,128" fill="url(#aGrd)"/>
+    <!-- Crossbar -->
+    <rect x="-81.92" y="-20.48" width="163.84" height="46.08" rx="10.24" fill="url(#aGrd)"/>
+  </g>
+  <!-- Gold line bottom -->
+  <rect x="0" y="450.56" width="512" height="10.24" fill="url(#goldLine)" rx="5.12"/>
+  <!-- "AURA" text at bottom -->
+  <text x="256" y="491.52" text-anchor="middle"
+    font-family="Arial Black, sans-serif" font-size="51.2" font-weight="900"
+    fill="#c9a84c" letter-spacing="10.24">AURA</text>
+</svg>

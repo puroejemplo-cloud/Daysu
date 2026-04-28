@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" width="800" height="450">
+<defs>
+  <radialGradient id="v-bg" cx="50%" cy="35%" r="75%">
+    <stop offset="0%" stop-color="#1a1000"/><stop offset="100%" stop-color="#050300"/>
+  </radialGradient>
+  <linearGradient id="v-gold" x1="0%" y1="0%" x2="100%" y2="0%">
+    <stop offset="0%" stop-color="#f59e0b" stop-opacity="0"/><stop offset="30%" stop-color="#f59e0b"/>
+    <stop offset="70%" stop-color="#fbbf24"/><stop offset="100%" stop-color="#f59e0b" stop-opacity="0"/>
+  </linearGradient>
+  <filter id="v-neo" x="-60%" y="-60%" width="220%" height="220%">
+    <feGaussianBlur stdDeviation="12" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+  </filter>
+  <filter id="v-glow" x="-40%" y="-40%" width="180%" height="180%">
+    <feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+  </filter>
+</defs>
+
+<rect width="800" height="450" fill="url(#v-bg)"/>
+<ellipse cx="400" cy="160" rx="360" ry="180" fill="#f59e0b" fill-opacity="0.05"/>
+<rect x="0" y="0" width="800" height="2" fill="url(#v-gold)"/>
+
+<text x="400" y="44" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" font-weight="700" fill="#fde68a" letter-spacing="9">PAQUETE · SONIDO DAYSU · DJ IVÁN EVENTS</text>
+<text x="400" y="96" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="44" font-weight="900" fill="#f59e0b" fill-opacity="0.5" letter-spacing="3" filter="url(#v-neo)">MASTER VIP</text>
+<text x="400" y="96" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="44" font-weight="900" fill="#fbbf24" letter-spacing="3">MASTER VIP</text>
+
+<line x1="80" y1="113" x2="720" y2="113" stroke="url(#v-gold)" stroke-width="1.2"/>
+
+<text x="400" y="150" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="32" font-weight="900" fill="#fbbf24" filter="url(#v-glow)">$19,000 MXN</text>
+<text x="400" y="170" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" fill="#94a3b8" letter-spacing="3">5 HRS + 1 RECEPCIÓN · 50 A 500 PERSONAS</text>
+
+<line x1="160" y1="183" x2="640" y2="183" stroke="url(#v-gold)" stroke-width="0.7" stroke-opacity="0.4"/>
+
+<text x="220" y="210" font-family="Arial,sans-serif" font-size="13.5" fill="#f59e0b">✦</text>
+<text x="244" y="210" font-family="Arial,sans-serif" font-size="13.5" fill="#e2e8f0">DJ + Audio 50–500 px + Iluminación completa</text>
+<text x="220" y="235" font-family="Arial,sans-serif" font-size="13.5" fill="#f59e0b">✦</text>
+<text x="244" y="235" font-family="Arial,sans-serif" font-size="13.5" fill="#e2e8f0">Carrito 200 shots · Show Robot Led · Limbo shot</text>
+<text x="220" y="260" font-family="Arial,sans-serif" font-size="13.5" fill="#f59e0b">✦</text>
+<text x="244" y="260" font-family="Arial,sans-serif" font-size="13.5" fill="#e2e8f0">Show Cabezones (2) · Animadores caracterizados</text>
+<text x="220" y="285" font-family="Arial,sans-serif" font-size="13.5" fill="#f59e0b">✦</text>
+<text x="244" y="285" font-family="Arial,sans-serif" font-size="13.5" fill="#e2e8f0">Maestro de ceremonias · Video semblanza · Pirotecnia</text>
+
+<!-- Bottom strip -->
+<rect x="0" y="302" width="800" height="148" fill="#080500"/>
+<line x1="0" y1="302" x2="800" y2="302" stroke="url(#v-gold)" stroke-width="1.2"/>
+
+<!-- ICON: Crown (símbolo VIP) -->
+<g transform="translate(340, 318)">
+  <!-- Crown body -->
+  <polygon points="60,8 40,55 20,30 0,55 20,8" fill="#1c1200" stroke="#f59e0b" stroke-width="2" filter="url(v-glow)"/>
+  <polygon points="60,8 40,55 20,30 0,55 20,8" fill="#f59e0b" fill-opacity="0.12"/>
+  <!-- Crown alt shape (wider) -->
+  <polygon points="120,10 96,58 72,32 48,58 24,32 0,58 24,10" fill="#1c1200" stroke="#f59e0b" stroke-width="2.5" filter="url(#v-glow)" transform="translate(0,0)"/>
+  <polygon points="120,10 96,58 72,32 48,58 24,32 0,58 24,10" fill="#fbbf24" fill-opacity="0.08" transform="translate(0,0)"/>
+  <!-- Crown base band -->
+  <rect x="0" y="56" width="120" height="14" rx="3" fill="#1c1200" stroke="#f59e0b" stroke-width="1.5"/>
+  <rect x="2" y="58" width="116" height="10" rx="2" fill="#f59e0b" fill-opacity="0.18"/>
+  <!-- Gems on crown points -->
+  <circle cx="24" cy="10" r="6" fill="#fbbf24" filter="url(#v-glow)"/>
+  <circle cx="60" cy="2" r="7" fill="#fff" filter="url(#v-glow)"/>
+  <circle cx="96" cy="10" r="6" fill="#fbbf24" filter="url(#v-glow)"/>
+  <!-- Small gems on band -->
+  <circle cx="30" cy="63" r="4" fill="#fde68a" filter="url(#v-glow)"/>
+  <circle cx="60" cy="63" r="4" fill="#fff" filter="url(#v-glow)"/>
+  <circle cx="90" cy="63" r="4" fill="#fde68a" filter="url(#v-glow)"/>
+  <!-- Sparkle lines -->
+  <line x1="60" y1="-8" x2="60" y2="-16" stroke="#fbbf24" stroke-width="2" stroke-opacity="0.7"/>
+  <line x1="52" y1="-12" x2="48" y2="-18" stroke="#fbbf24" stroke-width="1.5" stroke-opacity="0.5"/>
+  <line x1="68" y1="-12" x2="72" y2="-18" stroke="#fbbf24" stroke-width="1.5" stroke-opacity="0.5"/>
+  <!-- Glow under crown -->
+  <ellipse cx="60" cy="72" rx="65" ry="7" fill="#f59e0b" fill-opacity="0.15" filter="url(#v-glow)"/>
+</g>
+
+<text x="400" y="438" text-anchor="middle" font-family="Arial,sans-serif" font-size="9" font-weight="700" fill="#fde68a" letter-spacing="3">PAQUETE VIP COMPLETO</text>
+<rect x="0" y="448" width="800" height="2" fill="url(#v-gold)"/>
+</svg>

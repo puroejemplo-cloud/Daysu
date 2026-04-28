@@ -1,0 +1,134 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" width="800" height="450">
+<defs>
+  <radialGradient id="cf-bg" cx="50%" cy="35%" r="75%">
+    <stop offset="0%" stop-color="#1a0830"/><stop offset="100%" stop-color="#03020a"/>
+  </radialGradient>
+  <linearGradient id="cf-gold" x1="0%" y1="0%" x2="100%" y2="0%">
+    <stop offset="0%" stop-color="#f59e0b" stop-opacity="0"/><stop offset="30%" stop-color="#f59e0b"/>
+    <stop offset="70%" stop-color="#fbbf24"/><stop offset="100%" stop-color="#f59e0b" stop-opacity="0"/>
+  </linearGradient>
+  <linearGradient id="cf-red" x1="0%" y1="0%" x2="100%" y2="0%">
+    <stop offset="0%" stop-color="#dc2626"/><stop offset="100%" stop-color="#ef4444"/>
+  </linearGradient>
+  <linearGradient id="cf-bfr" x1="0%" y1="0%" x2="100%" y2="100%">
+    <stop offset="0%" stop-color="#ede9fe"/><stop offset="60%" stop-color="#c4b5fd"/><stop offset="100%" stop-color="#7c3aed"/>
+  </linearGradient>
+  <linearGradient id="cf-bsd" x1="0%" y1="0%" x2="100%" y2="0%">
+    <stop offset="0%" stop-color="#6d28d9"/><stop offset="100%" stop-color="#3b0764"/>
+  </linearGradient>
+  <linearGradient id="cf-led" x1="0%" y1="0%" x2="100%" y2="0%">
+    <stop offset="0%" stop-color="#c084fc"/><stop offset="33%" stop-color="#e879f9"/>
+    <stop offset="66%" stop-color="#9333ea"/><stop offset="100%" stop-color="#c084fc"/>
+  </linearGradient>
+  <filter id="cf-neo" x="-60%" y="-60%" width="220%" height="220%">
+    <feGaussianBlur stdDeviation="12" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+  </filter>
+  <filter id="cf-glow" x="-40%" y="-40%" width="180%" height="180%">
+    <feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+  </filter>
+  <filter id="cf-soft" x="-25%" y="-25%" width="150%" height="150%">
+    <feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+  </filter>
+</defs>
+
+<rect width="800" height="450" fill="url(#cf-bg)"/>
+<ellipse cx="400" cy="150" rx="360" ry="180" fill="#9333ea" fill-opacity="0.05"/>
+<rect x="0" y="0" width="800" height="2" fill="url(#cf-gold)"/>
+
+<!-- Header -->
+<text x="400" y="40" text-anchor="middle" font-family="Arial,sans-serif" font-size="9" font-weight="700" fill="#c084fc" letter-spacing="8">AURA PRODUCCIONES · FOTOGRAFÍA</text>
+
+<!-- OFERTA badge (top right) -->
+<rect x="588" y="14" width="192" height="34" rx="5" fill="url(#cf-red)"/>
+<text x="684" y="37" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="16" font-weight="900" fill="#fff" letter-spacing="2">🔥 OFERTA</text>
+
+<!-- Title -->
+<text x="380" y="88" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="48" font-weight="900" fill="#9333ea" fill-opacity="0.5" letter-spacing="2" filter="url(#cf-neo)">CABINA FOTOGRÁFICA</text>
+<text x="380" y="88" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="48" font-weight="900" fill="#ffffff" letter-spacing="2">CABINA FOTOGRÁFICA</text>
+
+<line x1="80" y1="104" x2="720" y2="104" stroke="url(#cf-gold)" stroke-width="1.2"/>
+
+<!-- Promo banner -->
+<rect x="180" y="112" width="440" height="36" rx="5" fill="#dc2626" fill-opacity="0.2" stroke="#ef4444" stroke-width="1.2"/>
+<text x="400" y="136" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="16" font-weight="900" fill="#fca5a5" letter-spacing="1">🕐 CONTRATA 3 HORAS · PAGA 2</text>
+
+<!-- Price area -->
+<g transform="translate(400,165)">
+  <!-- Original price (crossed out) -->
+  <text x="0" y="0" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="20" font-weight="900" fill="#6b7280" text-decoration="line-through">$3,500 MXN</text>
+  <!-- Strike line manual -->
+  <line x1="-80" y1="-8" x2="80" y2="-8" stroke="#6b7280" stroke-width="2.5"/>
+  <!-- Sale price -->
+  <text x="0" y="36" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="38" font-weight="900" fill="#fbbf24" filter="url(#cf-glow)">$2,800 MXN</text>
+  <text x="0" y="56" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" fill="#94a3b8" letter-spacing="3">PRECIO DE OFERTA · AURA PRODUCCIONES</text>
+</g>
+
+<line x1="160" y1="232" x2="640" y2="232" stroke="url(#cf-gold)" stroke-width="0.7" stroke-opacity="0.4"/>
+
+<!-- Features (2-column layout to fit) -->
+<text x="90" y="257" font-family="Arial,sans-serif" font-size="12.5" fill="#c084fc">✦</text>
+<text x="110" y="257" font-family="Arial,sans-serif" font-size="12.5" fill="#e2e8f0">Cabina fotográfica inflable LED</text>
+<text x="420" y="257" font-family="Arial,sans-serif" font-size="12.5" fill="#c084fc">✦</text>
+<text x="440" y="257" font-family="Arial,sans-serif" font-size="12.5" fill="#e2e8f0">Props y accesorios temáticos</text>
+
+<text x="90" y="278" font-family="Arial,sans-serif" font-size="12.5" fill="#c084fc">✦</text>
+<text x="110" y="278" font-family="Arial,sans-serif" font-size="12.5" fill="#e2e8f0">Galería digital por WhatsApp</text>
+<text x="420" y="278" font-family="Arial,sans-serif" font-size="12.5" fill="#c084fc">✦</text>
+<text x="440" y="278" font-family="Arial,sans-serif" font-size="12.5" fill="#e2e8f0">Iluminación LED RGB</text>
+
+<text x="90" y="299" font-family="Arial,sans-serif" font-size="12.5" fill="#c084fc">✦</text>
+<text x="110" y="299" font-family="Arial,sans-serif" font-size="12.5" fill="#e2e8f0">Operador profesional incluido</text>
+<text x="420" y="299" font-family="Arial,sans-serif" font-size="12.5" fill="#c084fc">✦</text>
+<text x="440" y="299" font-family="Arial,sans-serif" font-size="12.5" fill="#e2e8f0">Hasta 100 personas</text>
+
+<!-- Bottom strip -->
+<rect x="0" y="312" width="800" height="138" fill="#080512"/>
+<line x1="0" y1="312" x2="800" y2="312" stroke="url(#cf-gold)" stroke-width="1.2"/>
+
+<!-- PHOTO BOOTH ICON centered -->
+<g transform="translate(322,320)">
+  <!-- Shadow -->
+  <ellipse cx="78" cy="120" rx="72" ry="8" fill="#000" fill-opacity="0.6"/>
+  <!-- Top face -->
+  <polygon points="14,18 28,4 142,4 128,18" fill="#ddd6fe" fill-opacity="0.8"/>
+  <!-- Right face -->
+  <polygon points="128,18 142,4 142,114 128,128" fill="url(#cf-bsd)" fill-opacity="0.8"/>
+  <!-- Front face -->
+  <rect x="14" y="18" width="114" height="96" rx="5" fill="url(#cf-bfr)"/>
+  <!-- Neon border glow -->
+  <rect x="11" y="14" width="122" height="104" rx="7" fill="none" stroke="#9333ea" stroke-width="2" filter="url(#cf-glow)"/>
+  <rect x="11" y="14" width="122" height="104" rx="7" fill="none" stroke="#c084fc" stroke-width="1"/>
+  <!-- LED strip -->
+  <rect x="14" y="13" width="114" height="7" rx="3" fill="url(#cf-led)" filter="url(#cf-neo)"/>
+  <rect x="14" y="13" width="114" height="7" rx="3" fill="url(#cf-led)"/>
+  <!-- LED dots -->
+  <circle cx="28"  cy="17" r="2.5" fill="#fff" fill-opacity="0.9"/>
+  <circle cx="46"  cy="17" r="2.5" fill="#e879f9"/>
+  <circle cx="64"  cy="17" r="2.5" fill="#fff" fill-opacity="0.9"/>
+  <circle cx="82"  cy="17" r="2.5" fill="#c084fc"/>
+  <circle cx="100" cy="17" r="2.5" fill="#fff" fill-opacity="0.9"/>
+  <circle cx="118" cy="17" r="2.5" fill="#e879f9"/>
+  <!-- Brand on booth -->
+  <text x="71" y="44" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="9" fill="#6d28d9" letter-spacing="1.5" font-weight="900">AURA PRODUCCIONES</text>
+  <!-- Door frame glow -->
+  <rect x="42" y="55" width="58" height="59" rx="4" fill="none" stroke="#9333ea" stroke-width="2" filter="url(#cf-soft)"/>
+  <!-- Door dark -->
+  <rect x="43" y="56" width="56" height="57" rx="3" fill="#120030"/>
+  <!-- Camera icon on door -->
+  <g transform="translate(57,68)" fill="none" stroke="#9333ea" stroke-width="1.5">
+    <rect x="0" y="5" width="28" height="20" rx="3"/>
+    <circle cx="14" cy="15" r="7"/>
+    <circle cx="14" cy="15" r="3.5" fill="#9333ea" stroke="none" opacity="0.6"/>
+    <path d="M8 5 L10 1 L18 1 L20 5"/>
+    <circle cx="23" cy="8" r="2" fill="#9333ea" stroke="none"/>
+  </g>
+  <!-- Light spill -->
+  <polygon points="43,113 99,113 108,128 34,128" fill="#7c3aed" opacity="0.15"/>
+  <!-- "3x2" badge on booth -->
+  <rect x="88" y="56" width="38" height="22" rx="4" fill="#dc2626"/>
+  <text x="107" y="72" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="12" fill="#fff" font-weight="900">3×2</text>
+</g>
+
+<text x="400" y="444" text-anchor="middle" font-family="Arial,sans-serif" font-size="9" font-weight="700" fill="#c084fc" letter-spacing="3">CABINA FOTOGRÁFICA · OFERTA ESPECIAL</text>
+<rect x="0" y="448" width="800" height="2" fill="url(#cf-gold)"/>
+</svg>

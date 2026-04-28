@@ -1,0 +1,114 @@
+import { Suspense } from "react";
+import type { Metadata } from "next";
+import CatalogClient from "@/components/catalog/CatalogClient";
+import { prisma } from "@/lib/prisma";
+
+export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = {
+  title: "Catálogo de paquetes y servicios",
+  description: "Explora todos los paquetes de DJ, audio, iluminación, shows y entretenimiento para tu evento en Zacatecas.",
+  openGraph: {
+    title: "Catálogo — Aura Producciones VIP",
+    description: "Paquetes de DJ, audio, iluminación y entretenimiento para bodas, XV Años y eventos en Zacatecas.",
+  },
+};
+
+// Categorías que se muestran en el catálogo (las más representativas con productos reales)
+const FEATURED_CATS = [
+  "XV Años",
+  "Bodas",
+  "Fiestas & Cumpleaños",
+  "Entretenimiento",
+  "Sonido",
+  "Fotografía",
+  "Eventos VIP",
+  "Especiales",
+];
+
+export default async function CatalogoPage() {
+  const [allCategories, assets, componentLinks] = await Promise.all([
+    prisma.assetCategory.findMany({ orderBy: { name: "asc" } }),
+    prisma.asset.findMany({
+      where: { isActive: true, isRentable: true },
+      select: {
+        id: true, name: true, sku: true, dailyRate: true, originalPrice: true,
+        categoryId: true, description: true,
+        ownerAdmin: { select: { fullName: true } },
+        category: { select: { name: true } },
+      },
+      orderBy: { dailyRate: "asc" },
+    }),
+    // Componentes BOM en query separada para evitar problemas de nesting
+    prisma.assetComponent.findMany({
+      select: {
+        parentAssetId: true,
+        childAssetId:  true,
+      },
+    }),
+  ]);
+
+  // Construir mapa de nombres de componentes por assetId
+  const childIds   = [...new Set(componentLinks.map((c) => c.childAssetId))];
+  const childAssets = childIds.length
+    ? await prisma.asset.findMany({
+        where: { id: { in: childIds } },
+        select: { id: true, name: true },
+      })
+    : [];
+  const childNameMap = new Map(childAssets.map((a) => [a.id, a.name]));
+  const compMap      = new Map<number, string[]>();
+  for (const link of componentLinks) {
+    const name = childNameMap.get(link.childAssetId);
+    if (!name) continue;
+    if (!compMap.has(link.parentAssetId)) compMap.set(link.parentAssetId, []);
+    compMap.get(link.parentAssetId)!.push(name);
+  }
+
+  // Campos nuevos (imageUrl, pricingTiers) en query separada con fallback
+  const pricingMap     = new Map<number, import("@/lib/product-tiers").PricingConfig | null>();
+  const imageUrlMap    = new Map<number, string | null>();
+  const imageGalleryMap = new Map<number, string[]>();
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const extras = await (prisma.asset.findMany as any)({
+      where: { id: { in: assets.map((a) => a.id) } },
+      select: { id: true, pricingTiers: true, imageUrl: true, imageGallery: true },
+    }) as { id: number; pricingTiers: unknown; imageUrl: string | null; imageGallery: unknown }[];
+    for (const a of extras) {
+      pricingMap.set(a.id, (a.pricingTiers ?? null) as import("@/lib/product-tiers").PricingConfig | null);
+      imageUrlMap.set(a.id, a.imageUrl ?? null);
+      const gallery = Array.isArray(a.imageGallery) ? (a.imageGallery as string[]) : [];
+      if (gallery.length) imageGalleryMap.set(a.id, gallery);
+    }
+  } catch {
+    // nuevas columnas aún no disponibles en el cliente cacheado — se ignoran
+  }
+
+  // IDs de categorías que realmente tienen productos rentables
+  const activeCatIds = new Set(assets.map((a) => a.categoryId));
+
+  // Solo mostrar categorías featured que tengan al menos 1 producto
+  const categories = allCategories.filter(
+    (c) => FEATURED_CATS.includes(c.name) && activeCatIds.has(c.id)
+  );
+
+  return (
+    <Suspense fallback={<div style={{ background: "#05051a", minHeight: "100vh" }} />}>
+    <CatalogClient
+      categories={categories}
+      assets={assets.map((a) => ({
+        ...a,
+        dailyRate: a.dailyRate.toString(),
+        originalPrice: a.originalPrice?.toString() ?? null,
+        ownerName: a.ownerAdmin?.fullName ?? null,
+        categoryName: (a as typeof a & { category: { name: string } }).category?.name ?? null,
+        pricingTiers:  pricingMap.get(a.id) ?? null,
+        imageUrl:      imageUrlMap.get(a.id) ?? null,
+        imageGallery:  imageGalleryMap.get(a.id) ?? [],
+        componentNames: compMap.get(a.id) ?? [],
+      }))}
+    />
+    </Suspense>
+  );
+}

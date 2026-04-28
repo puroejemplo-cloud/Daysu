@@ -1,26 +1,617 @@
 @import "tailwindcss";
 
+/* ── Tokens ── */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --black:  #05051a;
+  --cream:  #f5f0e8;
+  --gold:   #c9a84c;
+  --gold2:  #D4AF37;
+  --red:    #e03535;
+  --muted:  #888;
+  --purple: #7C3AED;
+  --border: rgba(201,168,76,0.18);
+
+  --font-bebas: 'Bebas Neue', sans-serif;
+  --font-dm:    'DM Sans', system-ui, sans-serif;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-black:  var(--black);
+  --color-cream:  var(--cream);
+  --color-gold:   var(--gold);
+  --color-purple: var(--purple);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+/* ── TRANSICIÓN DE PÁGINA ──────────────────────────── */
+/* Solo opacity — transform en main crea un containing block para position:fixed
+   lo que rompe el cursor personalizado (lo hace relativo a main en vez del viewport) */
+@keyframes pageEnter {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+main { animation: pageEnter 0.32s ease both; }
+
+/* ── SKELETON LOADER ───────────────────────────────── */
+@keyframes shimmer {
+  0%   { background-position: -800px 0; }
+  100% { background-position:  800px 0; }
+}
+.skeleton {
+  border-radius: 8px;
+  background: linear-gradient(90deg, #0f0f1e 25%, #1a1a2e 50%, #0f0f1e 75%);
+  background-size: 800px 100%;
+  animation: shimmer 1.6s infinite linear;
+}
+
+/* ── PWA / App-like ────────────────────────────────── */
+/* Evita que el body rebote en iOS (rubber band scroll) */
+html, body { overscroll-behavior: none; }
+/* Fuente del sistema como fallback nativo */
+body { -webkit-font-smoothing: antialiased; }
+/* Selección de texto desactivada en elementos de UI */
+button, a, nav, header { user-select: none; -webkit-user-select: none; }
+/* Safe area para el navbar sticky (notch de iPhone) */
+header.sticky { padding-top: env(safe-area-inset-top); }
+/* Navbar siempre arriba del safe area */
+.safe-top { padding-top: max(0.75rem, env(safe-area-inset-top)); }
+
+body {
+  background: var(--black);
+  color: var(--cream);
+  font-family: var(--font-dm);
+  overflow-x: hidden;
+}
+
+/* ── Custom cursor ── */
+.cursor {
+  width: 10px; height: 10px;
+  background: var(--gold);
+  border-radius: 50%;
+  position: fixed; top: 0; left: 0;
+  pointer-events: none;
+  z-index: 9999;
+  transition: transform 0.1s;
+}
+.cursor-ring {
+  width: 36px; height: 36px;
+  border: 1px solid rgba(201,168,76,0.5);
+  border-radius: 50%;
+  position: fixed; top: 0; left: 0;
+  pointer-events: none;
+  z-index: 9998;
+  transition: all 0.18s ease;
+}
+
+/* ── Bebas display ── */
+.bebas { font-family: var(--font-bebas); letter-spacing: 0.02em; }
+
+/* ── Ticker ── */
+.ticker-track {
+  display: inline-flex;
+  animation: ticker 30s linear infinite;
+  white-space: nowrap;
+}
+@keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+/* ── Animated hero lines ── */
+@keyframes linefall {
+  0%   { top: -20%; opacity: 0; }
+  10%  { opacity: 1; }
+  90%  { opacity: 1; }
+  100% { top: 110%; opacity: 0; }
+}
+
+/* ── Fade-up entrance ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.fade-up-1 { animation: fadeUp 0.8s 0.2s both; }
+.fade-up-2 { animation: fadeUp 0.9s 0.35s both; }
+.fade-up-3 { animation: fadeUp 0.9s 0.5s both; }
+.fade-up-4 { animation: fadeUp 0.9s 0.65s both; }
+.fade-up-5 { animation: fadeUp 1.0s 0.8s both; }
+
+/* ── Scroll line ── */
+@keyframes scrollline {
+  0%,100% { transform: scaleY(1); opacity: 1; }
+  50%      { transform: scaleY(0.5); opacity: 0.3; }
+}
+
+/* ── Live dot pulse ── */
+.live-dot {
+  display: inline-block;
+  width: 7px; height: 7px;
+  background: var(--red);
+  border-radius: 50%;
+  margin-right: 0.4rem;
+  animation: pulse 1.4s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%,100% { box-shadow: 0 0 0 0 rgba(224,53,53,0.5); }
+  50%      { box-shadow: 0 0 0 6px rgba(224,53,53,0); }
+}
+
+/* ── Event/Package cards ── */
+.pkg-card {
+  position: relative;
+  overflow: hidden;
+  background: #0a0a18;
+}
+/* Neon bottom line on hover */
+.pkg-card::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #7C3AED, #c9a84c, #7C3AED);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.5s cubic-bezier(0.25,0.46,0.45,0.94);
+  z-index: 10;
+}
+.pkg-card:hover::after { transform: scaleX(1); }
+/* Subtle gold border frame on hover */
+.pkg-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 1px solid transparent;
+  transition: border-color 0.4s;
+  z-index: 10;
+  pointer-events: none;
+}
+.pkg-card:hover::before { border-color: rgba(201,168,76,0.35); }
+
+.pkg-card-bg {
+  position: absolute; inset: 0;
+  transition: transform 0.7s cubic-bezier(0.25,0.46,0.45,0.94);
+}
+.pkg-card:hover .pkg-card-bg { transform: scale(1.04); }
+
+.pkg-card-geo {
+  position: absolute;
+  border: 1px solid;
+  border-radius: 50%;
+  top: -50px; right: -50px;
+  opacity: 0.1;
+  transition: opacity 0.4s;
+}
+.pkg-card:hover .pkg-card-geo { opacity: 0.22; }
+
+.pkg-card-content {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column;
+  justify-content: flex-end;
+  padding: 1.75rem;
+  /* Deeper gradient so SVG illustration shows at the top */
+  background: linear-gradient(
+    to top,
+    rgba(5,5,26,0.98) 0%,
+    rgba(5,5,26,0.92) 28%,
+    rgba(5,5,26,0.55) 52%,
+    rgba(5,5,26,0.1)  72%,
+    transparent       100%
+  );
+}
+
+/* ── Package feature list ── */
+.pkg-features {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.28rem;
+  margin-top: 0.65rem;
+  padding-top: 0.65rem;
+  border-top: 1px solid rgba(201,168,76,0.2);
+}
+.pkg-features li {
+  font-size: 0.7rem;
+  color: rgba(245,240,232,0.78);
+  letter-spacing: 0.04em;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  line-height: 1.35;
+}
+.pkg-features li::before {
+  content: '✦';
+  color: var(--gold);
+  font-size: 0.55rem;
+  flex-shrink: 0;
+  opacity: 0.9;
+}
+
+/* ── Category pills ── */
+.cat-pill {
+  padding: 0.55rem 1.4rem;
+  border: 1px solid rgba(255,255,255,0.1);
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  transition: all 0.2s;
+  cursor: pointer;
+  font-family: var(--font-dm);
+  color: var(--cream);
+}
+.cat-pill:hover, .cat-pill.active {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: var(--black);
+}
+
+/* ── Buttons ── */
+.btn-gold {
+  background: var(--gold);
+  color: var(--black);
+  border: none;
+  padding: 0.85rem 2.2rem;
+  font-family: var(--font-dm);
+  font-size: 0.78rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  display: inline-block;
+}
+.btn-gold:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(201,168,76,0.35); }
+
+.btn-ghost {
+  background: transparent;
+  color: var(--cream);
+  border: 1px solid rgba(245,240,232,0.2);
+  padding: 0.85rem 2.2rem;
+  font-family: var(--font-dm);
+  font-size: 0.78rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+  text-decoration: none;
+  display: inline-block;
+}
+.btn-ghost:hover { border-color: var(--gold); color: var(--gold); }
+
+/* ── iOS zoom fix: font-size ≥ 16px evita el auto-zoom al hacer focus en inputs ── */
+input, select, textarea {
+  font-size: max(1rem, 16px);
+}
+
+/* ── Aura card (dark UI) ── */
+.aura-card {
+  background: #0d0d2b;
+  border: 1px solid rgba(124,58,237,0.25);
+  border-radius: 1rem;
+}
+.aura-input {
+  background: #13133a;
+  border: 1px solid rgba(124,58,237,0.25);
+  border-radius: .5rem;
+  padding: .5rem .75rem;
+  color: var(--cream);
+  font-size: .875rem;
+  width: 100%;
+  outline: none;
+  transition: border-color .2s;
+  font-family: var(--font-dm);
+}
+.aura-input:focus { border-color: var(--purple); }
+.aura-input::placeholder { color: #888; }
+
+.aura-select {
+  background: #13133a;
+  border: 1px solid rgba(124,58,237,0.25);
+  border-radius: .5rem;
+  padding: .5rem .75rem;
+  color: var(--cream);
+  font-size: .875rem;
+  width: 100%;
+  outline: none;
+  font-family: var(--font-dm);
+}
+
+/* ── DayPicker dark ── */
+.rdp-root {
+  --rdp-accent-color: var(--purple);
+  --rdp-accent-background-color: rgba(124,58,237,.15);
+  color: var(--cream);
+}
+.rdp-day_button { color: #888; }
+.rdp-selected .rdp-day_button { color: #fff; }
+
+/* ── Section utils ── */
+.section-label {
+  font-size: 0.7rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 1rem;
+}
+.section-title {
+  font-family: var(--font-bebas);
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  line-height: 1;
+  color: var(--cream);
+}
+
+/* cursor personalizado solo en la landing — se activa via clase en el wrapper */
+.custom-cursor-active,
+.custom-cursor-active a,
+.custom-cursor-active button { cursor: none; }
+
+/* ── RESPONSIVE LAYOUT HELPERS ─────────────────────────────────────── */
+
+/* Hero */
+.hero-section {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 5rem 1.25rem 2.5rem;
+  position: relative;
+}
+@media (min-width: 768px) {
+  .hero-section { padding: 80px 4rem 4rem; }
+}
+
+/* Packages section */
+.pkg-section {
+  padding: 3.5rem 1.25rem;
+}
+@media (min-width: 768px) {
+  .pkg-section { padding: 6rem 4rem; }
+}
+
+/* Packages grid: 1 col → 2 col → 3 col */
+.pkg-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+@media (min-width: 600px) {
+  .pkg-grid { grid-template-columns: repeat(2, 1fr); gap: 1.25rem; }
+}
+@media (min-width: 1024px) {
+  .pkg-grid { grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+}
+
+/* Large card: full width on mobile, span 2 on tablet+ */
+.pkg-col-large { grid-column: span 1; }
+@media (min-width: 600px) { .pkg-col-large { grid-column: span 2; } }
+
+/* Small card — always column */
+.pkg-inner-small {
+  display: flex;
+  flex-direction: column;
+  background: #0a0a18;
+  border: 1px solid rgba(255,255,255,0.07);
+  overflow: hidden;
+  position: relative;
+  text-decoration: none;
+  transition: box-shadow 0.35s, transform 0.35s;
+}
+.pkg-inner-small:active {
+  transform: scale(0.98);
+  box-shadow: 0 0 0 1px rgba(201,168,76,0.4);
+}
+
+/* Small card image */
+.pkg-img-small {
+  position: relative;
+  width: 100%;
+  height: 155px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+@media (min-width: 600px) {
+  .pkg-img-small { height: 185px; }
+}
+@media (min-width: 1024px) {
+  .pkg-img-small { aspect-ratio: 800/450; height: auto; }
+}
+
+/* Large card inner: column on mobile, row on desktop */
+.pkg-inner-large {
+  display: flex;
+  flex-direction: column;
+  background: #0a0a18;
+  border: 1px solid rgba(255,255,255,0.07);
+  overflow: hidden;
+  position: relative;
+  text-decoration: none;
+  transition: box-shadow 0.35s, transform 0.35s;
+}
+@media (min-width: 1024px) {
+  .pkg-inner-large { flex-direction: row; min-height: 400px; }
+}
+
+/* Large card image side */
+.pkg-img-large {
+  position: relative;
+  width: 100%;
+  height: 155px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+@media (min-width: 600px) {
+  .pkg-img-large { height: 185px; }
+}
+@media (min-width: 1024px) {
+  .pkg-img-large { width: 58%; height: auto; aspect-ratio: 800/450; }
+}
+
+/* Large card content side */
+.pkg-content-large {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background: #05051a;
+  border-top: 1px solid rgba(201,168,76,0.14);
+  border-left: none;
+  padding: 1.4rem 1.5rem 1.6rem;
+  position: relative;
+}
+@media (min-width: 1024px) {
+  .pkg-content-large {
+    border-top: none;
+    border-left: 1px solid rgba(201,168,76,0.14);
+    padding: 2rem 2rem 2rem 2.25rem;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* Small card content */
+.pkg-content-small {
+  flex: 1;
+  padding: 1.4rem 1.5rem 1.6rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background: #05051a;
+  border-top: 1px solid rgba(201,168,76,0.14);
+  position: relative;
 }
+
+/* Stats grid: 2 cols on mobile, 4 on desktop */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1px;
+  background: rgba(255,255,255,0.04);
+}
+@media (min-width: 640px) {
+  .stats-grid { grid-template-columns: repeat(4, 1fr); }
+}
+
+/* Categories section */
+.cats-section {
+  padding: 2.5rem 1.25rem;
+  border-top: 1px solid rgba(255,255,255,0.05);
+}
+@media (min-width: 768px) {
+  .cats-section { padding: 4rem; }
+}
+
+/* Promo section */
+.promo-section {
+  padding: 3.5rem 1.25rem;
+  border-top: 1px solid rgba(255,255,255,0.05);
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  align-items: center;
+}
+@media (min-width: 768px) {
+  .promo-section { padding: 6rem 4rem; grid-template-columns: 1fr 1fr; gap: 4rem; }
+}
+
+/* Footer */
+.footer-section {
+  padding: 1.5rem 1.25rem;
+  border-top: 1px solid rgba(255,255,255,0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  align-items: center;
+  text-align: center;
+}
+@media (min-width: 640px) {
+  .footer-section { flex-direction: row; justify-content: space-between; text-align: left; padding: 2rem 4rem; }
+}
+
+/* Catalog card image */
+.catalog-card-img {
+  position: relative;
+  width: 100%;
+  height: 175px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+@media (min-width: 580px) {
+  .catalog-card-img { height: 190px; }
+}
+@media (min-width: 1024px) {
+  .catalog-card-img { aspect-ratio: 800/450; height: auto; }
+}
+
+/* Catalog grid responsive */
+.catalog-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+}
+@media (min-width: 580px) {
+  .catalog-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (min-width: 1024px) {
+  .catalog-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+/* Tap feedback for large card on mobile */
+.pkg-inner-large:active {
+  transform: scale(0.98);
+  box-shadow: 0 0 0 1px rgba(201,168,76,0.4);
+}
+
+/* Hide custom cursor on touch devices */
+@media (hover: none) {
+  .cursor, .cursor-ring { display: none; }
+  .custom-cursor-active,
+  .custom-cursor-active a,
+  .custom-cursor-active button { cursor: auto; }
+}
+
+/* Spin para loading */
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── SKIP TO CONTENT ───────────────────────────────────────────────── */
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 1rem;
+  z-index: 9999;
+  padding: 0.5rem 1.25rem;
+  background: var(--gold);
+  color: var(--black);
+  font-weight: 700;
+  font-size: 0.85rem;
+  border-radius: 0 0 8px 8px;
+  text-decoration: none;
+  transition: top 0.15s;
+}
+.skip-link:focus { top: 0; }
+
+/* ── PREFERS REDUCED MOTION ────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  html { scroll-behavior: auto; }
+}
+
+/* ── ANIMACIONES MÓVIL ─────────────────────────────────────────────── */
+/* Asegurar que las fade-up sean visibles desde el inicio en móvil */
+@media (max-width: 767px) {
+  .fade-up-1, .fade-up-2, .fade-up-3, .fade-up-4, .fade-up-5 {
+    animation-duration: 0.6s;
+  }
+}
+
+/* Scroll reveal suave para tarjetas */
+@keyframes cardReveal {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.pkg-inner-small, .pkg-inner-large {
+  animation: cardReveal 0.5s ease both;
+}
+.pkg-inner-small:nth-child(1), .pkg-inner-large:nth-child(1) { animation-delay: 0.05s; }
+.pkg-inner-small:nth-child(2), .pkg-inner-large:nth-child(2) { animation-delay: 0.12s; }
+.pkg-inner-small:nth-child(3), .pkg-inner-large:nth-child(3) { animation-delay: 0.19s; }
+.pkg-inner-small:nth-child(4), .pkg-inner-large:nth-child(4) { animation-delay: 0.26s; }

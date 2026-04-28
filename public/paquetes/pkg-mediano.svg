@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" width="800" height="450">
+<defs>
+  <radialGradient id="m-bg" cx="50%" cy="35%" r="75%">
+    <stop offset="0%" stop-color="#1e0418"/><stop offset="100%" stop-color="#030008"/>
+  </radialGradient>
+  <linearGradient id="m-gold" x1="0%" y1="0%" x2="100%" y2="0%">
+    <stop offset="0%" stop-color="#f59e0b" stop-opacity="0"/><stop offset="30%" stop-color="#f59e0b"/>
+    <stop offset="70%" stop-color="#fbbf24"/><stop offset="100%" stop-color="#f59e0b" stop-opacity="0"/>
+  </linearGradient>
+  <filter id="m-neo" x="-60%" y="-60%" width="220%" height="220%">
+    <feGaussianBlur stdDeviation="12" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+  </filter>
+  <filter id="m-glow" x="-40%" y="-40%" width="180%" height="180%">
+    <feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+  </filter>
+</defs>
+
+<rect width="800" height="450" fill="url(#m-bg)"/>
+<ellipse cx="400" cy="160" rx="360" ry="180" fill="#f472b6" fill-opacity="0.05"/>
+<rect x="0" y="0" width="800" height="2" fill="url(#m-gold)"/>
+
+<text x="400" y="44" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" font-weight="700" fill="#f9a8d4" letter-spacing="9">PAQUETE · SONIDO DAYSU</text>
+<text x="400" y="96" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="52" font-weight="900" fill="#f472b6" fill-opacity="0.5" letter-spacing="2" filter="url(#m-neo)">MEDIANO</text>
+<text x="400" y="96" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="52" font-weight="900" fill="#ffffff" letter-spacing="2">MEDIANO</text>
+
+<line x1="80" y1="113" x2="720" y2="113" stroke="url(#m-gold)" stroke-width="1.2"/>
+
+<text x="400" y="150" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="32" font-weight="900" fill="#fbbf24" filter="url(#m-glow)">$8,000 MXN</text>
+<text x="400" y="170" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" fill="#94a3b8" letter-spacing="3">5 HRS + 1 RECEPCIÓN · HASTA 200 PERSONAS</text>
+
+<line x1="160" y1="183" x2="640" y2="183" stroke="url(#m-gold)" stroke-width="0.7" stroke-opacity="0.4"/>
+
+<text x="220" y="210" font-family="Arial,sans-serif" font-size="14" fill="#f472b6">✦</text>
+<text x="244" y="210" font-family="Arial,sans-serif" font-size="14" fill="#e2e8f0">DJ Versátil + Audio básico + Cabina LED pixel</text>
+<text x="220" y="236" font-family="Arial,sans-serif" font-size="14" fill="#f472b6">✦</text>
+<text x="244" y="236" font-family="Arial,sans-serif" font-size="14" fill="#e2e8f0">Iluminación básica de escenario</text>
+<text x="220" y="262" font-family="Arial,sans-serif" font-size="14" fill="#f472b6">✦</text>
+<text x="244" y="262" font-family="Arial,sans-serif" font-size="14" fill="#e2e8f0">Show Robot Led + pirotecnia fría</text>
+<text x="220" y="288" font-family="Arial,sans-serif" font-size="14" fill="#f472b6">✦</text>
+<text x="244" y="288" font-family="Arial,sans-serif" font-size="14" fill="#e2e8f0">Souvenirs de animación (globos)</text>
+
+<!-- Bottom strip -->
+<rect x="0" y="302" width="800" height="148" fill="#0a0210"/>
+<line x1="0" y1="302" x2="800" y2="302" stroke="url(#m-gold)" stroke-width="1.2"/>
+
+<!-- ICON: Robot LED (main new feature vs Básico) -->
+<g transform="translate(342, 314)">
+  <!-- Head -->
+  <rect x="30" y="0" width="56" height="42" rx="6" fill="#1a0520" stroke="#f472b6" stroke-width="2" filter="url(#m-glow)"/>
+  <rect x="30" y="0" width="56" height="42" rx="6" fill="none" stroke="#fbcfe8" stroke-width="1"/>
+  <!-- Eyes (LED visor) -->
+  <rect x="37" y="12" width="16" height="11" rx="3" fill="#f472b6" fill-opacity="0.8" filter="url(#m-glow)"/>
+  <rect x="63" y="12" width="16" height="11" rx="3" fill="#f472b6" fill-opacity="0.8" filter="url(#m-glow)"/>
+  <!-- Mouth -->
+  <rect x="42" y="28" width="32" height="7" rx="3" fill="#0a0015"/>
+  <circle cx="51" cy="31" r="2" fill="#f472b6" fill-opacity="0.7"/>
+  <circle cx="58" cy="31" r="2" fill="#f472b6" fill-opacity="0.7"/>
+  <circle cx="65" cy="31" r="2" fill="#f472b6" fill-opacity="0.7"/>
+  <!-- Antenna -->
+  <line x1="58" y1="0" x2="58" y2="-12" stroke="#f472b6" stroke-width="2"/>
+  <circle cx="58" cy="-14" r="4" fill="#f472b6" filter="url(#m-glow)"/>
+  <!-- Neck -->
+  <rect x="48" y="42" width="20" height="10" rx="2" fill="#1e1028"/>
+  <!-- Body -->
+  <rect x="16" y="52" width="84" height="56" rx="5" fill="#1a0520" stroke="#f472b6" stroke-width="1.5"/>
+  <!-- LED chest panel -->
+  <rect x="26" y="60" width="64" height="36" rx="3" fill="#0a0010"/>
+  <circle cx="40" cy="72" r="4" fill="#f472b6" fill-opacity="0.9" filter="url(#m-glow)"/>
+  <circle cx="58" cy="72" r="4" fill="#fbbf24" fill-opacity="0.9" filter="url(#m-glow)"/>
+  <circle cx="76" cy="72" r="4" fill="#f472b6" fill-opacity="0.9" filter="url(#m-glow)"/>
+  <circle cx="40" cy="85" r="4" fill="#38bdf8" fill-opacity="0.8" filter="url(#m-glow)"/>
+  <circle cx="58" cy="85" r="4" fill="#f472b6" fill-opacity="0.8" filter="url(#m-glow)"/>
+  <circle cx="76" cy="85" r="4" fill="#a78bfa" fill-opacity="0.8" filter="url(#m-glow)"/>
+  <!-- Arms -->
+  <rect x="-10" y="56" width="26" height="12" rx="5" fill="#1a0520" stroke="#f472b6" stroke-width="1.2"/>
+  <rect x="100" y="56" width="26" height="12" rx="5" fill="#1a0520" stroke="#f472b6" stroke-width="1.2"/>
+  <!-- Legs -->
+  <rect x="24" y="108" width="24" height="16" rx="3" fill="#1a0520" stroke="#f472b6" stroke-width="1"/>
+  <rect x="68" y="108" width="24" height="16" rx="3" fill="#1a0520" stroke="#f472b6" stroke-width="1"/>
+  <!-- Glow -->
+  <ellipse cx="58" cy="126" rx="55" ry="6" fill="#f472b6" fill-opacity="0.15" filter="url(#m-glow)"/>
+</g>
+
+<text x="400" y="438" text-anchor="middle" font-family="Arial,sans-serif" font-size="9" font-weight="700" fill="#f9a8d4" letter-spacing="3">SHOW ROBOT LED</text>
+<rect x="0" y="448" width="800" height="2" fill="url(#m-gold)"/>
+</svg>

@@ -1,0 +1,112 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" width="800" height="450">
+<defs>
+  <radialGradient id="d5-bg" cx="50%" cy="35%" r="75%">
+    <stop offset="0%" stop-color="#1a1000"/><stop offset="100%" stop-color="#050300"/>
+  </radialGradient>
+  <linearGradient id="d5-gold" x1="0%" y1="0%" x2="100%" y2="0%">
+    <stop offset="0%" stop-color="#f59e0b" stop-opacity="0"/><stop offset="30%" stop-color="#f59e0b"/>
+    <stop offset="70%" stop-color="#fbbf24"/><stop offset="100%" stop-color="#f59e0b" stop-opacity="0"/>
+  </linearGradient>
+  <linearGradient id="d5-spk" x1="0%" y1="0%" x2="0%" y2="100%">
+    <stop offset="0%" stop-color="#1c1500"/><stop offset="100%" stop-color="#0a0900"/>
+  </linearGradient>
+  <linearGradient id="d5-beam1" x1="30%" y1="100%" x2="0%" y2="0%">
+    <stop offset="0%" stop-color="#f59e0b" stop-opacity="0.45"/><stop offset="100%" stop-color="#f59e0b" stop-opacity="0"/>
+  </linearGradient>
+  <linearGradient id="d5-beam2" x1="70%" y1="100%" x2="100%" y2="0%">
+    <stop offset="0%" stop-color="#f59e0b" stop-opacity="0.45"/><stop offset="100%" stop-color="#f59e0b" stop-opacity="0"/>
+  </linearGradient>
+  <filter id="d5-neo" x="-60%" y="-60%" width="220%" height="220%">
+    <feGaussianBlur stdDeviation="12" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+  </filter>
+  <filter id="d5-glow" x="-40%" y="-40%" width="180%" height="180%">
+    <feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+  </filter>
+</defs>
+<rect width="800" height="450" fill="url(#d5-bg)"/>
+<ellipse cx="400" cy="150" rx="360" ry="180" fill="#f59e0b" fill-opacity="0.04"/>
+<rect x="0" y="0" width="800" height="2" fill="url(#d5-gold)"/>
+
+<text x="400" y="40" text-anchor="middle" font-family="Arial,sans-serif" font-size="9" font-weight="700" fill="#fde68a" letter-spacing="8">SONIDO DAYSU · PAQUETE PROFESIONAL</text>
+<text x="400" y="90" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="30" font-weight="900" fill="#f59e0b" fill-opacity="0.5" letter-spacing="1" filter="url(#d5-neo)">DJ + AUDIO PROFESIONAL</text>
+<text x="400" y="90" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="30" font-weight="900" fill="#fbbf24" letter-spacing="1">DJ + AUDIO PROFESIONAL</text>
+<text x="400" y="113" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="18" font-weight="900" fill="#f59e0b" letter-spacing="2">50 A 500 PERSONAS</text>
+
+<line x1="80" y1="128" x2="720" y2="128" stroke="url(#d5-gold)" stroke-width="1.2"/>
+
+<text x="400" y="163" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="32" font-weight="900" fill="#fbbf24" filter="url(#d5-glow)">$6,000 MXN</text>
+<text x="400" y="181" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" fill="#94a3b8" letter-spacing="3">5 HRS + 1 RECEPCIÓN · 50 A 500 PERSONAS</text>
+
+<line x1="160" y1="194" x2="640" y2="194" stroke="url(#d5-gold)" stroke-width="0.7" stroke-opacity="0.4"/>
+
+<text x="220" y="218" font-family="Arial,sans-serif" font-size="14" fill="#f59e0b">✦</text>
+<text x="244" y="218" font-family="Arial,sans-serif" font-size="14" fill="#e2e8f0">DJ Versátil mezclando en vivo</text>
+<text x="220" y="244" font-family="Arial,sans-serif" font-size="14" fill="#f59e0b">✦</text>
+<text x="244" y="244" font-family="Arial,sans-serif" font-size="14" fill="#e2e8f0">Audio profesional completo 50–500 px</text>
+<text x="220" y="270" font-family="Arial,sans-serif" font-size="14" fill="#f59e0b">✦</text>
+<text x="244" y="270" font-family="Arial,sans-serif" font-size="14" fill="#e2e8f0">Cabina LED pixel incluida</text>
+<text x="220" y="296" font-family="Arial,sans-serif" font-size="13" fill="#d97706">✦</text>
+<text x="244" y="296" font-family="Arial,sans-serif" font-size="13" fill="#94a3b8" font-style="italic">Eventos grandes, bodas, corporativos</text>
+
+<!-- BOTTOM STRIP -->
+<rect x="0" y="310" width="800" height="140" fill="#080500"/>
+<line x1="0" y1="310" x2="800" y2="310" stroke="url(#d5-gold)" stroke-width="1.2"/>
+
+<!-- Light beams -->
+<polygon points="145,390 110,390 55,312 90,312" fill="url(#d5-beam1)" opacity="0.7"/>
+<polygon points="655,390 690,390 745,312 710,312" fill="url(#d5-beam2)" opacity="0.7"/>
+
+<!-- Speaker izq -->
+<g transform="translate(50,318)">
+  <rect x="0" y="0" width="68" height="105" rx="3" fill="url(#d5-spk)" stroke="#3a2800" stroke-width="1.2"/>
+  <circle cx="34" cy="40" r="26" fill="#0a0800" stroke="#2a1e00" stroke-width="1.5"/>
+  <circle cx="34" cy="40" r="17" fill="#1a1100" stroke="#3a2800" stroke-width="1"/>
+  <circle cx="34" cy="40" r="8"  fill="#0a0800"/>
+  <circle cx="34" cy="40" r="3"  fill="#f59e0b" fill-opacity="0.7" filter="url(#d5-glow)"/>
+  <circle cx="34" cy="80" r="13" fill="#0a0800" stroke="#2a1e00" stroke-width="1.2"/>
+  <circle cx="34" cy="80" r="7"  fill="#1a1100"/>
+  <rect x="16" y="98" width="36" height="8" rx="4" fill="#0a0800" stroke="#2a1e00" stroke-width="0.8"/>
+  <!-- Sub -->
+  <rect x="3" y="109" width="62" height="44" rx="2" fill="#080600" stroke="#3a2800" stroke-width="1"/>
+  <ellipse cx="34" cy="155" rx="40" ry="5" fill="#f59e0b" fill-opacity="0.1" filter="url(#d5-glow)"/>
+</g>
+
+<!-- DJ Console centro -->
+<g transform="translate(192,326)">
+  <rect x="0" y="54" width="200" height="11" rx="3" fill="#1c1200" stroke="#f59e0b" stroke-width="1.2"/>
+  <rect x="12" y="16" width="176" height="40" rx="4" fill="#100c00" stroke="#f59e0b" stroke-width="1.5"/>
+  <circle cx="44"  cy="36" r="15" fill="#080600" stroke="#f59e0b" stroke-width="1.2"/>
+  <circle cx="44"  cy="36" r="9"  fill="#1c1200" stroke="#d97706" stroke-width="1"/>
+  <circle cx="44"  cy="36" r="4"  fill="#f59e0b" fill-opacity="0.8" filter="url(#d5-glow)"/>
+  <circle cx="156" cy="36" r="15" fill="#080600" stroke="#f59e0b" stroke-width="1.2"/>
+  <circle cx="156" cy="36" r="9"  fill="#1c1200" stroke="#d97706" stroke-width="1"/>
+  <circle cx="156" cy="36" r="4"  fill="#f59e0b" fill-opacity="0.8" filter="url(#d5-glow)"/>
+  <rect x="72" y="19" width="56" height="34" rx="2" fill="#080600"/>
+  <rect x="75" y="22" width="50" height="5" rx="1" fill="#1c1200"/>
+  <rect x="75" y="30" width="50" height="5" rx="1" fill="#1c1200"/>
+  <circle cx="86"  cy="47" r="3.5" fill="#f59e0b" fill-opacity="0.8"/>
+  <circle cx="100" cy="47" r="3.5" fill="#fbbf24" fill-opacity="0.8"/>
+  <circle cx="114" cy="47" r="3.5" fill="#f59e0b" fill-opacity="0.8"/>
+  <path d="M12 16 Q100 -14 188 16" fill="none" stroke="#f59e0b" stroke-width="2.5" stroke-linecap="round"/>
+  <rect x="1"   y="4"  width="13" height="18" rx="4" fill="#100c00" stroke="#f59e0b" stroke-width="1.5"/>
+  <rect x="186" y="4"  width="13" height="18" rx="4" fill="#100c00" stroke="#f59e0b" stroke-width="1.5"/>
+  <ellipse cx="100" cy="66" rx="85" ry="6" fill="#f59e0b" fill-opacity="0.12" filter="url(#d5-glow)"/>
+</g>
+
+<!-- Speaker der -->
+<g transform="translate(568,318)">
+  <rect x="0" y="0" width="68" height="105" rx="3" fill="url(#d5-spk)" stroke="#3a2800" stroke-width="1.2"/>
+  <circle cx="34" cy="40" r="26" fill="#0a0800" stroke="#2a1e00" stroke-width="1.5"/>
+  <circle cx="34" cy="40" r="17" fill="#1a1100" stroke="#3a2800" stroke-width="1"/>
+  <circle cx="34" cy="40" r="8"  fill="#0a0800"/>
+  <circle cx="34" cy="40" r="3"  fill="#f59e0b" fill-opacity="0.7" filter="url(#d5-glow)"/>
+  <circle cx="34" cy="80" r="13" fill="#0a0800" stroke="#2a1e00" stroke-width="1.2"/>
+  <circle cx="34" cy="80" r="7"  fill="#1a1100"/>
+  <rect x="16" y="98" width="36" height="8" rx="4" fill="#0a0800" stroke="#2a1e00" stroke-width="0.8"/>
+  <rect x="3"  y="109" width="62" height="44" rx="2" fill="#080600" stroke="#3a2800" stroke-width="1"/>
+  <ellipse cx="34" cy="155" rx="40" ry="5" fill="#f59e0b" fill-opacity="0.1" filter="url(#d5-glow)"/>
+</g>
+
+<text x="400" y="440" text-anchor="middle" font-family="Arial,sans-serif" font-size="9" font-weight="700" fill="#fde68a" letter-spacing="3">DJ VERSÁTIL · AUDIO COMPLETO · CABINA LED</text>
+<rect x="0" y="448" width="800" height="2" fill="url(#d5-gold)"/>
+</svg>

@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" width="800" height="450">
+<defs>
+  <radialGradient id="pl-bg" cx="50%" cy="35%" r="75%">
+    <stop offset="0%" stop-color="#0a0a1a"/><stop offset="100%" stop-color="#03030a"/>
+  </radialGradient>
+  <linearGradient id="pl-gold" x1="0%" y1="0%" x2="100%" y2="0%">
+    <stop offset="0%" stop-color="#f59e0b" stop-opacity="0"/><stop offset="30%" stop-color="#f59e0b"/>
+    <stop offset="70%" stop-color="#fbbf24"/><stop offset="100%" stop-color="#f59e0b" stop-opacity="0"/>
+  </linearGradient>
+  <radialGradient id="pl-tile1" cx="50%" cy="50%" r="60%"><stop offset="0%" stop-color="#f472b6" stop-opacity="0.8"/><stop offset="100%" stop-color="#9333ea" stop-opacity="0.4"/></radialGradient>
+  <radialGradient id="pl-tile2" cx="50%" cy="50%" r="60%"><stop offset="0%" stop-color="#38bdf8" stop-opacity="0.8"/><stop offset="100%" stop-color="#0ea5e9" stop-opacity="0.4"/></radialGradient>
+  <radialGradient id="pl-tile3" cx="50%" cy="50%" r="60%"><stop offset="0%" stop-color="#fbbf24" stop-opacity="0.8"/><stop offset="100%" stop-color="#f59e0b" stop-opacity="0.4"/></radialGradient>
+  <radialGradient id="pl-tile4" cx="50%" cy="50%" r="60%"><stop offset="0%" stop-color="#34d399" stop-opacity="0.8"/><stop offset="100%" stop-color="#10b981" stop-opacity="0.4"/></radialGradient>
+  <filter id="pl-neo" x="-60%" y="-60%" width="220%" height="220%">
+    <feGaussianBlur stdDeviation="12" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+  </filter>
+  <filter id="pl-glow" x="-40%" y="-40%" width="180%" height="180%">
+    <feGaussianBlur stdDeviation="6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+  </filter>
+</defs>
+<rect width="800" height="450" fill="url(#pl-bg)"/>
+<ellipse cx="400" cy="150" rx="360" ry="180" fill="#38bdf8" fill-opacity="0.04"/>
+<rect x="0" y="0" width="800" height="2" fill="url(#pl-gold)"/>
+
+<text x="400" y="40" text-anchor="middle" font-family="Arial,sans-serif" font-size="9" font-weight="700" fill="#7dd3fc" letter-spacing="8">SONIDO DAYSU · COMPLEMENTO PREMIUM</text>
+<text x="400" y="88" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="26" font-weight="900" fill="#38bdf8" fill-opacity="0.5" letter-spacing="1" filter="url(#pl-neo)">PISTA DE BAILE LED</text>
+<text x="400" y="88" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="26" font-weight="900" fill="#ffffff" letter-spacing="1">PISTA DE BAILE LED</text>
+<text x="400" y="112" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="16" font-weight="900" fill="#38bdf8" letter-spacing="2">CRISTAL INFINITO 5×5 METROS</text>
+
+<line x1="80" y1="126" x2="720" y2="126" stroke="url(#pl-gold)" stroke-width="1.2"/>
+
+<text x="400" y="160" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="32" font-weight="900" fill="#fbbf24" filter="url(#pl-glow)">$8,000 MXN</text>
+<text x="400" y="178" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" fill="#94a3b8" letter-spacing="3">COMPLEMENTO DISPONIBLE PARA TODOS LOS PAQUETES</text>
+
+<line x1="160" y1="192" x2="640" y2="192" stroke="url(#pl-gold)" stroke-width="0.7" stroke-opacity="0.4"/>
+
+<text x="220" y="216" font-family="Arial,sans-serif" font-size="14" fill="#38bdf8">✦</text>
+<text x="244" y="216" font-family="Arial,sans-serif" font-size="14" fill="#e2e8f0">Pista LED cristal infinito 5×5 metros</text>
+<text x="220" y="241" font-family="Arial,sans-serif" font-size="14" fill="#38bdf8">✦</text>
+<text x="244" y="241" font-family="Arial,sans-serif" font-size="14" fill="#e2e8f0">Efecto espejo infinito RGB multicolor</text>
+<text x="220" y="266" font-family="Arial,sans-serif" font-size="14" fill="#38bdf8">✦</text>
+<text x="244" y="266" font-family="Arial,sans-serif" font-size="14" fill="#e2e8f0">Iluminación LED sincronizada con la música</text>
+<text x="220" y="291" font-family="Arial,sans-serif" font-size="13" fill="#0ea5e9">✦</text>
+<text x="244" y="291" font-family="Arial,sans-serif" font-size="13" fill="#94a3b8" font-style="italic">Agrégala a cualquier paquete</text>
+
+<!-- BOTTOM STRIP -->
+<rect x="0" y="306" width="800" height="144" fill="#05050f"/>
+<line x1="0" y1="306" x2="800" y2="306" stroke="url(#pl-gold)" stroke-width="1.2"/>
+
+<!-- ICON: LED Dance Floor (5x5 grid of glowing tiles) -->
+<g transform="translate(280,316)">
+  <!-- Floor tiles 5x5 grid with perspective/isometric hint -->
+  <!-- Row 1 -->
+  <rect x="0"   y="24" width="44" height="44" rx="3" fill="url(#pl-tile1)" stroke="#f472b6" stroke-width="1" filter="url(#pl-glow)"/>
+  <rect x="48"  y="24" width="44" height="44" rx="3" fill="url(#pl-tile2)" stroke="#38bdf8" stroke-width="1" filter="url(#pl-glow)"/>
+  <rect x="96"  y="24" width="44" height="44" rx="3" fill="url(#pl-tile3)" stroke="#fbbf24" stroke-width="1" filter="url(#pl-glow)"/>
+  <rect x="144" y="24" width="44" height="44" rx="3" fill="url(#pl-tile4)" stroke="#34d399" stroke-width="1" filter="url(#pl-glow)"/>
+  <rect x="192" y="24" width="44" height="44" rx="3" fill="url(#pl-tile1)" stroke="#f472b6" stroke-width="1" filter="url(#pl-glow)"/>
+  <!-- Row 2 -->
+  <rect x="0"   y="72" width="44" height="44" rx="3" fill="url(#pl-tile4)" stroke="#34d399" stroke-width="1" filter="url(#pl-glow)"/>
+  <rect x="48"  y="72" width="44" height="44" rx="3" fill="url(#pl-tile3)" stroke="#fbbf24" stroke-width="1" filter="url(#pl-glow)"/>
+  <rect x="96"  y="72" width="44" height="44" rx="3" fill="url(#pl-tile1)" stroke="#f472b6" stroke-width="1" filter="url(#pl-glow)"/>
+  <rect x="144" y="72" width="44" height="44" rx="3" fill="url(#pl-tile2)" stroke="#38bdf8" stroke-width="1" filter="url(#pl-glow)"/>
+  <rect x="192" y="72" width="44" height="44" rx="3" fill="url(#pl-tile3)" stroke="#fbbf24" stroke-width="1" filter="url(#pl-glow)"/>
+  <!-- Inner shine on each tile -->
+  <circle cx="22"  cy="46" r="8" fill="#fff" fill-opacity="0.2"/>
+  <circle cx="70"  cy="46" r="8" fill="#fff" fill-opacity="0.2"/>
+  <circle cx="118" cy="46" r="8" fill="#fff" fill-opacity="0.2"/>
+  <circle cx="166" cy="46" r="8" fill="#fff" fill-opacity="0.2"/>
+  <circle cx="214" cy="46" r="8" fill="#fff" fill-opacity="0.2"/>
+  <circle cx="22"  cy="94" r="8" fill="#fff" fill-opacity="0.2"/>
+  <circle cx="70"  cy="94" r="8" fill="#fff" fill-opacity="0.2"/>
+  <circle cx="118" cy="94" r="8" fill="#fff" fill-opacity="0.2"/>
+  <circle cx="166" cy="94" r="8" fill="#fff" fill-opacity="0.2"/>
+  <circle cx="214" cy="94" r="8" fill="#fff" fill-opacity="0.2"/>
+  <!-- Border frame -->
+  <rect x="-3" y="21" width="242" height="98" rx="5" fill="none" stroke="#38bdf8" stroke-width="2" filter="url(#pl-glow)"/>
+  <!-- Dimensions label -->
+  <text x="118" y="14" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="10" fill="#38bdf8" letter-spacing="1">5 × 5 MTS</text>
+  <!-- Floor glow reflection -->
+  <ellipse cx="118" cy="125" rx="120" ry="8" fill="#38bdf8" fill-opacity="0.15" filter="url(#pl-glow)"/>
+</g>
+
+<text x="400" y="440" text-anchor="middle" font-family="Arial,sans-serif" font-size="9" font-weight="700" fill="#7dd3fc" letter-spacing="3">LED · CRISTAL INFINITO · RGB MULTICOLOR</text>
+<rect x="0" y="448" width="800" height="2" fill="url(#pl-gold)"/>
+</svg>

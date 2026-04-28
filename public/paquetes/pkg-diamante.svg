@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" width="800" height="450">
+<defs>
+  <radialGradient id="d-bg" cx="50%" cy="35%" r="75%">
+    <stop offset="0%" stop-color="#0f0f18"/><stop offset="100%" stop-color="#040406"/>
+  </radialGradient>
+  <linearGradient id="d-gold" x1="0%" y1="0%" x2="100%" y2="0%">
+    <stop offset="0%" stop-color="#f59e0b" stop-opacity="0"/><stop offset="30%" stop-color="#f59e0b"/>
+    <stop offset="70%" stop-color="#fbbf24"/><stop offset="100%" stop-color="#f59e0b" stop-opacity="0"/>
+  </linearGradient>
+  <filter id="d-neo" x="-60%" y="-60%" width="220%" height="220%">
+    <feGaussianBlur stdDeviation="12" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+  </filter>
+  <filter id="d-glow" x="-40%" y="-40%" width="180%" height="180%">
+    <feGaussianBlur stdDeviation="6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+  </filter>
+</defs>
+
+<rect width="800" height="450" fill="url(#d-bg)"/>
+<ellipse cx="400" cy="160" rx="360" ry="180" fill="#fbbf24" fill-opacity="0.04"/>
+<rect x="0" y="0" width="800" height="2" fill="url(#d-gold)"/>
+
+<text x="400" y="44" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" font-weight="700" fill="#fde68a" letter-spacing="9">PAQUETE · SONIDO DAYSU · DJ IVÁN EVENTS</text>
+<text x="400" y="96" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="50" font-weight="900" fill="#fbbf24" fill-opacity="0.5" letter-spacing="3" filter="url(#d-neo)">DIAMANTE</text>
+<text x="400" y="96" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="50" font-weight="900" fill="#fbbf24" letter-spacing="3">DIAMANTE</text>
+
+<line x1="80" y1="113" x2="720" y2="113" stroke="url(#d-gold)" stroke-width="1.2"/>
+
+<text x="400" y="150" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="32" font-weight="900" fill="#fbbf24" filter="url(#d-glow)">$21,500 MXN</text>
+<text x="400" y="170" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" fill="#94a3b8" letter-spacing="3">5 HRS + 1 RECEPCIÓN · HASTA 500 PERSONAS</text>
+
+<line x1="160" y1="183" x2="640" y2="183" stroke="url(#d-gold)" stroke-width="0.7" stroke-opacity="0.4"/>
+
+<text x="220" y="210" font-family="Arial,sans-serif" font-size="13.5" fill="#fbbf24">✦</text>
+<text x="244" y="210" font-family="Arial,sans-serif" font-size="13.5" fill="#e2e8f0">Todo Master VIP + Shot jeringas</text>
+<text x="220" y="235" font-family="Arial,sans-serif" font-size="13.5" fill="#fbbf24">✦</text>
+<text x="244" y="235" font-family="Arial,sans-serif" font-size="13.5" fill="#e2e8f0">Arlequín en zancos + Vals en las nubes sencillo</text>
+<text x="220" y="260" font-family="Arial,sans-serif" font-size="13.5" fill="#fbbf24">✦</text>
+<text x="244" y="260" font-family="Arial,sans-serif" font-size="13.5" fill="#e2e8f0">Cañón de confeti metalizado + Carrito 250 shots</text>
+<text x="220" y="285" font-family="Arial,sans-serif" font-size="13.5" fill="#fbbf24">✦</text>
+<text x="244" y="285" font-family="Arial,sans-serif" font-size="13.5" fill="#94a3b8" font-style="italic">+Pista LED 5×5 disponible por $8,000</text>
+
+<!-- Bottom strip -->
+<rect x="0" y="302" width="800" height="148" fill="#070706"/>
+<line x1="0" y1="302" x2="800" y2="302" stroke="url(#d-gold)" stroke-width="1.2"/>
+
+<!-- ICON: Diamond gem -->
+<g transform="translate(342, 316)">
+  <!-- Main diamond shape -->
+  <!-- Top facets -->
+  <polygon points="58,0 100,38 58,110 16,38" fill="#0f0f10" stroke="#fbbf24" stroke-width="2" filter="url(#d-glow)"/>
+  <!-- Facet lines -->
+  <line x1="58" y1="0"   x2="16"  y2="38"  stroke="#fde68a" stroke-width="1" stroke-opacity="0.6"/>
+  <line x1="58" y1="0"   x2="100" y2="38"  stroke="#fde68a" stroke-width="1" stroke-opacity="0.6"/>
+  <line x1="16" y1="38"  x2="58"  y2="110" stroke="#d97706" stroke-width="1" stroke-opacity="0.5"/>
+  <line x1="100" y1="38" x2="58"  y2="110" stroke="#d97706" stroke-width="1" stroke-opacity="0.5"/>
+  <line x1="16" y1="38"  x2="100" y2="38"  stroke="#fff"    stroke-width="0.8" stroke-opacity="0.5"/>
+  <!-- Horizontal facet division (upper/lower) -->
+  <line x1="30" y1="60"  x2="86"  y2="60"  stroke="#fbbf24" stroke-width="0.8" stroke-opacity="0.4"/>
+  <!-- Inner highlight triangle -->
+  <polygon points="58,10 88,38 58,90" fill="#fbbf24" fill-opacity="0.06"/>
+  <!-- Center highlight -->
+  <circle cx="58" cy="38" r="8" fill="#fff" fill-opacity="0.12"/>
+  <circle cx="58" cy="38" r="3" fill="#fff" fill-opacity="0.3"/>
+  <!-- Top gem sparkle points -->
+  <line x1="58" y1="-8"  x2="58"  y2="-18" stroke="#fbbf24" stroke-width="2" stroke-opacity="0.8"/>
+  <line x1="48" y1="-4"  x2="44"  y2="-12" stroke="#fbbf24" stroke-width="1.5" stroke-opacity="0.6"/>
+  <line x1="68" y1="-4"  x2="72"  y2="-12" stroke="#fbbf24" stroke-width="1.5" stroke-opacity="0.6"/>
+  <line x1="38" y1="6"   x2="30"  y2="0"   stroke="#fbbf24" stroke-width="1.2" stroke-opacity="0.4"/>
+  <line x1="78" y1="6"   x2="86"  y2="0"   stroke="#fbbf24" stroke-width="1.2" stroke-opacity="0.4"/>
+  <!-- Sparkle circles -->
+  <circle cx="58" cy="-20" r="3" fill="#fbbf24" filter="url(#d-glow)"/>
+  <circle cx="44" cy="-14" r="2" fill="#fde68a" filter="url(#d-glow)"/>
+  <circle cx="72" cy="-14" r="2" fill="#fde68a" filter="url(#d-glow)"/>
+  <!-- Glow under diamond -->
+  <ellipse cx="58" cy="116" rx="50" ry="6" fill="#fbbf24" fill-opacity="0.2" filter="url(#d-glow)"/>
+</g>
+
+<text x="400" y="438" text-anchor="middle" font-family="Arial,sans-serif" font-size="9" font-weight="700" fill="#fde68a" letter-spacing="3">VALS EN LAS NUBES · PIROTECNIA · CONFETI</text>
+<rect x="0" y="448" width="800" height="2" fill="url(#d-gold)"/>
+</svg>

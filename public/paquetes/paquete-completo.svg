@@ -1,0 +1,251 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="45%" r="70%">
+      <stop offset="0%" stop-color="#1a0f00"/>
+      <stop offset="45%" stop-color="#0d0808"/>
+      <stop offset="100%" stop-color="#000000"/>
+    </radialGradient>
+    <radialGradient id="centerGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#f59e0b" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#000" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="slv" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="35%" stop-color="#e2e8f0"/>
+      <stop offset="65%" stop-color="#64748b"/>
+      <stop offset="100%" stop-color="#e2e8f0"/>
+    </linearGradient>
+    <linearGradient id="gld" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#fef3c7"/>
+      <stop offset="40%" stop-color="#fbbf24"/>
+      <stop offset="100%" stop-color="#92400e"/>
+    </linearGradient>
+    <linearGradient id="gldH" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#92400e" stop-opacity="0"/>
+      <stop offset="30%" stop-color="#f59e0b"/>
+      <stop offset="70%" stop-color="#fde68a"/>
+      <stop offset="100%" stop-color="#92400e" stop-opacity="0"/>
+    </linearGradient>
+    <!-- Panel gradients -->
+    <linearGradient id="panelPurple" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#150528" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#06000f" stop-opacity="0.9"/>
+    </linearGradient>
+    <linearGradient id="panelPink" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1a0520" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#08000e" stop-opacity="0.9"/>
+    </linearGradient>
+    <linearGradient id="panelCyan" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#021220" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#000810" stop-opacity="0.9"/>
+    </linearGradient>
+    <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="9" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="glow2" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="4" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="glow3" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="18" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="softBlur">
+      <feGaussianBlur stdDeviation="12"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="800" height="450" fill="url(#bg)"/>
+
+  <!-- Central golden atmospheric glow -->
+  <ellipse cx="260" cy="225" rx="240" ry="195" fill="url(#centerGlow)" filter="url(#softBlur)"/>
+
+  <!-- THREE SERVICE PANELS (left area, stacked) -->
+  <!-- Panel height: each ~125px, gap 8px, total = 391px. Start y=28 -->
+
+  <!-- === PANEL 1: CABINA FOTOGRÁFICA (top, purple) === -->
+  <rect x="30" y="28" width="450" height="118" rx="6" fill="url(#panelPurple)"/>
+  <rect x="30" y="28" width="450" height="118" rx="6" fill="none" stroke="#9333ea" stroke-width="1.5" opacity="0.6"/>
+  <!-- Neon accent left edge -->
+  <rect x="30" y="28" width="4" height="118" rx="2" fill="#9333ea" opacity="0.8" filter="url(#glow2)"/>
+
+  <!-- Mini booth illustration -->
+  <!-- Booth shape simplified -->
+  <rect x="52" y="45" width="52" height="75" rx="3" fill="#ede9fe" opacity="0.5"/>
+  <polygon points="52,45 104,45 112,37 60,37" fill="#f5f0ff" opacity="0.4"/>
+  <polygon points="104,45 112,37 112,108 104,118" fill="#c084fc" opacity="0.3"/>
+  <rect x="52" y="45" width="52" height="75" rx="3" fill="none" stroke="#9333ea" stroke-width="1.5" filter="url(#glow2)"/>
+  <!-- Door -->
+  <rect x="68" y="80" width="24" height="40" rx="2" fill="#050008" opacity="0.9"/>
+  <rect x="67" y="79" width="26" height="42" rx="3" fill="none" stroke="#9333ea" stroke-width="1" opacity="0.8"/>
+  <!-- LED dots on booth -->
+  <circle cx="56" cy="44" r="2.5" fill="#f472b6" filter="url(#glow2)"/>
+  <circle cx="64" cy="44" r="2.5" fill="#38bdf8" filter="url(#glow2)"/>
+  <circle cx="72" cy="44" r="2.5" fill="#a78bfa" filter="url(#glow2)"/>
+  <circle cx="80" cy="44" r="2.5" fill="#34d399" filter="url(#glow2)"/>
+  <circle cx="88" cy="44" r="2.5" fill="#fbbf24" filter="url(#glow2)"/>
+  <circle cx="96" cy="44" r="2.5" fill="#f472b6" filter="url(#glow2)"/>
+
+  <!-- Panel 1 text -->
+  <text x="136" y="68" font-family="Arial, sans-serif" font-size="11"
+    letter-spacing="2.5" fill="#c084fc" font-weight="600">SERVICIO 01</text>
+  <text x="136" y="95" font-family="'Arial Black', Arial, sans-serif"
+    font-size="22" font-weight="900" fill="#ffffff">CABINA FOTOGRÁFICA</text>
+  <text x="136" y="118" font-family="Arial, sans-serif" font-size="12"
+    fill="#a78bfa">Cabina inflable  ·  Props  ·  Impresión  ·  Galería digital</text>
+
+  <!-- Check icon -->
+  <circle cx="455" cy="87" r="14" fill="#9333ea" opacity="0.3"/>
+  <path d="M447 87 L453 93 L463 81" fill="none" stroke="#c084fc" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- === PANEL 2: SHOTS ILUMINADOS (middle, pink) === -->
+  <rect x="30" y="158" width="450" height="118" rx="6" fill="url(#panelPink)"/>
+  <rect x="30" y="158" width="450" height="118" rx="6" fill="none" stroke="#f472b6" stroke-width="1.5" opacity="0.6"/>
+  <rect x="30" y="158" width="4" height="118" rx="2" fill="#f472b6" opacity="0.8" filter="url(#glow2)"/>
+
+  <!-- Mini shots illustration -->
+  <g transform="translate(48, 168)">
+    <!-- Counter -->
+    <rect x="0" y="78" width="75" height="12" rx="2" fill="#2d1545"/>
+    <rect x="0" y="88" width="75" height="2" rx="1" fill="#f472b6" opacity="0.6" filter="url(#glow2)"/>
+    <!-- 4 mini shot glasses -->
+    <g transform="translate(5,28)">
+      <path d="M2 2 L4 50 L14 50 L16 2 Z" fill="#f472b6" opacity="0.15"/>
+      <path d="M2 2 L4 50 L14 50 L16 2 Z" fill="none" stroke="#f472b6" stroke-width="1.2"/>
+      <line x1="2.5" y1="14" x2="15.5" y2="14" stroke="#f472b6" stroke-width="0.8" opacity="0.6"/>
+      <ellipse cx="9" cy="52" rx="8" ry="3" fill="#f472b6" opacity="0.4" filter="url(#glow2)"/>
+    </g>
+    <g transform="translate(24,32)">
+      <path d="M2 2 L4 46 L14 46 L16 2 Z" fill="#9333ea" opacity="0.15"/>
+      <path d="M2 2 L4 46 L14 46 L16 2 Z" fill="none" stroke="#9333ea" stroke-width="1.2"/>
+      <ellipse cx="9" cy="48" rx="8" ry="3" fill="#9333ea" opacity="0.4" filter="url(#glow2)"/>
+    </g>
+    <g transform="translate(43,26)">
+      <path d="M2 2 L4 52 L14 52 L16 2 Z" fill="#38bdf8" opacity="0.15"/>
+      <path d="M2 2 L4 52 L14 52 L16 2 Z" fill="none" stroke="#38bdf8" stroke-width="1.2"/>
+      <ellipse cx="9" cy="54" rx="8" ry="3" fill="#38bdf8" opacity="0.4" filter="url(#glow2)"/>
+    </g>
+    <g transform="translate(62,30)">
+      <path d="M2 2 L4 48 L14 48 L16 2 Z" fill="#fbbf24" opacity="0.15"/>
+      <path d="M2 2 L4 48 L14 48 L16 2 Z" fill="none" stroke="#fbbf24" stroke-width="1.2"/>
+      <ellipse cx="9" cy="50" rx="8" ry="3" fill="#fbbf24" opacity="0.4" filter="url(#glow2)"/>
+    </g>
+  </g>
+
+  <!-- Panel 2 text -->
+  <text x="136" y="198" font-family="Arial, sans-serif" font-size="11"
+    letter-spacing="2.5" fill="#f472b6" font-weight="600">SERVICIO 02</text>
+  <text x="136" y="225" font-family="'Arial Black', Arial, sans-serif"
+    font-size="22" font-weight="900" fill="#ffffff">SHOTS ILUMINADOS</text>
+  <text x="136" y="248" font-family="Arial, sans-serif" font-size="12"
+    fill="#f9a8d4">Barra LED  ·  6 colores RGB  ·  Servicio de shots  ·  Ambientación</text>
+
+  <!-- Check icon -->
+  <circle cx="455" cy="217" r="14" fill="#f472b6" opacity="0.3"/>
+  <path d="M447 217 L453 223 L463 211" fill="none" stroke="#f9a8d4" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- === PANEL 3: SONIDO E ILUMINACIÓN (bottom, cyan) === -->
+  <rect x="30" y="288" width="450" height="118" rx="6" fill="url(#panelCyan)"/>
+  <rect x="30" y="288" width="450" height="118" rx="6" fill="none" stroke="#38bdf8" stroke-width="1.5" opacity="0.6"/>
+  <rect x="30" y="288" width="4" height="118" rx="2" fill="#38bdf8" opacity="0.8" filter="url(#glow2)"/>
+
+  <!-- Mini speaker + beams illustration -->
+  <g transform="translate(44, 298)">
+    <!-- Speaker cabinet left -->
+    <rect x="0" y="12" width="30" height="80" rx="3" fill="#0f172a" stroke="#1e3a5f" stroke-width="1"/>
+    <circle cx="15" cy="38" r="12" fill="#0f172a" stroke="#334155" stroke-width="1.5"/>
+    <circle cx="15" cy="38" r="7" fill="#1e293b" stroke="#475569" stroke-width="1"/>
+    <circle cx="15" cy="38" r="3" fill="#38bdf8" opacity="0.6" filter="url(#glow2)"/>
+    <circle cx="15" cy="62" r="8" fill="#0f172a" stroke="#334155" stroke-width="1"/>
+    <circle cx="15" cy="62" r="4" fill="#38bdf8" opacity="0.3"/>
+    <!-- Speaker cabinet right -->
+    <rect x="50" y="12" width="30" height="80" rx="3" fill="#0f172a" stroke="#1e3a5f" stroke-width="1"/>
+    <circle cx="65" cy="38" r="12" fill="#0f172a" stroke="#334155" stroke-width="1.5"/>
+    <circle cx="65" cy="38" r="7" fill="#1e293b" stroke="#475569" stroke-width="1"/>
+    <circle cx="65" cy="38" r="3" fill="#9333ea" opacity="0.6" filter="url(#glow2)"/>
+    <circle cx="65" cy="62" r="8" fill="#0f172a" stroke="#334155" stroke-width="1"/>
+    <!-- Light beams upward -->
+    <polygon points="15,12 25,12 35,-40 5,-40" fill="#38bdf8" opacity="0.2"/>
+    <polygon points="65,12 75,12 90,-40 50,-40" fill="#9333ea" opacity="0.18"/>
+    <!-- Floor glow -->
+    <ellipse cx="40" cy="93" rx="40" ry="8" fill="#38bdf8" opacity="0.15" filter="url(#glow2)"/>
+  </g>
+
+  <!-- Panel 3 text -->
+  <text x="136" y="328" font-family="Arial, sans-serif" font-size="11"
+    letter-spacing="2.5" fill="#38bdf8" font-weight="600">SERVICIO 03</text>
+  <text x="136" y="355" font-family="'Arial Black', Arial, sans-serif"
+    font-size="22" font-weight="900" fill="#ffffff">SONIDO E ILUMINACIÓN</text>
+  <text x="136" y="378" font-family="Arial, sans-serif" font-size="12"
+    fill="#7dd3fc">Audio profesional  ·  Luces LED  ·  Cabezas móviles  ·  DJ</text>
+
+  <!-- Check icon -->
+  <circle cx="455" cy="347" r="14" fill="#38bdf8" opacity="0.3"/>
+  <path d="M447 347 L453 353 L463 341" fill="none" stroke="#7dd3fc" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- RIGHT SIDE TEXT PANEL -->
+  <rect x="510" y="0" width="290" height="450" fill="#000" opacity="0.3"/>
+
+  <!-- Gold crown / star motif at top -->
+  <g transform="translate(568, 38)">
+    <!-- Crown base -->
+    <path d="M10 50 L10 28 L0 10 L18 24 L28 0 L38 24 L56 10 L46 28 L46 50 Z"
+      fill="url(#gld)" filter="url(#glow2)"/>
+    <!-- Crown gems -->
+    <circle cx="28" cy="8" r="5" fill="#fef3c7"/>
+    <circle cx="6" cy="18" r="3.5" fill="#fde68a"/>
+    <circle cx="50" cy="18" r="3.5" fill="#fde68a"/>
+    <!-- Crown base band -->
+    <rect x="10" y="42" width="36" height="10" rx="2" fill="#d97706"/>
+    <!-- Small diamonds on band -->
+    <polygon points="22,42 25,46 22,50 19,46" fill="#fef3c7"/>
+    <polygon points="34,42 37,46 34,50 31,46" fill="#fef3c7"/>
+  </g>
+
+  <!-- "TODO" label -->
+  <text x="650" y="55" text-anchor="middle" font-family="Arial, sans-serif"
+    font-size="13" letter-spacing="4" fill="#f59e0b" font-weight="600">PAQUETE</text>
+
+  <!-- "COMPLETO" main title -->
+  <text x="650" y="112" text-anchor="middle" font-family="'Arial Black', Arial, sans-serif"
+    font-size="38" font-weight="900" fill="url(#gld)">TODO</text>
+  <text x="650" y="150" text-anchor="middle" font-family="'Arial Black', Arial, sans-serif"
+    font-size="28" font-weight="900" fill="url(#slv)">INCLUIDO</text>
+
+  <!-- Gold neon divider -->
+  <line x1="525" y1="168" x2="775" y2="168"
+    stroke="url(#gldH)" stroke-width="1.5"/>
+
+  <!-- Save percentage badge -->
+  <g transform="translate(590, 182)">
+    <polygon points="60,0 75,15 75,45 60,60 30,60 15,45 15,15 30,0" fill="#d97706" opacity="0.2"/>
+    <polygon points="60,0 75,15 75,45 60,60 30,60 15,45 15,15 30,0" fill="none" stroke="#f59e0b" stroke-width="1.5" filter="url(#glow2)"/>
+    <text x="45" y="28" text-anchor="middle" font-family="'Arial Black', sans-serif"
+      font-size="11" fill="#fde68a" font-weight="900">MEJOR</text>
+    <text x="45" y="44" text-anchor="middle" font-family="'Arial Black', sans-serif"
+      font-size="11" fill="#fde68a" font-weight="900">PRECIO</text>
+  </g>
+
+  <!-- Feature list -->
+  <g font-family="Arial, sans-serif" font-size="13" fill="#e2e8f0">
+    <circle cx="537" cy="270" r="3" fill="#f59e0b"/>
+    <text x="548" y="275">3 servicios en un solo paquete</text>
+    <circle cx="537" cy="298" r="3" fill="#f59e0b"/>
+    <text x="548" y="303">Coordinación integral incluida</text>
+    <circle cx="537" cy="326" r="3" fill="#f59e0b"/>
+    <text x="548" y="331">Staff profesional en sitio</text>
+    <circle cx="537" cy="354" r="3" fill="#f59e0b"/>
+    <text x="548" y="359">Precio especial al contratar todo</text>
+  </g>
+
+  <!-- Gold separator -->
+  <line x1="525" y1="378" x2="775" y2="378" stroke="url(#gldH)" stroke-width="1.5"/>
+
+  <!-- Brand footer -->
+  <text x="525" y="402" font-family="Arial, sans-serif" font-size="11"
+    letter-spacing="2" fill="#f59e0b" opacity="0.9">AURA PRODUCCIONES</text>
+  <text x="525" y="422" font-family="Georgia, serif" font-style="italic" font-size="11"
+    fill="#94a3b8" opacity="0.7">Creamos momentos inolvidables</text>
+</svg>

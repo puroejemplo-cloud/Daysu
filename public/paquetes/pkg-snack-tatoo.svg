@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" width="800" height="450">
+<defs>
+  <radialGradient id="st-bg" cx="50%" cy="35%" r="75%">
+    <stop offset="0%" stop-color="#0a1a12"/><stop offset="100%" stop-color="#030806"/>
+  </radialGradient>
+  <linearGradient id="st-gold" x1="0%" y1="0%" x2="100%" y2="0%">
+    <stop offset="0%" stop-color="#f59e0b" stop-opacity="0"/><stop offset="30%" stop-color="#f59e0b"/>
+    <stop offset="70%" stop-color="#fbbf24"/><stop offset="100%" stop-color="#f59e0b" stop-opacity="0"/>
+  </linearGradient>
+  <filter id="st-neo" x="-60%" y="-60%" width="220%" height="220%">
+    <feGaussianBlur stdDeviation="12" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+  </filter>
+  <filter id="st-glow" x="-40%" y="-40%" width="180%" height="180%">
+    <feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+  </filter>
+</defs>
+
+<rect width="800" height="450" fill="url(#st-bg)"/>
+<ellipse cx="400" cy="160" rx="360" ry="180" fill="#34d399" fill-opacity="0.04"/>
+<rect x="0" y="0" width="800" height="2" fill="url(#st-gold)"/>
+
+<text x="400" y="44" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" font-weight="700" fill="#6ee7b7" letter-spacing="9">PAQUETE · SONIDO DAYSU · DJ IVÁN EVENTS</text>
+<text x="400" y="96" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="44" font-weight="900" fill="#34d399" fill-opacity="0.5" letter-spacing="2" filter="url(#st-neo)">SNACK TATOO</text>
+<text x="400" y="96" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="44" font-weight="900" fill="#ffffff" letter-spacing="2">SNACK TATOO</text>
+
+<line x1="80" y1="113" x2="720" y2="113" stroke="url(#st-gold)" stroke-width="1.2"/>
+
+<text x="400" y="150" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="32" font-weight="900" fill="#fbbf24" filter="url(#st-glow)">$24,000 MXN</text>
+<text x="400" y="170" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" fill="#94a3b8" letter-spacing="3">5 HRS + 1 RECEPCIÓN · HASTA 500 PERSONAS</text>
+
+<line x1="160" y1="183" x2="640" y2="183" stroke="url(#st-gold)" stroke-width="0.7" stroke-opacity="0.4"/>
+
+<text x="220" y="210" font-family="Arial,sans-serif" font-size="13.5" fill="#34d399">✦</text>
+<text x="244" y="210" font-family="Arial,sans-serif" font-size="13.5" fill="#e2e8f0">Todo Diamante + Tatoo &amp; glitter personalizados</text>
+<text x="220" y="235" font-family="Arial,sans-serif" font-size="13.5" fill="#34d399">✦</text>
+<text x="244" y="235" font-family="Arial,sans-serif" font-size="13.5" fill="#e2e8f0">Vals en las nubes doble (humo efecto niebla)</text>
+<text x="220" y="260" font-family="Arial,sans-serif" font-size="13.5" fill="#34d399">✦</text>
+<text x="244" y="260" font-family="Arial,sans-serif" font-size="13.5" fill="#e2e8f0">Carrito maruchanfest disponible (+$2,000)</text>
+<text x="220" y="285" font-family="Arial,sans-serif" font-size="13.5" fill="#34d399">✦</text>
+<text x="244" y="285" font-family="Arial,sans-serif" font-size="13.5" fill="#94a3b8" font-style="italic">+Pista LED cristal infinito 5×5 por $8,000</text>
+
+<!-- Bottom strip -->
+<rect x="0" y="302" width="800" height="148" fill="#030a06"/>
+<line x1="0" y1="302" x2="800" y2="302" stroke="url(#st-gold)" stroke-width="1.2"/>
+
+<!-- ICON: Shopping cart with stars (Snacks + extras) -->
+<g transform="translate(334, 316)">
+  <!-- Cart body -->
+  <rect x="14" y="40" width="100" height="62" rx="5" fill="#0a1a0a" stroke="#34d399" stroke-width="2" filter="url(#st-glow)"/>
+  <rect x="14" y="40" width="100" height="62" rx="5" fill="none" stroke="#a7f3d0" stroke-width="0.8"/>
+  <!-- Cart items on shelf -->
+  <!-- Popcorn bag -->
+  <path d="M30 40 L26 22 L46 22 L42 40 Z" fill="#dc2626" fill-opacity="0.7"/>
+  <rect x="26" y="16" width="20" height="8" rx="2" fill="#fbbf24" fill-opacity="0.7"/>
+  <circle cx="31" cy="13" r="5" fill="#fde68a" fill-opacity="0.9"/>
+  <circle cx="36" cy="10" r="5" fill="#fef3c7" fill-opacity="0.9"/>
+  <circle cx="41" cy="13" r="5" fill="#fde68a" fill-opacity="0.9"/>
+  <!-- Shot glass -->
+  <path d="M60 40 L63 22 L73 22 L76 40 Z" fill="#34d399" fill-opacity="0.15"/>
+  <path d="M60 40 L63 22 L73 22 L76 40 Z" fill="none" stroke="#34d399" stroke-width="1.5"/>
+  <ellipse cx="68" cy="41" rx="8" ry="3" fill="#34d399" fill-opacity="0.5" filter="url(#st-glow)"/>
+  <!-- Tattoo machine hint -->
+  <rect x="88" y="24" width="16" height="26" rx="3" fill="#0f172a" stroke="#a78bfa" stroke-width="1.2"/>
+  <rect x="91" y="28" width="10" height="5" rx="1" fill="#1e293b" stroke="#6b7280" stroke-width="0.6"/>
+  <rect x="91" y="35" width="10" height="5" rx="1" fill="#1e293b" stroke="#6b7280" stroke-width="0.6"/>
+  <line x1="96" y1="50" x2="96" y2="57" stroke="#a78bfa" stroke-width="1.5"/>
+  <!-- LED strip bottom of cart -->
+  <rect x="16" y="100" width="96" height="3" rx="1" fill="#34d399" fill-opacity="0.5" filter="url(#st-glow)"/>
+  <!-- Cart handle -->
+  <rect x="106" y="38" width="10" height="46" rx="4" fill="#0a1a0a" stroke="#34d399" stroke-width="1.2"/>
+  <!-- Wheels -->
+  <circle cx="30"  cy="108" r="9" fill="#050f05" stroke="#34d399" stroke-width="1.5"/>
+  <circle cx="30"  cy="108" r="4" fill="#34d399" fill-opacity="0.35"/>
+  <circle cx="98"  cy="108" r="9" fill="#050f05" stroke="#34d399" stroke-width="1.5"/>
+  <circle cx="98"  cy="108" r="4" fill="#34d399" fill-opacity="0.35"/>
+  <!-- Floating stars/sparkles around cart -->
+  <circle cx="6"  cy="55" r="2.5" fill="#34d399" fill-opacity="0.8" filter="url(#st-glow)"/>
+  <circle cx="6"  cy="75" r="2"   fill="#fbbf24" fill-opacity="0.7" filter="url(#st-glow)"/>
+  <circle cx="128" cy="50" r="2.5" fill="#a78bfa" fill-opacity="0.8" filter="url(#st-glow)"/>
+  <circle cx="128" cy="70" r="2"   fill="#34d399" fill-opacity="0.7" filter="url(#st-glow)"/>
+  <text x="-4"  y="38" font-family="Arial" font-size="14" fill="#34d399" fill-opacity="0.6">✦</text>
+  <text x="122" y="38" font-family="Arial" font-size="14" fill="#fbbf24" fill-opacity="0.6">✦</text>
+  <!-- Glow -->
+  <ellipse cx="64" cy="120" rx="65" ry="6" fill="#34d399" fill-opacity="0.15" filter="url(#st-glow)"/>
+</g>
+
+<text x="400" y="438" text-anchor="middle" font-family="Arial,sans-serif" font-size="9" font-weight="700" fill="#6ee7b7" letter-spacing="3">TATOO · SNACKS · SHOTS · TODO INCLUIDO</text>
+<rect x="0" y="448" width="800" height="2" fill="url(#st-gold)"/>
+</svg>

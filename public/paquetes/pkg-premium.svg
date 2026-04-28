@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" width="800" height="450">
+<defs>
+  <radialGradient id="pr-bg" cx="50%" cy="35%" r="75%">
+    <stop offset="0%" stop-color="#011828"/><stop offset="100%" stop-color="#010408"/>
+  </radialGradient>
+  <linearGradient id="pr-gold" x1="0%" y1="0%" x2="100%" y2="0%">
+    <stop offset="0%" stop-color="#f59e0b" stop-opacity="0"/><stop offset="30%" stop-color="#f59e0b"/>
+    <stop offset="70%" stop-color="#fbbf24"/><stop offset="100%" stop-color="#f59e0b" stop-opacity="0"/>
+  </linearGradient>
+  <filter id="pr-neo" x="-60%" y="-60%" width="220%" height="220%">
+    <feGaussianBlur stdDeviation="12" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+  </filter>
+  <filter id="pr-glow" x="-40%" y="-40%" width="180%" height="180%">
+    <feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+  </filter>
+</defs>
+
+<rect width="800" height="450" fill="url(#pr-bg)"/>
+<ellipse cx="400" cy="160" rx="360" ry="180" fill="#38bdf8" fill-opacity="0.04"/>
+<rect x="0" y="0" width="800" height="2" fill="url(#pr-gold)"/>
+
+<text x="400" y="44" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" font-weight="700" fill="#7dd3fc" letter-spacing="9">PAQUETE · SONIDO DAYSU · DJ IVÁN EVENTS</text>
+<text x="400" y="96" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="52" font-weight="900" fill="#38bdf8" fill-opacity="0.5" letter-spacing="2" filter="url(#pr-neo)">PREMIUM</text>
+<text x="400" y="96" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="52" font-weight="900" fill="#ffffff" letter-spacing="2">PREMIUM</text>
+
+<line x1="80" y1="113" x2="720" y2="113" stroke="url(#pr-gold)" stroke-width="1.2"/>
+
+<text x="400" y="150" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="32" font-weight="900" fill="#fbbf24" filter="url(#pr-glow)">$14,500 MXN</text>
+<text x="400" y="170" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" fill="#94a3b8" letter-spacing="3">5 HRS + 1 RECEPCIÓN · HASTA 200 PERSONAS</text>
+
+<line x1="160" y1="183" x2="640" y2="183" stroke="url(#pr-gold)" stroke-width="0.7" stroke-opacity="0.4"/>
+
+<text x="220" y="210" font-family="Arial,sans-serif" font-size="13.5" fill="#38bdf8">✦</text>
+<text x="244" y="210" font-family="Arial,sans-serif" font-size="13.5" fill="#e2e8f0">DJ Versátil + Audio profesional hasta 200 px</text>
+<text x="220" y="235" font-family="Arial,sans-serif" font-size="13.5" fill="#38bdf8">✦</text>
+<text x="244" y="235" font-family="Arial,sans-serif" font-size="13.5" fill="#e2e8f0">Iluminación profesional + Show Cabezones (1)</text>
+<text x="220" y="260" font-family="Arial,sans-serif" font-size="13.5" fill="#38bdf8">✦</text>
+<text x="244" y="260" font-family="Arial,sans-serif" font-size="13.5" fill="#e2e8f0">Show Robot Led + Pirotecnia (4 chisperos)</text>
+<text x="220" y="285" font-family="Arial,sans-serif" font-size="13.5" fill="#38bdf8">✦</text>
+<text x="244" y="285" font-family="Arial,sans-serif" font-size="13.5" fill="#e2e8f0">Maestro de ceremonias + Proyección + Video semblanza</text>
+
+<!-- Bottom strip -->
+<rect x="0" y="302" width="800" height="148" fill="#030610"/>
+<line x1="0" y1="302" x2="800" y2="302" stroke="url(#pr-gold)" stroke-width="1.2"/>
+
+<!-- ICON: Microphone (Maestro de ceremonias — feature diferenciador) -->
+<g transform="translate(352, 316)">
+  <!-- Mic capsule -->
+  <rect x="30" y="0" width="36" height="55" rx="18" fill="#0f2a3a" stroke="#38bdf8" stroke-width="2" filter="url(#pr-glow)"/>
+  <rect x="30" y="0" width="36" height="55" rx="18" fill="none" stroke="#7dd3fc" stroke-width="1"/>
+  <!-- Mic grille lines -->
+  <line x1="30" y1="14" x2="66" y2="14" stroke="#38bdf8" stroke-width="0.8" stroke-opacity="0.5"/>
+  <line x1="30" y1="21" x2="66" y2="21" stroke="#38bdf8" stroke-width="0.8" stroke-opacity="0.5"/>
+  <line x1="30" y1="28" x2="66" y2="28" stroke="#38bdf8" stroke-width="0.8" stroke-opacity="0.5"/>
+  <line x1="30" y1="35" x2="66" y2="35" stroke="#38bdf8" stroke-width="0.8" stroke-opacity="0.5"/>
+  <line x1="30" y1="42" x2="66" y2="42" stroke="#38bdf8" stroke-width="0.8" stroke-opacity="0.5"/>
+  <!-- Inner capsule glow -->
+  <ellipse cx="48" cy="22" rx="12" ry="14" fill="#38bdf8" fill-opacity="0.1"/>
+  <!-- Handle -->
+  <rect x="40" y="55" width="16" height="38" rx="4" fill="#1e3a5f" stroke="#38bdf8" stroke-width="1.2"/>
+  <!-- Stand base -->
+  <ellipse cx="48" cy="98" rx="28" ry="6" fill="#0f2a3a" stroke="#38bdf8" stroke-width="1.2"/>
+  <line x1="48" y1="93" x2="48" y2="98" stroke="#38bdf8" stroke-width="1.5"/>
+  <!-- Sound waves -->
+  <path d="M74 12 Q84 27 74 43" fill="none" stroke="#38bdf8" stroke-width="1.8" stroke-linecap="round" stroke-opacity="0.7"/>
+  <path d="M80 6 Q96 27 80 48" fill="none" stroke="#38bdf8" stroke-width="1.5" stroke-linecap="round" stroke-opacity="0.45"/>
+  <path d="M22 12 Q12 27 22 43" fill="none" stroke="#38bdf8" stroke-width="1.8" stroke-linecap="round" stroke-opacity="0.7"/>
+  <path d="M16 6 Q0 27 16 48" fill="none" stroke="#38bdf8" stroke-width="1.5" stroke-linecap="round" stroke-opacity="0.45"/>
+  <!-- Glow -->
+  <ellipse cx="48" cy="104" rx="35" ry="5" fill="#38bdf8" fill-opacity="0.15" filter="url(#pr-glow)"/>
+</g>
+
+<text x="400" y="438" text-anchor="middle" font-family="Arial,sans-serif" font-size="9" font-weight="700" fill="#7dd3fc" letter-spacing="3">MAESTRO DE CEREMONIAS</text>
+<rect x="0" y="448" width="800" height="2" fill="url(#pr-gold)"/>
+</svg>

@@ -1,0 +1,237 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450">
+  <defs>
+    <radialGradient id="bg" cx="35%" cy="55%" r="65%">
+      <stop offset="0%" stop-color="#021220"/>
+      <stop offset="55%" stop-color="#040810"/>
+      <stop offset="100%" stop-color="#000000"/>
+    </radialGradient>
+    <linearGradient id="spkBox" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e293b"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+    <linearGradient id="spkBoxRight" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#172032"/>
+      <stop offset="100%" stop-color="#0a1020"/>
+    </linearGradient>
+    <linearGradient id="slv" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="35%" stop-color="#e2e8f0"/>
+      <stop offset="65%" stop-color="#64748b"/>
+      <stop offset="100%" stop-color="#e2e8f0"/>
+    </linearGradient>
+    <linearGradient id="gld" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#fde68a"/>
+      <stop offset="100%" stop-color="#d97706"/>
+    </linearGradient>
+    <!-- Light beam gradients -->
+    <linearGradient id="beam1" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.5"/>
+      <stop offset="100%" stop-color="#38bdf8" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="beam2" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" stop-color="#9333ea" stop-opacity="0.45"/>
+      <stop offset="100%" stop-color="#9333ea" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="beam3" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.4"/>
+      <stop offset="100%" stop-color="#38bdf8" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="beam4" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" stop-color="#a78bfa" stop-opacity="0.4"/>
+      <stop offset="100%" stop-color="#a78bfa" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="stageGlow" cx="50%" cy="100%" r="60%">
+      <stop offset="0%" stop-color="#0ea5e9" stop-opacity="0.25"/>
+      <stop offset="100%" stop-color="#0ea5e9" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="9" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="glow2" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="4" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="softBlur">
+      <feGaussianBlur stdDeviation="16"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="800" height="450" fill="url(#bg)"/>
+
+  <!-- Stage floor glow -->
+  <ellipse cx="270" cy="420" rx="280" ry="50" fill="url(#stageGlow)" filter="url(#softBlur)"/>
+
+  <!-- LIGHT BEAMS (behind speakers) -->
+  <!-- Beam 1: leftmost, angled left -->
+  <polygon points="105,358 130,358 30,0 55,0" fill="url(#beam1)" opacity="0.7"/>
+  <!-- Beam 2: left-center -->
+  <polygon points="155,358 178,358 120,0 95,0" fill="url(#beam2)" opacity="0.65"/>
+  <!-- Beam 3: center -->
+  <polygon points="222,358 248,358 260,0 235,0" fill="url(#beam3)" opacity="0.6"/>
+  <!-- Beam 4: right of center -->
+  <polygon points="280,358 305,358 380,0 355,0" fill="url(#beam4)" opacity="0.6"/>
+  <!-- Beam 5: far right -->
+  <polygon points="345,358 368,358 460,0 435,0" fill="url(#beam1)" opacity="0.5"/>
+
+  <!-- Atmospheric haze at top (light scattering) -->
+  <ellipse cx="240" cy="40" rx="280" ry="55" fill="#0ea5e9" opacity="0.07" filter="url(#softBlur)"/>
+  <ellipse cx="200" cy="60" rx="180" ry="35" fill="#9333ea" opacity="0.06" filter="url(#softBlur)"/>
+
+  <!-- MOVING HEAD LIGHT (top center) -->
+  <g transform="translate(170, 25)">
+    <!-- Base mount -->
+    <rect x="30" y="0" width="50" height="10" rx="2" fill="#1e293b"/>
+    <!-- Arm left -->
+    <rect x="18" y="8" width="10" height="35" rx="2" fill="#0f172a"/>
+    <!-- Arm right -->
+    <rect x="82" y="8" width="10" height="35" rx="2" fill="#0f172a"/>
+    <!-- Light head body -->
+    <rect x="22" y="38" width="66" height="45" rx="8" fill="#0f172a" stroke="#334155" stroke-width="1.5"/>
+    <!-- Light lens -->
+    <circle cx="55" cy="62" r="20" fill="#000" stroke="#38bdf8" stroke-width="2" filter="url(#glow2)"/>
+    <circle cx="55" cy="62" r="14" fill="#0ea5e9" opacity="0.4"/>
+    <circle cx="55" cy="62" r="8" fill="#38bdf8" opacity="0.7" filter="url(#glow2)"/>
+    <!-- Status LEDs -->
+    <circle cx="35" cy="50" r="3" fill="#38bdf8" filter="url(#glow2)"/>
+    <circle cx="75" cy="50" r="3" fill="#38bdf8" filter="url(#glow2)"/>
+  </g>
+
+  <!-- Second moving head (right area) -->
+  <g transform="translate(305, 30)">
+    <rect x="24" y="0" width="42" height="8" rx="2" fill="#1e293b"/>
+    <rect x="14" y="6" width="8" height="28" rx="2" fill="#0f172a"/>
+    <rect x="68" y="6" width="8" height="28" rx="2" fill="#0f172a"/>
+    <rect x="17" y="30" width="56" height="38" rx="7" fill="#0f172a" stroke="#334155" stroke-width="1.2"/>
+    <circle cx="45" cy="50" r="16" fill="#000" stroke="#9333ea" stroke-width="2" filter="url(#glow2)"/>
+    <circle cx="45" cy="50" r="11" fill="#7c3aed" opacity="0.4"/>
+    <circle cx="45" cy="50" r="6" fill="#a855f7" opacity="0.7" filter="url(#glow2)"/>
+    <circle cx="28" cy="40" r="2.5" fill="#a78bfa" filter="url(#glow2)"/>
+    <circle cx="62" cy="40" r="2.5" fill="#a78bfa" filter="url(#glow2)"/>
+  </g>
+
+  <!-- LEFT SPEAKER STACK -->
+  <g transform="translate(72, 155)">
+    <!-- Main cabinet -->
+    <rect x="0" y="0" width="105" height="200" rx="5" fill="url(#spkBox)"/>
+    <!-- Cabinet edge highlight -->
+    <rect x="0" y="0" width="105" height="200" rx="5" fill="none" stroke="#1e3a5f" stroke-width="1.5"/>
+    <!-- Big woofer -->
+    <circle cx="52" cy="75" r="38" fill="#0f172a" stroke="#334155" stroke-width="2"/>
+    <circle cx="52" cy="75" r="28" fill="#1e293b" stroke="#475569" stroke-width="1.5"/>
+    <circle cx="52" cy="75" r="16" fill="#0f172a" stroke="#64748b" stroke-width="1.5"/>
+    <circle cx="52" cy="75" r="7" fill="#1e3a5f"/>
+    <circle cx="52" cy="75" r="3" fill="#38bdf8" opacity="0.6" filter="url(#glow2)"/>
+    <!-- Tweeter -->
+    <circle cx="52" cy="148" r="18" fill="#0f172a" stroke="#334155" stroke-width="1.5"/>
+    <circle cx="52" cy="148" r="11" fill="#1e293b" stroke="#475569" stroke-width="1"/>
+    <circle cx="52" cy="148" r="6" fill="#0f172a"/>
+    <circle cx="52" cy="148" r="2.5" fill="#38bdf8" opacity="0.5"/>
+    <!-- Port hole -->
+    <rect x="30" y="178" width="45" height="12" rx="6" fill="#0f172a" stroke="#334155" stroke-width="1"/>
+    <!-- LED strip on side -->
+    <rect x="0" y="0" width="4" height="200" rx="2" fill="#38bdf8" opacity="0.15" filter="url(#glow2)"/>
+    <!-- Sub bass cabinet below -->
+    <rect x="5" y="205" width="95" height="75" rx="4" fill="#0a1525" stroke="#1e3a5f" stroke-width="1.5"/>
+    <rect x="20" y="222" width="65" height="40" rx="20" fill="#0f172a" stroke="#334155" stroke-width="1.5"/>
+    <rect x="35" y="230" width="35" height="25" rx="12" fill="#1e293b"/>
+    <!-- Speaker glow on floor -->
+    <ellipse cx="52" cy="282" rx="50" ry="10" fill="#0ea5e9" opacity="0.2" filter="url(#glow)"/>
+  </g>
+
+  <!-- RIGHT SPEAKER STACK -->
+  <g transform="translate(272, 170)">
+    <rect x="0" y="0" width="100" height="188" rx="5" fill="url(#spkBoxRight)"/>
+    <rect x="0" y="0" width="100" height="188" rx="5" fill="none" stroke="#1e3a5f" stroke-width="1.5"/>
+    <!-- Big woofer -->
+    <circle cx="50" cy="70" r="36" fill="#0f172a" stroke="#334155" stroke-width="2"/>
+    <circle cx="50" cy="70" r="26" fill="#1e293b" stroke="#475569" stroke-width="1.5"/>
+    <circle cx="50" cy="70" r="15" fill="#0f172a" stroke="#64748b" stroke-width="1.5"/>
+    <circle cx="50" cy="70" r="6" fill="#1e2a40"/>
+    <circle cx="50" cy="70" r="2.5" fill="#9333ea" opacity="0.6" filter="url(#glow2)"/>
+    <!-- Tweeter -->
+    <circle cx="50" cy="138" r="17" fill="#0f172a" stroke="#334155" stroke-width="1.5"/>
+    <circle cx="50" cy="138" r="10" fill="#1e293b" stroke="#475569" stroke-width="1"/>
+    <circle cx="50" cy="138" r="5" fill="#0f172a"/>
+    <!-- Port hole -->
+    <rect x="28" y="168" width="44" height="11" rx="5.5" fill="#0f172a" stroke="#334155" stroke-width="1"/>
+    <!-- LED strip -->
+    <rect x="96" y="0" width="4" height="188" rx="2" fill="#9333ea" opacity="0.15" filter="url(#glow2)"/>
+    <!-- Sub -->
+    <rect x="4" y="193" width="92" height="68" rx="4" fill="#0a1020" stroke="#1e3a5f" stroke-width="1.5"/>
+    <rect x="18" y="208" width="62" height="38" rx="19" fill="#0f172a" stroke="#334155" stroke-width="1.5"/>
+    <ellipse cx="50" cy="263" rx="48" ry="10" fill="#7c3aed" opacity="0.18" filter="url(#glow)"/>
+  </g>
+
+  <!-- Floor-level light scatter -->
+  <ellipse cx="200" cy="440" rx="190" ry="20" fill="#38bdf8" opacity="0.12"/>
+  <ellipse cx="330" cy="440" rx="120" ry="14" fill="#9333ea" opacity="0.1"/>
+
+  <!-- Ambient sparkle particles -->
+  <circle cx="65" cy="145" r="2.5" fill="#38bdf8" opacity="0.8" filter="url(#glow2)"/>
+  <circle cx="390" cy="130" r="2" fill="#a78bfa" opacity="0.7"/>
+  <circle cx="430" cy="200" r="3" fill="#38bdf8" opacity="0.6" filter="url(#glow2)"/>
+  <circle cx="60" cy="280" r="2" fill="#9333ea" opacity="0.7"/>
+  <circle cx="440" cy="310" r="2.5" fill="#38bdf8" opacity="0.6"/>
+
+  <!-- Equalizer bars (decorative, bottom left) -->
+  <g transform="translate(75,390)" opacity="0.5">
+    <rect x="0" y="0" width="6" height="40" rx="2" fill="#38bdf8"/>
+    <rect x="10" y="10" width="6" height="30" rx="2" fill="#9333ea"/>
+    <rect x="20" y="5" width="6" height="35" rx="2" fill="#38bdf8"/>
+    <rect x="30" y="15" width="6" height="25" rx="2" fill="#7c3aed"/>
+    <rect x="40" y="2" width="6" height="38" rx="2" fill="#38bdf8"/>
+    <rect x="50" y="12" width="6" height="28" rx="2" fill="#0ea5e9"/>
+  </g>
+
+  <!-- RIGHT SIDE TEXT PANEL -->
+  <rect x="510" y="0" width="290" height="450" fill="#000" opacity="0.25"/>
+
+  <!-- Speaker icon -->
+  <g transform="translate(524,48)" fill="none" stroke="#38bdf8" stroke-width="2.5">
+    <rect x="0" y="0" width="45" height="56" rx="5"/>
+    <circle cx="22" cy="24" r="14"/>
+    <circle cx="22" cy="24" r="8" fill="#38bdf8" opacity="0.35" stroke="none"/>
+    <circle cx="22" cy="24" r="4" fill="#0ea5e9" opacity="0.6" stroke="none"/>
+    <rect x="10" y="42" width="24" height="8" rx="4"/>
+    <!-- Sound waves -->
+    <path d="M50 18 Q58 24 50 30" stroke-linecap="round"/>
+    <path d="M54 12 Q66 24 54 36" stroke-linecap="round"/>
+  </g>
+
+  <!-- Category label -->
+  <text x="525" y="132" font-family="Arial, sans-serif" font-size="13"
+    letter-spacing="3" fill="#38bdf8" font-weight="600">PAQUETE</text>
+
+  <!-- Main title -->
+  <text x="525" y="176" font-family="'Arial Black', Arial, sans-serif"
+    font-size="38" font-weight="900" fill="url(#slv)">SONIDO</text>
+  <text x="525" y="212" font-family="'Arial Black', Arial, sans-serif"
+    font-size="22" font-weight="900" letter-spacing="1" fill="url(#slv)">E ILUMINACIÓN</text>
+
+  <!-- Neon divider -->
+  <line x1="525" y1="230" x2="775" y2="230"
+    stroke="#38bdf8" stroke-width="1.5" opacity="0.7" filter="url(#glow2)"/>
+
+  <!-- Feature bullets -->
+  <g font-family="Arial, sans-serif" font-size="14" fill="#e2e8f0">
+    <circle cx="537" cy="257" r="3" fill="#38bdf8"/>
+    <text x="550" y="262">Sistema de audio profesional</text>
+    <circle cx="537" cy="286" r="3" fill="#38bdf8"/>
+    <text x="550" y="291">Luces LED RGB robotizadas</text>
+    <circle cx="537" cy="315" r="3" fill="#38bdf8"/>
+    <text x="550" y="320">Cabezas móviles y láser</text>
+    <circle cx="537" cy="344" r="3" fill="#38bdf8"/>
+    <text x="550" y="349">DJ y operador incluidos</text>
+  </g>
+
+  <!-- Gold separator -->
+  <line x1="525" y1="370" x2="775" y2="370" stroke="#f59e0b" stroke-width="1" opacity="0.6"/>
+
+  <!-- Brand footer -->
+  <text x="525" y="394" font-family="Arial, sans-serif" font-size="11"
+    letter-spacing="2" fill="#f59e0b" opacity="0.9">AURA PRODUCCIONES</text>
+  <text x="525" y="414" font-family="Georgia, serif" font-style="italic" font-size="11"
+    fill="#94a3b8" opacity="0.7">Creamos momentos inolvidables</text>
+</svg>
