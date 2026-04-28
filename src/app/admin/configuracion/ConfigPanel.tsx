@@ -78,10 +78,11 @@ export default function ConfigPanel() {
       {toast && (
         <div role="status" style={{
           position: "fixed", bottom: "1.5rem", right: "1.5rem", zIndex: 9999,
-          padding: "0.75rem 1.25rem", borderRadius: 12, fontSize: "0.85rem",
-          fontWeight: 700, boxShadow: "0 4px 20px rgba(0,0,0,.5)",
-          background: toast.ok ? "rgba(22,163,74,.9)" : "rgba(239,68,68,.9)",
-          color: "#fff", backdropFilter: "blur(8px)",
+          padding: "0.6rem 1rem", borderRadius: 8, fontSize: "0.82rem",
+          fontWeight: 600,
+          background: toast.ok ? "#14532d" : "#450a0a",
+          border: `1px solid ${toast.ok ? "rgba(22,163,74,.3)" : "rgba(220,38,38,.3)"}`,
+          color: toast.ok ? "#86efac" : "#fca5a5",
         }}>
           {toast.msg}
         </div>
@@ -95,13 +96,12 @@ export default function ConfigPanel() {
             <div key={s.key} className="aura-card p-5">
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "1rem", flexWrap: "wrap" }}>
                 <div style={{ flex: 1, minWidth: 200 }}>
-                  <p className="font-black text-white text-sm mb-0.5">{getLabel(s.key)}</p>
+                  <p className="text-sm font-semibold mb-0.5" style={{ color: "#e4e4e7" }}>{getLabel(s.key)}</p>
                   {meta?.description && (
-                    <p style={{ color: "#94a3b8", fontSize: "0.78rem", lineHeight: 1.5 }}>{meta.description}</p>
+                    <p style={{ color: "#71717a", fontSize: "0.78rem", lineHeight: 1.5 }}>{meta.description}</p>
                   )}
-                  <p style={{ color: "#334155", fontSize: "0.68rem", marginTop: "0.35rem" }}>
-                    Clave: <code style={{ color: "#475569" }}>{s.key}</code> ·
-                    Actualizado: {new Date(s.updatedAt).toLocaleDateString("es-MX", { day: "2-digit", month: "short", year: "numeric" })}
+                  <p className="admin-label mt-1">
+                    {s.key} · actualizado {new Date(s.updatedAt).toLocaleDateString("es-MX", { day: "2-digit", month: "short", year: "numeric" })}
                   </p>
                 </div>
                 <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", flexShrink: 0 }}>
@@ -111,25 +111,25 @@ export default function ConfigPanel() {
                       value={drafts[s.key] ?? s.value}
                       onChange={(e) => setDrafts((d) => ({ ...d, [s.key]: e.target.value }))}
                       className="aura-input"
-                      style={{ width: meta?.type === "number" ? 96 : 200, textAlign: meta?.type === "number" ? "center" : "left" }}
+                      style={{ width: meta?.type === "number" ? 88 : 200, textAlign: meta?.type === "number" ? "center" : "left" }}
                       aria-label={getLabel(s.key)}
                     />
                     {meta?.unit && (
-                      <span style={{ color: "#475569", fontSize: "0.8rem" }}>{meta.unit}</span>
+                      <span className="admin-label">{meta.unit}</span>
                     )}
                   </div>
                   <button
                     onClick={() => save(s.key)}
                     disabled={saving === s.key || !isDirty}
-                    className="btn-gold disabled:opacity-40"
-                    style={{ padding: "0.5rem 1.25rem", fontSize: "0.78rem" }}>
+                    className="px-4 py-2 rounded-md text-xs font-semibold disabled:opacity-30 transition-all"
+                    style={{ background: isDirty ? "rgba(255,255,255,0.08)" : "transparent", color: isDirty ? "#e4e4e7" : "#3f3f46", border: "1px solid rgba(255,255,255,0.08)" }}>
                     {saving === s.key ? "..." : "Guardar"}
                   </button>
                   {isDirty && (
                     <button
                       onClick={() => setDrafts((d) => ({ ...d, [s.key]: s.value }))}
-                      style={{ color: "#475569", fontSize: "0.8rem", background: "none", border: "none", cursor: "pointer" }}
-                      title="Descartar cambios">
+                      style={{ color: "#52525b", fontSize: "0.8rem", background: "none", border: "none", cursor: "pointer" }}
+                      title="Descartar">
                       ✕
                     </button>
                   )}

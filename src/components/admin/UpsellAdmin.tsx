@@ -60,80 +60,85 @@ export default function UpsellAdmin({ assets }: { assets: Asset[] }) {
   };
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-5">
       {/* Formulario nueva regla */}
-      <form onSubmit={handleCreate} className="bg-white rounded-2xl shadow p-6 space-y-4">
-        <h2 className="font-bold text-[#1e3a5f]">Nueva regla</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <form onSubmit={handleCreate} className="aura-card p-5 space-y-4">
+        <p className="admin-label">Nueva regla de upsell</p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           <div>
-            <label className="block text-xs font-semibold text-gray-500 mb-1">CUANDO ELIJA...</label>
+            <label className="admin-label block mb-1.5">Cuando elija...</label>
             <select value={form.sourceAssetId} onChange={(e) => setForm((f) => ({ ...f, sourceAssetId: e.target.value }))}
-              required className="w-full border rounded-lg px-3 py-2 text-sm">
-              <option value="">— Selecciona activo origen —</option>
+              required className="aura-select">
+              <option value="">— Origen —</option>
               {assets.map((a) => <option key={a.id} value={a.id}>{a.name}</option>)}
             </select>
           </div>
           <div>
-            <label className="block text-xs font-semibold text-gray-500 mb-1">SUGERIR...</label>
+            <label className="admin-label block mb-1.5">Sugerir...</label>
             <select value={form.suggestedAssetId} onChange={(e) => setForm((f) => ({ ...f, suggestedAssetId: e.target.value }))}
-              required className="w-full border rounded-lg px-3 py-2 text-sm">
-              <option value="">— Selecciona activo sugerido —</option>
+              required className="aura-select">
+              <option value="">— Sugerido —</option>
               {assets.filter((a) => String(a.id) !== form.sourceAssetId)
                 .map((a) => <option key={a.id} value={a.id}>{a.name}</option>)}
             </select>
           </div>
           <div>
-            <label className="block text-xs font-semibold text-gray-500 mb-1">DESCUENTO (%)</label>
-            <input type="number" min="1" max="100" value={form.discountPercent}
+            <label className="admin-label block mb-1.5">Descuento (%)</label>
+            <input type="number" min="0" max="100" value={form.discountPercent}
               onChange={(e) => setForm((f) => ({ ...f, discountPercent: e.target.value }))}
-              required className="w-full border rounded-lg px-3 py-2 text-sm" />
+              required className="aura-input" style={{ width: 100 }} />
           </div>
           <div>
-            <label className="block text-xs font-semibold text-gray-500 mb-1">TEXTO DEL BANNER (opcional)</label>
+            <label className="admin-label block mb-1.5">Texto del banner (opcional)</label>
             <input type="text" value={form.label} placeholder="¡Complementa tu evento con..."
               onChange={(e) => setForm((f) => ({ ...f, label: e.target.value }))}
-              className="w-full border rounded-lg px-3 py-2 text-sm" />
+              className="aura-input" />
           </div>
         </div>
-        {error && <p className="text-red-600 text-sm">{error}</p>}
+        {error && <p className="text-xs" style={{ color: "#f87171" }}>{error}</p>}
         <button type="submit" disabled={saving}
-          className="bg-[#1e3a5f] text-white px-6 py-2 rounded-lg text-sm font-semibold hover:bg-[#2d5a9e] disabled:opacity-50 transition-colors">
+          className="px-5 py-2 rounded-md text-sm font-semibold disabled:opacity-40 transition-all"
+          style={{ background: "rgba(255,255,255,0.08)", color: "#e4e4e7", border: "1px solid rgba(255,255,255,0.1)" }}>
           {saving ? "Guardando..." : "+ Crear regla"}
         </button>
       </form>
 
       {/* Lista de reglas */}
-      <div className="bg-white rounded-2xl shadow overflow-hidden">
-        <div className="px-6 py-4 border-b">
-          <h2 className="font-bold text-[#1e3a5f]">Reglas activas ({rules.filter((r) => r.isActive).length})</h2>
+      <div className="aura-card overflow-hidden">
+        <div className="px-5 py-3 border-b" style={{ borderColor: "rgba(255,255,255,0.06)" }}>
+          <p className="admin-label">Reglas configuradas · {rules.filter((r) => r.isActive).length} activas</p>
         </div>
-        {loading && <p className="text-gray-400 text-sm p-6">Cargando...</p>}
+        {loading && <p className="text-sm p-5" style={{ color: "#52525b" }}>Cargando...</p>}
         {!loading && rules.length === 0 && (
-          <p className="text-gray-400 text-sm p-6">No hay reglas configuradas.</p>
+          <p className="text-sm p-5" style={{ color: "#3f3f46" }}>Sin reglas configuradas.</p>
         )}
-        <div className="divide-y">
+        <div className="divide-y" style={{ borderColor: "rgba(255,255,255,0.05)" }}>
           {rules.map((rule) => (
-            <div key={rule.id} className={`flex items-center gap-4 px-6 py-4 ${!rule.isActive ? "opacity-50" : ""}`}>
+            <div key={rule.id} className="flex items-center gap-4 px-5 py-3.5"
+              style={{ opacity: rule.isActive ? 1 : 0.4 }}>
               <div className="flex-1 min-w-0">
-                <p className="text-sm">
-                  <span className="font-semibold text-[#1e3a5f]">{rule.sourceAsset.name}</span>
-                  <span className="text-gray-400 mx-2">→</span>
-                  <span className="font-semibold text-green-700">{rule.suggestedAsset.name}</span>
-                  <span className="ml-2 text-xs bg-green-100 text-green-700 font-bold px-2 py-0.5 rounded-full">
-                    -{rule.discountPercent}%
-                  </span>
+                <p className="text-sm" style={{ color: "#d4d4d8" }}>
+                  <span className="font-medium">{rule.sourceAsset.name}</span>
+                  <span style={{ color: "#3f3f46", margin: "0 0.5rem" }}>→</span>
+                  <span className="font-medium">{rule.suggestedAsset.name}</span>
+                  {Number(rule.discountPercent) > 0 && (
+                    <span className="ml-2 text-xs px-1.5 py-0.5 rounded"
+                      style={{ background: "rgba(22,163,74,0.1)", color: "#4ade80", border: "1px solid rgba(22,163,74,0.2)" }}>
+                      -{rule.discountPercent}%
+                    </span>
+                  )}
                 </p>
-                {rule.label && <p className="text-xs text-gray-400 mt-0.5 truncate">{rule.label}</p>}
+                {rule.label && <p className="text-xs mt-0.5 truncate" style={{ color: "#52525b" }}>{rule.label}</p>}
               </div>
               <div className="flex items-center gap-2 flex-shrink-0">
                 <button onClick={() => toggleActive(rule)}
-                  className={`text-xs px-3 py-1 rounded-lg font-medium border transition-colors ${rule.isActive
-                    ? "border-amber-300 text-amber-700 hover:bg-amber-50"
-                    : "border-green-300 text-green-700 hover:bg-green-50"}`}>
-                  {rule.isActive ? "Desactivar" : "Activar"}
+                  className="text-xs px-3 py-1.5 rounded-md border transition-all"
+                  style={{ borderColor: "rgba(255,255,255,0.08)", color: "#71717a", background: "transparent" }}>
+                  {rule.isActive ? "Pausar" : "Activar"}
                 </button>
                 <button onClick={() => deleteRule(rule.id)}
-                  className="text-xs px-3 py-1 rounded-lg font-medium border border-red-200 text-red-600 hover:bg-red-50 transition-colors">
+                  className="text-xs px-3 py-1.5 rounded-md border transition-all"
+                  style={{ borderColor: "rgba(220,38,38,0.2)", color: "#71717a", background: "transparent" }}>
                   Eliminar
                 </button>
               </div>
@@ -141,11 +146,6 @@ export default function UpsellAdmin({ assets }: { assets: Asset[] }) {
           ))}
         </div>
       </div>
-
-      {/* Link en navbar admin */}
-      <p className="text-xs text-gray-400 text-center">
-        Accede también desde <span className="font-mono">/admin/upsell</span>
-      </p>
     </div>
   );
 }
