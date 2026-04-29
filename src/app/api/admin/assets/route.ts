@@ -12,7 +12,7 @@ export async function GET(req: NextRequest) {
 
   const assets = await prisma.asset.findMany({
     where: {
-      // Admin ve todos sus activos (activos e inactivos) — el catálogo público filtra isActive:true por su cuenta
+      isActive: true,
       ...(rentable === "true"  ? { isRentable: true }  : {}),
       ...(rentable === "false" ? { isRentable: false } : {}),
     },
