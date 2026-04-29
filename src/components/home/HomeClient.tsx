@@ -17,7 +17,7 @@ const PKG_OWNERS: Record<string, string> = {
   "DAY-DJ-AUDIO-100": "Sonido Daysu",
   "DAY-DJ-AUDIO-200": "Sonido Daysu",
   "DAY-DJ-AUDIO-500": "Sonido Daysu",
-  "CAB-FOTO-OFERTA":  "Aura Producciones",
+  "CAB-FOTO-OFERTA":  "Daysu.vip",
   "PKG-BASICO":      "Sonido Daysu",
   "PKG-MEDIANO":     "Sonido Daysu",
   "PKG-PREMIUM":     "Sonido Daysu · DJ Iván Events",
@@ -328,7 +328,7 @@ export default function HomeClient({ packages, carouselImages = [] }: { packages
             const descLines = (pkg.description ?? "").split("\n").map((l) => l.trim()).filter(Boolean);
             const features  = descLines.length > 0 ? descLines : (PKG_FEATURES[pkg.sku] ?? []);
             const comps     = pkg.componentNames ?? [];
-            const brand     = pkg.ownerName ?? PKG_OWNERS[pkg.sku] ?? "Aura Producciones";
+            const brand     = pkg.ownerName ?? PKG_OWNERS[pkg.sku] ?? "Daysu.vip";
             const isPromo   = !!pkg.originalPrice && Number(pkg.originalPrice) > Number(pkg.dailyRate);
             const isPopular = pkg.sku === POPULAR_SKU;
             const discount  = isPromo
@@ -433,7 +433,7 @@ export default function HomeClient({ packages, carouselImages = [] }: { packages
       </section>
 
       {/* ── STATS ──────────────────────────────────────────── */}
-      <div ref={statsRef} className="stats-grid" aria-label="Estadísticas de Aura Producciones">
+      <div ref={statsRef} className="stats-grid" aria-label="Estadísticas de Daysu.vip">
         {STATS.map((s) => (
           <div key={s.label} style={{ padding: "2rem 1.25rem", background: "var(--black)", textAlign: "center" }}>
             <span className="bebas" data-target={s.num} data-suffix={s.suffix}
@@ -546,10 +546,10 @@ export default function HomeClient({ packages, carouselImages = [] }: { packages
       {/* ── FOOTER ─────────────────────────────────────────── */}
       <footer className="footer-section">
         <span className="bebas" style={{ fontSize: "1.3rem", color: "var(--gold)", letterSpacing: "0.12em" }}>
-          AURA PRODUCCIONES VIP
+          DAYSU.VIP
         </span>
         <p style={{ fontSize: "0.72rem", color: "var(--muted)", letterSpacing: "0.08em" }}>
-          © {new Date().getFullYear()} Aura Producciones · Sonido Daysu · DJ Iván Events
+          © {new Date().getFullYear()} Daysu.vip · Sonido Daysu · DJ Iván Events
         </p>
         <p style={{ fontSize: "0.72rem", color: "var(--muted)", letterSpacing: "0.08em" }}>
           Instagram · TikTok · Facebook

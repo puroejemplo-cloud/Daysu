@@ -111,7 +111,7 @@ export default function PackageComparison() {
       <div className="hidden sm:block" style={{ overflowX: "auto", padding: "0 1.25rem" }}>
         <table
           style={{ width: "100%", minWidth: 680, borderCollapse: "collapse", fontSize: "0.82rem" }}
-          aria-label="Comparación de paquetes de Aura Producciones">
+          aria-label="Comparación de paquetes de Daysu.vip">
           <thead>
             <tr>
               <th scope="col" style={{ padding: "1rem 1rem", textAlign: "left", color: "#475569", fontWeight: 700, fontSize: "0.72rem", letterSpacing: "0.1em", textTransform: "uppercase", width: "30%" }}>

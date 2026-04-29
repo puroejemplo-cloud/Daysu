@@ -14,7 +14,7 @@ export default function NotificationPermission() {
 // Helper: mostrar notificación del sistema cuando llega una reserva
 export function notifyNewBooking(clientName: string, eventName: string) {
   if (!("Notification" in window) || Notification.permission !== "granted") return;
-  new Notification("🎉 Nueva reserva — Aura Producciones", {
+  new Notification("🎉 Nueva reserva — Daysu.vip", {
     body: `${clientName} ha reservado: ${eventName}`,
     icon: "/icons/icon-192.png",
     badge: "/icons/icon-72.png",

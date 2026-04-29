@@ -123,7 +123,7 @@ export default function BookingConfirmation({ bookingId }: { bookingId: string }
         <div className="rounded-2xl p-5 border" style={{ background: "rgba(22,163,74,.08)", borderColor: "rgba(22,163,74,.3)" }}>
           <p className="font-black text-lg mb-1" style={{ color: "#22c55e" }}>✅ ¡Reserva confirmada!</p>
           <p className="text-sm" style={{ color: "#94A3B8" }}>
-            Tu paquete está apartado. El equipo de Aura Producciones se pondrá en contacto para los detalles de logística.
+            Tu paquete está apartado. El equipo de Daysu.vip se pondrá en contacto para los detalles de logística.
           </p>
         </div>
       )}

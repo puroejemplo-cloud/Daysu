@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   title: "Cotiza tu evento",
   description: "Reserva tu paquete con 30% de depósito. Tu fecha queda apartada por 48 horas. Bodas, XV Años y eventos en Zacatecas.",
   openGraph: {
-    title: "Cotiza tu evento — Aura Producciones VIP",
+    title: "Cotiza tu evento — Daysu.vip",
     description: "Reserva con 30% de depósito. Cobertura en Zacatecas–Guadalupe.",
   },
 };

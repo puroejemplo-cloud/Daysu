@@ -21,20 +21,20 @@ const dm = DM_Sans({
   display: "swap",
 });
 
-const BASE_URL = process.env.NEXTAUTH_URL ?? "https://auraproduccionesvip.com";
+const BASE_URL = process.env.NEXTAUTH_URL ?? "https://daysu.vip";
 
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
   title: {
-    default: "Aura Producciones VIP — Eventos Legendarios en Zacatecas",
-    template: "%s — Aura Producciones VIP",
+    default: "Daysu.vip — Eventos Legendarios en Zacatecas",
+    template: "%s — Daysu.vip",
   },
   description: "Paquetes de DJ, audio, iluminación y shows para bodas, quinceañeras y eventos hasta 500 personas en Zacatecas.",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
-    title: "Aura VIP",
+    title: "Daysu.vip",
     startupImage: "/apple-touch-icon.png",
   },
   icons: {
@@ -46,18 +46,17 @@ export const metadata: Metadata = {
     apple: [{ url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
   },
   openGraph: {
-    title: "Aura Producciones VIP — Eventos Legendarios en Zacatecas",
+    title: "Daysu.vip — Eventos Legendarios en Zacatecas",
     description: "Paquetes VIP de DJ, audio, iluminación y shows para bodas, quinceañeras y eventos hasta 500 personas en Zacatecas.",
     type: "website",
     url: BASE_URL,
-    siteName: "Aura Producciones VIP",
+    siteName: "Daysu.vip",
     locale: "es_MX",
-    // Coloca una imagen real en /public/og-image.jpg (1200×630 px) para activar la preview
-    images: [{ url: "/og-image.jpg", width: 1200, height: 630, alt: "Aura Producciones VIP — Eventos en Zacatecas" }],
+    images: [{ url: "/og-image.jpg", width: 1200, height: 630, alt: "Daysu.vip — Eventos en Zacatecas" }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Aura Producciones VIP",
+    title: "Daysu.vip",
     description: "Paquetes VIP para eventos en Zacatecas",
     images: ["/og-image.jpg"],
   },

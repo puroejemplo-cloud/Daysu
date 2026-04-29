@@ -71,16 +71,11 @@ function SidebarInner({ onClose }: { onClose?: () => void }) {
       <div style={{ padding: "1.25rem 1rem 1rem", borderBottom: "1px solid rgba(255,255,255,0.06)", flexShrink: 0 }}>
         <Link href="/admin" onClick={onClose}
           style={{ textDecoration: "none", display: "flex", alignItems: "center", gap: "0.6rem" }}>
-          <div style={{
-            width: 28, height: 28, borderRadius: "50%",
-            background: "var(--gold)", color: "#05051a",
-            display: "flex", alignItems: "center", justifyContent: "center",
-            fontSize: "0.7rem", fontWeight: 700, flexShrink: 0,
-          }}>A</div>
-          <div>
-            <p style={{ fontSize: "0.72rem", fontWeight: 600, color: "#e4e4e7", letterSpacing: "0.12em", textTransform: "uppercase" }}>Aura</p>
-            <p style={{ fontSize: "0.55rem", color: "#3f3f46", letterSpacing: "0.14em", textTransform: "uppercase" }}>Producciones VIP</p>
-          </div>
+          <img src="/logo-daysu.png" alt="Daysu.vip"
+            style={{ width: 28, height: 28, objectFit: "contain", flexShrink: 0 }} />
+          <p style={{ fontSize: "0.78rem", fontWeight: 700, color: "#e4e4e7", letterSpacing: "0.1em", textTransform: "uppercase" }}>
+            Daysu.vip
+          </p>
         </Link>
       </div>
 

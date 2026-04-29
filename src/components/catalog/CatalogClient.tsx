@@ -283,7 +283,7 @@ export default function CatalogClient({
               // Componentes del BOM
               const comps     = asset.componentNames ?? [];
               const accent   = PKG_ACCENT[asset.sku] ?? "#7C3AED";
-              const brand    = asset.ownerName ?? PKG_OWNERS[asset.sku] ?? "Aura Producciones";
+              const brand    = asset.ownerName ?? PKG_OWNERS[asset.sku] ?? "Daysu.vip";
 
               return (
                 <div key={asset.id}

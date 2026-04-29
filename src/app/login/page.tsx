@@ -17,12 +17,11 @@ export default function LoginPage() {
       <div className="w-full max-w-sm relative">
         {/* Logo */}
         <div className="text-center mb-8">
-          <div className="w-14 h-14 rounded-full mx-auto mb-3 flex items-center justify-center font-black text-2xl"
-            style={{ background: "var(--gold)", color: "#05051a", boxShadow: "0 0 24px rgba(201,168,76,.4)" }}>
-            A
-          </div>
+          <img src="/logo-daysu.png" alt="Daysu.vip"
+            className="mx-auto mb-3"
+            style={{ width: 72, height: 72, objectFit: "contain", filter: "drop-shadow(0 0 16px rgba(201,168,76,.4))" }} />
           <h1 className="bebas text-white tracking-widest" style={{ fontSize: "1.8rem" }}>
-            AURA PRODUCCIONES VIP
+            DAYSU.VIP
           </h1>
           <p className="text-xs uppercase tracking-widest mt-1" style={{ color: "var(--muted)" }}>
             Panel de administración

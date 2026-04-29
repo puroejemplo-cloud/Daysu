@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   title: "Catálogo de paquetes y servicios",
   description: "Explora todos los paquetes de DJ, audio, iluminación, shows y entretenimiento para tu evento en Zacatecas.",
   openGraph: {
-    title: "Catálogo — Aura Producciones VIP",
+    title: "Catálogo — Daysu.vip",
     description: "Paquetes de DJ, audio, iluminación y entretenimiento para bodas, XV Años y eventos en Zacatecas.",
   },
 };

@@ -50,16 +50,13 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 py-2.5 flex items-center gap-4">
 
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2 flex-shrink-0" style={{ textDecoration: "none" }} aria-label="Aura Producciones — inicio">
-          <div className="w-7 h-7 rounded-full flex items-center justify-center font-black text-xs flex-shrink-0"
-            style={{ background: "var(--gold)", color: "#05051a" }}
-            aria-hidden="true">
-            A
-          </div>
-          <div className="leading-tight hidden sm:block">
-            <span className="text-sm tracking-widest uppercase" style={{ fontFamily: "var(--font-bebas)", color: "var(--cream)", letterSpacing: "0.15em" }}>Aura</span>
-            <span className="block text-[9px] tracking-[.2em] uppercase" style={{ color: "#71717a" }}>Producciones VIP</span>
-          </div>
+        <Link href="/" className="flex items-center gap-2 flex-shrink-0" style={{ textDecoration: "none" }} aria-label="Daysu.vip — inicio">
+          <img src="/logo-daysu.png" alt="Daysu.vip" aria-hidden="true"
+            style={{ width: 32, height: 32, objectFit: "contain", flexShrink: 0 }} />
+          <span className="hidden sm:block text-sm font-black tracking-widest uppercase"
+            style={{ fontFamily: "var(--font-bebas)", color: "var(--cream)", letterSpacing: "0.15em" }}>
+            Daysu.vip
+          </span>
         </Link>
 
         {/* Nav links — desktop */}
