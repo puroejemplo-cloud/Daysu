@@ -43,6 +43,22 @@ export async function GET(_req: NextRequest, { params }: Params) {
   });
 }
 
+export async function DELETE(_req: NextRequest, { params }: Params) {
+  const session = await auth();
+  if (!session) return err("No autenticado", 401);
+  const { id } = await params;
+
+  const asset = await prisma.asset.findUnique({ where: { id: Number(id) } });
+  if (!asset) return err("Activo no encontrado", 404);
+
+  const isSuperAdmin = session.user.role === "superadmin";
+  const isOwner      = asset.ownerAdminId === Number(session.user.id);
+  if (!isSuperAdmin && !isOwner) return err("Solo el propietario puede eliminar este activo", 403);
+
+  await prisma.asset.update({ where: { id: Number(id) }, data: { isActive: false } });
+  return ok({ message: "Activo eliminado correctamente" });
+}
+
 export async function PATCH(req: NextRequest, { params }: Params) {
   try {
     const session = await auth();
