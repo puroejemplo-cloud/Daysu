@@ -29,10 +29,10 @@ export default function CardCarousel({ images, alt, className, style }: Props) {
   // Con una sola imagen: render simple sin controles
   if (images.length === 1) {
     return (
-      <div className={className} style={{ ...style, borderRadius: "0.75rem 0.75rem 0 0", overflow: "hidden" }}>
+      <div className={className} style={{ overflow: "hidden", ...style }}>
         <Image src={images[0]} alt={alt} fill unoptimized
           className="img-fade-in"
-          style={{ objectFit: "contain", objectPosition: "center" }} />
+          style={{ objectFit: "cover", objectPosition: "center" }} />
       </div>
     );
   }

@@ -183,9 +183,9 @@ export default function AdminSidebar() {
         background: "rgba(9,9,11,0.97)",
         borderBottom: "1px solid rgba(255,255,255,0.06)",
         backdropFilter: "blur(16px)",
-        display: "flex", alignItems: "center", justifyContent: "space-between",
+        alignItems: "center", justifyContent: "space-between",
         padding: "0.7rem 1rem",
-      }} className="lg:hidden">
+      }} className="flex lg:hidden">
         <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
           <div style={{ width: 24, height: 24, borderRadius: "50%", background: "var(--gold)", color: "#05051a", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.6rem", fontWeight: 700 }}>A</div>
           <span style={{ fontSize: "0.75rem", fontWeight: 500, color: "#a1a1aa" }}>
