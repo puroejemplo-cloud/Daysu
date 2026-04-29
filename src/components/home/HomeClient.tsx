@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import PhotoCarousel    from "./PhotoCarousel";
+import PhotoCarousel, { type CarouselPhoto } from "./PhotoCarousel";
 import Testimonials     from "./Testimonials";
 import PackageComparison from "./PackageComparison";
 import CardCarousel     from "@/components/catalog/CardCarousel";
@@ -86,7 +86,7 @@ const CONTACT = {
   zone: "Zona conurbada Zacatecas–Guadalupe",
 };
 
-export default function HomeClient({ packages }: { packages: Package[] }) {
+export default function HomeClient({ packages, carouselImages = [] }: { packages: Package[]; carouselImages?: CarouselPhoto[] }) {
   const cursorRef     = useRef<HTMLDivElement>(null);
   const ringRef       = useRef<HTMLDivElement>(null);
   const linesRef      = useRef<HTMLDivElement>(null);
@@ -310,114 +310,116 @@ export default function HomeClient({ packages }: { packages: Package[] }) {
         </div>
       </div>
 
-      {/* ── PACKAGES GRID ──────────────────────────────────── */}
+      {/* ── PACKAGES ───────────────────────────────────────── */}
       <section className="pkg-section">
         <p className="section-label">Nuestros paquetes</p>
         <h2 className="section-title" style={{ marginBottom: "2.5rem" }}>
           Experiencias<br />para cada evento
         </h2>
 
-        <div className="pkg-grid">
+        <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
           {shown.map((pkg, i) => {
-            const c        = CARD_COLORS[i % CARD_COLORS.length];
-            const isLarge  = i === 0;
-            // Galería: BD primero, luego SVG hardcoded como fallback
-            const gallery  = (pkg.imageGallery && pkg.imageGallery.length > 0)
+            const c         = CARD_COLORS[i % CARD_COLORS.length];
+            const gallery   = (pkg.imageGallery && pkg.imageGallery.length > 0)
               ? pkg.imageGallery
               : (pkg.imageUrl ?? PKG_PHOTOS[pkg.sku])
                 ? [(pkg.imageUrl ?? PKG_PHOTOS[pkg.sku]) as string]
                 : [];
-            // Descripción: líneas del texto del admin
-            const descLines = (pkg.description ?? "")
-              .split("\n").map((l) => l.trim()).filter(Boolean);
-            // Si no hay descripción en BD, usar features hardcodeadas como fallback
-            const features = descLines.length > 0
-              ? descLines.slice(0, isLarge ? 4 : 3)
-              : (PKG_FEATURES[pkg.sku] ?? []).slice(0, isLarge ? 4 : 3);
-            // Componentes del BOM
-            const comps    = pkg.componentNames ?? [];
-            const brand    = pkg.ownerName ?? PKG_OWNERS[pkg.sku] ?? "Aura Producciones";
-            const isPromo  = !!pkg.originalPrice && Number(pkg.originalPrice) > Number(pkg.dailyRate);
+            const descLines = (pkg.description ?? "").split("\n").map((l) => l.trim()).filter(Boolean);
+            const features  = descLines.length > 0 ? descLines : (PKG_FEATURES[pkg.sku] ?? []);
+            const comps     = pkg.componentNames ?? [];
+            const brand     = pkg.ownerName ?? PKG_OWNERS[pkg.sku] ?? "Aura Producciones";
+            const isPromo   = !!pkg.originalPrice && Number(pkg.originalPrice) > Number(pkg.dailyRate);
             const isPopular = pkg.sku === POPULAR_SKU;
+            const discount  = isPromo
+              ? Math.round((1 - Number(pkg.dailyRate) / Number(pkg.originalPrice)) * 100)
+              : 0;
+
             return (
-              <Link key={pkg.id} href="/catalogo"
-                className={isLarge ? "pkg-col-large pkg-inner-large" : "pkg-inner-small"}
-                onMouseEnter={(e) => {
-                  (e.currentTarget as HTMLAnchorElement).style.boxShadow = "0 24px 64px rgba(0,0,0,0.6), 0 0 0 1px rgba(201,168,76,0.3)";
-                  (e.currentTarget as HTMLAnchorElement).style.transform = "translateY(-3px)";
-                }}
-                onMouseLeave={(e) => {
-                  (e.currentTarget as HTMLAnchorElement).style.boxShadow = "";
-                  (e.currentTarget as HTMLAnchorElement).style.transform = "";
-                }}>
+              <Link key={pkg.id} href="/catalogo" className="pkg-hcard">
 
-                {/* Foto / Carrusel */}
-                <CardCarousel
-                  images={gallery}
-                  alt={pkg.name}
-                  className={isLarge ? "pkg-img-large" : "pkg-img-small"}
-                  style={{ background: c.bg }}
-                />
+                {/* ── Imagen cuadrada 1:1 ── */}
+                <div className="pkg-hcard-img" style={{ background: c.bg }}>
+                  {gallery.length > 0
+                    ? <CardCarousel images={gallery} alt={pkg.name} style={{ height: "100%", borderRadius: 0 }} />
+                    : <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                        <span className="bebas" style={{ fontSize: "clamp(3rem,8vw,5rem)", color: "rgba(201,168,76,0.15)", letterSpacing: "0.06em" }}>{pkg.sku.split("-")[0]}</span>
+                      </div>
+                  }
 
-                {/* Panel de contenido */}
-                <div className={isLarge ? "pkg-content-large" : "pkg-content-small"}>
-                  <div style={{
-                    position: "absolute", top: 0, left: 0,
-                    width: 2, height: "100%",
-                    background: "linear-gradient(to bottom, #7C3AED, #c9a84c)",
-                  }} />
-                  <span style={{ fontSize: "0.6rem", letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--gold)", marginBottom: "0.55rem" }}>
+                  {/* Badges sobre la imagen */}
+                  {isPromo && (
+                    <div style={{ position: "absolute", top: 12, right: 12, zIndex: 5, background: "#dc2626", color: "#fff", fontSize: "0.6rem", letterSpacing: "0.12em", textTransform: "uppercase", padding: "0.3rem 0.7rem", fontWeight: 800, borderRadius: 6, boxShadow: "0 2px 8px rgba(0,0,0,0.4)" }}>
+                      🔥 -{discount}%
+                    </div>
+                  )}
+                  {!isPromo && isPopular && (
+                    <div style={{ position: "absolute", top: 12, right: 12, zIndex: 5, background: "var(--gold)", color: "#05051a", fontSize: "0.6rem", letterSpacing: "0.12em", textTransform: "uppercase", padding: "0.3rem 0.7rem", fontWeight: 800, borderRadius: 6, boxShadow: "0 2px 8px rgba(0,0,0,0.4)" }}>
+                      ⭐ Popular
+                    </div>
+                  )}
+
+                  {/* Glow overlay */}
+                  <div style={{ position: "absolute", inset: 0, background: "linear-gradient(135deg, rgba(201,168,76,0.06) 0%, transparent 60%)", pointerEvents: "none", zIndex: 1 }} />
+                </div>
+
+                {/* ── Contenido ── */}
+                <div className="pkg-hcard-body">
+
+                  {/* Brand */}
+                  <p style={{ fontSize: "0.62rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "#52525b", fontWeight: 700 }}>
                     {brand} · Zacatecas
-                  </span>
-                  <h3 className="bebas" style={{ fontSize: isLarge ? "clamp(1.6rem,4vw,2.6rem)" : "clamp(1.4rem,3.5vw,1.8rem)", lineHeight: 1, color: "var(--cream)", marginBottom: "0.3rem" }}>
-                    {pkg.name}
-                  </h3>
-                  <div style={{ display: "flex", alignItems: "baseline", gap: "0.45rem", flexWrap: "wrap" }}>
-                    {pkg.originalPrice && Number(pkg.originalPrice) > Number(pkg.dailyRate) && (
-                      <span style={{ fontSize: "0.75rem", color: "#6b7280", textDecoration: "line-through" }}>
+                  </p>
+
+                  {/* Nombre */}
+                  <h3 className="bebas pkg-hcard-name">{pkg.name}</h3>
+
+                  {/* Precio */}
+                  <div style={{ display: "flex", alignItems: "baseline", gap: "0.5rem", flexWrap: "wrap", margin: "0.65rem 0 0.9rem" }}>
+                    {isPromo && (
+                      <span style={{ fontSize: "0.82rem", color: "#52525b", textDecoration: "line-through" }}>
                         ${Number(pkg.originalPrice).toLocaleString("es-MX")}
                       </span>
                     )}
-                    <p style={{ fontSize: "0.82rem", fontWeight: 700, color: "var(--cream)", display: "flex", alignItems: "baseline", gap: "0.3rem", margin: 0 }}>
-                      <span style={{ color: pkg.originalPrice ? "#f87171" : "var(--gold)" }}>$</span>
-                      {Number(pkg.dailyRate).toLocaleString("es-MX")}
-                      <span style={{ color: "var(--muted)", fontWeight: 400, fontSize: "0.7rem" }}>MXN</span>
-                    </p>
-                    {pkg.originalPrice && Number(pkg.originalPrice) > Number(pkg.dailyRate) && (
-                      <span style={{ fontSize: "0.6rem", fontWeight: 700, padding: "0.1rem 0.5rem", borderRadius: 999, background: "rgba(220,38,38,0.2)", color: "#fca5a5", border: "1px solid rgba(220,38,38,0.3)" }}>
-                        🔥 OFERTA
-                      </span>
-                    )}
+                    <span className="bebas" style={{ fontSize: "clamp(1.8rem,4vw,2.4rem)", color: isPromo ? "#f87171" : "var(--gold)", lineHeight: 1 }}>
+                      ${Number(pkg.dailyRate).toLocaleString("es-MX")}
+                    </span>
+                    <span style={{ fontSize: "0.75rem", color: "#52525b", fontWeight: 400 }}>MXN</span>
                   </div>
-                  {features.length > 0 && (
-                    <ul className="pkg-features">
-                      {features.map((f, fi) => (
-                        <li key={fi}>{f}</li>
-                      ))}
-                    </ul>
-                  )}
-                  {comps.length > 0 && (
-                    <ul className="pkg-features" style={{ borderTop: features.length > 0 ? undefined : "none", marginTop: features.length > 0 ? undefined : 0 }}>
-                      {comps.slice(0, isLarge ? 5 : 3).map((c, ci) => (
-                        <li key={ci} style={{ opacity: 0.7 }}>{c}</li>
-                      ))}
-                      {comps.length > (isLarge ? 5 : 3) && (
-                        <li style={{ opacity: 0.5 }}>+{comps.length - (isLarge ? 5 : 3)} más incluidos</li>
-                      )}
-                    </ul>
-                  )}
-                </div>
 
-                {isPromo && (
-                  <div style={{ position: "absolute", top: "1rem", right: "1rem", background: "#dc2626", color: "#fff", fontSize: "0.58rem", letterSpacing: "0.15em", textTransform: "uppercase", padding: "0.28rem 0.65rem", fontWeight: 700, borderRadius: 4 }}>
-                    🔥 OFERTA
+                  {/* Separador */}
+                  <div style={{ height: 1, background: "rgba(201,168,76,0.12)", marginBottom: "0.9rem" }} />
+
+                  {/* Características */}
+                  {features.length > 0 && (
+                    <ul className="pkg-hfeatures">
+                      {features.map((f, fi) => <li key={fi}>{f}</li>)}
+                    </ul>
+                  )}
+
+                  {/* Componentes BOM */}
+                  {comps.length > 0 && (
+                    <div style={{ marginTop: "1rem" }}>
+                      <p style={{ fontSize: "0.62rem", letterSpacing: "0.12em", textTransform: "uppercase", color: "#52525b", fontWeight: 700, marginBottom: "0.45rem" }}>
+                        Incluye equipo
+                      </p>
+                      <div style={{ display: "flex", flexWrap: "wrap", gap: "0.35rem" }}>
+                        {comps.map((comp, ci) => (
+                          <span key={ci} style={{ fontSize: "0.7rem", fontWeight: 500, padding: "0.2rem 0.65rem", borderRadius: 999, background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.09)", color: "#71717a" }}>
+                            {comp}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* CTA */}
+                  <div style={{ marginTop: "auto", paddingTop: "1.25rem" }}>
+                    <div className="pkg-hcard-cta">
+                      Ver disponibilidad →
+                    </div>
                   </div>
-                )}
-                {!isPromo && isPopular && (
-                  <div style={{ position: "absolute", top: "1rem", right: "1rem", background: "var(--gold)", color: "#05051a", fontSize: "0.58rem", letterSpacing: "0.15em", textTransform: "uppercase", padding: "0.28rem 0.65rem", fontWeight: 700, borderRadius: 4 }}>
-                    ⭐ Más popular
-                  </div>
-                )}
+                </div>
               </Link>
             );
           })}
@@ -449,7 +451,7 @@ export default function HomeClient({ packages }: { packages: Package[] }) {
       {/* Sección "Explorar" eliminada por el usuario */}
 
       {/* ── CARRUSEL DE FOTOS ──────────────────────────────── */}
-      <PhotoCarousel />
+      <PhotoCarousel images={carouselImages} />
 
       {/* ── TESTIMONIALES ───────────────────────────────────── */}
       <Testimonials />
