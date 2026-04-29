@@ -60,6 +60,7 @@ CRON_SECRET="cadena-aleatoria"                 # Protege el endpoint cron en pro
 STRIPE_SECRET_KEY="sk_test_..."
 STRIPE_WEBHOOK_SECRET="whsec_..."
 NEXTAUTH_URL="http://localhost:3000"
+BLOB_READ_WRITE_TOKEN="..."        # Vercel Blob — requerido para la galería pública
 ```
 
 En producción con **Neon** (o cualquier pooler), `prisma.config.ts` prioriza estas variables para migraciones (usa conexión directa para evitar timeouts del pooler):
@@ -92,7 +93,7 @@ POSTGRES_URL="..."              # pooler — usado en runtime si no hay directa
 | `/admin/upsell` | admin / superadmin | Gestión de reglas de upsell |
 | `/admin/galeria` | admin / superadmin | Imágenes de galería pública |
 | `/admin/ventas/nueva` | admin / superadmin | Registro de venta manual (sin Stripe) |
-| `/admin/configuracion` | admin / superadmin | Edición de `system_settings` (ej: `payment_hold_hours`) |
+| `/admin/configuracion` | admin / superadmin | Edición de `system_settings` y selección de paquetes destacados en homepage |
 | `/superadmin/admins` | superadmin | Gestión de cuentas de administrador |
 
 El middleware (`src/middleware.ts`) usa `authConfig` (edge-safe, sin bcrypt/Prisma). Bloquea `/admin/:path*` y `/superadmin/:path*`; la callback `authorized` en `auth.config.ts` rechaza a no-superadmin que intenten acceder a `/superadmin/`.
@@ -169,7 +170,7 @@ Stripe webhook POST /api/webhooks/stripe → confirma pago → booking.status = 
 - `stripe.ts` — instancia Stripe con API version `"2026-04-22.dahlia"`.
 - `checklist.ts` — `getOrCreateChecklist(bookingId, phase)` auto-genera items de equipo y tareas.
 - `rate-limit.ts` — `rateLimit(req, limit, windowMs?)` — rate limiting en memoria por IP+ruta; devuelve `Response | null`.
-- `product-tiers.ts` — lógica de pricing tiers (`"hourly"` | `"capacity"`). `getPricingTiers(sku, dbConfig?)` prioriza BD; si no hay configuración usa fallbacks hardcodeados por SKU. `getTierLabel()` genera la etiqueta del resumen de precio.
+- `product-tiers.ts` — lógica de pricing tiers (`"hourly"` | `"capacity"`). `getPricingTiers(sku, dbConfig?)` lee el campo `Asset.pricingTiers` (JSON en BD); ya no hay fallbacks hardcodeados — si un activo no tiene tiers configurados en BD, devuelve `null`. `getTierLabel()` genera la etiqueta del resumen de precio.
 
 ### Tipos de activo (`Asset.assetType`)
 
@@ -208,6 +209,8 @@ Stripe webhook POST /api/webhooks/stripe → confirma pago → booking.status = 
 
 **Notificaciones**: `AdminNotification` registra eventos del ciclo de reserva (`hold_created`, `payment_received`, `hold_expired`, `force_cancelled`).
 
+**system_settings (claves conocidas)**: `payment_hold_hours` (número, default 48), `whatsapp_number` (texto, formato internacional sin `+`), `whatsapp_message` (texto), `homepage_packages` (JSON array de `Asset.id` — vacío = mostrar todos).
+
 **PWA**: La app es instalable. `public/manifest.json` y `public/sw.js` habilitan la experiencia PWA. `src/components/ui/PWARegister.tsx` registra el service worker en el cliente.
 
 ### Admin UI — convenciones de layout
@@ -229,6 +232,8 @@ Clases auxiliares: `admin-surface` (card oscura con borde sutil), `admin-divider
 
 El token de color de acento es `var(--gold)` (`#c9a84c` / `#D4AF37`). Nunca usar colores de acento hardcodeados; usar la variable CSS.
 
+Clases UI adicionales (definidas en `globals.css`): `aura-card` (card oscura general), `aura-input` (input oscuro), `btn-gold` (CTA primario), `btn-ghost` (CTA secundario), `skeleton` (shimmer loader), `pkg-card` (tarjeta de paquete con hover effects), `cat-pill` (filtro de categoría), `live-dot` (indicador rojo pulsante), `fade-up-{1-5}` (animaciones de entrada escalonadas).
+
 ### Prisma 7 — diferencias importantes
 
 - La URL de BD **no va** en `schema.prisma`. Va en `prisma.config.ts` (para migraciones) y en el constructor `PrismaPg` (para queries en runtime).
@@ -246,3 +251,7 @@ El token de color de acento es `var(--gold)` (`#c9a84c` / `#D4AF37`). Nunca usar
 
 - `next.config.ts` incluye `allowedDevOrigins: ["192.168.100.98"]` para acceder al servidor de desarrollo desde la red local.
 - Los imports de tipos Prisma siempre usan `"@/generated/prisma"`, no `"@prisma/client"`.
+- `prisma.ts` usa un Proxy lazy: el cliente Prisma se instancia al primer acceso real en runtime, nunca en build time (evita crash si `DATABASE_URL` no está disponible al compilar).
+- `AdminLayout` siempre renderiza `AdminSidebar` (fijo en desktop, drawer en móvil) y `AdminQuickSale` (botón flotante gold para nueva venta). No añadir estas piezas manualmente en páginas individuales.
+- La ruta `/admin/upsell` existe pero **no aparece en el sidebar** — accesible solo por URL directa.
+- El `BookingWizard` detecta si la dirección del venue está fuera de zona (`ZONE_KEYWORDS = ["zacatecas", "guadalupe", ...]`) para mostrar aviso de costo de traslado adicional.
