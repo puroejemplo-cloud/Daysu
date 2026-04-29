@@ -737,19 +737,13 @@ input, select, textarea {
   .footer-section { flex-direction: row; justify-content: space-between; text-align: left; padding: 2rem 4rem; }
 }
 
-/* Catalog card image */
+/* Catalog card image — 1:1 para mostrar completas las imágenes 1024x1024 */
 .catalog-card-img {
   position: relative;
   width: 100%;
-  height: 175px;
+  aspect-ratio: 1 / 1;
   overflow: hidden;
   flex-shrink: 0;
-}
-@media (min-width: 580px) {
-  .catalog-card-img { height: 190px; }
-}
-@media (min-width: 1024px) {
-  .catalog-card-img { aspect-ratio: 800/450; height: auto; }
 }
 
 /* Catalog grid responsive */
@@ -757,6 +751,7 @@ input, select, textarea {
   display: grid;
   grid-template-columns: 1fr;
   gap: 1.25rem;
+  margin-top: 1.5rem;
 }
 @media (min-width: 580px) {
   .catalog-grid { grid-template-columns: repeat(2, 1fr); }

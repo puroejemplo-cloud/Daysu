@@ -285,182 +285,202 @@ export default function CatalogClient({
               const accent   = PKG_ACCENT[asset.sku] ?? "#7C3AED";
               const brand    = asset.ownerName ?? PKG_OWNERS[asset.sku] ?? "Daysu.vip";
 
+              // Features: descripción del admin primero, si no hay usa los hardcoded
+              const features = descLines.length > 0
+                ? descLines
+                : (PKG_FEATURES[asset.sku] ?? []);
+
               return (
                 <div key={asset.id}
                   className={`pkg-card-v2${checked && !isAvail ? " unavailable" : ""}`}>
 
-                  {/* Carrusel de fotos */}
-                  {gallery.length > 0 && (
-                    <CardCarousel
-                      images={gallery}
-                      alt={asset.name}
-                      className="catalog-card-img"
-                    />
-                  )}
-
-                  {/* Panel de contenido */}
-                  <div style={{
-                    flex: 1, padding: "1.25rem 1.5rem 1.5rem",
-                    display: "flex", flexDirection: "column",
-                    borderTop: "1px solid rgba(255,255,255,0.07)",
-                  }}>
-                    {/* Categoría — label neutro */}
-                    {asset.categoryName && (
-                      <span style={{
-                        display: "inline-block", marginBottom: "0.6rem",
-                        fontSize: "0.6rem", fontWeight: 600, letterSpacing: "0.12em",
-                        textTransform: "uppercase", color: "#52525b",
+                  {/* ── Imagen 1:1 con overlay ── */}
+                  <div style={{ position: "relative" }}>
+                    {gallery.length > 0 ? (
+                      <CardCarousel images={gallery} alt={asset.name} className="catalog-card-img" />
+                    ) : (
+                      /* Placeholder cuando no hay foto */
+                      <div className="catalog-card-img" style={{
+                        background: `linear-gradient(135deg, #0c0c10 0%, ${accent}18 100%)`,
+                        display: "flex", alignItems: "center", justifyContent: "center",
                       }}>
-                        {asset.categoryName}
+                        <span style={{ fontFamily: "var(--font-bebas)", fontSize: "3rem", color: `${accent}40`, letterSpacing: "0.05em" }}>
+                          {asset.name.split(" ")[0]}
+                        </span>
+                      </div>
+                    )}
+
+                    {/* Badge disponibilidad — top right */}
+                    {checked && (
+                      <span style={{
+                        position: "absolute", top: 10, right: 10, zIndex: 5,
+                        fontSize: "0.6rem", fontWeight: 700, padding: "0.2rem 0.65rem", borderRadius: 999,
+                        background: isAvail ? "rgba(5,40,14,0.85)" : "rgba(40,5,5,0.85)",
+                        color: isAvail ? "#4ade80" : "#f87171",
+                        border: `1px solid ${isAvail ? "rgba(74,222,128,0.4)" : "rgba(248,113,113,0.4)"}`,
+                        backdropFilter: "blur(6px)",
+                      }}>
+                        {isAvail ? "✓ Disponible" : "✕ No disponible"}
                       </span>
                     )}
 
-                    {/* Badge disponibilidad + label */}
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.6rem" }}>
-                      <span style={{ fontSize: "0.6rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(148,163,184,0.7)" }}>
-                        {brand}
-                      </span>
-                      {checked && (
-                        <span style={{
-                          fontSize: "0.62rem", fontWeight: 700, padding: "0.18rem 0.6rem", borderRadius: 999,
-                          background: isAvail ? "rgba(34,197,94,0.15)" : "rgba(239,68,68,0.12)",
-                          color: isAvail ? "#4ade80" : "#f87171",
-                          border: `1px solid ${isAvail ? "rgba(34,197,94,0.3)" : "rgba(239,68,68,0.25)"}`,
-                        }}>
-                          {isAvail ? "✓ Disponible" : "✕ Sin stock"}
-                        </span>
-                      )}
+                    {/* Gradient + meta en la base de la imagen */}
+                    <div style={{
+                      position: "absolute", bottom: 0, left: 0, right: 0, zIndex: 4,
+                      background: "linear-gradient(to top, rgba(5,5,26,0.96) 0%, rgba(5,5,26,0.55) 55%, transparent 100%)",
+                      padding: "1.75rem 1rem 0.85rem",
+                    }}>
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
+                        <div style={{ minWidth: 0 }}>
+                          {asset.categoryName && (
+                            <p style={{ fontSize: "0.55rem", fontWeight: 700, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--gold)", marginBottom: "0.2rem", opacity: 0.85 }}>
+                              {asset.categoryName}
+                            </p>
+                          )}
+                          <p style={{ fontSize: "0.6rem", color: "rgba(255,255,255,0.45)", letterSpacing: "0.08em", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                            {brand}
+                          </p>
+                        </div>
+                        {/* Contador de fotos del carrusel visible en la imagen */}
+                        {gallery.length > 1 && (
+                          <span style={{ fontSize: "0.55rem", color: "rgba(255,255,255,0.4)", flexShrink: 0, marginLeft: "0.5rem" }}>
+                            {gallery.length} fotos
+                          </span>
+                        )}
+                      </div>
                     </div>
+                  </div>
+
+                  {/* ── Panel de información ── */}
+                  <div style={{
+                    flex: 1, padding: "1rem 1.125rem 1.25rem",
+                    display: "flex", flexDirection: "column",
+                    gap: "0.75rem",
+                  }}>
 
                     {/* Nombre */}
                     <h3 style={{
-                      fontSize: "1.1rem", fontWeight: 600, lineHeight: 1.2,
-                      color: "#f4f4f5", letterSpacing: "-0.01em", marginBottom: "0.5rem",
+                      fontSize: "1.05rem", fontWeight: 700, lineHeight: 1.25,
+                      color: "#f4f4f5", letterSpacing: "-0.01em",
+                      margin: 0,
                     }}>
                       {asset.name}
                     </h3>
 
-                    {/* Descripción */}
-                    {descLines.length > 0 && (
-                      <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: "0.25rem", marginBottom: "0.75rem" }}>
-                        {descLines.slice(0, 4).map((line, li) => (
+                    {/* Features */}
+                    {features.length > 0 && (
+                      <ul style={{ listStyle: "none", margin: 0, padding: 0, display: "flex", flexDirection: "column", gap: "0.28rem" }}>
+                        {features.slice(0, 4).map((line, li) => (
                           <li key={li} style={{
-                            fontSize: "0.75rem", color: "#71717a",
-                            display: "flex", alignItems: "flex-start", gap: "0.5rem", lineHeight: 1.5,
+                            fontSize: "0.76rem", color: "#71717a",
+                            display: "flex", alignItems: "flex-start", gap: "0.45rem", lineHeight: 1.5,
                           }}>
-                            <span style={{ color: "rgba(201,168,76,0.5)", fontSize: "0.5rem", marginTop: "0.35rem", flexShrink: 0 }}>—</span>
+                            <span style={{ color: accent, fontSize: "0.48rem", marginTop: "0.38rem", flexShrink: 0 }}>✦</span>
                             {line}
                           </li>
                         ))}
                       </ul>
                     )}
 
-                    {/* Precio — tipografía editorial */}
-                    {(() => {
-                      const hTiers = getHourlyTiers(asset.sku, asset.pricingTiers);
-                      const cTiers = getCapacityTiers(asset.sku, asset.pricingTiers);
-                      return hTiers ? (
-                      /* Por hora */
-                      <div style={{ marginBottom: "0.75rem", padding: "0.75rem", borderRadius: 8, background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)" }}>
-                        <p style={{ fontSize: "0.6rem", fontWeight: 600, letterSpacing: "0.12em", textTransform: "uppercase", color: "#52525b", marginBottom: "0.6rem" }}>
-                          Por hora
+                    {/* Componentes BOM — si los hay, compactos */}
+                    {comps.length > 0 && (
+                      <div style={{ padding: "0.6rem 0.75rem", borderRadius: 8, background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)" }}>
+                        <p style={{ fontSize: "0.55rem", fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase", color: "#475569", marginBottom: "0.35rem" }}>
+                          Incluye
                         </p>
-                        <div style={{ display: "flex", flexDirection: "column", gap: "0.3rem" }}>
-                          {hTiers.map((tier) => (
-                            <div key={tier.label} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "0.3rem 0", borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
-                              <span style={{ fontSize: "0.8rem", color: "#a1a1aa" }}>{tier.label}</span>
-                              <span style={{ fontSize: "1rem", fontWeight: 400, color: "#d4af37", letterSpacing: "-0.02em" }}>
-                                ${tier.price.toLocaleString("es-MX")}
-                                <span style={{ fontSize: "0.6rem", color: "#52525b", marginLeft: "0.2rem" }}>MXN</span>
-                              </span>
-                            </div>
+                        <div style={{ display: "flex", flexWrap: "wrap", gap: "0.3rem" }}>
+                          {comps.slice(0, 6).map((c, ci) => (
+                            <span key={ci} style={{
+                              fontSize: "0.65rem", color: "rgba(245,240,232,0.65)",
+                              background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)",
+                              borderRadius: 4, padding: "0.15rem 0.5rem",
+                            }}>
+                              {c}
+                            </span>
                           ))}
-                        </div>
-                      </div>
-                    ) : cTiers ? (
-                      /* Por capacidad */
-                      <div style={{ marginBottom: "0.75rem", padding: "0.75rem", borderRadius: 8, background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)" }}>
-                        <p style={{ fontSize: "0.6rem", fontWeight: 600, letterSpacing: "0.12em", textTransform: "uppercase", color: "#52525b", marginBottom: "0.6rem" }}>
-                          Por capacidad
-                        </p>
-                        <div style={{ display: "flex", flexDirection: "column", gap: "0.3rem" }}>
-                          {cTiers.map((opt) => (
-                            <div key={opt.label} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "0.3rem 0", borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
-                              <span style={{ fontSize: "0.8rem", color: "#a1a1aa" }}>{opt.label}</span>
-                              <span style={{ fontSize: "1rem", fontWeight: 400, color: opt.price > 0 ? "#d4af37" : "#3f3f46", letterSpacing: "-0.02em" }}>
-                                {opt.price > 0 ? `$${opt.price.toLocaleString("es-MX")}` : "Por confirmar"}
-                                {opt.price > 0 && <span style={{ fontSize: "0.6rem", color: "#52525b", marginLeft: "0.2rem" }}>MXN</span>}
-                              </span>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    ) : (
-                      /* Precio estándar — elegante, no supermercado */
-                      <div style={{ marginBottom: "0.75rem" }}>
-                        {asset.originalPrice && Number(asset.originalPrice) > Number(asset.dailyRate) && (
-                          <p style={{ fontSize: "0.78rem", color: "#52525b", textDecoration: "line-through", marginBottom: "0.1rem" }}>
-                            ${Number(asset.originalPrice).toLocaleString("es-MX")} MXN
-                          </p>
-                        )}
-                        <div style={{ display: "flex", alignItems: "baseline", gap: "0.4rem" }}>
-                          <span style={{ fontSize: "1.75rem", fontWeight: 300, letterSpacing: "-0.04em", color: "#d4af37", lineHeight: 1 }}>
-                            ${Number(asset.dailyRate).toLocaleString("es-MX")}
-                          </span>
-                          <span style={{ fontSize: "0.65rem", color: "#52525b", fontWeight: 400 }}>MXN</span>
-                          {asset.originalPrice && Number(asset.originalPrice) > Number(asset.dailyRate) && (
-                            <span style={{ fontSize: "0.65rem", color: "#71717a", padding: "0.15rem 0.5rem", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 4 }}>
-                              Oferta
+                          {comps.length > 6 && (
+                            <span style={{ fontSize: "0.65rem", color: "#475569", padding: "0.15rem 0.4rem" }}>
+                              +{comps.length - 6} más
                             </span>
                           )}
                         </div>
                       </div>
-                    );
-                    })()}
-
-                    {/* Componentes del BOM (si el paquete tiene) */}
-                    {comps.length > 0 && (
-                      <div style={{ marginBottom: "1rem" }}>
-                        <p style={{ fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.15em", textTransform: "uppercase", color: "#475569", marginBottom: "0.4rem" }}>
-                          Incluye
-                        </p>
-                        <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: "0.2rem" }}>
-                          {comps.slice(0, 5).map((c, ci) => (
-                            <li key={ci} style={{
-                              fontSize: "0.72rem", color: "rgba(245,240,232,0.75)",
-                              display: "flex", alignItems: "flex-start", gap: "0.4rem", lineHeight: 1.4,
-                            }}>
-                              <span style={{ color: accent, fontSize: "0.52rem", marginTop: "0.2rem", flexShrink: 0 }}>✦</span>
-                              {c}
-                            </li>
-                          ))}
-                          {comps.length > 5 && (
-                            <li style={{ fontSize: "0.68rem", color: "#475569" }}>
-                              +{comps.length - 5} más incluidos
-                            </li>
-                          )}
-                        </ul>
-                      </div>
                     )}
 
-                    {/* CTA */}
+                    {/* Precio */}
                     <div style={{ marginTop: "auto" }}>
-                      {checked && !isAvail ? (
-                        <span className="btn-ghost" style={{ textAlign: "center", display: "block", fontSize: "0.75rem", opacity: 0.5, cursor: "not-allowed" }}>
-                          No disponible para esa fecha
-                        </span>
-                      ) : (
-                        <Link
-                          href={
-                            range.from
-                              ? `/reservar?asset=${asset.id}&start=${range.from.toISOString()}&sh=${setupHour}`
-                              : `/reservar?asset=${asset.id}`
-                          }
-                          className="btn-gold" style={{ textAlign: "center", display: "block" }}>
-                          Cotizar ahora →
-                        </Link>
-                      )}
+                      {(() => {
+                        const hTiers = getHourlyTiers(asset.sku, asset.pricingTiers);
+                        const cTiers = getCapacityTiers(asset.sku, asset.pricingTiers);
+                        return hTiers ? (
+                          <div style={{ padding: "0.65rem 0.75rem", borderRadius: 8, background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)" }}>
+                            <p style={{ fontSize: "0.55rem", fontWeight: 700, letterSpacing: "0.15em", textTransform: "uppercase", color: "#52525b", marginBottom: "0.4rem" }}>Por hora</p>
+                            {hTiers.map((tier) => (
+                              <div key={tier.label} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "0.2rem 0", borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
+                                <span style={{ fontSize: "0.75rem", color: "#a1a1aa" }}>{tier.label}</span>
+                                <span style={{ fontSize: "0.95rem", fontWeight: 400, color: "#d4af37", letterSpacing: "-0.02em" }}>
+                                  ${tier.price.toLocaleString("es-MX")} <span style={{ fontSize: "0.55rem", color: "#52525b" }}>MXN</span>
+                                </span>
+                              </div>
+                            ))}
+                          </div>
+                        ) : cTiers ? (
+                          <div style={{ padding: "0.65rem 0.75rem", borderRadius: 8, background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)" }}>
+                            <p style={{ fontSize: "0.55rem", fontWeight: 700, letterSpacing: "0.15em", textTransform: "uppercase", color: "#52525b", marginBottom: "0.4rem" }}>Por capacidad</p>
+                            {cTiers.map((opt) => (
+                              <div key={opt.label} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "0.2rem 0", borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
+                                <span style={{ fontSize: "0.75rem", color: "#a1a1aa" }}>{opt.label}</span>
+                                <span style={{ fontSize: "0.95rem", fontWeight: 400, color: opt.price > 0 ? "#d4af37" : "#3f3f46", letterSpacing: "-0.02em" }}>
+                                  {opt.price > 0 ? `$${opt.price.toLocaleString("es-MX")}` : "Por confirmar"}
+                                  {opt.price > 0 && <span style={{ fontSize: "0.55rem", color: "#52525b", marginLeft: "0.2rem" }}>MXN</span>}
+                                </span>
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "0.5rem" }}>
+                            <div>
+                              {asset.originalPrice && Number(asset.originalPrice) > Number(asset.dailyRate) && (
+                                <p style={{ fontSize: "0.72rem", color: "#52525b", textDecoration: "line-through", marginBottom: "0.1rem" }}>
+                                  ${Number(asset.originalPrice).toLocaleString("es-MX")} MXN
+                                </p>
+                              )}
+                              <div style={{ display: "flex", alignItems: "baseline", gap: "0.35rem" }}>
+                                <span style={{ fontSize: "1.6rem", fontWeight: 300, letterSpacing: "-0.04em", color: "#d4af37", lineHeight: 1 }}>
+                                  ${Number(asset.dailyRate).toLocaleString("es-MX")}
+                                </span>
+                                <span style={{ fontSize: "0.62rem", color: "#52525b" }}>MXN</span>
+                              </div>
+                            </div>
+                            {asset.originalPrice && Number(asset.originalPrice) > Number(asset.dailyRate) && (
+                              <span style={{ fontSize: "0.62rem", fontWeight: 700, color: accent, background: `${accent}18`, border: `1px solid ${accent}35`, borderRadius: 4, padding: "0.2rem 0.55rem", flexShrink: 0 }}>
+                                Oferta
+                              </span>
+                            )}
+                          </div>
+                        );
+                      })()}
                     </div>
+
+                    {/* CTA */}
+                    {checked && !isAvail ? (
+                      <span style={{
+                        textAlign: "center", display: "block", fontSize: "0.75rem",
+                        padding: "0.65rem", borderRadius: 8, border: "1px solid rgba(255,255,255,0.07)",
+                        color: "#3f3f46", cursor: "not-allowed",
+                      }}>
+                        No disponible para esa fecha
+                      </span>
+                    ) : (
+                      <Link
+                        href={range.from
+                          ? `/reservar?asset=${asset.id}&start=${range.from.toISOString()}&sh=${setupHour}`
+                          : `/reservar?asset=${asset.id}`}
+                        className="btn-gold"
+                        style={{ textAlign: "center", display: "block" }}>
+                        Cotizar ahora →
+                      </Link>
+                    )}
                   </div>
                 </div>
               );
