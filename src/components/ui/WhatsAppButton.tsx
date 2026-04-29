@@ -24,7 +24,7 @@ export default function WhatsAppButton({
       t = setTimeout(() => {
         setExpanded(false);
         t = setTimeout(cycle, 30_000);
-      }, 1_000);
+      }, 10_000);
     };
 
     // Primer disparo con un pequeño delay para que no aparezca antes de que cargue la página
