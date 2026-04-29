@@ -76,38 +76,33 @@ export default function BookingWizard({ forcedAssetId }: { forcedAssetId?: numbe
   })();
 
   // ── Pre-fill desde URL ────────────────────────────────────────────────────
+  // Solo corre cuando NO hay forcedAssetId (para evitar carga doble)
   useEffect(() => {
     const sh = params.get("sh"), start = params.get("start"), assetId = params.get("asset");
     if (sh)    setSetupHour(sh);
     if (start) setEventDate(start.split("T")[0]);
-    if (assetId) {
+    // Si forcedAssetId maneja el paquete, no duplicar la carga desde URL
+    if (assetId && forcedAssetId == null) {
       fetch(`/api/assets/${assetId}`)
         .then((r) => r.json())
         .then((json) => {
-          if (json.data) {
-            const pkg: PkgInfo = {
-              id: json.data.id, name: json.data.name,
-              dailyRate: String(json.data.dailyRate), sku: json.data.sku,
-              maxGuests: json.data.maxGuests ?? null, category: json.data.category,
-              pricingTiers: json.data.pricingTiers ?? null,
-              hasSound: pkgHasSoundFromComponents(json.data.components ?? []),
-            };
-            setPreselectedPkg(pkg);
-            // Productos con tiers (hora/capacidad) no se pre-seleccionan:
-            // el usuario debe elegir explícitamente en el paso 0
-            const isSpecial = !!getPricingTiers(json.data.sku, json.data.pricingTiers);
-            if (!isSpecial) {
-              setSelected([{ assetId: pkg.id, assetName: pkg.name, quantity: 1, max: 1 }]);
-            }
-          } else {
-            setPrefillError("No se encontró el paquete seleccionado. Puedes elegir uno en el paso 2.");
+          if (!json.data) return; // asset no encontrado: ignorar silenciosamente
+          const pkg: PkgInfo = {
+            id: json.data.id, name: json.data.name,
+            dailyRate: String(json.data.dailyRate), sku: json.data.sku,
+            maxGuests: json.data.maxGuests ?? null, category: json.data.category,
+            pricingTiers: json.data.pricingTiers ?? null,
+            hasSound: pkgHasSoundFromComponents(json.data.components ?? []),
+          };
+          setPreselectedPkg(pkg);
+          const isSpecial = !!getPricingTiers(json.data.sku, json.data.pricingTiers);
+          if (!isSpecial) {
+            setSelected([{ assetId: pkg.id, assetName: pkg.name, quantity: 1, max: 1 }]);
           }
         })
-        .catch(() => {
-          setPrefillError("No se pudo cargar la información del paquete. Puedes continuar y elegir uno manualmente.");
-        });
+        .catch(() => {}); // fallo silencioso — wizard abre vacío
     }
-  }, [params]);
+  }, [params, forcedAssetId]);
 
   // ── forcedAssetId: cuando el comparador selecciona un paquete ────────────
   useEffect(() => {
@@ -124,7 +119,7 @@ export default function BookingWizard({ forcedAssetId }: { forcedAssetId?: numbe
     fetch(`/api/assets/${forcedAssetId}`)
       .then((r) => r.json())
       .then((json) => {
-        if (!json.data) { setPrefillError("No se encontró el paquete seleccionado."); return; }
+        if (!json.data) return; // asset no encontrado o inactivo: wizard abre vacío
         const d = json.data;
         const pkg: PkgInfo = {
           id: d.id, name: d.name, dailyRate: String(d.dailyRate), sku: d.sku,
@@ -136,7 +131,7 @@ export default function BookingWizard({ forcedAssetId }: { forcedAssetId?: numbe
         const isSpecial = !!getPricingTiers(d.sku, d.pricingTiers);
         if (!isSpecial) setSelected([{ assetId: pkg.id, assetName: pkg.name, quantity: 1, max: 1 }]);
       })
-      .catch(() => setPrefillError("No se pudo cargar el paquete seleccionado."));
+      .catch(() => {}); // fallo silencioso
   }, [forcedAssetId]);
 
   // ── Cargar complementos ───────────────────────────────────────────────────
