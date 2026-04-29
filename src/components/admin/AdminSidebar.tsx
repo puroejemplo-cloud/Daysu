@@ -178,25 +178,39 @@ export default function AdminSidebar() {
         background: "rgba(9,9,11,0.97)",
         borderBottom: "1px solid rgba(255,255,255,0.06)",
         backdropFilter: "blur(16px)",
-        alignItems: "center", justifyContent: "space-between",
+        display: "flex", alignItems: "center", gap: "0.75rem",
         padding: "0.7rem 1rem",
-      }} className="flex lg:hidden">
-        <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-          <div style={{ width: 24, height: 24, borderRadius: "50%", background: "var(--gold)", color: "#05051a", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.6rem", fontWeight: 700 }}>A</div>
-          <span style={{ fontSize: "0.75rem", fontWeight: 500, color: "#a1a1aa" }}>
+      }} className="lg:hidden">
+        {/* Botón toggle — izquierda, abre y cierra */}
+        <button
+          onClick={() => setOpen((v) => !v)}
+          aria-label={open ? "Cerrar menú" : "Abrir menú"}
+          aria-expanded={open}
+          style={{
+            background: open ? "rgba(201,168,76,0.12)" : "transparent",
+            border: `1px solid ${open ? "rgba(201,168,76,0.3)" : "rgba(255,255,255,0.08)"}`,
+            borderRadius: "0.4rem", padding: "0.3rem 0.45rem",
+            color: open ? "var(--gold)" : "#71717a",
+            cursor: "pointer", display: "flex", flexShrink: 0,
+            transition: "all 0.15s",
+          }}>
+          {open ? <X size={17} /> : <Menu size={17} />}
+        </button>
+
+        {/* Logo + página actual */}
+        <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", minWidth: 0 }}>
+          <img src="/logo-daysu.png" alt="" aria-hidden="true"
+            style={{ width: 22, height: 22, objectFit: "contain", flexShrink: 0 }} />
+          <span style={{ fontSize: "0.75rem", fontWeight: 500, color: "#a1a1aa", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
             {current?.label ?? "Admin"}
           </span>
         </div>
-        <button onClick={() => setOpen(true)}
-          style={{ background: "transparent", border: "1px solid rgba(255,255,255,0.08)", borderRadius: "0.4rem", padding: "0.3rem 0.45rem", color: "#71717a", cursor: "pointer", display: "flex" }}>
-          <Menu size={17} />
-        </button>
       </div>
 
       {/* ── Mobile drawer ── */}
       {open && (
         <>
-          {/* Overlay */}
+          {/* Overlay — clic fuera cierra */}
           <div onClick={() => setOpen(false)}
             style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.65)", zIndex: 48, backdropFilter: "blur(3px)" }} />
           {/* Drawer */}
@@ -208,12 +222,6 @@ export default function AdminSidebar() {
             zIndex: 49,
             animation: "slideInLeft 0.2s ease",
           }}>
-            <div style={{ display: "flex", justifyContent: "flex-end", padding: "0.75rem 1rem 0" }}>
-              <button onClick={() => setOpen(false)}
-                style={{ background: "transparent", border: "none", color: "#71717a", cursor: "pointer", display: "flex" }}>
-                <X size={17} />
-              </button>
-            </div>
             <SidebarInner onClose={() => setOpen(false)} />
           </aside>
         </>
