@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
@@ -37,9 +37,10 @@ const CAT_ICON: Record<string, string> = {
 const STEPS_PKG    = ["Tus datos", "Fecha y hora", "Complementos", "Confirmar"];
 const STEPS_NO_PKG = ["Tus datos", "Fecha y hora", "Elige paquete", "Confirmar"];
 
-export default function BookingWizard() {
+export default function BookingWizard({ forcedAssetId }: { forcedAssetId?: number | null } = {}) {
   const router = useRouter();
   const params = useSearchParams();
+  const prevForcedId = useRef<number | null | undefined>(undefined);
 
   const [step,      setStep]      = useState(0);
   const [client,    setClient]    = useState({ fullName: "", phone: "", email: "" });
@@ -97,6 +98,35 @@ export default function BookingWizard() {
         });
     }
   }, [params]);
+
+  // ── forcedAssetId: cuando el comparador selecciona un paquete ────────────
+  useEffect(() => {
+    // Solo actuar cuando cambia a un valor distinto (evita dispararse en el mount inicial)
+    if (forcedAssetId === prevForcedId.current) return;
+    prevForcedId.current = forcedAssetId;
+    if (forcedAssetId == null) return;
+
+    setPreselectedPkg(null);
+    setSelected([]);
+    setStep(0);
+    setPrefillError("");
+
+    fetch(`/api/assets/${forcedAssetId}`)
+      .then((r) => r.json())
+      .then((json) => {
+        if (!json.data) { setPrefillError("No se encontró el paquete seleccionado."); return; }
+        const d = json.data;
+        const pkg: PkgInfo = {
+          id: d.id, name: d.name, dailyRate: String(d.dailyRate), sku: d.sku,
+          maxGuests: d.maxGuests ?? null, category: d.category,
+          pricingTiers: d.pricingTiers ?? null,
+        };
+        setPreselectedPkg(pkg);
+        const isSpecial = !!getPricingTiers(d.sku, d.pricingTiers);
+        if (!isSpecial) setSelected([{ assetId: pkg.id, assetName: pkg.name, quantity: 1, max: 1 }]);
+      })
+      .catch(() => setPrefillError("No se pudo cargar el paquete seleccionado."));
+  }, [forcedAssetId]);
 
   // ── Cargar complementos ───────────────────────────────────────────────────
   const loadProducts = useCallback(async () => {

@@ -1,7 +1,13 @@
 "use client";
 import Link from "next/link";
 
-const PKGS = [
+interface DbPkg {
+  id: number; name: string; sku: string;
+  dailyRate: string; maxGuests: number | null;
+}
+
+// Datos base (colores, popularidad, capacidad fallback, SKU de referencia)
+const PKGS_BASE = [
   { name: "Básico",     price: 4600,  cap: 100,  color: "#9333ea", sku: "PKG-BASICO",     popular: false },
   { name: "Mediano",    price: 8000,  cap: 200,  color: "#f472b6", sku: "PKG-MEDIANO",    popular: true  },
   { name: "Premium",    price: 14500, cap: 200,  color: "#38bdf8", sku: "PKG-PREMIUM",    popular: false },
@@ -35,7 +41,29 @@ function Cell({ val, color }: { val: Val; color: string }) {
   return <span style={{ color, fontSize: "0.72rem", fontWeight: 700 }}>{val}</span>;
 }
 
-export default function PackageComparison() {
+export default function PackageComparison({
+  packages,
+  onSelect,
+}: {
+  packages?: DbPkg[];
+  onSelect?: (id: number) => void;
+} = {}) {
+  // Fusionar datos de BD con colores/features hardcodeados
+  // Solo muestra paquetes que existen en BD (si se pasan)
+  const PKGS = PKGS_BASE.map((base) => {
+    const dbPkg = packages?.find((p) => p.sku === base.sku);
+    if (packages && !dbPkg) return null; // ocultar si no está en BD
+    return {
+      ...base,
+      id:    dbPkg?.id ?? null,
+      price: dbPkg ? Number(dbPkg.dailyRate) : base.price,
+      name:  dbPkg?.name ?? base.name,
+      cap:   dbPkg?.maxGuests ?? base.cap,
+    };
+  }).filter(Boolean) as Array<typeof PKGS_BASE[0] & { id: number | null }>;
+
+  if (PKGS.length === 0) return null;
+
   return (
     <section style={{ padding: "4rem 0 5rem", borderTop: "1px solid rgba(255,255,255,.05)" }}>
       <div style={{ maxWidth: 1280, margin: "0 auto", padding: "0 1.25rem" }}>
@@ -93,15 +121,27 @@ export default function PackageComparison() {
                   </li>
                 ))}
               </ul>
-              <Link href={`/reservar?asset=${p.sku}`}
-                style={{
-                  display: "block", textAlign: "center", padding: "0.65rem",
-                  borderRadius: 999, fontSize: "0.8rem", fontWeight: 700,
-                  background: p.color, color: ["#fbbf24","#f59e0b"].includes(p.color) ? "#05051a" : "#fff",
-                  textDecoration: "none",
-                }}>
-                Cotizar {p.name} →
-              </Link>
+              {onSelect && p.id ? (
+                <button onClick={() => onSelect(p.id!)}
+                  style={{
+                    display: "block", width: "100%", textAlign: "center", padding: "0.65rem",
+                    borderRadius: 999, fontSize: "0.8rem", fontWeight: 700,
+                    background: p.color, color: ["#fbbf24","#f59e0b"].includes(p.color) ? "#05051a" : "#fff",
+                    border: "none", cursor: "pointer",
+                  }}>
+                  ✓ Seleccionar {p.name}
+                </button>
+              ) : (
+                <Link href={`/reservar?asset=${p.id ?? p.sku}`}
+                  style={{
+                    display: "block", textAlign: "center", padding: "0.65rem",
+                    borderRadius: 999, fontSize: "0.8rem", fontWeight: 700,
+                    background: p.color, color: ["#fbbf24","#f59e0b"].includes(p.color) ? "#05051a" : "#fff",
+                    textDecoration: "none",
+                  }}>
+                  Cotizar {p.name} →
+                </Link>
+              )}
             </div>
           );
         })}
@@ -178,15 +218,27 @@ export default function PackageComparison() {
               </td>
               {PKGS.map((p) => (
                 <td key={p.sku} style={{ padding: "1rem 0.5rem", textAlign: "center" }}>
-                  <Link href={`/reservar?asset=${p.sku}`}
-                    style={{
-                      display: "inline-block", padding: "0.45rem 0.85rem",
-                      borderRadius: 999, fontSize: "0.72rem", fontWeight: 700,
-                      background: p.color, color: ["#fbbf24","#f59e0b"].includes(p.color) ? "#05051a" : "#fff",
-                      textDecoration: "none", transition: "opacity 0.2s",
-                    }}>
-                    Cotizar
-                  </Link>
+                  {onSelect && p.id ? (
+                    <button onClick={() => onSelect(p.id!)}
+                      style={{
+                        display: "inline-block", padding: "0.45rem 0.85rem",
+                        borderRadius: 999, fontSize: "0.72rem", fontWeight: 700,
+                        background: p.color, color: ["#fbbf24","#f59e0b"].includes(p.color) ? "#05051a" : "#fff",
+                        border: "none", cursor: "pointer", transition: "opacity 0.2s",
+                      }}>
+                      ✓ Seleccionar
+                    </button>
+                  ) : (
+                    <Link href={`/reservar?asset=${p.id ?? p.sku}`}
+                      style={{
+                        display: "inline-block", padding: "0.45rem 0.85rem",
+                        borderRadius: 999, fontSize: "0.72rem", fontWeight: 700,
+                        background: p.color, color: ["#fbbf24","#f59e0b"].includes(p.color) ? "#05051a" : "#fff",
+                        textDecoration: "none", transition: "opacity 0.2s",
+                      }}>
+                      Cotizar
+                    </Link>
+                  )}
                 </td>
               ))}
             </tr>

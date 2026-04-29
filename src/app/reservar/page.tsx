@@ -1,5 +1,6 @@
-import { Suspense } from "react";
 import type { Metadata } from "next";
+import { prisma } from "@/lib/prisma";
+import ReservarContent from "./ReservarContent";
 
 export const metadata: Metadata = {
   title: "Cotiza tu evento",
@@ -9,12 +10,24 @@ export const metadata: Metadata = {
     description: "Reserva con 30% de depósito. Cobertura en Zacatecas–Guadalupe.",
   },
 };
-import BookingWizard from "@/components/booking/BookingWizard";
-import BookingWizardSkeleton from "@/components/booking/BookingWizardSkeleton";
-import BookingWizardErrorBoundary from "@/components/booking/BookingWizardErrorBoundary";
-import PackageComparison from "@/components/home/PackageComparison";
 
-export default function ReservarPage() {
+export default async function ReservarPage({
+  searchParams,
+}: {
+  searchParams: { asset?: string; sh?: string; start?: string };
+}) {
+  // Paquetes activos de la BD para el comparador
+  const packages = await prisma.asset.findMany({
+    where: { isActive: true, isRentable: true, assetType: "package" },
+    select: { id: true, name: true, sku: true, dailyRate: true, maxGuests: true },
+    orderBy: { dailyRate: "asc" },
+  });
+
+  // Si viene ?asset=ID desde el catálogo, inicializar el wizard con ese paquete
+  const initialAssetId = searchParams.asset
+    ? parseInt(searchParams.asset, 10) || null
+    : null;
+
   return (
     <div style={{
       minHeight: "100vh",
@@ -24,7 +37,6 @@ export default function ReservarPage() {
         #05051a
       `,
     }}>
-
       <div className="max-w-5xl mx-auto px-4 py-10" style={{ position: "relative", zIndex: 1 }}>
         <p className="section-label">Reserva tu fecha</p>
         <h1 className="bebas text-white mb-1" style={{ fontSize: "2.8rem" }}>
@@ -34,18 +46,13 @@ export default function ReservarPage() {
           Completa el formulario — tu fecha quedará apartada por 48 hrs.
         </p>
 
-        <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: "3rem" }}>
-          <BookingWizardErrorBoundary>
-            <Suspense fallback={<BookingWizardSkeleton />}>
-              <BookingWizard />
-            </Suspense>
-          </BookingWizardErrorBoundary>
-
-          <div style={{ borderTop: "1px solid rgba(255,255,255,.06)", paddingTop: "2rem" }}>
-            <p className="section-label">Compara antes de decidir</p>
-            <PackageComparison />
-          </div>
-        </div>
+        <ReservarContent
+          packages={packages.map((p) => ({
+            ...p,
+            dailyRate: p.dailyRate.toString(),
+          }))}
+          initialAssetId={initialAssetId}
+        />
       </div>
     </div>
   );
