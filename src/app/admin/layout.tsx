@@ -5,7 +5,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   return (
     <>
       <AdminSidebar />
-      <div className="lg:ml-[220px]" style={{ minHeight: "100vh", background: "#09090b" }}>
+      <div className="admin-content">
         {children}
       </div>
       <AdminQuickSale />

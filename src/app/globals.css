@@ -352,6 +352,15 @@ input, select, textarea {
   to   { transform: translateX(0);     opacity: 1; }
 }
 
+/* ── Admin content area — offset del sidebar fijo ───────────────────────── */
+.admin-content {
+  min-height: 100vh;
+  background: #09090b;
+}
+@media (min-width: 1024px) {
+  .admin-content { margin-left: 220px; }
+}
+
 /* ── Admin page layout — espaciado generoso ─────────────────────────────── */
 .admin-page {
   max-width: 80rem;
