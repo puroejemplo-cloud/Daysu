@@ -1,9 +1,51 @@
 import HomeClient from "@/components/home/HomeClient";
 import { prisma } from "@/lib/prisma";
+import { extname, basename } from "path";
+
+function toWebpName(name: string): string {
+  return basename(name, extname(name))
+    .toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "-")
+    .replace(/-+/g, "-").replace(/^-|-$/g, "") + ".webp";
+}
+
+async function loadCarouselImages(): Promise<{ src: string; alt: string }[]> {
+  try {
+    const { list } = await import("@vercel/blob");
+    const [cfgBlobs, procBlobs] = await Promise.all([
+      list({ prefix: "galeria/config/carousel.json" }).then(r => r.blobs),
+      list({ prefix: "galeria/processed/" }).then(r => r.blobs),
+    ]);
+    const cfgBlob = cfgBlobs.find(b => b.pathname === "galeria/config/carousel.json");
+    if (!cfgBlob) return [];
+
+    const res = await fetch(cfgBlob.url, { cache: "no-store" });
+    if (!res.ok) return [];
+    const selected: string[] = await res.json();
+
+    const procMap = new Map(
+      procBlobs.map(b => [b.pathname.slice("galeria/processed/".length), b.url])
+    );
+
+    return selected
+      .map(name => {
+        const url = procMap.get(toWebpName(name));
+        if (!url) return null;
+        return {
+          src: url,
+          alt: basename(name, extname(name))
+            .replace(/[-_]/g, " ").replace(/\s+/g, " ").trim()
+            .replace(/^\w/, c => c.toUpperCase()),
+        };
+      })
+      .filter((x): x is { src: string; alt: string } => x !== null);
+  } catch { return []; }
+}
 
 export const revalidate = 60; // revalida cada minuto
 
 export default async function HomePage() {
+  const carouselImages = await loadCarouselImages();
+
   const packages = await prisma.asset.findMany({
     where: {
       isActive: true,
@@ -54,6 +96,7 @@ export default async function HomePage() {
 
   return (
     <HomeClient
+      carouselImages={carouselImages}
       packages={packages.map((p) => ({
         ...p,
         dailyRate:      p.dailyRate.toString(),

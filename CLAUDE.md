@@ -13,11 +13,14 @@ Gestiona inventario con relaciones Padre→Hijo (BOM), disponibilidad en tiempo 
 |---|---|
 | Framework | Next.js 16.2.4 (App Router) |
 | Lenguaje | TypeScript 5 |
+| UI | React 19 |
 | Base de datos | PostgreSQL 16 |
 | ORM | Prisma 7 (adapter-pg) |
 | Auth | NextAuth v5 (beta.31) — Credentials + JWT |
 | Pagos | Stripe 22 |
 | Estilos | Tailwind CSS 4 |
+| Iconos | lucide-react |
+| Fechas | date-fns + react-day-picker |
 
 ## Commands
 
@@ -36,9 +39,12 @@ npm run db:seed:admin     # Crea la cuenta superadmin inicial (ejecutar una sola
 npm run db:studio         # Abre Prisma Studio en el navegador
 
 # Build y calidad
-npm run build             # Build de producción
+npm run build             # Build de producción (incluye prisma generate automáticamente)
 npx tsc --noEmit          # Type-check sin compilar
 npm run lint              # ESLint
+
+# Scripts operativos (uno a la vez, no son parte del flujo normal)
+# scripts/*.ts — tareas puntuales: assign-owners, create-users, add-day-products, etc.
 
 # No hay suite de tests en este proyecto
 ```
@@ -56,13 +62,21 @@ STRIPE_WEBHOOK_SECRET="whsec_..."
 NEXTAUTH_URL="http://localhost:3000"
 ```
 
+En producción con **Neon** (o cualquier pooler), `prisma.config.ts` prioriza estas variables para migraciones (usa conexión directa para evitar timeouts del pooler):
+
+```
+DATABASE_URL_UNPOOLED="..."    # conexión directa — preferida para migraciones
+POSTGRES_URL_NON_POOLING="..."  # alias alternativo (Vercel Neon integration)
+POSTGRES_URL="..."              # pooler — usado en runtime si no hay directa
+```
+
 ## Arquitectura
 
 ### Rutas de la aplicación
 
 | Ruta | Acceso | Descripción |
 |---|---|---|
-| `/` | Público | Homepage con paquetes (revalidate: 3600s) |
+| `/` | Público | Homepage con paquetes (revalidate: 60s) |
 | `/catalogo` | Público | Catálogo de activos |
 | `/reservar` | Público | Wizard de reserva multi-paso |
 | `/reserva/[id]` | Público (UUID) | Confirmación de reserva individual |
@@ -119,7 +133,8 @@ Stripe webhook POST /api/webhooks/stripe → confirma pago → booking.status = 
 | `/api/admin/assets/[id]/image` | POST, DELETE | Sube o elimina foto de galería (guardada en `public/productos/`, ownership verificado) |
 | `/api/admin/assets/[id]/components` | GET, POST, DELETE | Gestión BOM desde panel admin (con auth + check ownership) |
 | `/api/admin/bookings` | GET | Listado de reservas con filtros |
-| `/api/admin/galeria` | GET, POST, DELETE | Gestión de imágenes de galería pública |
+| `/api/admin/galeria` | GET, POST, PATCH, PUT, DELETE | Galería pública: GET lista, POST procesa blur, PATCH sube nueva imagen, PUT reprocesa todas, DELETE elimina |
+| `/api/admin/galeria/carousel` | GET, PUT | Lee y guarda la selección de imágenes para el carrusel de la homepage |
 | `/api/admin/settings` | GET, PATCH | Lee y actualiza `system_settings` (clave `payment_hold_hours`, etc.) |
 | `/api/availability` | GET | Stock disponible (`?start=ISO&end=ISO&asset_id=`) |
 | `/api/availability-blocks` | GET, POST | Bloqueos manuales del calendario |
@@ -172,8 +187,14 @@ Stripe webhook POST /api/webhooks/stripe → confirma pago → booking.status = 
 ### Subida de imágenes
 
 - Las imágenes de activos se guardan localmente en `public/productos/` (nombre: `<sku-lowercase>-<timestamp>.<ext>`).
-- Las imágenes de galería pública se guardan en `public/Galeria/`.
-- No hay cloud storage. En producción esto implica que las imágenes deben estar en el servidor o en un volumen persistente.
+- Las imágenes de paquetes (fotos adicionales para la homepage) se guardan en `public/paquetes/`.
+- La galería pública usa **Vercel Blob** como almacenamiento persistente (requiere `BLOB_READ_WRITE_TOKEN`):
+  - `galeria/originals/{filename}` — originales subidos por el admin.
+  - `galeria/processed/{filename.webp}` — versiones WebP procesadas con `sharp` (máx. 1400 px).
+  - `galeria/config/blur.json` — regiones de blur por imagen (coordenadas relativas 0–1).
+  - `galeria/config/order.json` — orden de presentación (más recientes primero).
+  - `galeria/config/carousel.json` — filenames seleccionados para el carrusel de la homepage.
+- `public/Galeria/` y `public/galeria/` ya no se usan para nuevas subidas; son restos de la arquitectura anterior (solo-lectura en Vercel).
 
 ### Módulos de negocio adicionales
 
@@ -188,6 +209,25 @@ Stripe webhook POST /api/webhooks/stripe → confirma pago → booking.status = 
 **Notificaciones**: `AdminNotification` registra eventos del ciclo de reserva (`hold_created`, `payment_received`, `hold_expired`, `force_cancelled`).
 
 **PWA**: La app es instalable. `public/manifest.json` y `public/sw.js` habilitan la experiencia PWA. `src/components/ui/PWARegister.tsx` registra el service worker en el cliente.
+
+### Admin UI — convenciones de layout
+
+Todas las páginas del panel admin siguen el mismo esqueleto para mantener espaciado y tipografía uniformes. Usar estas clases de `globals.css`:
+
+```tsx
+<div className="admin-page">           {/* max-width 80rem, padding responsivo */}
+  <header className="admin-page-header">  {/* margin-bottom 2.5rem */}
+    <p className="admin-label">Sección</p>         {/* etiqueta pequeña en mayúsculas */}
+    <h1 className="admin-page-title">Título</h1>  {/* 1.625rem, font-weight 500 */}
+    <p className="admin-page-desc">Descripción.</p>
+  </header>
+  {/* contenido */}
+</div>
+```
+
+Clases auxiliares: `admin-surface` (card oscura con borde sutil), `admin-divider` (separador horizontal), `admin-badge` (pill de estado).
+
+El token de color de acento es `var(--gold)` (`#c9a84c` / `#D4AF37`). Nunca usar colores de acento hardcodeados; usar la variable CSS.
 
 ### Prisma 7 — diferencias importantes
 
