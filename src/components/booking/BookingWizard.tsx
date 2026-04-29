@@ -16,6 +16,11 @@ interface PkgInfo     {
   id: number; name: string; dailyRate: string; sku: string;
   maxGuests: number | null; category?: { name: string };
   pricingTiers?: PricingConfig | null;
+  hasSound?: boolean;
+}
+
+function pkgHasSoundFromComponents(components: { childAsset?: { name?: string } }[]): boolean {
+  return components.some((c) => /dj|audio|sonido/i.test(c.childAsset?.name ?? ""));
 }
 
 // Zona de cobertura sin cargo extra
@@ -81,6 +86,7 @@ export default function BookingWizard({ forcedAssetId }: { forcedAssetId?: numbe
               dailyRate: String(json.data.dailyRate), sku: json.data.sku,
               maxGuests: json.data.maxGuests ?? null, category: json.data.category,
               pricingTiers: json.data.pricingTiers ?? null,
+              hasSound: pkgHasSoundFromComponents(json.data.components ?? []),
             };
             setPreselectedPkg(pkg);
             // Productos con tiers (hora/capacidad) no se pre-seleccionan:
@@ -120,6 +126,7 @@ export default function BookingWizard({ forcedAssetId }: { forcedAssetId?: numbe
           id: d.id, name: d.name, dailyRate: String(d.dailyRate), sku: d.sku,
           maxGuests: d.maxGuests ?? null, category: d.category,
           pricingTiers: d.pricingTiers ?? null,
+          hasSound: pkgHasSoundFromComponents(d.components ?? []),
         };
         setPreselectedPkg(pkg);
         const isSpecial = !!getPricingTiers(d.sku, d.pricingTiers);
@@ -459,18 +466,6 @@ export default function BookingWizard({ forcedAssetId }: { forcedAssetId?: numbe
             <label className={lb} style={muted}>Hora de inicio</label>
             <input type="time" value={setupHour} onChange={(e) => setSetupHour(e.target.value)}
               className="aura-input" style={{ colorScheme: "dark", maxWidth: 160 }} />
-            <p className="text-xs mt-2" style={{ color: "#475569" }}>
-              Fin estimado: <strong style={muted}>{teardownHour}h</strong>
-            </p>
-            {preselectedPkg ? (
-              <p className="text-xs mt-1" style={{ color: "#D4AF37" }}>
-                📌 Los paquetes incluyen 5 hrs de servicio + 1 hr de bienvenida
-              </p>
-            ) : (
-              <p className="text-xs mt-1" style={{ color: "#475569" }}>
-                ℹ️ Los paquetes incluyen 5 hrs de servicio + 1 hr de bienvenida. Los servicios individuales no.
-              </p>
-            )}
           </div>
           <div>
             <label className={lb} style={muted}>Tipo de evento <span className="normal-case font-normal ml-1" style={{ color: "#475569" }}>(opcional)</span></label>
@@ -803,7 +798,7 @@ export default function BookingWizard({ forcedAssetId }: { forcedAssetId?: numbe
               {client.email && <div className="flex gap-2"><span style={muted}>✉️</span><span className="text-white">{client.email}</span></div>}
               <div className="flex gap-2"><span style={muted}>👥</span><span className="text-white">{guestNum} invitados</span></div>
               <div className="flex gap-2"><span style={muted}>📅</span><span className="text-white">{dl}</span></div>
-              <div className="flex gap-2"><span style={muted}>⏰</span><span className="text-white">{setupHour} – {teardownHour}h</span></div>
+              <div className="flex gap-2"><span style={muted}>⏰</span><span className="text-white">{setupHour}h</span></div>
               {eventName && <div className="flex gap-2"><span style={muted}>🎉</span><span className="text-white">{eventName}</span></div>}
               {venue     && <div className="flex gap-2"><span style={muted}>📍</span><span className="text-white">{venue}</span></div>}
             </div>
@@ -877,6 +872,20 @@ export default function BookingWizard({ forcedAssetId }: { forcedAssetId?: numbe
             </div>
           )}
 
+          {(() => {
+            const hasSoundPkg =
+              preselectedPkg?.hasSound === true ||
+              selected.some((s) => {
+                const prod = allProducts.find((p) => p.id === s.assetId);
+                return prod?.category?.name === "Sonido";
+              });
+            return hasSoundPkg ? (
+              <div className="rounded-2xl p-5 text-sm border" style={{ background: "rgba(212,175,55,.07)", borderColor: "rgba(212,175,55,.3)" }}>
+                <p className="font-black mb-1" style={gold}>📌 Incluye 5 hrs de servicio + 1 hr de bienvenida</p>
+                <p style={muted}>Tu paquete cubre 1 hora de recepción antes del evento y 5 horas de servicio completo.</p>
+              </div>
+            ) : null;
+          })()}
           <div className="rounded-2xl p-5 text-sm border" style={{ background: "rgba(212,175,55,.07)", borderColor: "rgba(212,175,55,.3)" }}>
             <p className="font-black mb-1" style={gold}>⏳ Hold VIP de 48 horas</p>
             <p style={muted}>Tu fecha quedará apartada 48 horas para que confirmes el pago.</p>

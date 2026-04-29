@@ -184,7 +184,8 @@ export default function ProductManager({ categories, userSuffix }: { categories:
     }
   };
 
-  const removeComponent = async (assetId: number, childId: number) => {
+  const removeComponent = async (assetId: number, childId: number, childName?: string) => {
+    if (!confirm(`¿Quitar "${childName ?? "este componente"}" del BOM?\nEl componente no se elimina, solo se desvincula del paquete.`)) return;
     await fetch(`/api/admin/assets/${assetId}/components`, {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
@@ -194,6 +195,21 @@ export default function ProductManager({ categories, userSuffix }: { categories:
     if (editingId === assetId || editBomId === assetId) {
       const r = await fetch(`/api/admin/assets/${assetId}`);
       setEditDetail((await r.json()).data);
+    }
+  };
+
+  const deleteAsset = async (asset: Asset) => {
+    const tipo = asset.assetType === "package" ? "paquete" : asset.assetType === "component" ? "componente" : "producto";
+    if (!confirm(`¿Eliminar ${tipo} "${asset.name}"?\nEsta acción lo desactivará permanentemente y no se puede deshacer.`)) return;
+    const res = await fetch(`/api/admin/assets/${asset.id}`, { method: "DELETE" });
+    if (res.ok) {
+      setMsg({ type: "ok", text: `"${asset.name}" eliminado correctamente.` });
+      if (editingId === asset.id) setEditingId(null);
+      if (editBomId === asset.id) setEditBomId(null);
+      await load();
+    } else {
+      const json = await res.json().catch(() => ({}));
+      setMsg({ type: "err", text: json.error ?? "No se pudo eliminar el activo." });
     }
   };
 
@@ -408,6 +424,11 @@ export default function ProductManager({ categories, userSuffix }: { categories:
                       {isBomOpen ? "✕ BOM" : "⚙ BOM"}
                     </button>
                   )}
+                  <button onClick={() => deleteAsset(asset)}
+                    className="text-xs font-bold px-3 py-1.5 rounded-lg border transition-colors"
+                    style={{ borderColor: "rgba(239,68,68,.3)", color: "#EF4444", background: "transparent" }}>
+                    🗑 Eliminar
+                  </button>
                 </div>
               </div>
 
@@ -803,7 +824,7 @@ export default function ProductManager({ categories, userSuffix }: { categories:
                                 )}
                               </span>
                             </div>
-                            <button onClick={() => removeComponent(asset.id, c.childAssetId)}
+                            <button onClick={() => removeComponent(asset.id, c.childAssetId, c.childAsset.name)}
                               className="text-xs font-bold px-2 py-1 rounded"
                               style={{ background: "rgba(239,68,68,.12)", color: "#EF4444" }}>
                               ✕
@@ -908,7 +929,7 @@ export default function ProductManager({ categories, userSuffix }: { categories:
                           {Number(c.childAsset.dailyRate) > 0 && ` · $${(Number(c.childAsset.dailyRate) * c.quantity).toLocaleString("es-MX")} MXN`}
                         </span>
                       </div>
-                      <button onClick={() => removeComponent(asset.id, c.childAssetId)}
+                      <button onClick={() => removeComponent(asset.id, c.childAssetId, c.childAsset.name)}
                         className="text-xs font-bold px-2 py-1 rounded"
                         style={{ background: "rgba(239,68,68,.12)", color: "#EF4444" }}>
                         ✕

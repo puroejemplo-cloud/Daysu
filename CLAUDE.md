@@ -172,6 +172,14 @@ Stripe webhook POST /api/webhooks/stripe → confirma pago → booking.status = 
 - `rate-limit.ts` — `rateLimit(req, limit, windowMs?)` — rate limiting en memoria por IP+ruta; devuelve `Response | null`.
 - `product-tiers.ts` — lógica de pricing tiers (`"hourly"` | `"capacity"`). `getPricingTiers(sku, dbConfig?)` lee el campo `Asset.pricingTiers` (JSON en BD); ya no hay fallbacks hardcodeados — si un activo no tiene tiers configurados en BD, devuelve `null`. `getTierLabel()` genera la etiqueta del resumen de precio.
 
+### Soft-delete
+
+`Asset`, `AdminUser` y `StaffUser` nunca se eliminan físicamente. El campo `isActive` se pone en `false` y todas las queries filtran con `where: { isActive: true }`. No usar `prisma.asset.delete()` ni equivalentes — fallarán por integridad referencial y además son incorrectos por diseño.
+
+### Permisos de admin sobre activos
+
+Las rutas de mutación de assets (`PUT`, `DELETE`, gestión BOM) verifican ownership: `isSuperAdmin || asset.ownerAdminId === session.user.id`. Un admin regular solo puede modificar activos cuyo `ownerAdminId` coincida con su propio id. El campo `AdminUser.suffix` identifica el "namespace" del admin; se asigna al crear activos vía `scripts/assign-owners.ts`.
+
 ### Tipos de activo (`Asset.assetType`)
 
 - `"package"` — paquete completo con precio fijo o tiers; tiene hijos BOM.
@@ -211,7 +219,7 @@ Stripe webhook POST /api/webhooks/stripe → confirma pago → booking.status = 
 
 **system_settings (claves conocidas)**: `payment_hold_hours` (número, default 48), `whatsapp_number` (texto, formato internacional sin `+`), `whatsapp_message` (texto), `homepage_packages` (JSON array de `Asset.id` — vacío = mostrar todos).
 
-**PWA**: La app es instalable. `public/manifest.json` y `public/sw.js` habilitan la experiencia PWA. `src/components/ui/PWARegister.tsx` registra el service worker en el cliente.
+**PWA**: La app es instalable. `public/manifest.json` y `public/sw.js` habilitan la experiencia PWA. `src/components/ui/PWARegister.tsx` registra el service worker en el cliente. El SW usa **network-first** para HTML/CSS/JS y **cache-first** para imágenes/fuentes/SVG. Las rutas `/api/*`, `/admin/*`, `/_next/*` siempre van a red (sin cache) — importante al depurar endpoints.
 
 ### Admin UI — convenciones de layout
 
@@ -230,7 +238,17 @@ Todas las páginas del panel admin siguen el mismo esqueleto para mantener espac
 
 Clases auxiliares: `admin-surface` (card oscura con borde sutil), `admin-divider` (separador horizontal), `admin-badge` (pill de estado).
 
-El token de color de acento es `var(--gold)` (`#c9a84c` / `#D4AF37`). Nunca usar colores de acento hardcodeados; usar la variable CSS.
+Tokens de color CSS (nunca hardcodear valores hex; siempre usar la variable):
+
+| Variable | Valor | Uso |
+|---|---|---|
+| `--gold` | `#c9a84c` | Acento principal, CTAs |
+| `--gold2` | `#D4AF37` | Variante más brillante del acento |
+| `--black` | `#05051a` | Fondo base |
+| `--cream` | `#f5f0e8` | Texto sobre fondo oscuro |
+| `--muted` | `#888` | Texto secundario |
+| `--red` | `#e03535` | Alertas, `live-dot` |
+| `--purple` | `#7C3AED` | Badges especiales |
 
 Clases UI adicionales (definidas en `globals.css`): `aura-card` (card oscura general), `aura-input` (input oscuro), `btn-gold` (CTA primario), `btn-ghost` (CTA secundario), `skeleton` (shimmer loader), `pkg-card` (tarjeta de paquete con hover effects), `cat-pill` (filtro de categoría), `live-dot` (indicador rojo pulsante), `fade-up-{1-5}` (animaciones de entrada escalonadas).
 
