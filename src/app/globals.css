@@ -766,6 +766,12 @@ input, select, textarea {
   box-shadow: 0 0 0 1px rgba(201,168,76,0.4);
 }
 
+/* Marquee de la barra de anuncio del Navbar */
+@keyframes marqueeScroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
 /* Arrow bounce para el CTA de comparador en /reservar */
 @keyframes arrowBounce {
   0%, 100% { transform: translateY(0); }
