@@ -336,7 +336,7 @@ export default function HomeClient({ packages, carouselImages = [] }: { packages
               : 0;
 
             return (
-              <Link key={pkg.id} href={`/reservar?asset=${pkg.id}`} className="pkg-hcard">
+              <Link key={pkg.id} href="/catalogo" className="pkg-hcard">
 
                 {/* ── Imagen cuadrada 1:1 ── */}
                 <div className="pkg-hcard-img" style={{ background: c.bg }}>

@@ -14,8 +14,10 @@ export const metadata: Metadata = {
 export default async function ReservarPage({
   searchParams,
 }: {
-  searchParams: { asset?: string; sh?: string; start?: string };
+  searchParams: Promise<{ asset?: string; sh?: string; start?: string }>;
 }) {
+  const sp = await searchParams;
+
   // Paquetes activos de la BD para el comparador
   const packages = await prisma.asset.findMany({
     where: { isActive: true, isRentable: true, assetType: "package" },
@@ -24,9 +26,7 @@ export default async function ReservarPage({
   });
 
   // Si viene ?asset=ID desde el catálogo, inicializar el wizard con ese paquete
-  const initialAssetId = searchParams.asset
-    ? parseInt(searchParams.asset, 10) || null
-    : null;
+  const initialAssetId = sp.asset ? parseInt(sp.asset, 10) || null : null;
 
   return (
     <div style={{
