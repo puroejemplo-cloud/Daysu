@@ -29,7 +29,7 @@ const ADMIN_LINKS = [
 
 // Texto del marquee — se duplica para loop continuo
 const MARQUEE_TEXT =
-  "✦ Bodas · Quinceañeras · XV Años · Cumpleaños VIP · Eventos Corporativos · Zacatecas · Guadalupe · Sonido Profesional · Shows Únicos · DJ Versátil · Robot LED · Cabezones · Pirotecnia · Vals en las Nubes · Paquetes Todo Incluido  ";
+  "✦ Bodas · XV Años · Cumpleaños VIP · Eventos Corporativos · Zacatecas · Guadalupe · Sonido Profesional · Shows Únicos · DJ Versátil · Robot LED · Cabezones · Pirotecnia · Vals en las Nubes · Paquetes Todo Incluido  ";
 
 export default function Navbar() {
   const path = usePathname();
@@ -165,15 +165,6 @@ export default function Navbar() {
                 </Link>
               );
             })}
-            <Link href="/login"
-              className="flex-shrink-0 rounded-lg font-black border transition-all"
-              style={{
-                color: "#7C3AED", borderColor: "rgba(124,58,237,.4)",
-                background: "rgba(124,58,237,.08)", textDecoration: "none",
-                fontSize: "0.6rem", padding: "0.45rem 0.5rem",
-              }}>
-              Admin
-            </Link>
           </nav>
         )}
         {isLoggedIn && <div className="flex-1 lg:hidden" />}
@@ -205,11 +196,6 @@ export default function Navbar() {
             </>
           ) : (
             <>
-              <Link href="/login"
-                className="text-xs font-semibold uppercase tracking-widest"
-                style={{ color: "#52525b", textDecoration: "none", letterSpacing: "0.1em" }}>
-                Admin
-              </Link>
               <Link href="/reservar"
                 className="btn-gold text-sm px-5 py-2.5 flex items-center gap-1.5"
                 style={{ textDecoration: "none" }}>
@@ -279,11 +265,6 @@ export default function Navbar() {
             </div>
           ) : (
             <div className="pt-3 border-t mt-2 space-y-2.5" style={{ borderColor: "rgba(255,255,255,.07)" }}>
-              <Link href="/login" onClick={() => setMobileOpen(false)}
-                className="block px-4 py-3 rounded-xl font-bold border"
-                style={{ color: "#94A3B8", textDecoration: "none", borderColor: "rgba(255,255,255,.07)", background: "rgba(255,255,255,.02)", fontSize: "0.875rem" }}>
-                Ingresar como administrador
-              </Link>
               <Link href="/reservar" onClick={() => setMobileOpen(false)}
                 className="btn-gold flex items-center justify-center gap-1.5"
                 style={{ textDecoration: "none", padding: "0.8rem" }}>
