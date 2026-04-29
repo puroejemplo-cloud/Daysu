@@ -33,10 +33,10 @@ function isOutOfZone(address: string) {
 }
 
 // Categorías de servicios individuales (NO paquetes completos)
-const SERVICE_CATS = ["Sonido", "Iluminación", "Entretenimiento", "Fotografía", "Staff", "Mobiliario"];
+const SERVICE_CATS = ["Sonido", "Iluminación", "Entretenimiento", "Fotografía", "Staff", "Mobiliario", "Cabinas"];
 const CAT_ICON: Record<string, string> = {
   "Sonido": "🔊", "Iluminación": "💡", "Entretenimiento": "🎭",
-  "Fotografía": "📷", "Staff": "👤", "Mobiliario": "🪑",
+  "Fotografía": "📷", "Staff": "👤", "Mobiliario": "🪑", "Cabinas": "📸",
 };
 
 const STEPS_PKG    = ["Tus datos", "Fecha y hora", "Complementos", "Confirmar"];
