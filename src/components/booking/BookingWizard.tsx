@@ -405,11 +405,19 @@ export default function BookingWizard({ forcedAssetId }: { forcedAssetId?: numbe
 
             // ── Paquete regular ────────────────────────────────────────────
             return (
-              <div className="px-3 py-2 rounded-lg text-sm" style={{ background: "rgba(124,58,237,.1)", border: "1px solid rgba(124,58,237,.3)" }}>
-                <span style={muted}>Paquete: </span>
-                <strong className="text-white">{preselectedPkg.name}</strong>
-                <span className="ml-2 font-bold" style={gold}>${Number(preselectedPkg.dailyRate).toLocaleString("es-MX")} MXN</span>
-                {preselectedPkg.maxGuests && <span className="ml-2 text-xs" style={{ color: "#475569" }}>· hasta {preselectedPkg.maxGuests} invitados</span>}
+              <div className="rounded-xl p-4" style={{ background: "rgba(124,58,237,.12)", border: "2px solid #7C3AED" }}>
+                <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: "#9333EA" }}>✦ Paquete seleccionado</p>
+                <div className="flex items-center justify-between gap-3 flex-wrap">
+                  <div>
+                    <p className="font-black text-white text-base">{preselectedPkg.name}</p>
+                    {preselectedPkg.maxGuests && (
+                      <p className="text-xs mt-0.5" style={{ color: "#9333EA" }}>👥 hasta {preselectedPkg.maxGuests} invitados</p>
+                    )}
+                  </div>
+                  <p className="text-lg font-black flex-shrink-0" style={gold}>
+                    ${Number(preselectedPkg.dailyRate).toLocaleString("es-MX")} MXN
+                  </p>
+                </div>
               </div>
             );
           })()}
