@@ -62,6 +62,9 @@ model Asset {
   pricingTiers  Json?    @map("pricing_tiers")
   imageUrl      String?  @map("image_url")      @db.VarChar(500)
   imageGallery  Json?    @map("image_gallery")  // string[] — URLs de las fotos del carrusel
+  isRecommended Boolean  @default(false) @map("is_recommended")
+  promoType     String?  @map("promo_type")     @db.VarChar(20) // "hours" | "guests" | "fixed"
+  promoMinValue Int?     @map("promo_min_value")                // umbral de horas o invitados
   ownerAdminId  Int?     @map("owner_admin_id") // qué admin es dueño del equipo
   ownerSuffix  String?  @map("owner_suffix") @db.VarChar(8) // copia del suffix para display rápido
   createdAt    DateTime @default(now()) @map("created_at")

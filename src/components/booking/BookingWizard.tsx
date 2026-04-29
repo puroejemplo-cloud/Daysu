@@ -10,6 +10,10 @@ interface AssetDetail {
   id: number; name: string; dailyRate: string; sku: string;
   maxGuests: number | null; category: { id: number; name: string }; description: string | null;
   pricingTiers?: PricingConfig | null;
+  originalPrice?: string | null;
+  isRecommended?: boolean;
+  promoType?: string | null;
+  promoMinValue?: number | null;
 }
 interface SelectedItem { assetId: number; assetName: string; quantity: number; max: number; overridePrice?: number }
 interface PkgInfo     {
@@ -185,10 +189,17 @@ export default function BookingWizard({ forcedAssetId }: { forcedAssetId?: numbe
       .sort((a, b) => Number(a.dailyRate) - Number(b.dailyRate))[0] ?? null;
   })();
 
-  // Complementos: solo categorías de servicio, excluir el paquete principal
+  // Complementos: categorías de servicio + recomendados, excluir paquete principal
   const extras = allProducts.filter((p) => {
     if (preselectedPkg && p.id === preselectedPkg.id) return false;
-    return SERVICE_CATS.includes(p.category?.name ?? "") && availability[p.id]?.isAvailable;
+    if (!availability[p.id]?.isAvailable) return false;
+    if (SERVICE_CATS.includes(p.category?.name ?? "")) return true;
+    // Recomendados fuera de SERVICE_CATS: mostrar si condición cumplida
+    if (p.isRecommended) {
+      if (p.promoType === "guests" && p.promoMinValue != null) return guestNum >= p.promoMinValue;
+      return true; // "fixed" u "hours" siempre visible
+    }
+    return false;
   });
 
   const grouped = extras.reduce<Record<string, AssetDetail[]>>((acc, p) => {
@@ -554,6 +565,38 @@ export default function BookingWizard({ forcedAssetId }: { forcedAssetId?: numbe
             {!loadingProducts && Object.keys(grouped).length === 0 && (
               <p className="text-sm text-center py-6" style={muted}>No hay complementos disponibles para esta fecha.</p>
             )}
+
+            {/* Recomendados destacados */}
+            {!loadingProducts && extras.filter((p) => p.isRecommended).map((p) => {
+              const sel = selected.find((s) => s.assetId === p.id);
+              const promoLabel = p.promoType === "guests" ? `Para ${p.promoMinValue}+ invitados` : p.promoType === "hours" ? `${p.promoMinValue} hrs incluidas` : "Promoción especial";
+              return (
+                <div key={`rec-${p.id}`}
+                  onClick={() => {
+                    if (sel) setSelected((prev) => prev.filter((s) => s.assetId !== p.id));
+                    else setSelected((prev) => [...prev, { assetId: p.id, assetName: p.name, quantity: 1, max: availability[p.id]?.availableUnits ?? 1 }]);
+                  }}
+                  className="flex items-center gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all mb-3"
+                  style={{ borderColor: sel ? "var(--gold)" : "rgba(212,175,55,.4)", background: sel ? "rgba(212,175,55,.08)" : "rgba(212,175,55,.03)" }}>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap mb-0.5">
+                      <span className="text-xs font-black px-2 py-0.5 rounded-full" style={{ background: "rgba(212,175,55,.2)", color: "var(--gold)" }}>⭐ Recomendado</span>
+                      <span className="text-xs px-2 py-0.5 rounded-full" style={{ background: "rgba(212,175,55,.1)", color: "#94A3B8" }}>{promoLabel}</span>
+                    </div>
+                    <p className="font-bold text-white text-sm">{p.name}</p>
+                    {p.description && <p className="text-xs mt-0.5" style={{ color: "#475569" }}>{p.description}</p>}
+                  </div>
+                  <div className="text-right flex-shrink-0">
+                    {p.originalPrice && Number(p.originalPrice) > Number(p.dailyRate) && (
+                      <p className="text-xs line-through" style={{ color: "#6b7280" }}>${Number(p.originalPrice).toLocaleString("es-MX")}</p>
+                    )}
+                    <p className="text-sm font-black" style={{ color: "var(--gold)" }}>${Number(p.dailyRate).toLocaleString("es-MX")}</p>
+                  </div>
+                  <div className="w-6 h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0 text-xs font-black"
+                    style={{ borderColor: sel ? "var(--gold)" : "#334155", background: sel ? "var(--gold)" : "transparent", color: sel ? "#05051a" : "transparent" }}>✓</div>
+                </div>
+              );
+            })}
 
             {!loadingProducts && Object.entries(grouped).map(([cat, products]) => (
               <div key={cat} className="mb-5">

@@ -14,6 +14,9 @@ interface Asset {
   assetType: string; // "package" | "product" | "component"
   description: string | null; imageUrl: string | null; imageGallery: string[] | null;
   pricingTiers?: PricingConfig | null;
+  isRecommended: boolean;
+  promoType: string | null;
+  promoMinValue: number | null;
   category: { name: string };
   components: AssetComp[];
   componentTotal?: number;
@@ -86,7 +89,7 @@ export default function ProductManager({ categories, userSuffix }: { categories:
       return;
     }
     setEditingId(asset.id);
-    setEditForm({ name: asset.name, sku: asset.sku, totalUnits: String(asset.totalUnits), dailyRate: String(asset.dailyRate), originalPrice: asset.originalPrice ?? "", maxGuests: String(asset.maxGuests ?? ""), isActive: asset.isActive, isRentable: asset.isRentable, description: asset.description ?? "", assetType: asset.assetType ?? "product" });
+    setEditForm({ name: asset.name, sku: asset.sku, totalUnits: String(asset.totalUnits), dailyRate: String(asset.dailyRate), originalPrice: asset.originalPrice ?? "", maxGuests: String(asset.maxGuests ?? ""), isActive: asset.isActive, isRentable: asset.isRentable, description: asset.description ?? "", assetType: asset.assetType ?? "product", isRecommended: asset.isRecommended ?? false, promoType: asset.promoType ?? "", promoMinValue: String(asset.promoMinValue ?? "") });
     setEditImageUrl(asset.imageUrl ?? null);
     setEditGallery(asset.imageGallery ?? []);
     setShowPicker(false);
@@ -131,6 +134,9 @@ export default function ProductManager({ categories, userSuffix }: { categories:
         imageGallery:  editGallery,
         imageUrl:      editGallery[0] ?? null,
         pricingTiers,
+        isRecommended: Boolean(editForm.isRecommended),
+        promoType:     editForm.promoType     || null,
+        promoMinValue: editForm.promoMinValue ? Number(editForm.promoMinValue) : null,
       }),
     });
     const json = await res.json();
@@ -768,6 +774,73 @@ export default function ProductManager({ categories, userSuffix }: { categories:
                       )}
                     </div>
                   )}
+
+                  {/* ── Sección Promoción ── */}
+                  <div className="pt-4 border-t space-y-3" style={{ borderColor: "rgba(212,175,55,.15)" }}>
+                    <p className="text-xs font-black uppercase tracking-widest" style={{ color: "var(--gold)" }}>🏷 Promoción / Recomendado</p>
+
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input type="checkbox"
+                        checked={Boolean(editForm.isRecommended)}
+                        onChange={(e) => setEditForm((f) => ({ ...f, isRecommended: e.target.checked, promoType: e.target.checked ? (f.promoType || "fixed") : "" }))}
+                        className="w-4 h-4 accent-[#D4AF37]" />
+                      <span className="text-sm text-white">Mostrar como recomendado en el flujo de reserva</span>
+                    </label>
+
+                    {Boolean(editForm.isRecommended) && (
+                      <div className="space-y-3 pl-6">
+                        <div>
+                          <label className="text-xs font-bold uppercase tracking-widest block mb-1" style={{ color: "#94A3B8" }}>Tipo de promoción</label>
+                          <div className="flex gap-2 flex-wrap">
+                            {(["fixed", "guests", "hours"] as const).map((t) => (
+                              <button key={t} type="button"
+                                onClick={() => setEditForm((f) => ({ ...f, promoType: t }))}
+                                className="text-xs font-bold px-3 py-1.5 rounded-lg border transition-colors"
+                                style={{
+                                  borderColor: editForm.promoType === t ? "var(--gold)" : "rgba(212,175,55,.25)",
+                                  background:  editForm.promoType === t ? "rgba(212,175,55,.12)" : "transparent",
+                                  color:       editForm.promoType === t ? "var(--gold)" : "#94A3B8",
+                                }}>
+                                {t === "fixed" ? "💰 Precio fijo" : t === "guests" ? "👥 Por invitados" : "⏱ Por horas"}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+
+                        {(editForm.promoType === "guests" || editForm.promoType === "hours") && (
+                          <div>
+                            <label className="text-xs font-bold uppercase tracking-widest block mb-1" style={{ color: "#94A3B8" }}>
+                              {editForm.promoType === "guests" ? "Mínimo de invitados" : "Número de horas incluidas"}
+                            </label>
+                            <input type="number" min="1"
+                              value={String(editForm.promoMinValue ?? "")}
+                              onChange={(e) => setEditForm((f) => ({ ...f, promoMinValue: e.target.value }))}
+                              placeholder={editForm.promoType === "guests" ? "ej. 100" : "ej. 3"}
+                              className="aura-input" style={{ maxWidth: 140 }} />
+                          </div>
+                        )}
+
+                        <div className="grid grid-cols-2 gap-3">
+                          <div>
+                            <label className="text-xs font-bold uppercase tracking-widest block mb-1" style={{ color: "#94A3B8" }}>Precio promo (MXN)</label>
+                            <input type="number" min="0"
+                              value={String(editForm.dailyRate ?? "")}
+                              onChange={(e) => setEditForm((f) => ({ ...f, dailyRate: e.target.value }))}
+                              className="aura-input" />
+                            <p className="text-xs mt-1" style={{ color: "#475569" }}>Este es el precio que verá el cliente</p>
+                          </div>
+                          <div>
+                            <label className="text-xs font-bold uppercase tracking-widest block mb-1" style={{ color: "#94A3B8" }}>Precio original (tachado)</label>
+                            <input type="number" min="0"
+                              value={String(editForm.originalPrice ?? "")}
+                              onChange={(e) => setEditForm((f) => ({ ...f, originalPrice: e.target.value }))}
+                              placeholder="Dejar vacío si no aplica"
+                              className="aura-input" />
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
 
                   <div className="flex gap-3">
                     <button onClick={saveEdit} disabled={savingEdit}

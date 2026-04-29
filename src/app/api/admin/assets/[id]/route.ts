@@ -69,7 +69,7 @@ export async function PATCH(req: NextRequest, { params }: Params) {
     if (!asset) return err("Activo no encontrado", 404);
 
     const body = await req.json();
-    const { name, sku, description, totalUnits, dailyRate, originalPrice, maxGuests, isRentable, isActive, categoryId, pricingTiers, imageUrl, imageGallery, assetType } = body;
+    const { name, sku, description, totalUnits, dailyRate, originalPrice, maxGuests, isRentable, isActive, categoryId, pricingTiers, imageUrl, imageGallery, assetType, isRecommended, promoType, promoMinValue } = body;
 
     const isSuperAdmin = session.user.role === "superadmin";
     const isOwner      = asset.ownerAdminId === Number(session.user.id);
@@ -99,8 +99,11 @@ export async function PATCH(req: NextRequest, { params }: Params) {
         ...(isActive      !== undefined && { isActive }),
         ...(categoryId    !== undefined && { categoryId:    Number(categoryId) }),
         ...(pricingTiers  !== undefined && { pricingTiers:  pricingTiers ?? null }),
-        ...(imageUrl      !== undefined && { imageUrl:      imageUrl ?? null }),
-        ...(imageGallery  !== undefined && { imageGallery:  Array.isArray(imageGallery) ? imageGallery : [] }),
+        ...(imageUrl        !== undefined && { imageUrl:        imageUrl ?? null }),
+        ...(imageGallery    !== undefined && { imageGallery:    Array.isArray(imageGallery) ? imageGallery : [] }),
+        ...(isRecommended   !== undefined && { isRecommended }),
+        ...(promoType       !== undefined && { promoType:       promoType ?? null }),
+        ...(promoMinValue   !== undefined && { promoMinValue:   promoMinValue !== null ? Number(promoMinValue) : null }),
       },
       include: {
         category:   true,
