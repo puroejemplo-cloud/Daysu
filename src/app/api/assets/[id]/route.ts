@@ -7,7 +7,7 @@ type Params = { params: Promise<{ id: string }> };
 export async function GET(_req: NextRequest, { params }: Params) {
   const { id } = await params;
   const asset = await prisma.asset.findUnique({
-    where: { id: Number(id) },
+    where: { id: Number(id), isActive: true },
     include: {
       category: true,
       components: { include: { childAsset: { select: { id: true, name: true } } } },
