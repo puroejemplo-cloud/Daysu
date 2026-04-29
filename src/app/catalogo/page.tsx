@@ -37,21 +37,26 @@ export default async function CatalogoPage() {
     }),
   ]);
 
-  // Construir mapa de nombres de componentes por assetId
-  const childIds   = [...new Set(componentLinks.map((c) => c.childAssetId))];
+  // Construir mapa de nombres de componentes ordenados por precio descendente
+  const childIds    = [...new Set(componentLinks.map((c) => c.childAssetId))];
   const childAssets = childIds.length
     ? await prisma.asset.findMany({
         where: { id: { in: childIds } },
-        select: { id: true, name: true },
+        select: { id: true, name: true, dailyRate: true },
       })
     : [];
-  const childNameMap = new Map(childAssets.map((a) => [a.id, a.name]));
-  const compMap      = new Map<number, string[]>();
+  const childAssetMap = new Map(childAssets.map((a) => [a.id, { name: a.name, price: Number(a.dailyRate) }]));
+
+  const compWithPrice = new Map<number, { name: string; price: number }[]>();
   for (const link of componentLinks) {
-    const name = childNameMap.get(link.childAssetId);
-    if (!name) continue;
-    if (!compMap.has(link.parentAssetId)) compMap.set(link.parentAssetId, []);
-    compMap.get(link.parentAssetId)!.push(name);
+    const asset = childAssetMap.get(link.childAssetId);
+    if (!asset) continue;
+    if (!compWithPrice.has(link.parentAssetId)) compWithPrice.set(link.parentAssetId, []);
+    compWithPrice.get(link.parentAssetId)!.push(asset);
+  }
+  const compMap = new Map<number, string[]>();
+  for (const [parentId, items] of compWithPrice) {
+    compMap.set(parentId, items.sort((a, b) => b.price - a.price).map(i => i.name));
   }
 
   // Campos nuevos (imageUrl, pricingTiers) en query separada con fallback

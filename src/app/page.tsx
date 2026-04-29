@@ -41,16 +41,24 @@ async function loadCarouselImages(): Promise<{ src: string; alt: string }[]> {
   } catch { return []; }
 }
 
-export const revalidate = 60; // revalida cada minuto
+export const revalidate = 60;
 
 export default async function HomePage() {
   const carouselImages = await loadCarouselImages();
+
+  // Leer homepage_packages para filtrar paquetes del index
+  const homepageSetting = await prisma.systemSetting.findUnique({ where: { key: "homepage_packages" } }).catch(() => null);
+  let homepagePkgIds: number[] = [];
+  try {
+    if (homepageSetting?.value) homepagePkgIds = JSON.parse(homepageSetting.value);
+  } catch { /* muestra todos */ }
 
   const packages = await prisma.asset.findMany({
     where: {
       isActive: true,
       isRentable: true,
       assetType: "package",
+      ...(homepagePkgIds.length > 0 ? { id: { in: homepagePkgIds } } : {}),
     },
     select: {
       id: true, name: true, dailyRate: true, originalPrice: true,
@@ -62,9 +70,8 @@ export default async function HomePage() {
 
   const pkgIds = packages.map((p) => p.id);
 
-  // Campos nuevos en queries separadas para evitar errores de cliente desactualizado
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [imageRows, componentLinks] = await Promise.all([
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (prisma.asset.findMany as any)({
       where: { id: { in: pkgIds } },
       select: { id: true, imageUrl: true, imageGallery: true },
@@ -81,17 +88,26 @@ export default async function HomePage() {
     Array.isArray(r.imageGallery) ? (r.imageGallery as string[]) : [],
   ]));
 
-  const childIds    = [...new Set(componentLinks.map((c) => c.childAssetId))];
+  // Componentes ordenados por precio descendente
+  const childIds = [...new Set(componentLinks.map((c) => c.childAssetId))];
   const childAssets = childIds.length
-    ? await prisma.asset.findMany({ where: { id: { in: childIds } }, select: { id: true, name: true } })
+    ? await prisma.asset.findMany({
+        where: { id: { in: childIds } },
+        select: { id: true, name: true, dailyRate: true },
+      })
     : [];
-  const childNameMap = new Map(childAssets.map((a) => [a.id, a.name]));
-  const compMap      = new Map<number, string[]>();
+  const childAssetMap = new Map(childAssets.map((a) => [a.id, { name: a.name, price: Number(a.dailyRate) }]));
+
+  const compWithPrice = new Map<number, { name: string; price: number }[]>();
   for (const link of componentLinks) {
-    const name = childNameMap.get(link.childAssetId);
-    if (!name) continue;
-    if (!compMap.has(link.parentAssetId)) compMap.set(link.parentAssetId, []);
-    compMap.get(link.parentAssetId)!.push(name);
+    const asset = childAssetMap.get(link.childAssetId);
+    if (!asset) continue;
+    if (!compWithPrice.has(link.parentAssetId)) compWithPrice.set(link.parentAssetId, []);
+    compWithPrice.get(link.parentAssetId)!.push(asset);
+  }
+  const compMap = new Map<number, string[]>();
+  for (const [parentId, items] of compWithPrice) {
+    compMap.set(parentId, items.sort((a, b) => b.price - a.price).map(i => i.name));
   }
 
   return (

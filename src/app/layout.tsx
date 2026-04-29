@@ -5,6 +5,7 @@ import Navbar from "@/components/ui/Navbar";
 import AuthSessionProvider from "@/components/ui/SessionProvider";
 import PWARegister     from "@/components/ui/PWARegister";
 import WhatsAppButton  from "@/components/ui/WhatsAppButton";
+import { prisma } from "@/lib/prisma";
 
 const bebas = Bebas_Neue({
   weight: "400",
@@ -74,7 +75,17 @@ export const viewport: Viewport = {
   ],
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  let waNumber: string | undefined, waMessage: string | undefined;
+  try {
+    const [waN, waM] = await Promise.all([
+      prisma.systemSetting.findUnique({ where: { key: "whatsapp_number" } }),
+      prisma.systemSetting.findUnique({ where: { key: "whatsapp_message" } }),
+    ]);
+    waNumber  = waN?.value;
+    waMessage = waM?.value;
+  } catch { /* usa defaults del componente */ }
+
   return (
     <html lang="es" className={`${bebas.variable} ${dm.variable}`}
       style={{ background: "#05051a" }}
@@ -92,7 +103,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <a href="#main-content" className="skip-link">Saltar al contenido</a>
           <Navbar />
           <main id="main-content">{children}</main>
-          <WhatsAppButton />
+          <WhatsAppButton number={waNumber} message={waMessage} />
           {/* Safe area bottom — espacio para la barra home del iPhone */}
           <div style={{ height: "env(safe-area-inset-bottom)" }} />
         </AuthSessionProvider>
