@@ -1,5 +1,5 @@
 "use client";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Suspense } from "react";
 import BookingWizard from "@/components/booking/BookingWizard";
 import BookingWizardSkeleton from "@/components/booking/BookingWizardSkeleton";
@@ -21,6 +21,8 @@ export default function ReservarContent({
   const [selectedPkgId, setSelectedPkgId] = useState<number | null>(initialAssetId);
   const wizardRef     = useRef<HTMLDivElement>(null);
   const comparisonRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => { window.scrollTo(0, 0); }, []);
 
   const handleSelectPackage = (id: number) => {
     setSelectedPkgId(id);
