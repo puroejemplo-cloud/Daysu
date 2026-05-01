@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useState, useRef, useEffect } from "react";
 import { Suspense } from "react";
 import BookingWizard from "@/components/booking/BookingWizard";
@@ -57,8 +57,8 @@ export default function ReservarContent({
           margin: "1.5rem 0 0",
           padding: "1rem 1.5rem",
           borderRadius: 12,
-          background: "rgba(201,168,76,0.06)",
-          border: "1px solid rgba(201,168,76,0.2)",
+          background: "rgba(232,25,138,0.06)",
+          border: "1px solid rgba(232,25,138,0.2)",
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
@@ -67,8 +67,8 @@ export default function ReservarContent({
           transition: "background 0.2s",
           userSelect: "none",
         }}
-        onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.background = "rgba(201,168,76,0.1)")}
-        onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.background = "rgba(201,168,76,0.06)")}>
+        onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.background = "rgba(232,25,138,0.1)")}
+        onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.background = "rgba(232,25,138,0.06)")}>
         <div>
           <p style={{ color: "var(--gold)", fontWeight: 700, fontSize: "0.9rem" }}>
             ¿Aún no decides qué paquete? Mira el comparador

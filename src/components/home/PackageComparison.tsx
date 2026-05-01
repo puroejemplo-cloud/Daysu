@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import Link from "next/link";
 
 interface DbPkg {
@@ -189,7 +189,7 @@ export default function PackageComparison({
             </tr>
             <tr>
               <td colSpan={PKGS.length + 1} style={{ padding: 0 }}>
-                <div style={{ height: 1, background: "linear-gradient(to right, transparent, rgba(201,168,76,.3), transparent)" }} />
+                <div style={{ height: 1, background: "linear-gradient(to right, transparent, rgba(232,25,138,.3), transparent)" }} />
               </td>
             </tr>
           </thead>

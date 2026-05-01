@@ -1,4 +1,4 @@
-import { prisma } from "@/lib/prisma";
+﻿import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
@@ -82,7 +82,7 @@ export default async function ChecklistsPage() {
                   return (
                     <div key={phase} className="text-center min-w-[80px]">
                       <p className="text-xs font-black uppercase tracking-widest mb-1"
-                        style={{ color: phase === "salida" ? "#7C3AED" : "#c9a84c" }}>
+                        style={{ color: phase === "salida" ? "#7C3AED" : "#E8198A" }}>
                         {phase}
                       </p>
                       {p ? (

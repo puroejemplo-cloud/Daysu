@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useState, useCallback, useEffect } from "react";
 import { getHourlyTiers, getCapacityTiers, type PricingConfig } from "@/lib/product-tiers";
 import CardCarousel from "./CardCarousel";
@@ -149,8 +149,8 @@ export default function CatalogClient({
       minHeight: "100vh",
       background: `
         radial-gradient(ellipse 80% 40% at 50% 0%, rgba(124,58,237,0.09) 0%, transparent 60%),
-        radial-gradient(ellipse 45% 30% at 5%  80%, rgba(201,168,76,0.05) 0%, transparent 55%),
-        radial-gradient(ellipse 45% 30% at 95% 80%, rgba(201,168,76,0.04) 0%, transparent 55%),
+        radial-gradient(ellipse 45% 30% at 5%  80%, rgba(232,25,138,0.05) 0%, transparent 55%),
+        radial-gradient(ellipse 45% 30% at 95% 80%, rgba(232,25,138,0.04) 0%, transparent 55%),
         #05051a
       `,
     }}>
@@ -418,7 +418,7 @@ export default function CatalogClient({
                             {hTiers.map((tier) => (
                               <div key={tier.label} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "0.2rem 0", borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
                                 <span style={{ fontSize: "0.75rem", color: "#a1a1aa" }}>{tier.label}</span>
-                                <span style={{ fontSize: "0.95rem", fontWeight: 400, color: "#d4af37", letterSpacing: "-0.02em" }}>
+                                <span style={{ fontSize: "0.95rem", fontWeight: 400, color: "#FF3DA8", letterSpacing: "-0.02em" }}>
                                   ${tier.price.toLocaleString("es-MX")} <span style={{ fontSize: "0.55rem", color: "#52525b" }}>MXN</span>
                                 </span>
                               </div>
@@ -430,7 +430,7 @@ export default function CatalogClient({
                             {cTiers.map((opt) => (
                               <div key={opt.label} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "0.2rem 0", borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
                                 <span style={{ fontSize: "0.75rem", color: "#a1a1aa" }}>{opt.label}</span>
-                                <span style={{ fontSize: "0.95rem", fontWeight: 400, color: opt.price > 0 ? "#d4af37" : "#3f3f46", letterSpacing: "-0.02em" }}>
+                                <span style={{ fontSize: "0.95rem", fontWeight: 400, color: opt.price > 0 ? "#FF3DA8" : "#3f3f46", letterSpacing: "-0.02em" }}>
                                   {opt.price > 0 ? `$${opt.price.toLocaleString("es-MX")}` : "Por confirmar"}
                                   {opt.price > 0 && <span style={{ fontSize: "0.55rem", color: "#52525b", marginLeft: "0.2rem" }}>MXN</span>}
                                 </span>
@@ -446,7 +446,7 @@ export default function CatalogClient({
                                 </p>
                               )}
                               <div style={{ display: "flex", alignItems: "baseline", gap: "0.35rem" }}>
-                                <span style={{ fontSize: "1.6rem", fontWeight: 300, letterSpacing: "-0.04em", color: "#d4af37", lineHeight: 1 }}>
+                                <span style={{ fontSize: "1.6rem", fontWeight: 300, letterSpacing: "-0.04em", color: "#FF3DA8", lineHeight: 1 }}>
                                   ${Number(asset.dailyRate).toLocaleString("es-MX")}
                                 </span>
                                 <span style={{ fontSize: "0.62rem", color: "#52525b" }}>MXN</span>

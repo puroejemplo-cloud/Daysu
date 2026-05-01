@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -16,7 +16,7 @@ export default function NotFound() {
       {/* Número decorativo */}
       <div aria-hidden="true" style={{
         fontFamily: "var(--font-bebas)", fontSize: "clamp(7rem,20vw,14rem)",
-        lineHeight: 1, color: "rgba(201,168,76,0.08)", userSelect: "none",
+        lineHeight: 1, color: "rgba(232,25,138,0.08)", userSelect: "none",
         marginBottom: "-2rem",
       }}>
         404
@@ -28,7 +28,7 @@ export default function NotFound() {
         background: "var(--gold)", color: "#05051a",
         display: "flex", alignItems: "center", justifyContent: "center",
         fontWeight: 900, fontSize: "1.4rem",
-        boxShadow: "0 0 24px rgba(201,168,76,.35)",
+        boxShadow: "0 0 24px rgba(232,25,138,.35)",
         marginBottom: "1.5rem",
       }} aria-hidden="true">A</div>
 

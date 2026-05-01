@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useEffect, useState, useCallback } from "react";
 import { format, formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale";
@@ -12,7 +12,7 @@ interface BookingData {
 }
 
 const STATUS: Record<string, { label: string; bg: string; color: string; icon: string }> = {
-  pending_payment: { label: "Pendiente de pago", bg: "rgba(212,175,55,.1)",  color: "#D4AF37", icon: "⏳" },
+  pending_payment: { label: "Pendiente de pago", bg: "rgba(212,175,55,.1)",  color: "#FF3DA8", icon: "⏳" },
   confirmed:       { label: "Confirmada",         bg: "rgba(22,163,74,.1)",   color: "#22c55e", icon: "✅" },
   expired:         { label: "Vencida",            bg: "rgba(239,68,68,.1)",   color: "#EF4444", icon: "❌" },
   cancelled:       { label: "Cancelada",          bg: "rgba(100,116,139,.1)", color: "#64748B", icon: "🚫" },
@@ -93,17 +93,17 @@ export default function BookingConfirmation({ bookingId }: { bookingId: string }
       {/* Hold countdown */}
       {booking.status === "pending_payment" && booking.expiresAt && (
         <div className="rounded-2xl p-5 border-2" style={{ background: "rgba(212,175,55,.06)", borderColor: "rgba(212,175,55,.4)" }}>
-          <p className="font-black text-lg mb-1" style={{ color: "#D4AF37" }}>⏳ Vence {timeLeft}</p>
+          <p className="font-black text-lg mb-1" style={{ color: "#FF3DA8" }}>⏳ Vence {timeLeft}</p>
           <p className="text-sm mb-5" style={{ color: "#94A3B8" }}>
             Tu paquete está apartado hasta{" "}
-            <strong style={{ color: "#D4AF37" }}>
+            <strong style={{ color: "#FF3DA8" }}>
               {format(new Date(booking.expiresAt), "d MMM yyyy 'a las' HH:mm'h'", { locale: es })}
             </strong>.
             Realiza el pago antes de que venza.
           </p>
           <div className="rounded-xl p-4 space-y-3 border" style={{ background: "var(--bg-card)", borderColor: "rgba(124,58,237,.2)" }}>
             <p className="font-black text-white">💳 Pago del apartado (30%)</p>
-            <p className="text-3xl font-black" style={{ color: "#D4AF37" }}>
+            <p className="text-3xl font-black" style={{ color: "#FF3DA8" }}>
               ${deposit.toFixed(2)} <span className="text-sm font-normal" style={{ color: "#94A3B8" }}>MXN</span>
             </p>
             {error && <p className="text-sm" style={{ color: "#EF4444" }}>{error}</p>}
@@ -155,7 +155,7 @@ export default function BookingConfirmation({ bookingId }: { bookingId: string }
             <div key={item.id} className="flex justify-between items-center text-sm py-2"
               style={{ borderBottom: "1px solid rgba(124,58,237,.1)" }}>
               <span className="text-white">{item.asset.name} <span style={{ color: "#94A3B8" }}>×{item.quantity}</span></span>
-              <span className="font-bold" style={{ color: "#D4AF37" }}>
+              <span className="font-bold" style={{ color: "#FF3DA8" }}>
                 ${(Number(item.unitPrice) * item.quantity).toFixed(2)}
               </span>
             </div>
@@ -167,7 +167,7 @@ export default function BookingConfirmation({ bookingId }: { bookingId: string }
           </div>
           <div className="flex justify-between font-black text-base">
             <span className="text-white">Apartado (30%)</span>
-            <span style={{ color: "#D4AF37" }}>${deposit.toFixed(2)} MXN</span>
+            <span style={{ color: "#FF3DA8" }}>${deposit.toFixed(2)} MXN</span>
           </div>
         </div>
       </div>

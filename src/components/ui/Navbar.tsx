@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
@@ -54,8 +54,8 @@ export default function Navbar() {
       {/* ── BARRA DE ANUNCIO (marquee) — solo para visitantes no logueados ── */}
       {!isLoggedIn && path !== "/login" && (
         <div style={{
-          background: "linear-gradient(90deg, rgba(201,168,76,0.12), rgba(124,58,237,0.08), rgba(201,168,76,0.12))",
-          borderBottom: "1px solid rgba(201,168,76,0.15)",
+          background: "linear-gradient(90deg, rgba(232,25,138,0.12), rgba(124,58,237,0.08), rgba(232,25,138,0.12))",
+          borderBottom: "1px solid rgba(232,25,138,0.15)",
           overflow: "hidden",
           height: "2rem",
           display: "flex",
@@ -71,7 +71,7 @@ export default function Navbar() {
               <span key={i} style={{
                 fontSize: "0.65rem",
                 fontWeight: 700,
-                color: "rgba(201,168,76,0.75)",
+                color: "rgba(232,25,138,0.75)",
                 letterSpacing: "0.1em",
                 textTransform: "uppercase",
                 whiteSpace: "nowrap",
@@ -223,7 +223,7 @@ export default function Navbar() {
       {/* ── Menú móvil ── */}
       {mobileOpen && (
         <div id="mobile-menu" className="lg:hidden border-t px-4 py-4 space-y-1.5"
-          style={{ background: "rgba(5,5,26,.99)", borderColor: "rgba(201,168,76,.12)" }}>
+          style={{ background: "rgba(5,5,26,.99)", borderColor: "rgba(232,25,138,.12)" }}>
           {navLinks.map((l) => {
             const active = isActive(l.href);
             const Icon   = (l as { Icon?: React.ComponentType<{ size?: number }> }).Icon;

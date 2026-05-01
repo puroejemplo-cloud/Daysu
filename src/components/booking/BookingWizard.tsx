@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { format } from "date-fns";
@@ -250,7 +250,7 @@ export default function BookingWizard({ forcedAssetId }: { forcedAssetId?: numbe
 
   const outOfZone = isOutOfZone(venue);
   const muted    = { color: "#71717a" } as React.CSSProperties;
-  const gold     = { color: "#d4af37" } as React.CSSProperties;
+  const gold     = { color: "#FF3DA8" } as React.CSSProperties;
   const lb       = "block text-xs font-semibold uppercase tracking-widest mb-2";
   // Input con focus gold — aplicado inline para no depender de clase global
   const inputStyle: React.CSSProperties = {
@@ -332,7 +332,7 @@ export default function BookingWizard({ forcedAssetId }: { forcedAssetId?: numbe
                               textAlign: "center" as const,
                             }}>
                             <span style={{ display: "block", fontSize: "1rem", color: active ? "#fff" : "var(--cream)" }}>{tier.label}</span>
-                            <span style={{ display: "block", fontSize: "0.78rem", color: active ? "#D4AF37" : "#64748b", marginTop: "0.1rem" }}>
+                            <span style={{ display: "block", fontSize: "0.78rem", color: active ? "#FF3DA8" : "#64748b", marginTop: "0.1rem" }}>
                               ${tier.price.toLocaleString("es-MX")} MXN
                             </span>
                           </button>
@@ -383,7 +383,7 @@ export default function BookingWizard({ forcedAssetId }: { forcedAssetId?: numbe
                               textAlign: "center" as const,
                             }}>
                             <span style={{ display: "block", fontSize: "1rem", color: active ? "#fff" : "var(--cream)" }}>{opt.label}</span>
-                            <span style={{ display: "block", fontSize: "0.78rem", color: active ? "#D4AF37" : "#64748b", marginTop: "0.1rem" }}>
+                            <span style={{ display: "block", fontSize: "0.78rem", color: active ? "#FF3DA8" : "#64748b", marginTop: "0.1rem" }}>
                               ${price.toLocaleString("es-MX")} MXN
                             </span>
                           </button>
@@ -769,7 +769,7 @@ export default function BookingWizard({ forcedAssetId }: { forcedAssetId?: numbe
           {/* Total en tiempo real */}
           {total > 0 && (
             <div className="rounded-xl px-4 py-3 flex items-center justify-between"
-              style={{ background: "rgba(201,168,76,.08)", border: "1px solid rgba(201,168,76,.2)" }}>
+              style={{ background: "rgba(232,25,138,.08)", border: "1px solid rgba(232,25,138,.2)" }}>
               <div>
                 <p className="text-xs font-bold uppercase tracking-widest" style={{ color: "#94a3b8" }}>Total estimado</p>
                 <p className="text-xl font-black" style={gold}>${total.toLocaleString("es-MX")} MXN</p>
@@ -821,7 +821,7 @@ export default function BookingWizard({ forcedAssetId }: { forcedAssetId?: numbe
                       {p.maxGuests && <p className="text-xs mt-0.5" style={{ color: insufficiente ? "#f87171" : "#475569" }}>👥 hasta {p.maxGuests} personas</p>}
                     </div>
                     {Number(p.dailyRate) > 0 && <p className="text-sm font-black flex-shrink-0" style={gold}>${Number(p.dailyRate).toLocaleString("es-MX")}</p>}
-                    <span className="text-xl flex-shrink-0" style={{ color: sel ? "#D4AF37" : "transparent" }}>✓</span>
+                    <span className="text-xl flex-shrink-0" style={{ color: sel ? "#FF3DA8" : "transparent" }}>✓</span>
                   </div>
                 );
               })}
@@ -854,7 +854,7 @@ export default function BookingWizard({ forcedAssetId }: { forcedAssetId?: numbe
                 <div key={s.assetId} className="flex items-center justify-between text-sm gap-2 mb-2">
                   <div className="flex items-center gap-2 min-w-0">
                     <span className="text-xs px-1.5 py-0.5 rounded font-bold flex-shrink-0"
-                      style={{ background: preselectedPkg?.id === s.assetId ? "rgba(124,58,237,.2)" : "rgba(212,175,55,.12)", color: preselectedPkg?.id === s.assetId ? "#9333EA" : "#D4AF37" }}>
+                      style={{ background: preselectedPkg?.id === s.assetId ? "rgba(124,58,237,.2)" : "rgba(212,175,55,.12)", color: preselectedPkg?.id === s.assetId ? "#9333EA" : "#FF3DA8" }}>
                       {preselectedPkg?.id === s.assetId ? "Principal" : "Extra"}
                     </span>
                     <span className="text-white truncate">{s.assetName}</span>
@@ -866,7 +866,7 @@ export default function BookingWizard({ forcedAssetId }: { forcedAssetId?: numbe
           </div>
           {/* Desglose de precios */}
           {total > 0 && (
-            <div className="rounded-xl p-4" style={{ background: "rgba(201,168,76,.07)", border: "1px solid rgba(201,168,76,.2)" }}>
+            <div className="rounded-xl p-4" style={{ background: "rgba(232,25,138,.07)", border: "1px solid rgba(232,25,138,.2)" }}>
               <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: "#94a3b8" }}>Desglose de precios</p>
               <div className="space-y-1.5">
                 {selected.map((s) => {
@@ -895,7 +895,7 @@ export default function BookingWizard({ forcedAssetId }: { forcedAssetId?: numbe
                   </div>
                 )}
               </div>
-              <div className="flex justify-between items-center mt-3 pt-3" style={{ borderTop: "1px solid rgba(201,168,76,.25)" }}>
+              <div className="flex justify-between items-center mt-3 pt-3" style={{ borderTop: "1px solid rgba(232,25,138,.25)" }}>
                 <p className="text-sm font-bold" style={{ color: "#94a3b8" }}>TOTAL ESTIMADO</p>
                 <p className="text-2xl font-black" style={gold}>${total.toLocaleString("es-MX")} MXN</p>
               </div>

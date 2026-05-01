@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useState } from "react";
 
 interface Pkg { id: number; name: string; sku: string; dailyRate: string }
@@ -92,8 +92,8 @@ export default function HomepagePackagesPanel({
               style={{
                 display: "flex", alignItems: "center", gap: "0.75rem",
                 padding: "0.6rem 0.875rem", borderRadius: 8, cursor: "pointer",
-                background: on ? "rgba(201,168,76,0.08)" : "rgba(255,255,255,0.02)",
-                border: `1px solid ${on ? "rgba(201,168,76,0.25)" : "rgba(255,255,255,0.06)"}`,
+                background: on ? "rgba(232,25,138,0.08)" : "rgba(255,255,255,0.02)",
+                border: `1px solid ${on ? "rgba(232,25,138,0.25)" : "rgba(255,255,255,0.06)"}`,
                 transition: "all 0.15s",
               }}>
               <input type="checkbox" checked={on} onChange={() => toggle(pkg.id)}

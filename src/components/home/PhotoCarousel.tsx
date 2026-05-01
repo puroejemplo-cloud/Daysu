@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useState, useEffect, useCallback, useRef } from "react";
 
 export interface CarouselPhoto { src: string; alt: string; }
@@ -53,7 +53,7 @@ export default function PhotoCarousel({ images = [] }: { images?: CarouselPhoto[
           style={{
             position: "relative", borderRadius: 16, overflow: "hidden",
             background: "#05050f", userSelect: "none",
-            boxShadow: "0 0 0 1px rgba(201,168,76,.3), 0 0 40px rgba(124,58,237,.25), 0 0 80px rgba(201,168,76,.1)",
+            boxShadow: "0 0 0 1px rgba(232,25,138,.3), 0 0 40px rgba(124,58,237,.25), 0 0 80px rgba(232,25,138,.1)",
           }}>
 
           <video autoPlay muted loop playsInline

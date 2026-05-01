@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useEffect, useState, useCallback } from "react";
 import { type PricingConfig, getPricingTiers } from "@/lib/product-tiers";
 
@@ -245,7 +245,7 @@ export default function ProductManager({ categories, userSuffix }: { categories:
       {!showForm && (
         <button onClick={() => setShowForm(true)}
           className="w-full py-3.5 rounded-xl font-black text-sm uppercase tracking-widest flex items-center justify-center gap-2 transition-all border-2 border-dashed"
-          style={{ borderColor: "rgba(201,168,76,.4)", color: "var(--gold)", background: "rgba(201,168,76,.05)" }}>
+          style={{ borderColor: "rgba(232,25,138,.4)", color: "var(--gold)", background: "rgba(232,25,138,.05)" }}>
           ＋ Nuevo producto / paquete
         </button>
       )}
@@ -643,7 +643,7 @@ export default function ProductManager({ categories, userSuffix }: { categories:
                                 {selected && (
                                   <div style={{
                                     position: "absolute", inset: 0,
-                                    background: "rgba(201,168,76,.25)",
+                                    background: "rgba(232,25,138,.25)",
                                     display: "flex", alignItems: "center", justifyContent: "center",
                                   }}>
                                     <span style={{ fontSize: "1.4rem", color: "var(--gold)", fontWeight: 900 }}>✓</span>
@@ -783,7 +783,7 @@ export default function ProductManager({ categories, userSuffix }: { categories:
                       <input type="checkbox"
                         checked={Boolean(editForm.isRecommended)}
                         onChange={(e) => setEditForm((f) => ({ ...f, isRecommended: e.target.checked, promoType: e.target.checked ? (f.promoType || "fixed") : "" }))}
-                        className="w-4 h-4 accent-[#D4AF37]" />
+                        className="w-4 h-4 accent-[#FF3DA8]" />
                       <span className="text-sm text-white">Mostrar como recomendado en el flujo de reserva</span>
                     </label>
 

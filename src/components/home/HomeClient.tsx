@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import PhotoCarousel, { type CarouselPhoto } from "./PhotoCarousel";
@@ -55,7 +55,7 @@ const PKG_PHOTOS: Record<string, string> = {
 };
 
 const CARD_COLORS = [
-  { bg: "linear-gradient(135deg,#1a0e00 0%,#2d1a00 40%,#0d0d0d 100%)", geo: "#c9a84c", geoW: 400, geoH: 400 },
+  { bg: "linear-gradient(135deg,#1a0e00 0%,#2d1a00 40%,#0d0d0d 100%)", geo: "#E8198A", geoW: 400, geoH: 400 },
   { bg: "linear-gradient(135deg,#05051a 0%,#0d0d2b 50%,#0d0d0d 100%)", geo: "#7C3AED", geoW: 200, geoH: 200 },
   { bg: "linear-gradient(135deg,#0d001a 0%,#1a0026 50%,#0d0d0d 100%)", geo: "#9a4cc9", geoW: 200, geoH: 200 },
   { bg: "linear-gradient(135deg,#001a0d 0%,#00261a 50%,#0d0d0d 100%)", geo: "#4cc98e", geoW: 200, geoH: 200 },
@@ -136,7 +136,7 @@ export default function HomeClient({ packages, carouselImages = [] }: { packages
     if (!el || el.children.length > 0) return;
     for (let i = 0; i < 6; i++) {
       const s = document.createElement("span");
-      s.style.cssText = `position:absolute;will-change:transform;width:1px;background:#c9a84c;animation:linefall ${8 + Math.random() * 6}s linear ${Math.random() * 10}s infinite;opacity:0;left:${10 + Math.random() * 80}%;height:${60 + Math.random() * 120}px;`;
+      s.style.cssText = `position:absolute;will-change:transform;width:1px;background:#E8198A;animation:linefall ${8 + Math.random() * 6}s linear ${Math.random() * 10}s infinite;opacity:0;left:${10 + Math.random() * 80}%;height:${60 + Math.random() * 120}px;`;
       el.appendChild(s);
     }
   }, []);
@@ -249,7 +249,7 @@ export default function HomeClient({ packages, carouselImages = [] }: { packages
             }}
             style={{ display: "flex", gap: "0.6rem", flexWrap: "wrap", alignItems: "flex-end" }}>
             <div>
-              <label style={{ display: "block", fontSize: "0.65rem", fontWeight: 700, color: "rgba(201,168,76,.7)", letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: "0.35rem" }}>
+              <label style={{ display: "block", fontSize: "0.65rem", fontWeight: 700, color: "rgba(232,25,138,.7)", letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: "0.35rem" }}>
                 Fecha de tu evento
               </label>
               <input
@@ -257,7 +257,7 @@ export default function HomeClient({ packages, carouselImages = [] }: { packages
                 name="heroDate"
                 min={new Date().toISOString().split("T")[0]}
                 style={{
-                  background: "rgba(255,255,255,.06)", border: "1px solid rgba(201,168,76,.3)",
+                  background: "rgba(255,255,255,.06)", border: "1px solid rgba(232,25,138,.3)",
                   borderRadius: 8, padding: "0.6rem 0.85rem", color: "#fff",
                   fontSize: "0.85rem", colorScheme: "dark", outline: "none",
                   fontFamily: "var(--font-dm)", cursor: "pointer",
@@ -265,7 +265,7 @@ export default function HomeClient({ packages, carouselImages = [] }: { packages
               />
             </div>
             <div>
-              <label style={{ display: "block", fontSize: "0.65rem", fontWeight: 700, color: "rgba(201,168,76,.7)", letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: "0.35rem" }}>
+              <label style={{ display: "block", fontSize: "0.65rem", fontWeight: 700, color: "rgba(232,25,138,.7)", letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: "0.35rem" }}>
                 Hora inicio
               </label>
               <input
@@ -273,7 +273,7 @@ export default function HomeClient({ packages, carouselImages = [] }: { packages
                 name="heroHour"
                 defaultValue="19:00"
                 style={{
-                  background: "rgba(255,255,255,.06)", border: "1px solid rgba(201,168,76,.3)",
+                  background: "rgba(255,255,255,.06)", border: "1px solid rgba(232,25,138,.3)",
                   borderRadius: 8, padding: "0.6rem 0.75rem", color: "#fff",
                   fontSize: "0.85rem", colorScheme: "dark", outline: "none",
                   fontFamily: "var(--font-dm)", width: 120,
@@ -286,7 +286,7 @@ export default function HomeClient({ packages, carouselImages = [] }: { packages
           </form>
           <div style={{ marginTop: "0.85rem", display: "flex", gap: "0.75rem" }}>
             <Link href="/catalogo" className="btn-ghost" style={{ fontSize: "0.78rem" }}>Ver todos los paquetes</Link>
-            <Link href="/reservar" style={{ color: "rgba(201,168,76,.6)", fontSize: "0.78rem", textDecoration: "none", lineHeight: "2.5rem" }}>o cotiza ahora →</Link>
+            <Link href="/reservar" style={{ color: "rgba(232,25,138,.6)", fontSize: "0.78rem", textDecoration: "none", lineHeight: "2.5rem" }}>o cotiza ahora →</Link>
           </div>
         </div>
 
@@ -343,7 +343,7 @@ export default function HomeClient({ packages, carouselImages = [] }: { packages
                   {gallery.length > 0
                     ? <CardCarousel images={gallery} alt={pkg.name} style={{ height: "100%", borderRadius: 0 }} />
                     : <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                        <span className="bebas" style={{ fontSize: "clamp(3rem,8vw,5rem)", color: "rgba(201,168,76,0.15)", letterSpacing: "0.06em" }}>{pkg.sku.split("-")[0]}</span>
+                        <span className="bebas" style={{ fontSize: "clamp(3rem,8vw,5rem)", color: "rgba(232,25,138,0.15)", letterSpacing: "0.06em" }}>{pkg.sku.split("-")[0]}</span>
                       </div>
                   }
 
@@ -360,7 +360,7 @@ export default function HomeClient({ packages, carouselImages = [] }: { packages
                   )}
 
                   {/* Glow overlay */}
-                  <div style={{ position: "absolute", inset: 0, background: "linear-gradient(135deg, rgba(201,168,76,0.06) 0%, transparent 60%)", pointerEvents: "none", zIndex: 1 }} />
+                  <div style={{ position: "absolute", inset: 0, background: "linear-gradient(135deg, rgba(232,25,138,0.06) 0%, transparent 60%)", pointerEvents: "none", zIndex: 1 }} />
                 </div>
 
                 {/* ── Contenido ── */}
@@ -388,7 +388,7 @@ export default function HomeClient({ packages, carouselImages = [] }: { packages
                   </div>
 
                   {/* Separador */}
-                  <div style={{ height: 1, background: "rgba(201,168,76,0.12)", marginBottom: "0.9rem" }} />
+                  <div style={{ height: 1, background: "rgba(232,25,138,0.12)", marginBottom: "0.9rem" }} />
 
                   {/* Características */}
                   {features.length > 0 && (

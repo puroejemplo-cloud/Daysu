@@ -82,7 +82,7 @@ POSTGRES_URL="..."              # pooler — usado en runtime si no hay directa
 | `/reservar` | Público | Wizard de reserva multi-paso |
 | `/reserva/[id]` | Público (UUID) | Confirmación de reserva individual |
 | `/login` | Público | Login de administradores |
-| `/admin` | admin / superadmin | Dashboard principal |
+| `/admin` | admin / superadmin | Dashboard principal — reservas activas, holds y notificaciones |
 | `/admin/productos` | admin / superadmin | Gestión de activos y BOM |
 | `/admin/clientes` | admin / superadmin | CRM de clientes |
 | `/admin/clientes/[id]` | admin / superadmin | Perfil de cliente con historial |
@@ -242,8 +242,8 @@ Tokens de color CSS (nunca hardcodear valores hex; siempre usar la variable):
 
 | Variable | Valor | Uso |
 |---|---|---|
-| `--gold` | `#c9a84c` | Acento principal, CTAs |
-| `--gold2` | `#D4AF37` | Variante más brillante del acento |
+| `--gold` | `#E8198A` | Acento principal, CTAs (rosa/magenta del logo Daysu) |
+| `--gold2` | `#FF3DA8` | Variante más clara del acento |
 | `--black` | `#05051a` | Fondo base |
 | `--cream` | `#f5f0e8` | Texto sobre fondo oscuro |
 | `--muted` | `#888` | Texto secundario |
@@ -268,6 +268,7 @@ Clases UI adicionales (definidas en `globals.css`): `aura-card` (card oscura gen
 ### Notas de desarrollo
 
 - `next.config.ts` incluye `allowedDevOrigins: ["192.168.100.98"]` para acceder al servidor de desarrollo desde la red local.
+- `WhatsAppButton` se inyecta en el **root layout** (`src/app/layout.tsx`) y aparece en **todas** las páginas, incluido el panel admin. Lee `whatsapp_number` y `whatsapp_message` de `system_settings` en cada request del layout. No añadirlo manualmente en páginas individuales.
 - Los imports de tipos Prisma siempre usan `"@/generated/prisma"`, no `"@prisma/client"`.
 - `prisma.ts` usa un Proxy lazy: el cliente Prisma se instancia al primer acceso real en runtime, nunca en build time (evita crash si `DATABASE_URL` no está disponible al compilar).
 - `AdminLayout` siempre renderiza `AdminSidebar` (fijo en desktop, drawer en móvil) y `AdminQuickSale` (botón flotante gold para nueva venta). No añadir estas piezas manualmente en páginas individuales.

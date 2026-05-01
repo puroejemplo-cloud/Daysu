@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import Link from "next/link";
@@ -47,7 +47,7 @@ function NavLink({
       }}
       onMouseEnter={(e) => { if (!active) (e.currentTarget as HTMLElement).style.color = "#a1a1aa"; }}
       onMouseLeave={(e) => { if (!active) (e.currentTarget as HTMLElement).style.color = "#52525b"; }}>
-      <Icon size={15} style={{ flexShrink: 0, color: active ? "#d4af37" : "inherit" }} />
+      <Icon size={15} style={{ flexShrink: 0, color: active ? "#FF3DA8" : "inherit" }} />
       <span style={{ fontSize: "0.8rem", fontWeight: active ? 500 : 400, letterSpacing: "0.01em" }}>
         {label}
       </span>
@@ -187,8 +187,8 @@ export default function AdminSidebar() {
           aria-label={open ? "Cerrar menú" : "Abrir menú"}
           aria-expanded={open}
           style={{
-            background: open ? "rgba(201,168,76,0.12)" : "transparent",
-            border: `1px solid ${open ? "rgba(201,168,76,0.3)" : "rgba(255,255,255,0.08)"}`,
+            background: open ? "rgba(232,25,138,0.12)" : "transparent",
+            border: `1px solid ${open ? "rgba(232,25,138,0.3)" : "rgba(255,255,255,0.08)"}`,
             borderRadius: "0.4rem", padding: "0.3rem 0.45rem",
             color: open ? "var(--gold)" : "#71717a",
             cursor: "pointer", display: "flex", flexShrink: 0,

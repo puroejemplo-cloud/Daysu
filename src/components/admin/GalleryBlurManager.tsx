@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useState, useRef, useCallback, useEffect } from "react";
 
 interface Region { x: number; y: number; w: number; h: number }
@@ -311,8 +311,8 @@ export default function GalleryBlurManager() {
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "0.75rem", marginBottom: "1.25rem" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
             <span style={{
-              background: carouselSelected.size > 0 ? "rgba(201,168,76,.15)" : "rgba(255,255,255,.04)",
-              border: `1px solid ${carouselSelected.size > 0 ? "rgba(201,168,76,.4)" : "rgba(255,255,255,.08)"}`,
+              background: carouselSelected.size > 0 ? "rgba(232,25,138,.15)" : "rgba(255,255,255,.04)",
+              border: `1px solid ${carouselSelected.size > 0 ? "rgba(232,25,138,.4)" : "rgba(255,255,255,.08)"}`,
               color: carouselSelected.size > 0 ? "var(--gold)" : "#52525b",
               padding: "0.3rem 0.85rem", borderRadius: 999, fontSize: "0.78rem", fontWeight: 700,
             }}>
@@ -347,7 +347,7 @@ export default function GalleryBlurManager() {
                   position: "relative", borderRadius: 8, overflow: "hidden",
                   aspectRatio: "4/3", cursor: "pointer",
                   border: selected ? "2px solid var(--gold)" : "2px solid rgba(255,255,255,.08)",
-                  boxShadow: selected ? "0 0 0 1px rgba(201,168,76,.3), inset 0 0 0 1px rgba(201,168,76,.2)" : "none",
+                  boxShadow: selected ? "0 0 0 1px rgba(232,25,138,.3), inset 0 0 0 1px rgba(232,25,138,.2)" : "none",
                   transition: "border-color 0.15s, box-shadow 0.15s, transform 0.15s",
                   opacity: selected ? 1 : 0.6,
                 }}
@@ -388,7 +388,7 @@ export default function GalleryBlurManager() {
       {/* ── EDITOR MODAL (blur) ──────────────────────────────────────────────── */}
       {editing && (
         <div style={{ position: "fixed", inset: 0, zIndex: 9999, background: "rgba(0,0,0,.92)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "1rem" }}>
-          <div style={{ width: "100%", maxWidth: 900, background: "#05051a", borderRadius: 16, overflow: "hidden", border: "1px solid rgba(201,168,76,.3)" }}>
+          <div style={{ width: "100%", maxWidth: 900, background: "#05051a", borderRadius: 16, overflow: "hidden", border: "1px solid rgba(232,25,138,.3)" }}>
             <div style={{ padding: "1rem 1.5rem", borderBottom: "1px solid rgba(255,255,255,.08)", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
               <div>
                 <p style={{ color: "#fff", fontWeight: 700 }}>{editing.name}</p>

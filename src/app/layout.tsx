@@ -1,4 +1,4 @@
-import type { Metadata, Viewport } from "next";
+﻿import type { Metadata, Viewport } from "next";
 import { Bebas_Neue, DM_Sans } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/ui/Navbar";
@@ -70,8 +70,8 @@ export const viewport: Viewport = {
   // pueda hacer zoom. El problema del zoom en inputs iOS se resuelve con font-size≥16px
   viewportFit: "cover",  // edge-to-edge en iPhone con notch
   themeColor: [
-    { media: "(prefers-color-scheme: dark)",  color: "#c9a84c" },
-    { media: "(prefers-color-scheme: light)", color: "#c9a84c" },
+    { media: "(prefers-color-scheme: dark)",  color: "#E8198A" },
+    { media: "(prefers-color-scheme: light)", color: "#E8198A" },
   ],
 };
 

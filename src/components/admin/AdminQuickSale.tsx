@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { PlusCircle } from "lucide-react";
@@ -24,7 +24,7 @@ export default function AdminQuickSale() {
         color: "#05051a",
         borderRadius: 999,
         padding: "0.7rem 1.25rem 0.7rem 1rem",
-        boxShadow: "0 4px 24px rgba(201,168,76,.45), 0 1px 6px rgba(0,0,0,.4)",
+        boxShadow: "0 4px 24px rgba(232,25,138,.45), 0 1px 6px rgba(0,0,0,.4)",
         textDecoration: "none",
         fontFamily: "var(--font-dm, sans-serif)",
         fontWeight: 700,
@@ -35,11 +35,11 @@ export default function AdminQuickSale() {
       }}
       onMouseEnter={(e) => {
         (e.currentTarget as HTMLElement).style.transform = "translateY(-2px)";
-        (e.currentTarget as HTMLElement).style.boxShadow = "0 8px 32px rgba(201,168,76,.6), 0 2px 8px rgba(0,0,0,.4)";
+        (e.currentTarget as HTMLElement).style.boxShadow = "0 8px 32px rgba(232,25,138,.6), 0 2px 8px rgba(0,0,0,.4)";
       }}
       onMouseLeave={(e) => {
         (e.currentTarget as HTMLElement).style.transform = "";
-        (e.currentTarget as HTMLElement).style.boxShadow = "0 4px 24px rgba(201,168,76,.45), 0 1px 6px rgba(0,0,0,.4)";
+        (e.currentTarget as HTMLElement).style.boxShadow = "0 4px 24px rgba(232,25,138,.45), 0 1px 6px rgba(0,0,0,.4)";
       }}>
       <PlusCircle size={18} style={{ flexShrink: 0 }} />
       Nueva venta
