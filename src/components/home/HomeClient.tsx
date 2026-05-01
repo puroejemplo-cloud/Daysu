@@ -234,7 +234,7 @@ export default function HomeClient({ packages, carouselImages = [] }: { packages
         </p>
 
         {/* CTA con verificación de disponibilidad directo desde el hero */}
-        <div className="fade-up-4" style={{ marginTop: "1.5rem" }}>
+        <div className="fade-up-4" style={{ marginTop: "2.75rem" }}>
           <form
             onSubmit={(e) => {
               e.preventDefault();
@@ -257,10 +257,13 @@ export default function HomeClient({ packages, carouselImages = [] }: { packages
                 name="heroDate"
                 min={new Date().toISOString().split("T")[0]}
                 style={{
-                  background: "rgba(255,255,255,.06)", border: "1px solid rgba(232,25,138,.3)",
+                  background: "rgba(232,25,138,.06)",
+                  border: "1px solid rgba(232,25,138,.55)",
+                  boxShadow: "0 0 10px rgba(232,25,138,.12), inset 0 1px 0 rgba(255,255,255,.05)",
                   borderRadius: 8, padding: "0.6rem 0.85rem", color: "#fff",
                   fontSize: "0.85rem", colorScheme: "dark", outline: "none",
                   fontFamily: "var(--font-dm)", cursor: "pointer",
+                  transition: "border-color 0.2s, box-shadow 0.2s",
                 }}
               />
             </div>
@@ -273,10 +276,13 @@ export default function HomeClient({ packages, carouselImages = [] }: { packages
                 name="heroHour"
                 defaultValue="19:00"
                 style={{
-                  background: "rgba(255,255,255,.06)", border: "1px solid rgba(232,25,138,.3)",
+                  background: "rgba(232,25,138,.06)",
+                  border: "1px solid rgba(232,25,138,.55)",
+                  boxShadow: "0 0 10px rgba(232,25,138,.12), inset 0 1px 0 rgba(255,255,255,.05)",
                   borderRadius: 8, padding: "0.6rem 0.75rem", color: "#fff",
                   fontSize: "0.85rem", colorScheme: "dark", outline: "none",
                   fontFamily: "var(--font-dm)", width: 120,
+                  transition: "border-color 0.2s, box-shadow 0.2s",
                 }}
               />
             </div>
@@ -299,12 +305,24 @@ export default function HomeClient({ packages, carouselImages = [] }: { packages
       </section>
 
       {/* ── TICKER ─────────────────────────────────────────── */}
-      <div style={{ background: "var(--gold)", color: "#05051a", padding: "0.6rem 0", overflow: "hidden", whiteSpace: "nowrap" }} aria-hidden="true">
+      <div style={{
+        background: "rgba(232,25,138,0.88)",
+        backdropFilter: "blur(12px)",
+        WebkitBackdropFilter: "blur(12px)",
+        borderTop: "1px solid rgba(255,255,255,0.12)",
+        borderBottom: "1px solid rgba(0,0,0,0.2)",
+        color: "#05051a",
+        padding: "0.35rem 0",
+        overflow: "hidden",
+        whiteSpace: "nowrap",
+      }} aria-hidden="true">
         <div className="ticker-track">
           {[...TICKER_ITEMS, ...TICKER_ITEMS, ...TICKER_ITEMS].map((item, i) => (
-            <span key={i}>
-              <span style={{ fontFamily: "var(--font-bebas)", fontSize: "0.95rem", letterSpacing: "0.18em", padding: "0 2rem" }}>{item}</span>
-              <span style={{ opacity: 0.4, fontFamily: "var(--font-bebas)" }}>—</span>
+            <span key={i} style={{ transition: "filter 0.2s" }}
+              onMouseEnter={e => (e.currentTarget.style.filter = "brightness(1.2)")}
+              onMouseLeave={e => (e.currentTarget.style.filter = "brightness(1)")}>
+              <span style={{ fontFamily: "var(--font-bebas)", fontSize: "0.88rem", letterSpacing: "0.2em", padding: "0 1.75rem", fontWeight: 700 }}>{item}</span>
+              <span style={{ opacity: 0.35, fontFamily: "var(--font-bebas)" }}>✦</span>
             </span>
           ))}
         </div>

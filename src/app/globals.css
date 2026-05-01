@@ -59,7 +59,8 @@ header.sticky { padding-top: env(safe-area-inset-top); }
 .safe-top { padding-top: max(0.75rem, env(safe-area-inset-top)); }
 
 body {
-  background: var(--black);
+  background: radial-gradient(circle at 50% 35%, #1a0033 0%, #05051a 55%, #000000 100%);
+  background-attachment: fixed;
   color: var(--cream);
   font-family: var(--font-dm);
   overflow-x: hidden;
@@ -256,9 +257,12 @@ body {
   font-weight: 700;
   cursor: pointer;
   transition: transform 0.2s, box-shadow 0.2s;
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
 }
-.btn-gold:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(232,25,138,0.35); }
+.btn-gold:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(232,25,138,0.45); }
 
 .btn-ghost {
   background: transparent;
@@ -608,9 +612,10 @@ input, select, textarea {
   pointer-events: none;
 }
 .pkg-hcard:hover {
-  border-color: rgba(232,25,138,0.28);
-  box-shadow: 0 24px 64px rgba(0,0,0,0.55), 0 0 0 1px rgba(232,25,138,0.1);
-  transform: translateY(-3px);
+  border-color: rgba(232,25,138,0.35);
+  box-shadow: 0 24px 64px rgba(0,0,0,0.55), 0 0 0 1px rgba(232,25,138,0.15);
+  transform: translateY(-4px);
+  filter: brightness(1.04);
 }
 .pkg-hcard:active { transform: scale(0.99); }
 

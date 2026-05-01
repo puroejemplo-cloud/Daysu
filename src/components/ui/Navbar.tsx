@@ -119,14 +119,14 @@ export default function Navbar() {
             return (
               <Link key={l.href} href={l.href}
                 aria-current={active ? "page" : undefined}
-                className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-semibold transition-all"
+                className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg font-semibold transition-all"
                 style={{
-                  color:          active ? "#e4e4e7" : "#52525b",
+                  color:          active ? "#e4e4e7" : "#71717a",
                   background:     active ? "rgba(255,255,255,0.07)" : "transparent",
                   textDecoration: "none",
-                  letterSpacing:  "0.04em",
+                  letterSpacing:  "0.09em",
                   textTransform:  "uppercase",
-                  fontSize:       "0.7rem",
+                  fontSize:       "0.75rem",
                 }}>
                 {Icon && <Icon size={13} aria-hidden="true" />}
                 {l.label}
@@ -135,8 +135,8 @@ export default function Navbar() {
           })}
           {isSuperAdmin && (
             <Link href="/superadmin/admins"
-              className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-semibold transition-all"
-              style={{ color: "#52525b", textDecoration: "none", letterSpacing: "0.04em", textTransform: "uppercase", fontSize: "0.7rem" }}>
+              className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg font-semibold transition-all"
+              style={{ color: "#71717a", textDecoration: "none", letterSpacing: "0.09em", textTransform: "uppercase", fontSize: "0.75rem" }}>
               Admins
             </Link>
           )}
@@ -197,9 +197,9 @@ export default function Navbar() {
           ) : (
             <>
               <Link href="/reservar"
-                className="btn-gold text-sm px-5 py-2.5 flex items-center gap-1.5"
-                style={{ textDecoration: "none" }}>
-                <Sparkles size={14} aria-hidden="true" />
+                className="btn-gold"
+                style={{ textDecoration: "none", fontSize: "0.72rem", padding: "0.7rem 1.6rem" }}>
+                <Sparkles size={13} aria-hidden="true" />
                 Cotizar VIP
               </Link>
             </>
