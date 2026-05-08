@@ -8,6 +8,7 @@ import "react-day-picker/style.css";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import Link from "next/link";
+import { CalendarDays, PackageSearch } from "lucide-react";
 
 interface Category { id: number; name: string }
 interface AssetInfo {
@@ -24,62 +25,8 @@ interface AssetAvail {
   assetId: number; availableUnits: number; isAvailable: boolean; reservedUnits: number;
 }
 
-// ── Imágenes SVG por SKU ──────────────────────────────────────────────────────
-const PKG_PHOTOS: Record<string, string> = {
-  "DAY-MARUCHAN":     "/paquetes/pkg-maruchan.svg",
-  "DAY-PISTA-LED":    "/paquetes/pkg-pista-led.svg",
-  "DAY-DJ-AUDIO-100": "/paquetes/pkg-dj-audio-100.svg",
-  "DAY-DJ-AUDIO-200": "/paquetes/pkg-dj-audio-200.svg",
-  "DAY-DJ-AUDIO-500": "/paquetes/pkg-dj-audio-500.svg",
-  "CAB-FOTO-OFERTA":  "/paquetes/cab-foto-oferta.svg",
-  "PKG-BASICO":      "/paquetes/pkg-basico.svg",
-  "PKG-MEDIANO":     "/paquetes/pkg-mediano.svg",
-  "PKG-PREMIUM":     "/paquetes/pkg-premium.svg",
-  "PKG-MASTER-VIP":  "/paquetes/pkg-master-vip.svg",
-  "PKG-DIAMANTE":    "/paquetes/pkg-diamante.svg",
-  "PKG-SNACK-TATOO": "/paquetes/pkg-snack-tatoo.svg",
-};
-
-// ── Contenido de cada paquete (datos reales) ──────────────────────────────────
-const PKG_FEATURES: Record<string, string[]> = {
-  "DAY-MARUCHAN":     ["Carrito de sopa maruchan", "Servicio para 50 personas", "Toppings y sazón incluidos", "Disponible para todos los paquetes"],
-  "DAY-PISTA-LED":    ["Pista LED cristal infinito 5×5 mts", "Efecto espejo RGB multicolor", "Iluminación sincronizada con música", "Disponible para todos los paquetes"],
-  "DAY-DJ-AUDIO-100": ["DJ Versátil mezclando en vivo", "Audio básico profesional · Cabina LED", "Hasta 100 personas · 5 hrs + recepción", "Ideal cumpleaños, bautizos, eventos día"],
-  "DAY-DJ-AUDIO-200": ["DJ Versátil mezclando en vivo", "Audio profesional · Cabina LED", "Hasta 200 personas · 5 hrs + recepción", "Bodas, XV Años, eventos nocturnos"],
-  "DAY-DJ-AUDIO-500": ["DJ Versátil mezclando en vivo", "Audio profesional completo · Cabina LED", "50 a 500 personas · 5 hrs + recepción", "Eventos grandes, bodas, corporativos"],
-  "CAB-FOTO-OFERTA": ["Cabina fotográfica inflable LED", "Props y accesorios temáticos", "Galería digital · Iluminación RGB", "Operador profesional incluido"],
-  "PKG-BASICO":      ["DJ Versátil + Audio básico profesional", "Cabina LED", "Souvenirs (globos)", "Ideal bautizos, cumpleaños, eventos día"],
-  "PKG-MEDIANO":     ["DJ Versátil + Audio básico + Cabina LED", "Iluminación básica", "Show Robot Led + pirotecnia fría", "Souvenirs (globos)"],
-  "PKG-PREMIUM":     ["DJ Versátil + Audio hasta 200 px", "Iluminación profesional de escenario", "Show Cabezones (1) + Robot Led", "Maestro de ceremonias + Proyección + Video semblanza"],
-  "PKG-MASTER-VIP":  ["DJ + Audio 50-500 px + Iluminación completa", "Carrito 200 shots + Show Robot Led", "Cabezones (2) + Animadores caracterizados", "Maestro de ceremonias + Video semblanza + Pirotecnia"],
-  "PKG-DIAMANTE":    ["Todo Master VIP + Shot jeringas", "Arlequín en zancos + Vals en las nubes sencillo", "Cañón de confeti metalizado + Carrito 250 shots", "Pista LED y Maruchanfest disponibles como extras"],
-  "PKG-SNACK-TATOO": ["Todo Diamante + Tatoo & glitter personalizados", "Vals en las nubes doble", "Maruchanfest y Pista LED disponibles como extras", "El paquete más completo"],
-};
-
-// ── Dueño por SKU ────────────────────────────────────────────────────────────
-const PKG_OWNERS: Record<string, string> = {
-  "DAY-MARUCHAN":     "Sonido Daysu",
-  "DAY-PISTA-LED":    "Sonido Daysu",
-  "DAY-DJ-AUDIO-100": "Sonido Daysu",
-  "DAY-DJ-AUDIO-200": "Sonido Daysu",
-  "DAY-DJ-AUDIO-500": "Sonido Daysu",
-  "PKG-BASICO":       "Sonido Daysu",
-  "PKG-MEDIANO":     "Sonido Daysu",
-  "PKG-PREMIUM":     "Sonido Daysu · DJ Iván Events",
-  "PKG-MASTER-VIP":  "Sonido Daysu · DJ Iván Events",
-  "PKG-DIAMANTE":    "Sonido Daysu · DJ Iván Events",
-  "PKG-SNACK-TATOO": "Sonido Daysu · DJ Iván Events",
-};
-
-// ── Acento de color por SKU ───────────────────────────────────────────────────
-const PKG_ACCENT: Record<string, string> = {
-  "PKG-BASICO":      "#e879f9",
-  "PKG-MEDIANO":     "#f472b6",
-  "PKG-PREMIUM":     "#38bdf8",
-  "PKG-MASTER-VIP":  "#f59e0b",
-  "PKG-DIAMANTE":    "#fbbf24",
-  "PKG-SNACK-TATOO": "#f472b6",
-};
+// Paleta de acento por índice de categoría — evita hardcodear por SKU
+const ACCENT_PALETTE = ["#e879f9", "#f472b6", "#38bdf8", "#f59e0b", "#a78bfa", "#4ade80", "#fb923c"];
 
 export default function CatalogClient({
   categories,
@@ -140,9 +87,16 @@ export default function CatalogClient({
       : format(range.from, "d MMMM yyyy", { locale: es })
     : "Selecciona tu fecha";
 
-  const shown = catFilter
-    ? assets.filter((a) => a.categoryId === catFilter)
-    : assets;
+  const shown = (catFilter ? assets.filter((a) => a.categoryId === catFilter) : assets)
+    .slice()
+    .sort((a, b) => {
+      if (!checked) return 0;
+      const aOk = avail[a.id]?.isAvailable ?? true;
+      const bOk = avail[b.id]?.isAvailable ?? true;
+      if (aOk && !bOk) return -1;
+      if (!aOk && bOk) return 1;
+      return 0;
+    });
 
   return (
     <div style={{
@@ -207,9 +161,14 @@ export default function CatalogClient({
                 Fecha del evento
               </label>
               <button onClick={() => setShowPicker((v) => !v)} className="aura-input"
-                style={{ textAlign: "left", cursor: "pointer", color: range.from ? "var(--cream)" : "#64748b",
-                  display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                📅 {dateLabel}
+                style={{
+                  textAlign: "left", cursor: "pointer",
+                  color: range.from ? "var(--cream)" : "#64748b",
+                  display: "flex", alignItems: "center", gap: "0.6rem",
+                  border: showPicker ? "1px solid rgba(232,25,138,0.5)" : undefined,
+                }}>
+                <CalendarDays size={15} style={{ color: "var(--gold)", flexShrink: 0 }} />
+                {dateLabel}
               </button>
             </div>
             <div>
@@ -231,7 +190,7 @@ export default function CatalogClient({
           </div>
 
           {showPicker && (
-            <div style={{ marginTop: "1.5rem", borderTop: "1px solid rgba(124,58,237,.2)", paddingTop: "1.5rem" }}>
+            <div className="rdp-dark" style={{ marginTop: "1.5rem", borderTop: "1px solid rgba(232,25,138,.12)", paddingTop: "1.5rem" }}>
               <DayPicker mode="range" selected={range as never}
                 onSelect={(r: unknown) => setRange((r as { from?: Date; to?: Date }) ?? {})}
                 locale={es} disabled={{ before: new Date() }} numberOfMonths={2} />
@@ -263,32 +222,26 @@ export default function CatalogClient({
 
         {/* ── GRID DE PAQUETES ── */}
         {!loading && shown.length === 0 ? (
-          <div style={{ textAlign: "center", padding: "5rem 0", color: "#475569" }}>
-            No hay servicios en esta categoría.
+          <div className="empty-state" style={{ marginTop: "2rem" }}>
+            <PackageSearch size={40} className="empty-state-icon" />
+            <p className="empty-state-title">Sin servicios</p>
+            <p className="empty-state-desc">
+              {catFilter ? "No hay servicios en esta categoría." : "No hay servicios disponibles por el momento."}
+            </p>
           </div>
         ) : !loading && (
           <div className="catalog-grid">
             {shown.map((asset) => {
-              const av       = avail[asset.id];
-              const isAvail  = !checked || (av?.isAvailable ?? true);
-              // Galería: imágenes de BD primero, luego fallback SVG hardcoded
-              const gallery  = (asset.imageGallery && asset.imageGallery.length > 0)
+              const av      = avail[asset.id];
+              const isAvail = !checked || (av?.isAvailable ?? true);
+              const gallery = (asset.imageGallery && asset.imageGallery.length > 0)
                 ? asset.imageGallery
-                : (asset.imageUrl ?? PKG_PHOTOS[asset.sku])
-                  ? [(asset.imageUrl ?? PKG_PHOTOS[asset.sku]) as string]
-                  : [];
-              // Descripción: líneas del texto del admin
-              const descLines = (asset.description ?? "")
-                .split("\n").map((l) => l.trim()).filter(Boolean);
-              // Componentes del BOM
+                : asset.imageUrl ? [asset.imageUrl] : [];
+              const descLines = (asset.description ?? "").split("\n").map((l) => l.trim()).filter(Boolean);
               const comps     = asset.componentNames ?? [];
-              const accent   = PKG_ACCENT[asset.sku] ?? "#7C3AED";
-              const brand    = asset.ownerName ?? PKG_OWNERS[asset.sku] ?? "Daysu.vip";
-
-              // Features: descripción del admin primero, si no hay usa los hardcoded
-              const features = descLines.length > 0
-                ? descLines
-                : (PKG_FEATURES[asset.sku] ?? []);
+              const accent    = ACCENT_PALETTE[asset.categoryId % ACCENT_PALETTE.length];
+              const brand     = asset.ownerName ?? "Daysu.vip";
+              const features  = descLines.length > 0 ? descLines : comps;
 
               return (
                 <div key={asset.id}
@@ -382,8 +335,8 @@ export default function CatalogClient({
                       </ul>
                     )}
 
-                    {/* Componentes BOM — si los hay, compactos */}
-                    {comps.length > 0 && (
+                    {/* Componentes BOM — solo cuando description ocupa features */}
+                    {descLines.length > 0 && comps.length > 0 && (
                       <div style={{ padding: "0.6rem 0.75rem", borderRadius: 8, background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)" }}>
                         <p style={{ fontSize: "0.55rem", fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase", color: "#475569", marginBottom: "0.35rem" }}>
                           Incluye
