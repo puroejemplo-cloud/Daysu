@@ -193,6 +193,22 @@ Las rutas de mutación de assets (`PUT`, `DELETE`, gestión BOM) verifican owner
 - Al crear una reserva, `expandBomItems()` agrega los hijos como `booking_items` con `isAutoBlocked=true`.
 - `AssetComponent.overridePrice` permite fijar un precio específico por componente dentro del paquete (lo usa el wizard de pricing tiers para paquetes con tiers de capacidad u horas).
 
+### Campos de Asset no triviales
+
+| Campo | Tipo | Descripción |
+|---|---|---|
+| `promoType` | `"hours" \| "guests" \| "fixed" \| null` | Tipo de promoción automática |
+| `promoMinValue` | `Int?` | Umbral de horas o invitados para activar la promo |
+| `isRecommended` | `Boolean` | Aparece como "destacado" en la homepage |
+| `imageGallery` | `Json? (string[])` | URLs de fotos adicionales para el carrusel del paquete en homepage |
+| `ownerSuffix` | `String?` | Copia desnormalizada del `suffix` del admin dueño, para display rápido sin JOIN |
+
+### Disponibilidad — fechas clave
+
+La disponibilidad se calcula sobre `Booking.setupAt` y `Booking.teardownAt` (ventana real de uso del equipo), **no** sobre `Booking.eventDate`. `eventDate` es solo la fecha del evento para mostrar al cliente; `setupAt`/`teardownAt` son los extremos que bloquean stock.
+
+Los `AvailabilityBlock` con `assetId = null` son **bloqueos globales** — afectan a todos los activos para ese rango de fechas (ej.: temporada alta, cierre de bodega).
+
 ### Subida de imágenes
 
 - Las imágenes de activos se guardan localmente en `public/productos/` (nombre: `<sku-lowercase>-<timestamp>.<ext>`).
@@ -260,7 +276,7 @@ Clases UI adicionales (definidas en `globals.css`): `aura-card` (card oscura gen
 
 ### Autenticación (NextAuth v5)
 
-- `src/auth.ts` — configuración principal con Credentials provider (bcrypt). Exporta `{ handlers, signIn, signOut, auth }`.
+- `src/auth.ts` — configuración principal con Credentials provider (**`bcryptjs`**, no `bcrypt`). Exporta `{ handlers, signIn, signOut, auth }`.
 - `src/auth.config.ts` — configuración edge-safe (sin bcrypt/Prisma). Contiene callbacks JWT y session que propagan `username`, `suffix` y `role` al token.
 - `AdminUser.role` puede ser `admin` o `superadmin`. El campo `suffix` identifica qué activos "posee" cada admin.
 - El tipo de sesión se extiende en `src/types/next-auth.d.ts`.
@@ -274,3 +290,5 @@ Clases UI adicionales (definidas en `globals.css`): `aura-card` (card oscura gen
 - `AdminLayout` siempre renderiza `AdminSidebar` (fijo en desktop, drawer en móvil) y `AdminQuickSale` (botón flotante gold para nueva venta). No añadir estas piezas manualmente en páginas individuales.
 - La ruta `/admin/upsell` existe pero **no aparece en el sidebar** — accesible solo por URL directa.
 - El `BookingWizard` detecta si la dirección del venue está fuera de zona (`ZONE_KEYWORDS = ["zacatecas", "guadalupe", ...]`) para mostrar aviso de costo de traslado adicional.
+- El wizard filtra servicios individuales (no paquetes) usando `SERVICE_CATS = ["Sonido", "Iluminación", "Entretenimiento", "Fotografía", "Staff", "Mobiliario", "Cabinas"]`. Si se añade una categoría de activos individuales rentables, debe aparecer en esta lista para que el wizard la muestre en el paso de selección.
+- `next.config.ts` sirve imágenes en formato `webp`/`avif` y permite SVG con sandbox. Los activos de imagen se sirven desde `public/` (locales en dev/prod). No hay dominio externo configurado en `images.remotePatterns`.

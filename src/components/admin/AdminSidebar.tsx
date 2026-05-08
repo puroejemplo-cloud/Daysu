@@ -8,6 +8,7 @@ import { logoutAction } from "@/app/login/actions";
 import {
   LayoutDashboard, Package, PlusCircle, Images, CalendarDays,
   CheckSquare, Users, Bell, Settings, ShieldCheck, Menu, X, Eye, LogOut,
+  TrendingUp, UserCog,
 } from "lucide-react";
 
 const NAV_PRIMARY = [
@@ -21,6 +22,8 @@ const NAV_PRIMARY = [
 ];
 
 const NAV_SECONDARY = [
+  { href: "/admin/staff",         label: "Staff",         Icon: UserCog         },
+  { href: "/admin/upsell",        label: "Upsell",        Icon: TrendingUp      },
   { href: "/admin/galeria",       label: "Galería",       Icon: Images          },
   { href: "/admin/configuracion", label: "Configuración", Icon: Settings        },
   { href: "/catalogo",            label: "Ver sitio",     Icon: Eye             },

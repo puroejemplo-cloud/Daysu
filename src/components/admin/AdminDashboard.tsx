@@ -34,7 +34,7 @@ const ACTION_STATUS: Record<"confirm" | "cancel", string> = {
   cancel:  "cancelled",
 };
 
-type FilterKey = "all" | "pending_payment" | "confirmed" | "expired";
+type FilterKey = "all" | "pending_payment" | "confirmed" | "in_progress" | "completed" | "cancelled" | "expired";
 
 let toastId = 0;
 
@@ -171,7 +171,7 @@ export default function AdminDashboard() {
       {/* Filtros */}
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "0.6rem" }}>
         <div className="flex gap-1.5 flex-wrap" role="group" aria-label="Filtrar por estado">
-          {(["pending_payment", "confirmed", "expired", "all"] as FilterKey[]).map((f) => {
+          {(["pending_payment", "confirmed", "in_progress", "completed", "cancelled", "expired", "all"] as FilterKey[]).map((f) => {
             const active = filter === f;
             return (
               <button key={f} onClick={() => setFilterAndUrl(f)}
