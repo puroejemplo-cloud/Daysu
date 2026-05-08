@@ -501,7 +501,8 @@ export default function BookingWizard({ forcedAssetId }: { forcedAssetId?: numbe
             )}
           </div>
 
-          <div className="flex justify-end pt-2">
+          <div className="flex justify-between items-center pt-2">
+            <button onClick={() => router.back()} className="text-sm font-bold" style={muted}>← Volver</button>
             <button onClick={() => goStep(1)} disabled={!canNext0} className="btn-gold disabled:opacity-40 px-8 py-3 text-sm">
               Siguiente →
             </button>
