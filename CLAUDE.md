@@ -44,7 +44,7 @@ npx tsc --noEmit          # Type-check sin compilar
 npm run lint              # ESLint
 
 # Scripts operativos (uno a la vez, no son parte del flujo normal)
-# scripts/*.ts — tareas puntuales: assign-owners, create-users, add-day-products, etc.
+npx tsx scripts/<nombre>.ts  # assign-owners, create-users, add-day-products, process-gallery, etc.
 
 # No hay suite de tests en este proyecto
 ```
@@ -295,4 +295,8 @@ Clases UI adicionales (definidas en `globals.css`): `aura-card` (card oscura gen
 - La ruta `/admin/upsell` existe pero **no aparece en el sidebar** — accesible solo por URL directa.
 - El `BookingWizard` detecta si la dirección del venue está fuera de zona (`ZONE_KEYWORDS = ["zacatecas", "guadalupe", ...]`) para mostrar aviso de costo de traslado adicional.
 - El wizard filtra servicios individuales (no paquetes) usando `SERVICE_CATS = ["Sonido", "Iluminación", "Entretenimiento", "Fotografía", "Staff", "Mobiliario", "Cabinas"]`. Si se añade una categoría de activos individuales rentables, debe aparecer en esta lista para que el wizard la muestre en el paso de selección.
+- El wizard tiene **dos flujos de pasos**: con paquete pre-seleccionado (`?asset=ID` o `forcedAssetId`) los pasos son ["Tus datos", "Fecha y hora", "Complementos", "Confirmar"]; sin pre-selección los pasos incluyen "Elige paquete" en lugar de "Complementos".
+- `POST /api/bookings` hace **doble verificación de disponibilidad**: una antes de abrir la transacción y otra dentro del `$transaction()` con lock, para evitar race conditions en stock compartido. No simplificar a una sola verificación.
+- `POST /api/admin/bookings` (venta manual desde el panel) **omite Stripe por completo**: crea la reserva directamente en `confirmed`, establece `depositAmount = totalAmount` y `expiresAt = null`. No confundir con el flujo público `/api/bookings` que siempre pasa por Stripe.
+- Los campos `Decimal` de Prisma (ej. `dailyRate`) se deben convertir a `.toString()` antes de incluirlos en respuestas JSON para evitar errores de serialización.
 - `next.config.ts` sirve imágenes en formato `webp`/`avif` y permite SVG con sandbox. Los activos de imagen se sirven desde `public/` (locales en dev/prod). No hay dominio externo configurado en `images.remotePatterns`.

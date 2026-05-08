@@ -1,5 +1,6 @@
 import HomeClient from "@/components/home/HomeClient";
 import { prisma } from "@/lib/prisma";
+import { fetchGoogleReviews } from "@/lib/google-places";
 import { extname, basename } from "path";
 
 function toWebpName(name: string): string {
@@ -53,7 +54,7 @@ export default async function HomePage() {
     if (homepageSetting?.value) homepagePkgIds = JSON.parse(homepageSetting.value);
   } catch { /* muestra todos */ }
 
-  const [packages, whatsappSetting] = await Promise.all([
+  const [packages, whatsappSetting, googleReviews] = await Promise.all([
     prisma.asset.findMany({
       where: {
         isActive: true,
@@ -69,6 +70,7 @@ export default async function HomePage() {
       orderBy: { dailyRate: "asc" },
     }),
     prisma.systemSetting.findUnique({ where: { key: "whatsapp_number" } }).catch(() => null),
+    fetchGoogleReviews(),
   ]);
 
   const pkgIds = packages.map((p) => p.id);
@@ -117,6 +119,7 @@ export default async function HomePage() {
     <HomeClient
       carouselImages={carouselImages}
       whatsappNumber={whatsappSetting?.value ?? "524929496372"}
+      googleReviews={googleReviews}
       packages={packages.map((p) => ({
         ...p,
         dailyRate:      p.dailyRate.toString(),

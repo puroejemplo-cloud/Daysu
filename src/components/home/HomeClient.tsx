@@ -5,6 +5,11 @@ import PhotoCarousel, { type CarouselPhoto } from "./PhotoCarousel";
 import Testimonials     from "./Testimonials";
 import PackageComparison from "./PackageComparison";
 import CardCarousel     from "@/components/catalog/CardCarousel";
+import type { PlaceInfo } from "@/lib/google-places";
+
+const MAPS_URL   = "https://maps.app.goo.gl/jECw9oHjjJikhovE8";
+// TODO: actualizar con dirección completa cuando el usuario la proporcione
+const BUSINESS_ADDRESS = "Guadalupe, Zacatecas, México";
 
 interface Package {
   id: number; name: string; dailyRate: string; originalPrice: string | null;
@@ -33,10 +38,12 @@ export default function HomeClient({
   packages,
   carouselImages = [],
   whatsappNumber = "524929496372",
+  googleReviews = null,
 }: {
   packages: Package[];
   carouselImages?: CarouselPhoto[];
   whatsappNumber?: string;
+  googleReviews?: PlaceInfo | null;
 }) {
   const cursorRef     = useRef<HTMLDivElement>(null);
   const ringRef       = useRef<HTMLDivElement>(null);
@@ -420,7 +427,7 @@ export default function HomeClient({
       <PhotoCarousel images={carouselImages} />
 
       {/* ── TESTIMONIALES ───────────────────────────────────── */}
-      <Testimonials whatsappNumber={whatsappNumber} />
+      <Testimonials whatsappNumber={whatsappNumber} placeInfo={googleReviews} />
 
       {/* ── CÓMO FUNCIONA ──────────────────────────────────── */}
       <section style={{ padding: "5rem 1.25rem 5rem", borderTop: "1px solid rgba(255,255,255,.05)" }}>
@@ -509,6 +516,77 @@ export default function HomeClient({
         </div>
       </section>
 
+      {/* ── UBICACIÓN ──────────────────────────────────────── */}
+      <section style={{ padding: "4rem 1.25rem", borderTop: "1px solid rgba(255,255,255,.05)", background: "rgba(255,255,255,.02)" }}>
+        <div style={{ maxWidth: 960, margin: "0 auto", display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "3rem", alignItems: "center" }}>
+          {/* Info */}
+          <div>
+            <p className="section-label">Encuéntranos</p>
+            <h2 className="bebas section-title" style={{ marginBottom: "1.5rem" }}>Nuestra ubicación</h2>
+            <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+              <div style={{ display: "flex", gap: "0.75rem", alignItems: "flex-start" }}>
+                <span style={{ color: "var(--gold)", fontSize: "1.1rem", marginTop: "0.1rem", flexShrink: 0 }}>📍</span>
+                <div>
+                  <p style={{ color: "#fff", fontWeight: 600, fontSize: "0.9rem", marginBottom: "0.15rem" }}>Dirección</p>
+                  <p style={{ color: "var(--muted)", fontSize: "0.85rem", lineHeight: 1.6 }}>{BUSINESS_ADDRESS}</p>
+                </div>
+              </div>
+              <div style={{ display: "flex", gap: "0.75rem", alignItems: "flex-start" }}>
+                <span style={{ color: "var(--gold)", fontSize: "1.1rem", marginTop: "0.1rem", flexShrink: 0 }}>📞</span>
+                <div>
+                  <p style={{ color: "#fff", fontWeight: 600, fontSize: "0.9rem", marginBottom: "0.15rem" }}>Teléfono / WhatsApp</p>
+                  <a href={`https://wa.me/${whatsappNumber}`} target="_blank" rel="noopener noreferrer"
+                    style={{ color: "var(--muted)", fontSize: "0.85rem", textDecoration: "none" }}>
+                    +{whatsappNumber.replace(/(\d{2})(\d{3})(\d{3})(\d{4})/, "$1 $2 $3 $4")}
+                  </a>
+                </div>
+              </div>
+              <div style={{ display: "flex", gap: "0.75rem", alignItems: "flex-start" }}>
+                <span style={{ color: "var(--gold)", fontSize: "1.1rem", marginTop: "0.1rem", flexShrink: 0 }}>🌐</span>
+                <div>
+                  <p style={{ color: "#fff", fontWeight: 600, fontSize: "0.9rem", marginBottom: "0.15rem" }}>Zona de servicio</p>
+                  <p style={{ color: "var(--muted)", fontSize: "0.85rem" }}>Zacatecas · Guadalupe · Zona Conurbada</p>
+                </div>
+              </div>
+            </div>
+            <a href={MAPS_URL} target="_blank" rel="noopener noreferrer"
+              className="btn-gold"
+              style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem", marginTop: "1.75rem", textDecoration: "none", fontSize: "0.9rem" }}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              Ver en Google Maps
+            </a>
+          </div>
+
+          {/* Mapa estático con enlace */}
+          <a href={MAPS_URL} target="_blank" rel="noopener noreferrer"
+            aria-label="Abrir ubicación en Google Maps"
+            style={{
+              display: "block", borderRadius: 16, overflow: "hidden",
+              border: "1px solid rgba(255,255,255,0.08)", position: "relative",
+              background: "#0d0d1a", textDecoration: "none",
+              aspectRatio: "4/3",
+            }}>
+            <iframe
+              title="Ubicación Daysu Eventos en Google Maps"
+              src={`https://maps.google.com/maps?q=22.776768,-102.584548&z=15&output=embed`}
+              width="100%" height="100%"
+              style={{ border: 0, display: "block", pointerEvents: "none" }}
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+            />
+            {/* Overlay con CTA */}
+            <div style={{
+              position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(5,5,26,0.7) 0%, transparent 50%)",
+              display: "flex", alignItems: "flex-end", padding: "1rem 1.25rem",
+            }}>
+              <span style={{ color: "#fff", fontSize: "0.8rem", fontWeight: 600, letterSpacing: "0.05em" }}>
+                Abrir en Google Maps →
+              </span>
+            </div>
+          </a>
+        </div>
+      </section>
+
       {/* ── FOOTER ─────────────────────────────────────────── */}
       <footer className="footer-section">
         <span className="bebas" style={{ fontSize: "1.3rem", color: "var(--gold)", letterSpacing: "0.12em" }}>
@@ -516,6 +594,9 @@ export default function HomeClient({
         </span>
         <p style={{ fontSize: "0.72rem", color: "var(--muted)", letterSpacing: "0.08em" }}>
           © {new Date().getFullYear()} Daysu.vip · Sonido Daysu · DJ Iván Events
+        </p>
+        <p style={{ fontSize: "0.72rem", color: "var(--muted)", letterSpacing: "0.08em" }}>
+          {BUSINESS_ADDRESS}
         </p>
         <p style={{ fontSize: "0.72rem", color: "var(--muted)", letterSpacing: "0.08em" }}>
           Instagram · TikTok · Facebook
