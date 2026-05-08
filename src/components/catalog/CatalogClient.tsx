@@ -427,11 +427,11 @@ export default function CatalogClient({
                     ) : (
                       <Link
                         href={range.from
-                          ? `/reservar?asset=${asset.id}&start=${range.from.toISOString()}&sh=${setupHour}`
-                          : `/reservar?asset=${asset.id}`}
+                          ? `/catalogo/${asset.id}?start=${range.from.toISOString()}&sh=${setupHour}`
+                          : `/catalogo/${asset.id}`}
                         className="btn-gold"
                         style={{ textAlign: "center", display: "block" }}>
-                        Cotizar ahora →
+                        Ver paquete →
                       </Link>
                     )}
                   </div>
