@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import { useState, useCallback, useEffect } from "react";
 import { getHourlyTiers, getCapacityTiers, type PricingConfig } from "@/lib/product-tiers";
 import CardCarousel from "./CardCarousel";
@@ -8,7 +8,7 @@ import "react-day-picker/style.css";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import Link from "next/link";
-import { CalendarDays, PackageSearch } from "lucide-react";
+import { CalendarDays, PackageSearch, Sparkles } from "lucide-react";
 
 interface Category { id: number; name: string }
 interface AssetInfo {
@@ -25,8 +25,14 @@ interface AssetAvail {
   assetId: number; availableUnits: number; isAvailable: boolean; reservedUnits: number;
 }
 
-// Paleta de acento por índice de categoría — evita hardcodear por SKU
 const ACCENT_PALETTE = ["#e879f9", "#f472b6", "#38bdf8", "#f59e0b", "#a78bfa", "#4ade80", "#fb923c"];
+
+// Iconos por categoría
+const CAT_ICONS: Record<string, string> = {
+  "Paquetes": "🎉", "Sonido": "🔊", "Iluminación": "💡", "Entretenimiento": "🎭",
+  "Fotografía": "📷", "Staff": "👤", "Mobiliario": "🪑", "Cabinas": "📸",
+  "Todos": "✦",
+};
 
 export default function CatalogClient({
   categories,
@@ -39,22 +45,19 @@ export default function CatalogClient({
   const [range, setRange] = useState<{ from?: Date; to?: Date }>({});
   const [setupHour, setSetupHour] = useState("19:00");
 
-  // Pre-fill desde el hero del homepage
   useEffect(() => {
     const date = searchParams.get("date");
     const sh   = searchParams.get("sh");
-    if (date) {
-      setRange({ from: new Date(date + "T12:00:00"), to: undefined });
-    }
-    if (sh) setSetupHour(sh);
+    if (date) setRange({ from: new Date(date + "T12:00:00"), to: undefined });
+    if (sh)   setSetupHour(sh);
   }, [searchParams]);
-  const [avail, setAvail]   = useState<Record<number, AssetAvail>>({});
-  const [loading, setLoading] = useState(false);
-  const [catFilter, setCatFilter] = useState<number | null>(null);
-  const [showPicker, setShowPicker] = useState(false);
-  const [checked, setChecked] = useState(false);
 
-  // Hora fin = inicio + 6 horas (igual que en el wizard)
+  const [avail,      setAvail]      = useState<Record<number, AssetAvail>>({});
+  const [loading,    setLoading]    = useState(false);
+  const [catFilter,  setCatFilter]  = useState<number | null>(null);
+  const [showPicker, setShowPicker] = useState(false);
+  const [checked,    setChecked]    = useState(false);
+
   const teardownHour = (() => {
     const [h, m] = setupHour.split(":").map(Number);
     return `${String((h + 6) % 24).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
@@ -102,58 +105,84 @@ export default function CatalogClient({
     <div style={{
       minHeight: "100vh",
       background: `
-        radial-gradient(ellipse 80% 40% at 50% 0%, rgba(124,58,237,0.09) 0%, transparent 60%),
-        radial-gradient(ellipse 45% 30% at 5%  80%, rgba(232,25,138,0.05) 0%, transparent 55%),
-        radial-gradient(ellipse 45% 30% at 95% 80%, rgba(232,25,138,0.04) 0%, transparent 55%),
+        radial-gradient(ellipse 80% 40% at 50% 0%, rgba(124,58,237,0.1) 0%, transparent 60%),
+        radial-gradient(ellipse 45% 30% at 5%  80%, rgba(232,25,138,0.06) 0%, transparent 55%),
+        radial-gradient(ellipse 45% 30% at 95% 80%, rgba(56,189,248,0.04) 0%, transparent 55%),
         #05051a
       `,
     }}>
 
-      {/* ── HEADER ── todo el contenido en zIndex:1 para quedar sobre el fondo */}
-      <div style={{ position: "relative", overflow: "hidden", padding: "4rem 1rem 2.5rem", textAlign: "center", zIndex: 1 }}>
+      {/* ── HEADER ── */}
+      <div style={{ position: "relative", overflow: "hidden", padding: "4.5rem 1rem 3rem", textAlign: "center", zIndex: 1 }}>
         <div style={{ position: "absolute", inset: 0, pointerEvents: "none",
-          background: "radial-gradient(ellipse 60% 55% at 50% 0%, rgba(124,58,237,0.18) 0%, transparent 70%)" }} />
+          background: "radial-gradient(ellipse 70% 60% at 50% 0%, rgba(124,58,237,0.2) 0%, transparent 70%)" }} />
+
         <p style={{ position: "relative", fontSize: "0.7rem", fontWeight: 700, letterSpacing: "0.3em",
-          textTransform: "uppercase", color: "#7C3AED", marginBottom: "0.75rem" }}>
-          ✦ Disponibilidad en tiempo real
+          textTransform: "uppercase", color: "#9333EA", marginBottom: "1rem",
+          display: "inline-flex", alignItems: "center", gap: "0.4rem" }}>
+          <Sparkles size={12} /> Disponibilidad en tiempo real
         </p>
-        <h1 style={{ position: "relative", fontFamily: "var(--font-bebas)", fontSize: "clamp(2.8rem,6vw,5rem)",
-          lineHeight: 1, color: "var(--cream)", marginBottom: "0.75rem", letterSpacing: "0.02em" }}>
+        <h1 style={{
+          position: "relative",
+          fontFamily: "var(--font-bebas)",
+          fontSize: "clamp(3.2rem,7vw,6rem)",
+          lineHeight: 1, letterSpacing: "0.02em", marginBottom: "1rem",
+          background: "linear-gradient(135deg, #f4f4f5 30%, #a78bfa 70%, #e879f9 100%)",
+          WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text",
+        }}>
           Nuestros Servicios
         </h1>
-        <p style={{ position: "relative", maxWidth: 480, margin: "0 auto", color: "#94A3B8", fontSize: "0.88rem" }}>
+        <p style={{ position: "relative", maxWidth: 480, margin: "0 auto", color: "#64748b", fontSize: "0.9rem", lineHeight: 1.6 }}>
           Selecciona la fecha de tu evento para verificar disponibilidad al instante.
         </p>
-
       </div>
 
-      {/* ── TABS DE CATEGORÍA — fuera del header (overflow:hidden los bloqueaba en móvil) ── */}
+      {/* ── FILTROS DE CATEGORÍA ── */}
       <div style={{
         display: "flex", gap: "0.5rem", flexWrap: "wrap", justifyContent: "center",
-        padding: "1rem 1rem 0", position: "relative", zIndex: 10,
+        padding: "0 1rem 1.5rem", position: "relative", zIndex: 10,
       }}>
-        {[{ id: null, name: "Todos" }, ...categories].map((c) => (
-          <button key={c.id ?? "all"}
-            onClick={() => setCatFilter(c.id)}
-            style={{
-              padding: "0.5rem 1.3rem", borderRadius: 999,
-              fontSize: "0.78rem", fontWeight: 600, minHeight: 40,
-              border: "1px solid", cursor: "pointer", transition: "all 0.2s",
-              WebkitTapHighlightColor: "transparent",
-              background: catFilter === c.id ? "var(--gold)" : "rgba(255,255,255,0.04)",
-              borderColor: catFilter === c.id ? "var(--gold)" : "rgba(255,255,255,0.1)",
-              color: catFilter === c.id ? "#05051a" : "#71717a",
-            }}>
-            {c.name}
-          </button>
-        ))}
+        {[{ id: null, name: "Todos" }, ...categories].map((c, ci) => {
+          const isActive = catFilter === c.id;
+          const accent   = c.id ? ACCENT_PALETTE[ci % ACCENT_PALETTE.length] : "#E8198A";
+          const icon     = CAT_ICONS[c.name] ?? "✦";
+          return (
+            <button key={c.id ?? "all"}
+              onClick={() => setCatFilter(c.id)}
+              style={{
+                padding: "0.5rem 1.2rem", borderRadius: 999,
+                fontSize: "0.78rem", fontWeight: 700, minHeight: 40,
+                border: "1px solid", cursor: "pointer", transition: "all 0.2s",
+                WebkitTapHighlightColor: "transparent",
+                display: "flex", alignItems: "center", gap: "0.35rem",
+                background: isActive ? accent : "rgba(255,255,255,0.04)",
+                borderColor: isActive ? accent : "rgba(255,255,255,0.1)",
+                color: isActive ? "#05051a" : "#71717a",
+                boxShadow: isActive ? `0 0 16px ${accent}50` : "none",
+              }}>
+              <span>{icon}</span>
+              {c.name}
+            </button>
+          );
+        })}
       </div>
 
-      <div style={{ maxWidth: 1280, margin: "0 auto", padding: "0 1rem 4rem", position: "relative", zIndex: 1 }}>
-        {/* Las tabs de categoría también necesitan zIndex */}
+      <div style={{ maxWidth: 1280, margin: "0 auto", padding: "0 1rem 5rem", position: "relative", zIndex: 1 }}>
 
         {/* ── SELECTOR DE FECHA ── */}
-        <div className="aura-card" style={{ padding: "1.5rem", marginBottom: "2.5rem" }}>
+        <div style={{
+          padding: "1.5rem",
+          marginBottom: "2.5rem",
+          borderRadius: 16,
+          background: "rgba(255,255,255,0.03)",
+          border: "1px solid rgba(232,25,138,0.2)",
+          boxShadow: "0 0 40px rgba(232,25,138,0.06), inset 0 1px 0 rgba(255,255,255,0.04)",
+          position: "relative", overflow: "hidden",
+        }}>
+          <div style={{
+            position: "absolute", top: 0, left: 0, right: 0, height: 2,
+            background: "linear-gradient(90deg, transparent, #E8198A, transparent)",
+          }} />
           <div style={{ display: "flex", flexWrap: "wrap", gap: "1rem", alignItems: "flex-end" }}>
             <div style={{ flex: 1, minWidth: 200 }}>
               <label style={{ display: "block", fontSize: "0.65rem", fontWeight: 700,
@@ -165,7 +194,7 @@ export default function CatalogClient({
                   textAlign: "left", cursor: "pointer",
                   color: range.from ? "var(--cream)" : "#64748b",
                   display: "flex", alignItems: "center", gap: "0.6rem",
-                  border: showPicker ? "1px solid rgba(232,25,138,0.5)" : undefined,
+                  border: showPicker ? "1px solid rgba(232,25,138,0.5)" : "1px solid rgba(255,255,255,0.08)",
                 }}>
                 <CalendarDays size={15} style={{ color: "var(--gold)", flexShrink: 0 }} />
                 {dateLabel}
@@ -184,7 +213,11 @@ export default function CatalogClient({
               </p>
             </div>
             <button onClick={checkAvailability} disabled={!range.from || loading}
-              className="btn-gold" style={{ opacity: !range.from ? 0.45 : 1, cursor: !range.from ? "not-allowed" : "pointer" }}>
+              className="btn-gold"
+              style={{
+                opacity: !range.from ? 0.45 : 1, cursor: !range.from ? "not-allowed" : "pointer",
+                boxShadow: range.from ? "0 0 20px rgba(232,25,138,0.3)" : "none",
+              }}>
               {loading ? "Consultando…" : "Ver disponibilidad ✦"}
             </button>
           </div>
@@ -198,22 +231,19 @@ export default function CatalogClient({
           )}
         </div>
 
-        {/* ── FILTROS (arriba del selector de fecha) — ya movidos al header ── */}
-
-        {/* ── SKELETON mientras carga ── */}
+        {/* ── SKELETON ── */}
         {loading && (
           <div className="catalog-grid" style={{ marginTop: "1rem" }}>
             {Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} style={{ borderRadius: 10, overflow: "hidden", border: "1px solid rgba(255,255,255,.06)" }}>
-                <div className="skeleton" style={{ height: 175 }} />
-                <div style={{ padding: "1.2rem", background: "#05051a", display: "flex", flexDirection: "column", gap: "0.6rem" }}>
+              <div key={i} style={{ borderRadius: 16, overflow: "hidden", border: "1px solid rgba(255,255,255,.06)" }}>
+                <div className="skeleton" style={{ height: 220 }} />
+                <div style={{ padding: "1.2rem", background: "#0c0c10", display: "flex", flexDirection: "column", gap: "0.6rem" }}>
                   <div className="skeleton" style={{ height: 10, width: "45%", borderRadius: 99 }} />
-                  <div className="skeleton" style={{ height: 22, width: "80%" }} />
-                  <div className="skeleton" style={{ height: 16, width: "40%" }} />
+                  <div className="skeleton" style={{ height: 28, width: "80%" }} />
+                  <div className="skeleton" style={{ height: 14, width: "40%" }} />
                   <div className="skeleton" style={{ height: 10, width: "90%" }} />
                   <div className="skeleton" style={{ height: 10, width: "70%" }} />
-                  <div className="skeleton" style={{ height: 10, width: "80%" }} />
-                  <div className="skeleton" style={{ height: 36, borderRadius: 4, marginTop: "0.5rem" }} />
+                  <div className="skeleton" style={{ height: 40, borderRadius: 8, marginTop: "0.5rem" }} />
                 </div>
               </div>
             ))}
@@ -240,8 +270,9 @@ export default function CatalogClient({
               const descLines = (asset.description ?? "").split("\n").map((l) => l.trim()).filter(Boolean);
               const comps     = asset.componentNames ?? [];
               const accent    = ACCENT_PALETTE[asset.categoryId % ACCENT_PALETTE.length];
-              const brand     = asset.ownerName ?? "Daysu.vip";
               const features  = descLines.length > 0 ? descLines : comps;
+              const isPromo   = !!asset.originalPrice && Number(asset.originalPrice) > Number(asset.dailyRate);
+              const discount  = isPromo ? Math.round((1 - Number(asset.dailyRate) / Number(asset.originalPrice!)) * 100) : 0;
 
               const cardHref = range.from
                 ? `/catalogo/${asset.sku.toLowerCase()}?start=${range.from.toISOString()}&sh=${setupHour}`
@@ -251,58 +282,80 @@ export default function CatalogClient({
                 <Link key={asset.id}
                   href={cardHref}
                   className={`pkg-card-v2${checked && !isAvail ? " unavailable" : ""}`}
-                  style={{ textDecoration: "none", display: "flex", flexDirection: "column" }}>
+                  style={{
+                    textDecoration: "none", display: "flex", flexDirection: "column",
+                    "--card-accent": accent + "55",
+                    "--card-glow":   accent + "12",
+                  } as React.CSSProperties}>
 
-                  {/* ── Imagen 1:1 con overlay ── */}
+                  {/* Línea de acento superior */}
+                  <div style={{
+                    height: 3, flexShrink: 0,
+                    background: `linear-gradient(90deg, transparent, ${accent}, transparent)`,
+                    opacity: 0.7,
+                  }} />
+
+                  {/* ── Imagen ── */}
                   <div style={{ position: "relative" }}>
                     {gallery.length > 0 ? (
                       <CardCarousel images={gallery} alt={asset.name} className="catalog-card-img" />
                     ) : (
-                      /* Placeholder cuando no hay foto */
                       <div className="catalog-card-img" style={{
                         background: `linear-gradient(135deg, #0c0c10 0%, ${accent}18 100%)`,
                         display: "flex", alignItems: "center", justifyContent: "center",
                       }}>
-                        <span style={{ fontFamily: "var(--font-bebas)", fontSize: "3rem", color: `${accent}40`, letterSpacing: "0.05em" }}>
+                        <span style={{ fontFamily: "var(--font-bebas)", fontSize: "3.5rem", color: `${accent}40`, letterSpacing: "0.05em" }}>
                           {asset.name.split(" ")[0]}
                         </span>
                       </div>
                     )}
 
-                    {/* Badge disponibilidad — top right */}
+                    {/* Badge disponibilidad */}
                     {checked && (
                       <span style={{
                         position: "absolute", top: 10, right: 10, zIndex: 5,
-                        fontSize: "0.6rem", fontWeight: 700, padding: "0.2rem 0.65rem", borderRadius: 999,
-                        background: isAvail ? "rgba(5,40,14,0.85)" : "rgba(40,5,5,0.85)",
+                        fontSize: "0.6rem", fontWeight: 700, padding: "0.25rem 0.7rem", borderRadius: 999,
+                        background: isAvail ? "rgba(5,40,14,0.9)" : "rgba(40,5,5,0.9)",
                         color: isAvail ? "#4ade80" : "#f87171",
                         border: `1px solid ${isAvail ? "rgba(74,222,128,0.4)" : "rgba(248,113,113,0.4)"}`,
-                        backdropFilter: "blur(6px)",
+                        backdropFilter: "blur(8px)",
+                        boxShadow: isAvail ? "0 0 10px rgba(74,222,128,0.2)" : "0 0 10px rgba(248,113,113,0.2)",
                       }}>
                         {isAvail ? "✓ Disponible" : "✕ No disponible"}
                       </span>
                     )}
 
-                    {/* Gradient + meta en la base de la imagen */}
+                    {/* Badge promo */}
+                    {isPromo && (
+                      <span style={{
+                        position: "absolute", top: 10, left: 10, zIndex: 5,
+                        fontSize: "0.6rem", fontWeight: 700, padding: "0.25rem 0.7rem", borderRadius: 999,
+                        background: "#dc2626", color: "#fff",
+                        boxShadow: "0 0 10px rgba(220,38,38,0.4)",
+                      }}>
+                        🔥 -{discount}%
+                      </span>
+                    )}
+
+                    {/* Gradient + meta */}
                     <div style={{
                       position: "absolute", bottom: 0, left: 0, right: 0, zIndex: 4,
-                      background: "linear-gradient(to top, rgba(5,5,26,0.96) 0%, rgba(5,5,26,0.55) 55%, transparent 100%)",
-                      padding: "1.75rem 1rem 0.85rem",
+                      background: "linear-gradient(to top, rgba(12,12,16,1) 0%, rgba(12,12,16,0.7) 50%, transparent 100%)",
+                      padding: "2rem 1rem 0.75rem",
                     }}>
                       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
-                        <div style={{ minWidth: 0 }}>
-                          {asset.categoryName && (
-                            <p style={{ fontSize: "0.55rem", fontWeight: 700, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--gold)", marginBottom: "0.2rem", opacity: 0.85 }}>
-                              {asset.categoryName}
-                            </p>
-                          )}
-                          <p style={{ fontSize: "0.6rem", color: "rgba(255,255,255,0.45)", letterSpacing: "0.08em", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                            {brand}
+                        {asset.categoryName && (
+                          <p style={{
+                            fontSize: "0.58rem", fontWeight: 700, letterSpacing: "0.2em",
+                            textTransform: "uppercase", color: accent, opacity: 0.9,
+                            background: `${accent}18`, border: `1px solid ${accent}30`,
+                            padding: "0.2rem 0.55rem", borderRadius: 999,
+                          }}>
+                            {asset.categoryName}
                           </p>
-                        </div>
-                        {/* Contador de fotos del carrusel visible en la imagen */}
+                        )}
                         {gallery.length > 1 && (
-                          <span style={{ fontSize: "0.55rem", color: "rgba(255,255,255,0.4)", flexShrink: 0, marginLeft: "0.5rem" }}>
+                          <span style={{ fontSize: "0.55rem", color: "rgba(255,255,255,0.4)", flexShrink: 0, marginLeft: "auto" }}>
                             {gallery.length} fotos
                           </span>
                         )}
@@ -310,53 +363,58 @@ export default function CatalogClient({
                     </div>
                   </div>
 
-                  {/* ── Panel de información ── */}
+                  {/* ── Información ── */}
                   <div style={{
                     flex: 1, padding: "1rem 1.125rem 1.25rem",
-                    display: "flex", flexDirection: "column",
-                    gap: "0.75rem",
+                    display: "flex", flexDirection: "column", gap: "0.75rem",
+                    background: `linear-gradient(180deg, ${accent}06 0%, transparent 40%)`,
                   }}>
 
                     {/* Nombre */}
                     <h3 style={{
-                      fontSize: "1.05rem", fontWeight: 700, lineHeight: 1.25,
-                      color: "#f4f4f5", letterSpacing: "-0.01em",
-                      margin: 0,
+                      fontFamily: "var(--font-bebas)",
+                      fontSize: "1.5rem", lineHeight: 1.1, letterSpacing: "0.01em",
+                      color: "#f4f4f5", margin: 0,
                     }}>
                       {asset.name}
                     </h3>
 
                     {/* Features */}
                     {features.length > 0 && (
-                      <ul style={{ listStyle: "none", margin: 0, padding: 0, display: "flex", flexDirection: "column", gap: "0.28rem" }}>
+                      <ul style={{ listStyle: "none", margin: 0, padding: 0, display: "flex", flexDirection: "column", gap: "0.3rem" }}>
                         {features.slice(0, 4).map((line, li) => (
                           <li key={li} style={{
                             fontSize: "0.76rem", color: "#71717a",
                             display: "flex", alignItems: "flex-start", gap: "0.45rem", lineHeight: 1.5,
                           }}>
-                            <span style={{ color: accent, fontSize: "0.48rem", marginTop: "0.38rem", flexShrink: 0 }}>✦</span>
+                            <span style={{ color: accent, fontSize: "0.48rem", marginTop: "0.4rem", flexShrink: 0, filter: `drop-shadow(0 0 3px ${accent})` }}>✦</span>
                             {line}
                           </li>
                         ))}
                       </ul>
                     )}
 
-                    {/* Componentes BOM — solo cuando description ocupa features */}
+                    {/* Componentes BOM — tags multicolor */}
                     {descLines.length > 0 && comps.length > 0 && (
-                      <div style={{ padding: "0.6rem 0.75rem", borderRadius: 8, background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)" }}>
-                        <p style={{ fontSize: "0.55rem", fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase", color: "#475569", marginBottom: "0.35rem" }}>
+                      <div style={{ padding: "0.6rem 0.75rem", borderRadius: 10, background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)" }}>
+                        <p style={{ fontSize: "0.52rem", fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase", color: "#475569", marginBottom: "0.4rem" }}>
                           Incluye
                         </p>
                         <div style={{ display: "flex", flexWrap: "wrap", gap: "0.3rem" }}>
-                          {comps.slice(0, 6).map((c, ci) => (
-                            <span key={ci} style={{
-                              fontSize: "0.65rem", color: "rgba(245,240,232,0.65)",
-                              background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)",
-                              borderRadius: 4, padding: "0.15rem 0.5rem",
-                            }}>
-                              {c}
-                            </span>
-                          ))}
+                          {comps.slice(0, 6).map((c, ci) => {
+                            const tagAccent = ACCENT_PALETTE[(asset.id + ci) % ACCENT_PALETTE.length];
+                            return (
+                              <span key={ci} style={{
+                                fontSize: "0.65rem", fontWeight: 500,
+                                color: tagAccent,
+                                background: `${tagAccent}12`,
+                                border: `1px solid ${tagAccent}28`,
+                                borderRadius: 5, padding: "0.15rem 0.5rem",
+                              }}>
+                                {c}
+                              </span>
+                            );
+                          })}
                           {comps.length > 6 && (
                             <span style={{ fontSize: "0.65rem", color: "#475569", padding: "0.15rem 0.4rem" }}>
                               +{comps.length - 6} más
@@ -372,26 +430,26 @@ export default function CatalogClient({
                         const hTiers = getHourlyTiers(asset.sku, asset.pricingTiers);
                         const cTiers = getCapacityTiers(asset.sku, asset.pricingTiers);
                         return hTiers ? (
-                          <div style={{ padding: "0.65rem 0.75rem", borderRadius: 8, background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)" }}>
-                            <p style={{ fontSize: "0.55rem", fontWeight: 700, letterSpacing: "0.15em", textTransform: "uppercase", color: "#52525b", marginBottom: "0.4rem" }}>Por hora</p>
+                          <div style={{ padding: "0.65rem 0.75rem", borderRadius: 10, background: "rgba(255,255,255,0.03)", border: `1px solid ${accent}20` }}>
+                            <p style={{ fontSize: "0.52rem", fontWeight: 700, letterSpacing: "0.15em", textTransform: "uppercase", color: "#52525b", marginBottom: "0.4rem" }}>Por hora</p>
                             {hTiers.map((tier) => (
                               <div key={tier.label} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "0.2rem 0", borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
                                 <span style={{ fontSize: "0.75rem", color: "#a1a1aa" }}>{tier.label}</span>
-                                <span style={{ fontSize: "0.95rem", fontWeight: 400, color: "#FF3DA8", letterSpacing: "-0.02em" }}>
-                                  ${tier.price.toLocaleString("es-MX")} <span style={{ fontSize: "0.55rem", color: "#52525b" }}>MXN</span>
+                                <span style={{ fontSize: "0.95rem", fontWeight: 600, color: "#FF3DA8", letterSpacing: "-0.02em" }}>
+                                  ${tier.price.toLocaleString("es-MX")} <span style={{ fontSize: "0.52rem", color: "#52525b" }}>MXN</span>
                                 </span>
                               </div>
                             ))}
                           </div>
                         ) : cTiers ? (
-                          <div style={{ padding: "0.65rem 0.75rem", borderRadius: 8, background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)" }}>
-                            <p style={{ fontSize: "0.55rem", fontWeight: 700, letterSpacing: "0.15em", textTransform: "uppercase", color: "#52525b", marginBottom: "0.4rem" }}>Por capacidad</p>
+                          <div style={{ padding: "0.65rem 0.75rem", borderRadius: 10, background: "rgba(255,255,255,0.03)", border: `1px solid ${accent}20` }}>
+                            <p style={{ fontSize: "0.52rem", fontWeight: 700, letterSpacing: "0.15em", textTransform: "uppercase", color: "#52525b", marginBottom: "0.4rem" }}>Por capacidad</p>
                             {cTiers.map((opt) => (
                               <div key={opt.label} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "0.2rem 0", borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
                                 <span style={{ fontSize: "0.75rem", color: "#a1a1aa" }}>{opt.label}</span>
-                                <span style={{ fontSize: "0.95rem", fontWeight: 400, color: opt.price > 0 ? "#FF3DA8" : "#3f3f46", letterSpacing: "-0.02em" }}>
+                                <span style={{ fontSize: "0.95rem", fontWeight: 600, color: opt.price > 0 ? "#FF3DA8" : "#3f3f46", letterSpacing: "-0.02em" }}>
                                   {opt.price > 0 ? `$${opt.price.toLocaleString("es-MX")}` : "Por confirmar"}
-                                  {opt.price > 0 && <span style={{ fontSize: "0.55rem", color: "#52525b", marginLeft: "0.2rem" }}>MXN</span>}
+                                  {opt.price > 0 && <span style={{ fontSize: "0.52rem", color: "#52525b", marginLeft: "0.2rem" }}>MXN</span>}
                                 </span>
                               </div>
                             ))}
@@ -399,20 +457,28 @@ export default function CatalogClient({
                         ) : (
                           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "0.5rem" }}>
                             <div>
-                              {asset.originalPrice && Number(asset.originalPrice) > Number(asset.dailyRate) && (
+                              {isPromo && (
                                 <p style={{ fontSize: "0.72rem", color: "#52525b", textDecoration: "line-through", marginBottom: "0.1rem" }}>
                                   ${Number(asset.originalPrice).toLocaleString("es-MX")} MXN
                                 </p>
                               )}
                               <div style={{ display: "flex", alignItems: "baseline", gap: "0.35rem" }}>
-                                <span style={{ fontSize: "1.6rem", fontWeight: 300, letterSpacing: "-0.04em", color: "#FF3DA8", lineHeight: 1 }}>
+                                <span style={{
+                                  fontSize: "1.9rem", fontWeight: 300, letterSpacing: "-0.04em", lineHeight: 1,
+                                  color: "#FF3DA8",
+                                  textShadow: "0 0 20px rgba(255,61,168,0.35)",
+                                }}>
                                   ${Number(asset.dailyRate).toLocaleString("es-MX")}
                                 </span>
                                 <span style={{ fontSize: "0.62rem", color: "#52525b" }}>MXN</span>
                               </div>
                             </div>
-                            {asset.originalPrice && Number(asset.originalPrice) > Number(asset.dailyRate) && (
-                              <span style={{ fontSize: "0.62rem", fontWeight: 700, color: accent, background: `${accent}18`, border: `1px solid ${accent}35`, borderRadius: 4, padding: "0.2rem 0.55rem", flexShrink: 0 }}>
+                            {isPromo && (
+                              <span style={{
+                                fontSize: "0.65rem", fontWeight: 700, color: accent,
+                                background: `${accent}18`, border: `1px solid ${accent}35`,
+                                borderRadius: 6, padding: "0.25rem 0.65rem", flexShrink: 0,
+                              }}>
                                 Oferta
                               </span>
                             )}
@@ -421,17 +487,17 @@ export default function CatalogClient({
                       })()}
                     </div>
 
-                    {/* CTA visual — la tarjeta completa es el link */}
+                    {/* CTA */}
                     <div style={{
-                      textAlign: "center", display: "block", fontSize: "0.75rem",
-                      padding: "0.6rem", borderRadius: 8, marginTop: "auto",
+                      textAlign: "center", fontSize: "0.8rem", fontWeight: 700,
+                      padding: "0.7rem", borderRadius: 10, marginTop: "auto",
                       background: checked && !isAvail
                         ? "transparent"
-                        : "rgba(232,25,138,0.08)",
-                      border: `1px solid ${checked && !isAvail ? "rgba(255,255,255,0.07)" : "rgba(232,25,138,0.25)"}`,
-                      color: checked && !isAvail ? "#3f3f46" : "var(--gold)",
-                      fontWeight: 600, letterSpacing: "0.03em",
-                      transition: "background 0.2s, border-color 0.2s",
+                        : `linear-gradient(135deg, ${accent}20, rgba(232,25,138,0.12))`,
+                      border: `1px solid ${checked && !isAvail ? "rgba(255,255,255,0.07)" : accent + "40"}`,
+                      color: checked && !isAvail ? "#3f3f46" : accent,
+                      letterSpacing: "0.03em",
+                      transition: "all 0.2s",
                     }}>
                       {checked && !isAvail ? "No disponible para esa fecha" : "Ver paquete →"}
                     </div>
