@@ -6,17 +6,49 @@ import type { PricingConfig } from "@/lib/product-tiers";
 
 type Props = { params: Promise<{ id: string }> };
 
+// El parámetro `id` contiene el SKU en minúsculas (ej: "pkg-mediano").
+// Se convierte a mayúsculas para buscar en BD. Si no se encuentra por SKU,
+// intenta búsqueda por ID numérico para mantener compatibilidad con links viejos.
+async function findAsset(slug: string) {
+  // Primero: buscar por SKU (caso normal — slug = SKU en minúsculas)
+  const bySku = await prisma.asset.findFirst({
+    where: { sku: slug.toUpperCase(), isActive: true, isRentable: true },
+    include: {
+      category:   true,
+      ownerAdmin: { select: { fullName: true } },
+      components: {
+        include: { childAsset: { select: { id: true, name: true, dailyRate: true } } },
+      },
+    },
+  }).catch(() => null);
+  if (bySku) return bySku;
+
+  // Fallback: buscar por ID numérico (links generados antes del cambio)
+  const numId = Number(slug);
+  if (isNaN(numId)) return null;
+  return prisma.asset.findUnique({
+    where: { id: numId, isActive: true, isRentable: true },
+    include: {
+      category:   true,
+      ownerAdmin: { select: { fullName: true } },
+      components: {
+        include: { childAsset: { select: { id: true, name: true, dailyRate: true } } },
+      },
+    },
+  }).catch(() => null);
+}
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { id } = await params;
-  const asset = await prisma.asset.findUnique({
-    where: { id: Number(id), isActive: true },
+  const { id: slug } = await params;
+  const asset = await prisma.asset.findFirst({
+    where: { sku: slug.toUpperCase(), isActive: true },
     select: { name: true, description: true, imageUrl: true, imageGallery: true },
   }).catch(() => null);
 
   if (!asset) return { title: "Paquete no encontrado — Daysu.vip" };
 
-  const gallery = Array.isArray(asset.imageGallery) ? (asset.imageGallery as string[]) : [];
-  const ogImage = gallery[0] ?? asset.imageUrl ?? undefined;
+  const gallery   = Array.isArray(asset.imageGallery) ? (asset.imageGallery as string[]) : [];
+  const ogImage   = gallery[0] ?? asset.imageUrl ?? undefined;
   const firstLine = (asset.description ?? "").split("\n")[0]?.trim();
 
   return {
@@ -29,23 +61,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export const dynamic = "force-dynamic";
 
 export default async function PackageDetailPage({ params }: Props) {
-  const { id } = await params;
-  const assetId = Number(id);
-  if (isNaN(assetId)) notFound();
-
-  const asset = await prisma.asset.findUnique({
-    where: { id: assetId, isActive: true, isRentable: true },
-    include: {
-      category:   true,
-      ownerAdmin: { select: { fullName: true } },
-      components: {
-        include: {
-          childAsset: { select: { id: true, name: true, dailyRate: true } },
-        },
-      },
-    },
-  }).catch(() => null);
-
+  const { id: slug } = await params;
+  const asset = await findAsset(slug);
   if (!asset) notFound();
 
   const componentNames = [...asset.components]
@@ -57,20 +74,20 @@ export default async function PackageDetailPage({ params }: Props) {
   return (
     <PackageDetail
       asset={{
-        id:           asset.id,
-        name:         asset.name,
-        sku:          asset.sku,
-        dailyRate:    asset.dailyRate.toString(),
+        id:            asset.id,
+        name:          asset.name,
+        sku:           asset.sku,
+        dailyRate:     asset.dailyRate.toString(),
         originalPrice: asset.originalPrice?.toString() ?? null,
-        description:  asset.description,
-        categoryName: asset.category.name,
-        ownerName:    asset.ownerAdmin?.fullName ?? null,
-        imageUrl:     asset.imageUrl,
-        imageGallery: gallery,
-        pricingTiers: (asset.pricingTiers ?? null) as PricingConfig | null,
-        maxGuests:    asset.maxGuests,
+        description:   asset.description,
+        categoryName:  asset.category.name,
+        ownerName:     asset.ownerAdmin?.fullName ?? null,
+        imageUrl:      asset.imageUrl,
+        imageGallery:  gallery,
+        pricingTiers:  (asset.pricingTiers ?? null) as PricingConfig | null,
+        maxGuests:     asset.maxGuests,
         isRecommended: asset.isRecommended,
-        promoType:    asset.promoType,
+        promoType:     asset.promoType,
         componentNames,
       }}
     />

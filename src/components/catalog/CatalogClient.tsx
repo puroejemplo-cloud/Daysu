@@ -427,8 +427,8 @@ export default function CatalogClient({
                     ) : (
                       <Link
                         href={range.from
-                          ? `/catalogo/${asset.id}?start=${range.from.toISOString()}&sh=${setupHour}`
-                          : `/catalogo/${asset.id}`}
+                          ? `/catalogo/${asset.sku.toLowerCase()}?start=${range.from.toISOString()}&sh=${setupHour}`
+                          : `/catalogo/${asset.sku.toLowerCase()}`}
                         className="btn-gold"
                         style={{ textAlign: "center", display: "block" }}>
                         Ver paquete →
