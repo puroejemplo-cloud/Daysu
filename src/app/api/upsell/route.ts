@@ -4,7 +4,7 @@ import { ok, err } from "@/lib/api";
 
 // GET /api/upsell?assets=1,2,3
 // Devuelve sugerencias de upsell basadas en los activos seleccionados.
-// Si el activo sugerido ya está en la lista, se omite.
+// Incluye también activos con isRecommended=true que no estén ya seleccionados.
 export async function GET(req: NextRequest) {
   const raw = new URL(req.url).searchParams.get("assets");
   if (!raw) return err("El parámetro 'assets' es requerido");
@@ -12,21 +12,31 @@ export async function GET(req: NextRequest) {
   const assetIds = raw.split(",").map(Number).filter(Boolean);
   if (assetIds.length === 0) return err("IDs de activos inválidos");
 
-  const rules = await prisma.upsellRule.findMany({
-    where: {
-      sourceAssetId: { in: assetIds },
-      isActive: true,
-      // no sugerir algo que ya está seleccionado
-      suggestedAssetId: { notIn: assetIds },
-    },
-    include: {
-      sourceAsset:    { select: { id: true, name: true } },
-      suggestedAsset: { select: { id: true, name: true, dailyRate: true } },
-    },
-    orderBy: { discountPercent: "desc" },
-  });
+  const [rules, recommended] = await Promise.all([
+    prisma.upsellRule.findMany({
+      where: {
+        sourceAssetId:    { in: assetIds },
+        isActive:         true,
+        suggestedAssetId: { notIn: assetIds },
+      },
+      include: {
+        sourceAsset:    { select: { id: true, name: true } },
+        suggestedAsset: { select: { id: true, name: true, dailyRate: true } },
+      },
+      orderBy: { discountPercent: "desc" },
+    }),
+    prisma.asset.findMany({
+      where: {
+        isRecommended: true,
+        isActive:      true,
+        isRentable:    true,
+        id:            { notIn: assetIds },
+      },
+      select: { id: true, name: true, dailyRate: true },
+    }),
+  ]);
 
-  // Deduplicar: si el mismo activo sugerido aparece por varias fuentes, tomar el mayor descuento
+  // Deduplicar reglas: si el mismo activo sugerido aparece por varias fuentes, tomar el mayor descuento
   const seen = new Map<number, (typeof rules)[0]>();
   for (const rule of rules) {
     const prev = seen.get(rule.suggestedAssetId);
@@ -35,7 +45,7 @@ export async function GET(req: NextRequest) {
     }
   }
 
-  const suggestions = [...seen.values()].map((r) => ({
+  const ruleSuggestions = [...seen.values()].map((r) => ({
     ruleId:           r.id,
     suggestedAssetId: r.suggestedAssetId,
     suggestedName:    r.suggestedAsset.name,
@@ -46,5 +56,21 @@ export async function GET(req: NextRequest) {
     triggeredBy:      r.sourceAsset.name,
   }));
 
-  return ok(suggestions);
+  // Activos recomendados que no estén ya cubiertos por una regla
+  const ruleAssetIds = new Set(ruleSuggestions.map((s) => s.suggestedAssetId));
+  const recommendedSuggestions = recommended
+    .filter((a) => !ruleAssetIds.has(a.id))
+    .map((a) => ({
+      ruleId:           -a.id, // ID sintético negativo — no colisiona con reglas reales
+      suggestedAssetId: a.id,
+      suggestedName:    a.name,
+      originalPrice:    Number(a.dailyRate),
+      discountPercent:  0,
+      discountedPrice:  Number(a.dailyRate),
+      label:            `✦ Recomendado para tu evento: ${a.name}`,
+      triggeredBy:      "Recomendado",
+    }));
+
+  // Reglas primero (con descuento), recomendados después
+  return ok([...ruleSuggestions, ...recommendedSuggestions]);
 }
