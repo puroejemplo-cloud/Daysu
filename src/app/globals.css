@@ -335,6 +335,7 @@ input, select, textarea {
   transform: translateY(-4px);
   border-color: rgba(232,25,138,0.3);
   box-shadow: 0 24px 60px rgba(0,0,0,0.45), 0 0 0 1px rgba(232,25,138,0.15);
+  cursor: pointer;
 }
 .pkg-card-v2.unavailable { opacity: 0.45; pointer-events: none; }
 

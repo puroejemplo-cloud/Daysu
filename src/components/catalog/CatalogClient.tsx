@@ -243,9 +243,15 @@ export default function CatalogClient({
               const brand     = asset.ownerName ?? "Daysu.vip";
               const features  = descLines.length > 0 ? descLines : comps;
 
+              const cardHref = range.from
+                ? `/catalogo/${asset.sku.toLowerCase()}?start=${range.from.toISOString()}&sh=${setupHour}`
+                : `/catalogo/${asset.sku.toLowerCase()}`;
+
               return (
-                <div key={asset.id}
-                  className={`pkg-card-v2${checked && !isAvail ? " unavailable" : ""}`}>
+                <Link key={asset.id}
+                  href={cardHref}
+                  className={`pkg-card-v2${checked && !isAvail ? " unavailable" : ""}`}
+                  style={{ textDecoration: "none", display: "flex", flexDirection: "column" }}>
 
                   {/* ── Imagen 1:1 con overlay ── */}
                   <div style={{ position: "relative" }}>
@@ -415,27 +421,22 @@ export default function CatalogClient({
                       })()}
                     </div>
 
-                    {/* CTA */}
-                    {checked && !isAvail ? (
-                      <span style={{
-                        textAlign: "center", display: "block", fontSize: "0.75rem",
-                        padding: "0.65rem", borderRadius: 8, border: "1px solid rgba(255,255,255,0.07)",
-                        color: "#3f3f46", cursor: "not-allowed",
-                      }}>
-                        No disponible para esa fecha
-                      </span>
-                    ) : (
-                      <Link
-                        href={range.from
-                          ? `/catalogo/${asset.sku.toLowerCase()}?start=${range.from.toISOString()}&sh=${setupHour}`
-                          : `/catalogo/${asset.sku.toLowerCase()}`}
-                        className="btn-gold"
-                        style={{ textAlign: "center", display: "block" }}>
-                        Ver paquete →
-                      </Link>
-                    )}
+                    {/* CTA visual — la tarjeta completa es el link */}
+                    <div style={{
+                      textAlign: "center", display: "block", fontSize: "0.75rem",
+                      padding: "0.6rem", borderRadius: 8, marginTop: "auto",
+                      background: checked && !isAvail
+                        ? "transparent"
+                        : "rgba(232,25,138,0.08)",
+                      border: `1px solid ${checked && !isAvail ? "rgba(255,255,255,0.07)" : "rgba(232,25,138,0.25)"}`,
+                      color: checked && !isAvail ? "#3f3f46" : "var(--gold)",
+                      fontWeight: 600, letterSpacing: "0.03em",
+                      transition: "background 0.2s, border-color 0.2s",
+                    }}>
+                      {checked && !isAvail ? "No disponible para esa fecha" : "Ver paquete →"}
+                    </div>
                   </div>
-                </div>
+                </Link>
               );
             })}
           </div>
