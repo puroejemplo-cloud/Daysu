@@ -52,6 +52,8 @@ export default function BookingWizard({ forcedAssetId }: { forcedAssetId?: numbe
   const prevForcedId = useRef<number | null | undefined>(undefined);
 
   const [step,      setStep]      = useState(0);
+  const [stepDir,   setStepDir]   = useState<"forward" | "back">("forward");
+  const goStep = (n: number) => { setStepDir(n > step ? "forward" : "back"); setStep(n); };
   const [client,    setClient]    = useState({ fullName: "", phone: "", email: "" });
   const [guests,    setGuests]    = useState<number | "">("");
   const [eventDate, setEventDate] = useState("");
@@ -288,6 +290,9 @@ export default function BookingWizard({ forcedAssetId }: { forcedAssetId?: numbe
         ))}
       </div>
 
+      {/* Wrapper animado — key={step} fuerza remount y re-dispara la animación */}
+      <div key={step} className={stepDir === "forward" ? "wizard-slide-in" : "wizard-slide-back"}>
+
       {/* ══ PASO 0: DATOS ══ */}
       {step === 0 && (
         <div className="aura-card p-6 space-y-5">
@@ -459,7 +464,7 @@ export default function BookingWizard({ forcedAssetId }: { forcedAssetId?: numbe
           </div>
 
           <div className="flex justify-end pt-2">
-            <button onClick={() => setStep(1)} disabled={!canNext0} className="btn-gold disabled:opacity-40 px-8 py-3 text-sm">
+            <button onClick={() => goStep(1)} disabled={!canNext0} className="btn-gold disabled:opacity-40 px-8 py-3 text-sm">
               Siguiente →
             </button>
           </div>
@@ -496,8 +501,8 @@ export default function BookingWizard({ forcedAssetId }: { forcedAssetId?: numbe
             )}
           </div>
           <div className="flex justify-between pt-2">
-            <button onClick={() => setStep(0)} className="text-sm font-bold" style={muted}>← Atrás</button>
-            <button onClick={() => setStep(2)} disabled={!canNext1} className="btn-gold disabled:opacity-40 px-8 py-3 text-sm">
+            <button onClick={() => goStep(0)} className="text-sm font-bold" style={muted}>← Atrás</button>
+            <button onClick={() => goStep(2)} disabled={!canNext1} className="btn-gold disabled:opacity-40 px-8 py-3 text-sm">
               {preselectedPkg ? "Ver complementos →" : "Ver paquetes →"}
             </button>
           </div>
@@ -782,8 +787,8 @@ export default function BookingWizard({ forcedAssetId }: { forcedAssetId?: numbe
           )}
 
           <div className="flex justify-between">
-            <button onClick={() => setStep(1)} className="text-sm font-bold" style={muted}>← Atrás</button>
-            <button onClick={() => setStep(3)} className="btn-gold px-8 py-3 text-sm">
+            <button onClick={() => goStep(1)} className="text-sm font-bold" style={muted}>← Atrás</button>
+            <button onClick={() => goStep(3)} className="btn-gold px-8 py-3 text-sm">
               {selected.length > 1 ? `Continuar (${selected.length - 1} extra${selected.length > 2 ? "s" : ""}) →` : "Continuar sin extras →"}
             </button>
           </div>
@@ -798,7 +803,7 @@ export default function BookingWizard({ forcedAssetId }: { forcedAssetId?: numbe
               style={{ background: "rgba(212,175,55,.08)", border: "1px solid rgba(212,175,55,.2)" }}>
               <span style={gold}>📅</span>
               <span style={muted}>{dl} · {setupHour}h · {guestNum > 0 ? `${guestNum} invitados` : ""}</span>
-              <button onClick={() => setStep(1)} className="ml-auto text-xs font-bold" style={gold}>Cambiar</button>
+              <button onClick={() => goStep(1)} className="ml-auto text-xs font-bold" style={gold}>Cambiar</button>
             </div>
           )}
           <div className="aura-card p-5">
@@ -827,8 +832,8 @@ export default function BookingWizard({ forcedAssetId }: { forcedAssetId?: numbe
               })}
           </div>
           <div className="flex justify-between">
-            <button onClick={() => setStep(1)} className="text-sm font-bold" style={muted}>← Atrás</button>
-            <button onClick={() => setStep(3)} disabled={!canNext2} className="btn-gold disabled:opacity-40 px-8 py-3 text-sm">Revisar →</button>
+            <button onClick={() => goStep(1)} className="text-sm font-bold" style={muted}>← Atrás</button>
+            <button onClick={() => goStep(3)} disabled={!canNext2} className="btn-gold disabled:opacity-40 px-8 py-3 text-sm">Revisar →</button>
           </div>
         </div>
       )}
@@ -938,13 +943,15 @@ export default function BookingWizard({ forcedAssetId }: { forcedAssetId?: numbe
           </div>
           {error && <div className="rounded-xl p-4 text-sm" style={{ background: "rgba(239,68,68,.1)", border: "1px solid rgba(239,68,68,.3)", color: "#EF4444" }}>{error}</div>}
           <div className="flex justify-between">
-            <button onClick={() => setStep(2)} className="text-sm font-bold" style={muted}>← Atrás</button>
+            <button onClick={() => goStep(2)} className="text-sm font-bold" style={muted}>← Atrás</button>
             <button onClick={handleSubmit} disabled={submitting} className="btn-gold disabled:opacity-50 px-8 py-3 text-sm">
               {submitting ? "Procesando..." : "✦ Confirmar y apartar fecha"}
             </button>
           </div>
         </div>
       )}
+
+      </div>{/* fin wrapper animado */}
     </div>
   );
 }

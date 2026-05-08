@@ -704,6 +704,47 @@ input, select, textarea {
   .pkg-hcard-body { padding: 2rem 2.5rem; }
 }
 
+/* ── Wizard step transitions ─────────────────────────────────────────── */
+@keyframes wizardSlideIn {
+  from { opacity: 0; transform: translateX(22px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes wizardSlideBack {
+  from { opacity: 0; transform: translateX(-22px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+.wizard-slide-in   { animation: wizardSlideIn  0.24s cubic-bezier(0.25,0.46,0.45,0.94) both; }
+.wizard-slide-back { animation: wizardSlideBack 0.24s cubic-bezier(0.25,0.46,0.45,0.94) both; }
+
+/* ── Empty states ────────────────────────────────────────────────────── */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 3.5rem 2rem;
+  text-align: center;
+  border-radius: 0.75rem;
+  border: 1px dashed rgba(255,255,255,0.07);
+  background: rgba(255,255,255,0.01);
+}
+.empty-state-icon {
+  color: #27272a;
+  flex-shrink: 0;
+}
+.empty-state-title {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #3f3f46;
+}
+.empty-state-desc {
+  font-size: 0.78rem;
+  color: #27272a;
+  max-width: 28ch;
+  line-height: 1.5;
+}
+
 /* Stats grid: 2 cols on mobile, 4 on desktop */
 .stats-grid {
   display: grid;

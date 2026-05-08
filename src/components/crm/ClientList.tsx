@@ -3,7 +3,7 @@ import { useEffect, useState, useCallback, useRef } from "react";
 import Link from "next/link";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
-import { UserPlus, X } from "lucide-react";
+import { UserPlus, X, Users } from "lucide-react";
 
 interface Client {
   id: number; fullName: string; email: string; phone: string | null; company: string | null;
@@ -173,8 +173,12 @@ export default function ClientList() {
       {loading && <p className="text-sm" style={{ color: "#94A3B8" }}>Buscando...</p>}
 
       {!loading && clients.length === 0 && (
-        <div className="aura-card p-12 text-center" style={{ color: "#475569" }}>
-          {q ? `Sin resultados para "${q}"` : "No hay clientes registrados aún."}
+        <div className="empty-state">
+          <Users size={36} className="empty-state-icon" />
+          <p className="empty-state-title">{q ? "Sin resultados" : "Sin clientes aún"}</p>
+          <p className="empty-state-desc">
+            {q ? `No hay clientes que coincidan con "${q}".` : "Crea el primero con el botón Nuevo cliente."}
+          </p>
         </div>
       )}
 

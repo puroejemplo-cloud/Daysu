@@ -6,7 +6,7 @@ import { es } from "date-fns/locale";
 import Link from "next/link";
 import {
   Package, PlusCircle, Users, CheckSquare, Bell, Images,
-  CalendarDays, Eye, RefreshCw,
+  CalendarDays, Eye, RefreshCw, CalendarX,
 } from "lucide-react";
 import NotificationPermission from "@/components/ui/NotificationPermission";
 
@@ -205,8 +205,12 @@ export default function AdminDashboard() {
         </div>
       )}
       {!loading && bookings.length === 0 && (
-        <div className="aura-card p-10 text-center" style={{ color: "#3f3f46" }}>
-          Sin reservas con este filtro.
+        <div className="empty-state">
+          <CalendarX size={36} className="empty-state-icon" />
+          <p className="empty-state-title">Sin reservas</p>
+          <p className="empty-state-desc">
+            {filter === "all" ? "No hay reservas registradas aún." : `No hay reservas con estado "${ST[filter]?.label ?? filter}".`}
+          </p>
         </div>
       )}
       {!loading && (

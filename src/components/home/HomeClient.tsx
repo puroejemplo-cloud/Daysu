@@ -8,51 +8,10 @@ import CardCarousel     from "@/components/catalog/CardCarousel";
 
 interface Package {
   id: number; name: string; dailyRate: string; originalPrice: string | null;
-  description: string | null; sku: string; ownerName: string | null;
-  imageUrl: string | null; imageGallery: string[]; componentNames: string[];
+  description: string | null; sku: string; isRecommended: boolean;
+  ownerName: string | null; imageUrl: string | null;
+  imageGallery: string[]; componentNames: string[];
 }
-
-// Dueño de cada paquete
-const PKG_OWNERS: Record<string, string> = {
-  "DAY-DJ-AUDIO-100": "Sonido Daysu",
-  "DAY-DJ-AUDIO-200": "Sonido Daysu",
-  "DAY-DJ-AUDIO-500": "Sonido Daysu",
-  "CAB-FOTO-OFERTA":  "Daysu.vip",
-  "PKG-BASICO":      "Sonido Daysu",
-  "PKG-MEDIANO":     "Sonido Daysu",
-  "PKG-PREMIUM":     "Sonido Daysu · DJ Iván Events",
-  "PKG-MASTER-VIP":  "Sonido Daysu · DJ Iván Events",
-  "PKG-DIAMANTE":    "Sonido Daysu · DJ Iván Events",
-  "PKG-SNACK-TATOO": "Sonido Daysu · DJ Iván Events",
-};
-
-// Contenido de cada paquete (datos reales)
-const PKG_FEATURES: Record<string, string[]> = {
-  "DAY-DJ-AUDIO-100": ["DJ Versátil + Audio básico · Cabina LED", "Hasta 100 personas", "5 hrs + 1 recepción", "Cumpleaños, bautizos, eventos día"],
-  "DAY-DJ-AUDIO-200": ["DJ Versátil + Audio profesional · Cabina LED", "Hasta 200 personas", "5 hrs + 1 recepción", "Bodas, XV Años, eventos nocturnos"],
-  "DAY-DJ-AUDIO-500": ["DJ Versátil + Audio completo · Cabina LED", "50 a 500 personas", "5 hrs + 1 recepción", "Eventos grandes, bodas, corporativos"],
-  "CAB-FOTO-OFERTA": ["Cabina fotográfica inflable LED", "Props, galería digital, LED RGB", "Operador profesional incluido", "1 hr $2,000 · 2 hrs $3,000 · 3 hrs $3,500"],
-  "PKG-BASICO":      ["DJ Versátil + Audio básico profesional", "Cabina LED", "Souvenirs (globos)", "Ideal bautizos, cumpleaños, eventos día"],
-  "PKG-MEDIANO":     ["DJ Versátil + Audio básico + Cabina LED", "Iluminación básica", "Show Robot Led + pirotecnia fría", "Souvenirs (globos)"],
-  "PKG-PREMIUM":     ["DJ Versátil + Audio hasta 200 px", "Iluminación profesional de escenario", "Show Cabezones (1) + Robot Led", "Maestro de ceremonias + Proyección + Video semblanza"],
-  "PKG-MASTER-VIP":  ["DJ + Audio 50-500 px + Iluminación completa", "Carrito 200 shots + Show Robot Led", "Cabezones (2) + Animadores caracterizados", "Maestro de ceremonias + Video semblanza + Pirotecnia"],
-  "PKG-DIAMANTE":    ["Todo Master VIP + Shot jeringas", "Arlequín en zancos + Vals en las nubes sencillo", "Cañón de confeti + Carrito 250 shots", "Pista LED y Maruchanfest disponibles como extras"],
-  "PKG-SNACK-TATOO": ["Todo Diamante + Tatoo & glitter", "Vals en las nubes doble", "Maruchanfest y Pista LED disponibles como extras", "El paquete más completo"],
-};
-
-// Mapa SKU → foto local. Si la foto no existe, se usa el gradiente como fallback.
-const PKG_PHOTOS: Record<string, string> = {
-  "DAY-DJ-AUDIO-100": "/paquetes/pkg-dj-audio-100.svg",
-  "DAY-DJ-AUDIO-200": "/paquetes/pkg-dj-audio-200.svg",
-  "DAY-DJ-AUDIO-500": "/paquetes/pkg-dj-audio-500.svg",
-  "CAB-FOTO-OFERTA":  "/paquetes/cab-foto-oferta.svg",
-  "PKG-BASICO":       "/paquetes/pkg-basico.svg",
-  "PKG-MEDIANO":     "/paquetes/pkg-mediano.svg",
-  "PKG-PREMIUM":     "/paquetes/pkg-premium.svg",
-  "PKG-MASTER-VIP":  "/paquetes/pkg-master-vip.svg",
-  "PKG-DIAMANTE":    "/paquetes/pkg-diamante.svg",
-  "PKG-SNACK-TATOO": "/paquetes/pkg-snack-tatoo.svg",
-};
 
 const CARD_COLORS = [
   { bg: "linear-gradient(135deg,#1a0e00 0%,#2d1a00 40%,#0d0d0d 100%)", geo: "#E8198A", geoW: 400, geoH: 400 },
@@ -70,29 +29,20 @@ const TICKER_ITEMS = [
   "Carrito de Shots", "DJ Versátil", "Audio Profesional",
 ];
 
-const STATS = [
-  { num: 8,   suffix: "+",    label: "Paquetes disponibles"             },
-  { num: 5,   suffix: " hrs", label: "De servicio por paquete"          },
-  { num: 500, suffix: "+",    label: "Invitados máx."                   },
-  { num: 100, suffix: "%",    label: "Compromiso y calidad"             },
-];
-
-const CATS = ["Todos", "Bodas", "XV Años", "Bautizos", "Cumpleaños", "Graduaciones", "Empresariales"];
-
-const CONTACT = {
-  whatsapp: "524929496372",
-  phone1: "4929496372",
-  phone2: "4921291862",
-  zone: "Zona conurbada Zacatecas–Guadalupe",
-};
-
-export default function HomeClient({ packages, carouselImages = [] }: { packages: Package[]; carouselImages?: CarouselPhoto[] }) {
+export default function HomeClient({
+  packages,
+  carouselImages = [],
+  whatsappNumber = "524929496372",
+}: {
+  packages: Package[];
+  carouselImages?: CarouselPhoto[];
+  whatsappNumber?: string;
+}) {
   const cursorRef     = useRef<HTMLDivElement>(null);
   const ringRef       = useRef<HTMLDivElement>(null);
   const linesRef      = useRef<HTMLDivElement>(null);
   const statsRef      = useRef<HTMLDivElement>(null);
-  const [activeCat,   setActiveCat]   = useState("Todos");
-  const [cursorReady, setCursorReady] = useState(false); // oculta el cursor nativo solo tras primer movimiento
+  const [cursorReady, setCursorReady] = useState(false);
 
   // Cursor: refs directos al DOM — sin re-renders de React
   const mxRef = useRef(0);
@@ -161,18 +111,14 @@ export default function HomeClient({ packages, carouselImages = [] }: { packages
     return () => clearTimeout(delay);
   }, []);
 
-  // SKU del paquete "más popular"
-  const POPULAR_SKU = "PKG-MEDIANO";
-
-  // Ordenar: 1º promos, 2º popular, 3º resto por precio
+  // Ordenar: 1º promos, 2º recomendados (isRecommended en BD), 3º resto por precio
   const sorted = [...packages].sort((a, b) => {
     const aPromo = !!a.originalPrice && Number(a.originalPrice) > Number(a.dailyRate);
     const bPromo = !!b.originalPrice && Number(b.originalPrice) > Number(b.dailyRate);
     if (aPromo && !bPromo) return -1;
     if (!aPromo && bPromo) return 1;
-    const aPop = a.sku === POPULAR_SKU ? 0 : 1;
-    const bPop = b.sku === POPULAR_SKU ? 0 : 1;
-    if (aPop !== bPop) return aPop - bPop;
+    if (a.isRecommended && !b.isRecommended) return -1;
+    if (!a.isRecommended && b.isRecommended) return 1;
     return Number(a.dailyRate) - Number(b.dailyRate);
   });
   const shown = sorted.slice(0, 4);
@@ -337,18 +283,15 @@ export default function HomeClient({ packages, carouselImages = [] }: { packages
 
         <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
           {shown.map((pkg, i) => {
-            const c         = CARD_COLORS[i % CARD_COLORS.length];
-            const gallery   = (pkg.imageGallery && pkg.imageGallery.length > 0)
+            const c       = CARD_COLORS[i % CARD_COLORS.length];
+            const gallery = pkg.imageGallery.length > 0
               ? pkg.imageGallery
-              : (pkg.imageUrl ?? PKG_PHOTOS[pkg.sku])
-                ? [(pkg.imageUrl ?? PKG_PHOTOS[pkg.sku]) as string]
-                : [];
+              : pkg.imageUrl ? [pkg.imageUrl] : [];
             const descLines = (pkg.description ?? "").split("\n").map((l) => l.trim()).filter(Boolean);
-            const features  = descLines.length > 0 ? descLines : (PKG_FEATURES[pkg.sku] ?? []);
-            const comps     = pkg.componentNames ?? [];
-            const brand     = pkg.ownerName ?? PKG_OWNERS[pkg.sku] ?? "Daysu.vip";
+            const features  = descLines.length > 0 ? descLines : pkg.componentNames;
+            const brand     = pkg.ownerName ?? "Daysu.vip";
             const isPromo   = !!pkg.originalPrice && Number(pkg.originalPrice) > Number(pkg.dailyRate);
-            const isPopular = pkg.sku === POPULAR_SKU;
+            const isPopular = pkg.isRecommended;
             const discount  = isPromo
               ? Math.round((1 - Number(pkg.dailyRate) / Number(pkg.originalPrice)) * 100)
               : 0;
@@ -415,14 +358,14 @@ export default function HomeClient({ packages, carouselImages = [] }: { packages
                     </ul>
                   )}
 
-                  {/* Componentes BOM */}
-                  {comps.length > 0 && (
+                  {/* Componentes BOM — solo cuando la descripción ya ocupa las features */}
+                  {descLines.length > 0 && pkg.componentNames.length > 0 && (
                     <div style={{ marginTop: "1rem" }}>
                       <p style={{ fontSize: "0.62rem", letterSpacing: "0.12em", textTransform: "uppercase", color: "#52525b", fontWeight: 700, marginBottom: "0.45rem" }}>
                         Incluye equipo
                       </p>
                       <div style={{ display: "flex", flexWrap: "wrap", gap: "0.35rem" }}>
-                        {comps.map((comp, ci) => (
+                        {pkg.componentNames.map((comp, ci) => (
                           <span key={ci} style={{ fontSize: "0.7rem", fontWeight: 500, padding: "0.2rem 0.65rem", borderRadius: 999, background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.09)", color: "#71717a" }}>
                             {comp}
                           </span>
@@ -452,7 +395,12 @@ export default function HomeClient({ packages, carouselImages = [] }: { packages
 
       {/* ── STATS ──────────────────────────────────────────── */}
       <div ref={statsRef} className="stats-grid" aria-label="Estadísticas de Daysu.vip">
-        {STATS.map((s) => (
+        {[
+          { num: packages.length, suffix: "+",    label: "Paquetes disponibles" },
+          { num: 5,               suffix: " hrs",  label: "De servicio por paquete" },
+          { num: 500,             suffix: "+",    label: "Invitados máx." },
+          { num: 100,             suffix: "%",    label: "Compromiso y calidad" },
+        ].map((s) => (
           <div key={s.label} style={{ padding: "2rem 1.25rem", background: "var(--black)", textAlign: "center" }}>
             <span className="bebas" data-target={s.num} data-suffix={s.suffix}
               aria-live="polite" aria-atomic="true"
@@ -547,7 +495,7 @@ export default function HomeClient({ packages, carouselImages = [] }: { packages
           {/* CTA final */}
           <div style={{ textAlign: "center", marginTop: "3rem", display: "flex", gap: "1rem", justifyContent: "center", flexWrap: "wrap" }}>
             <Link href="/catalogo" className="btn-gold">Verificar disponibilidad →</Link>
-            <a href={`https://wa.me/${CONTACT.whatsapp}?text=Hola%2C%20quiero%20información%20sobre%20los%20paquetes`}
+            <a href={`https://wa.me/${whatsappNumber}?text=Hola%2C%20quiero%20información%20sobre%20los%20paquetes`}
               target="_blank" rel="noopener noreferrer"
               className="btn-ghost"
               style={{ textDecoration: "none", display: "flex", alignItems: "center", gap: "0.4rem" }}>
@@ -556,7 +504,7 @@ export default function HomeClient({ packages, carouselImages = [] }: { packages
             </a>
           </div>
           <p style={{ textAlign: "center", marginTop: "1rem", fontSize: "0.72rem", color: "#475569" }}>
-            📞 {CONTACT.phone1} · {CONTACT.phone2} · {CONTACT.zone}
+            📞 Zona conurbada Zacatecas–Guadalupe
           </p>
         </div>
       </section>

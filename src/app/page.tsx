@@ -53,20 +53,23 @@ export default async function HomePage() {
     if (homepageSetting?.value) homepagePkgIds = JSON.parse(homepageSetting.value);
   } catch { /* muestra todos */ }
 
-  const packages = await prisma.asset.findMany({
-    where: {
-      isActive: true,
-      isRentable: true,
-      assetType: "package",
-      ...(homepagePkgIds.length > 0 ? { id: { in: homepagePkgIds } } : {}),
-    },
-    select: {
-      id: true, name: true, dailyRate: true, originalPrice: true,
-      description: true, sku: true, ownerSuffix: true,
-      ownerAdmin: { select: { fullName: true } },
-    },
-    orderBy: { dailyRate: "asc" },
-  });
+  const [packages, whatsappSetting] = await Promise.all([
+    prisma.asset.findMany({
+      where: {
+        isActive: true,
+        isRentable: true,
+        assetType: "package",
+        ...(homepagePkgIds.length > 0 ? { id: { in: homepagePkgIds } } : {}),
+      },
+      select: {
+        id: true, name: true, dailyRate: true, originalPrice: true,
+        description: true, sku: true, isRecommended: true,
+        ownerAdmin: { select: { fullName: true } },
+      },
+      orderBy: { dailyRate: "asc" },
+    }),
+    prisma.systemSetting.findUnique({ where: { key: "whatsapp_number" } }).catch(() => null),
+  ]);
 
   const pkgIds = packages.map((p) => p.id);
 
@@ -113,6 +116,7 @@ export default async function HomePage() {
   return (
     <HomeClient
       carouselImages={carouselImages}
+      whatsappNumber={whatsappSetting?.value ?? "524929496372"}
       packages={packages.map((p) => ({
         ...p,
         dailyRate:      p.dailyRate.toString(),
