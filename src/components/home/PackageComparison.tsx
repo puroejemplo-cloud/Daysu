@@ -4,6 +4,7 @@ import Link from "next/link";
 interface DbPkg {
   id: number; name: string; sku: string;
   dailyRate: string; maxGuests: number | null;
+  isRecommended?: boolean;
 }
 
 // Datos base (colores, popularidad, capacidad fallback, SKU de referencia)
@@ -52,13 +53,14 @@ export default function PackageComparison({
   // Solo muestra paquetes que existen en BD (si se pasan)
   const PKGS = PKGS_BASE.map((base) => {
     const dbPkg = packages?.find((p) => p.sku === base.sku);
-    if (packages && !dbPkg) return null; // ocultar si no está en BD
+    if (packages && !dbPkg) return null;
     return {
       ...base,
-      id:    dbPkg?.id ?? null,
-      price: dbPkg ? Number(dbPkg.dailyRate) : base.price,
-      name:  dbPkg?.name ?? base.name,
-      cap:   dbPkg?.maxGuests ?? base.cap,
+      id:      dbPkg?.id ?? null,
+      price:   dbPkg ? Number(dbPkg.dailyRate) : base.price,
+      name:    dbPkg?.name ?? base.name,
+      cap:     dbPkg?.maxGuests ?? base.cap,
+      popular: dbPkg?.isRecommended ?? base.popular, // usa BD si disponible
     };
   }).filter(Boolean) as Array<typeof PKGS_BASE[0] & { id: number | null }>;
 
@@ -229,7 +231,7 @@ export default function PackageComparison({
                       ✓ Seleccionar
                     </button>
                   ) : (
-                    <Link href={`/reservar?asset=${p.id ?? p.sku}`}
+                    <Link href={`/catalogo/${p.sku.toLowerCase()}`}
                       style={{
                         display: "inline-block", padding: "0.45rem 0.85rem",
                         borderRadius: 999, fontSize: "0.72rem", fontWeight: 700,

@@ -420,7 +420,7 @@ export default function HomeClient({
       <PhotoCarousel images={carouselImages} />
 
       {/* ── TESTIMONIALES ───────────────────────────────────── */}
-      <Testimonials />
+      <Testimonials whatsappNumber={whatsappNumber} />
 
       {/* ── CÓMO FUNCIONA ──────────────────────────────────── */}
       <section style={{ padding: "5rem 1.25rem 5rem", borderTop: "1px solid rgba(255,255,255,.05)" }}>

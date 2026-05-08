@@ -21,7 +21,7 @@ export default async function ReservarPage({
   // Paquetes activos de la BD para el comparador
   const packages = await prisma.asset.findMany({
     where: { isActive: true, isRentable: true, assetType: "package" },
-    select: { id: true, name: true, sku: true, dailyRate: true, maxGuests: true },
+    select: { id: true, name: true, sku: true, dailyRate: true, maxGuests: true, isRecommended: true },
     orderBy: { dailyRate: "asc" },
   });
 
@@ -37,12 +37,12 @@ export default async function ReservarPage({
         #05051a
       `,
     }}>
-      <div className="max-w-5xl mx-auto px-4 py-10" style={{ position: "relative", zIndex: 1 }}>
+      <div style={{ maxWidth: "72rem", margin: "0 auto", padding: "2.5rem 1.25rem 4rem", position: "relative", zIndex: 1 }}>
         <p className="section-label">Reserva tu fecha</p>
-        <h1 className="bebas text-white mb-1" style={{ fontSize: "2.8rem" }}>
+        <h1 className="bebas" style={{ fontSize: "clamp(2.2rem,5vw,3.5rem)", color: "var(--cream)", lineHeight: 1, marginBottom: "0.5rem" }}>
           Cotiza tu evento
         </h1>
-        <p className="mb-8 text-sm" style={{ color: "#94a3b8" }}>
+        <p style={{ color: "#71717a", fontSize: "0.88rem", marginBottom: "2.5rem" }}>
           Completa el formulario — tu fecha quedará apartada por 48 hrs.
         </p>
 

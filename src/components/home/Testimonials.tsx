@@ -17,7 +17,7 @@ function Stars({ n }: { n: number }) {
   );
 }
 
-export default function Testimonials() {
+export default function Testimonials({ whatsappNumber = "524929496372" }: { whatsappNumber?: string }) {
   return (
     <section style={{ padding: "4rem 1.25rem 5rem", borderTop: "1px solid rgba(255,255,255,.05)", background: "rgba(0,0,0,.2)" }}>
       <div style={{ maxWidth: 1280, margin: "0 auto" }}>
@@ -59,7 +59,7 @@ export default function Testimonials() {
 
         {/* CTA debajo */}
         <div style={{ textAlign: "center", marginTop: "2.5rem" }}>
-          <a href={`https://wa.me/524929496372?text=${encodeURIComponent("Hola, me interesa cotizar un evento 🎉")}`}
+          <a href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent("Hola, me interesa cotizar un evento 🎉")}`}
             target="_blank" rel="noopener noreferrer"
             className="btn-gold" style={{ textDecoration: "none", display: "inline-block" }}>
             ✦ Sé el próximo evento legendario
