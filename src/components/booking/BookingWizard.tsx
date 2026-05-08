@@ -4,6 +4,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { getHourlyTiers, getCapacityTiers, getPricingTiers, getTierLabel, type PricingConfig } from "@/lib/product-tiers";
+import WizardDatePicker from "./WizardDatePicker";
 
 interface AssetAvail  { assetId: number; isAvailable: boolean; availableUnits: number }
 interface AssetDetail {
@@ -272,22 +273,58 @@ export default function BookingWizard({ forcedAssetId }: { forcedAssetId?: numbe
 
   return (
     <div>
-      {/* STEPPER — minimalista */}
-      <div className="flex items-center gap-2 mb-8 flex-wrap">
-        {STEPS.map((s, i) => (
-          <div key={i} className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold flex-shrink-0"
-              style={{
-                background: i < step ? "rgba(22,163,74,0.15)" : i === step ? "var(--gold)" : "rgba(255,255,255,0.05)",
-                color: i < step ? "#4ade80" : i === step ? "#05051a" : "#52525b",
-                border: `1px solid ${i < step ? "rgba(22,163,74,0.3)" : i === step ? "var(--gold)" : "rgba(255,255,255,0.08)"}`,
-              }}>
-              {i < step ? "✓" : i + 1}
+      {/* STEPPER — con barra de progreso animada */}
+      <div style={{ marginBottom: "2rem" }}>
+        {/* Barra superior */}
+        <div style={{ height: 2, background: "rgba(255,255,255,0.06)", borderRadius: 1, marginBottom: "1.25rem", overflow: "hidden" }}>
+          <div style={{
+            height: "100%",
+            width: `${(step / (STEPS.length - 1)) * 100}%`,
+            background: "linear-gradient(90deg, var(--gold), var(--gold2))",
+            borderRadius: 1,
+            transition: "width 0.4s cubic-bezier(0.25,0.46,0.45,0.94)",
+          }} />
+        </div>
+        {/* Círculos + líneas conectoras */}
+        <div style={{ display: "flex", alignItems: "flex-start" }}>
+          {STEPS.map((s, i) => (
+            <div key={i} style={{ flex: i < STEPS.length - 1 ? 1 : 0, display: "flex", alignItems: "flex-start" }}>
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "0.4rem", flexShrink: 0 }}>
+                <div style={{
+                  width: 32, height: 32, borderRadius: "50%",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  fontSize: "0.72rem", fontWeight: 700,
+                  background: i < step ? "rgba(22,163,74,0.15)" : i === step ? "var(--gold)" : "rgba(255,255,255,0.05)",
+                  color:      i < step ? "#4ade80"             : i === step ? "#05051a"      : "#52525b",
+                  border:     `1.5px solid ${i < step ? "rgba(22,163,74,0.3)" : i === step ? "var(--gold)" : "rgba(255,255,255,0.08)"}`,
+                  transition: "all 0.25s",
+                  boxShadow:  i === step ? "0 0 12px rgba(232,25,138,0.3)" : "none",
+                }}>
+                  {i < step ? "✓" : i + 1}
+                </div>
+                <span style={{
+                  fontSize: "0.65rem", fontWeight: 600, whiteSpace: "nowrap",
+                  color: i === step ? "#e4e4e7" : i < step ? "#4ade80" : "#3f3f46",
+                  transition: "color 0.25s",
+                }}>{s}</span>
+              </div>
+              {/* Línea conectora con fill animado */}
+              {i < STEPS.length - 1 && (
+                <div style={{ flex: 1, position: "relative", height: 2, margin: "0.9rem 0.35rem 0", flexShrink: 1 }}>
+                  <div style={{ position: "absolute", inset: 0, background: "rgba(255,255,255,0.06)", borderRadius: 1 }} />
+                  <div style={{
+                    position: "absolute", inset: 0,
+                    background: "var(--gold)",
+                    borderRadius: 1,
+                    transform: `scaleX(${i < step ? 1 : 0})`,
+                    transformOrigin: "left",
+                    transition: "transform 0.4s cubic-bezier(0.25,0.46,0.45,0.94)",
+                  }} />
+                </div>
+              )}
             </div>
-            <span className="text-xs font-medium" style={{ color: i === step ? "#e4e4e7" : "#52525b" }}>{s}</span>
-            {i < STEPS.length - 1 && <div className="w-6 h-px flex-shrink-0" style={{ background: "rgba(255,255,255,0.06)" }} />}
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
 
       {/* Wrapper animado — key={step} fuerza remount y re-dispara la animación */}
@@ -477,9 +514,7 @@ export default function BookingWizard({ forcedAssetId }: { forcedAssetId?: numbe
           <p className="text-xs font-bold uppercase tracking-widest mb-1" style={gold}>📅 ¿Cuándo es tu evento?</p>
           <div>
             <label className={lb} style={muted}>Fecha del evento *</label>
-            <input type="date" value={eventDate} min={new Date().toISOString().split("T")[0]}
-              onChange={(e) => setEventDate(e.target.value)} className="aura-input" style={{ colorScheme: "dark" }} />
-            {dl && <p className="text-sm font-bold mt-2" style={gold}>📅 {dl}</p>}
+            <WizardDatePicker value={eventDate} onChange={setEventDate} />
           </div>
           <div>
             <label className={lb} style={muted}>Hora de inicio</label>

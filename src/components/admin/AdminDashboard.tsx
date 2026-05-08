@@ -112,6 +112,10 @@ export default function AdminDashboard() {
   const pending   = bookings.filter((b) => b.status === "pending_payment").length;
   const confirmed = bookings.filter((b) => b.status === "confirmed").length;
   const unread    = bookings.reduce((n, b) => n + b.notifications.filter((n) => !n.isRead).length, 0);
+  const revenue   = bookings
+    .filter((b) => b.status === "confirmed")
+    .reduce((sum, b) => sum + Number(b.depositAmount), 0);
+  const total     = bookings.length || 1; // evita división por cero
 
   return (
     <div className="space-y-6">
@@ -151,19 +155,27 @@ export default function AdminDashboard() {
         ))}
       </div>
 
-      {/* Stats — número ligero, espaciado generoso */}
+      {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         {[
-          { label: "Holds activos",  value: pending,         accent: "#ca8a04" },
-          { label: "Confirmadas",    value: confirmed,       accent: "#16a34a" },
-          { label: "Sin leer",       value: unread,          accent: "#dc2626" },
-          { label: "Total visibles", value: bookings.length, accent: "#71717a" },
+          { label: "Holds activos", value: pending,   accent: "#ca8a04", pct: Math.round(pending   / total * 100) },
+          { label: "Confirmadas",   value: confirmed, accent: "#16a34a", pct: Math.round(confirmed / total * 100) },
+          { label: "Sin leer",      value: unread,    accent: "#dc2626", pct: null },
+          { label: "Apartados MXN", value: `$${revenue.toLocaleString("es-MX", { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`, accent: "#a78bfa", pct: null },
         ].map((s) => (
-          <div key={s.label} className="aura-card p-6">
-            <p style={{ fontSize: "2.5rem", fontWeight: 300, letterSpacing: "-0.04em", color: s.accent, lineHeight: 1 }}>
+          <div key={s.label} className="aura-card p-6" style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+            <p style={{ fontSize: typeof s.value === "string" ? "1.5rem" : "2.5rem", fontWeight: 300, letterSpacing: "-0.04em", color: s.accent, lineHeight: 1 }}>
               {s.value}
             </p>
-            <p className="admin-label mt-3">{s.label}</p>
+            <p className="admin-label">{s.label}</p>
+            {s.pct !== null && bookings.length > 0 && (
+              <div style={{ marginTop: "0.25rem" }}>
+                <div style={{ height: 2, background: "rgba(255,255,255,0.05)", borderRadius: 1, overflow: "hidden" }}>
+                  <div style={{ height: "100%", width: `${s.pct}%`, background: s.accent, borderRadius: 1, transition: "width 0.5s ease", opacity: 0.7 }} />
+                </div>
+                <p style={{ fontSize: "0.6rem", color: "#3f3f46", marginTop: "0.25rem" }}>{s.pct}% del total</p>
+              </div>
+            )}
           </div>
         ))}
       </div>

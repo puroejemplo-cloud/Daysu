@@ -427,7 +427,7 @@ input, select, textarea {
   letter-spacing: 0.04em;
 }
 
-/* ── DayPicker dark ── */
+/* ── DayPicker dark (uso general) ── */
 .rdp-root {
   --rdp-accent-color: var(--purple);
   --rdp-accent-background-color: rgba(124,58,237,.15);
@@ -435,6 +435,24 @@ input, select, textarea {
 }
 .rdp-day_button { color: #888; }
 .rdp-selected .rdp-day_button { color: #fff; }
+
+/* ── DayPicker wizard — acento rosa/magenta ── */
+.wizard-calendar .rdp-root {
+  --rdp-accent-color: var(--gold);
+  --rdp-accent-background-color: rgba(232,25,138,.12);
+  --rdp-font-size: 0.875rem;
+  color: var(--cream);
+}
+.wizard-calendar .rdp-month_caption { color: #e4e4e7; font-weight: 600; font-size: 0.875rem; }
+.wizard-calendar .rdp-weekday        { color: #52525b; font-size: 0.72rem; letter-spacing: 0.06em; }
+.wizard-calendar .rdp-day_button     { color: #71717a; border-radius: 8px; transition: background 0.15s, color 0.15s; }
+.wizard-calendar .rdp-day_button:hover:not(:disabled) { background: rgba(232,25,138,.12); color: var(--cream); }
+.wizard-calendar .rdp-selected .rdp-day_button { background: var(--gold); color: #05051a; font-weight: 700; }
+.wizard-calendar .rdp-today .rdp-day_button    { color: var(--gold); font-weight: 700; }
+.wizard-calendar .rdp-outside .rdp-day_button  { color: #27272a; }
+.wizard-calendar .rdp-disabled .rdp-day_button { color: #27272a; cursor: not-allowed; }
+.wizard-calendar .rdp-nav button               { color: #52525b; border-radius: 8px; padding: 0.25rem; transition: color 0.15s; }
+.wizard-calendar .rdp-nav button:hover         { color: var(--gold); }
 
 /* ── Section utils ── */
 .section-label {
