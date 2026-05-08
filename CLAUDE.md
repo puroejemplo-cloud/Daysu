@@ -90,6 +90,7 @@ POSTGRES_URL="..."              # pooler — usado en runtime si no hay directa
 | `/admin/checklists` | admin / superadmin | Lista de checklists por reserva |
 | `/admin/checklists/[bookingId]` | admin / superadmin | Checklist de salida/entrada |
 | `/admin/calendario` | admin / superadmin | Vista de reservas activas en calendario |
+| `/admin/staff` | admin / superadmin | Gestión de personal y asignaciones a activos |
 | `/admin/upsell` | admin / superadmin | Gestión de reglas de upsell |
 | `/admin/galeria` | admin / superadmin | Imágenes de galería pública |
 | `/admin/ventas/nueva` | admin / superadmin | Registro de venta manual (sin Stripe) |
@@ -156,6 +157,9 @@ Stripe webhook POST /api/webhooks/stripe → confirma pago → booking.status = 
 | `/api/upsell-rules` | GET, POST | Reglas de upsell |
 | `/api/upsell-rules/[id]` | GET, PUT, DELETE | Regla individual |
 | `/api/upsell` | GET | Sugerencias para un activo (`?assetId=`) |
+| `/api/admin/staff` | GET, POST | Listar y crear personal |
+| `/api/admin/staff/[id]` | PUT | Editar o dar de baja colaborador |
+| `/api/admin/staff/[id]/assignments` | POST, DELETE | Asignar/remover activos a personal |
 | `/api/admin-users` | GET, POST | Crear/listar cuentas de admin |
 | `/api/admin-users/[id]` | GET, PUT | Detalle de admin |
 | `/api/cron/expire-holds` | GET | Job de expiración (requiere `x-cron-secret` en prod) |
