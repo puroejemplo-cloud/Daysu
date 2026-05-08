@@ -5,6 +5,7 @@ import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { getHourlyTiers, getCapacityTiers, getPricingTiers, getTierLabel, type PricingConfig } from "@/lib/product-tiers";
 import WizardDatePicker from "./WizardDatePicker";
+import UpsellBanner from "./UpsellBanner";
 
 interface AssetAvail  { assetId: number; isAvailable: boolean; availableUnits: number }
 interface AssetDetail {
@@ -598,6 +599,30 @@ export default function BookingWizard({ forcedAssetId }: { forcedAssetId?: numbe
               <div className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 text-white font-black" style={{ background: "#7C3AED" }}>✓</div>
             </div>
           </div>
+
+          {/* UpsellBanner — reglas configuradas en /admin/upsell */}
+          {!loadingProducts && (
+            <UpsellBanner
+              selectedAssetIds={selected.map((s) => s.assetId)}
+              addedIds={[
+                ...selected.map((s) => s.assetId),
+                // ocultar también los que ya se muestran en la sección Recomendados
+                ...extras.filter((p) => p.isRecommended).map((p) => p.id),
+              ]}
+              onAdd={(assetId, name, price) => {
+                setSelected((prev) => [
+                  ...prev,
+                  {
+                    assetId,
+                    assetName: name,
+                    quantity: 1,
+                    max: availability[assetId]?.availableUnits ?? 1,
+                    overridePrice: price > 0 ? price : undefined,
+                  },
+                ]);
+              }}
+            />
+          )}
 
           {/* Complementos por categoría */}
           <div className="aura-card p-5">
