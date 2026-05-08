@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState, useCallback } from "react";
 
-interface Asset { id: number; name: string }
+interface Asset { id: number; name: string; isRecommended: boolean }
 interface Rule {
   id: number; discountPercent: number; label: string | null; isActive: boolean;
   sourceAsset: Asset; suggestedAsset: Asset;
@@ -78,8 +78,23 @@ export default function UpsellAdmin({ assets }: { assets: Asset[] }) {
             <select value={form.suggestedAssetId} onChange={(e) => setForm((f) => ({ ...f, suggestedAssetId: e.target.value }))}
               required className="aura-select">
               <option value="">— Sugerido —</option>
-              {assets.filter((a) => String(a.id) !== form.sourceAssetId)
-                .map((a) => <option key={a.id} value={a.id}>{a.name}</option>)}
+              {(() => {
+                const opts = assets.filter((a) => String(a.id) !== form.sourceAssetId);
+                const recommended = opts.filter((a) => a.isRecommended);
+                const rest        = opts.filter((a) => !a.isRecommended);
+                return (
+                  <>
+                    {recommended.length > 0 && (
+                      <optgroup label="⭐ Recomendados">
+                        {recommended.map((a) => <option key={a.id} value={a.id}>{a.name}</option>)}
+                      </optgroup>
+                    )}
+                    <optgroup label="Todos los productos">
+                      {rest.map((a) => <option key={a.id} value={a.id}>{a.name}</option>)}
+                    </optgroup>
+                  </>
+                );
+              })()}
             </select>
           </div>
           <div>

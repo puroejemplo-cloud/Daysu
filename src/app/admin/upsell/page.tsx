@@ -6,7 +6,7 @@ export const dynamic = "force-dynamic";
 export default async function UpsellAdminPage() {
   const assets = await prisma.asset.findMany({
     where: { isActive: true, isRentable: true },
-    select: { id: true, name: true },
+    select: { id: true, name: true, isRecommended: true },
     orderBy: { name: "asc" },
   });
   return (
