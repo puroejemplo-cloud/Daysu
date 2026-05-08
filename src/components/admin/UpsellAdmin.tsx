@@ -7,7 +7,18 @@ interface Rule {
   sourceAsset: Asset; suggestedAsset: Asset;
 }
 
-export default function UpsellAdmin({ assets }: { assets: Asset[] }) {
+export default function UpsellAdmin({
+  sourceAssets,
+  suggestAssets,
+  // retrocompat: si se pasa `assets` solo (versión anterior)
+  assets,
+}: {
+  sourceAssets?: Asset[];
+  suggestAssets?: Asset[];
+  assets?: Asset[];
+}) {
+  const sources  = sourceAssets ?? assets ?? [];
+  const suggests = suggestAssets ?? assets ?? [];
   const [rules, setRules] = useState<Rule[]>([]);
   const [loading, setLoading] = useState(true);
   const [form, setForm] = useState({ sourceAssetId: "", suggestedAssetId: "", discountPercent: "10", label: "" });
@@ -70,7 +81,7 @@ export default function UpsellAdmin({ assets }: { assets: Asset[] }) {
             <select value={form.sourceAssetId} onChange={(e) => setForm((f) => ({ ...f, sourceAssetId: e.target.value }))}
               required className="aura-select">
               <option value="">— Origen —</option>
-              {assets.map((a) => <option key={a.id} value={a.id}>{a.name}</option>)}
+              {sources.map((a) => <option key={a.id} value={a.id}>{a.name}</option>)}
             </select>
           </div>
           <div>
@@ -79,7 +90,7 @@ export default function UpsellAdmin({ assets }: { assets: Asset[] }) {
               required className="aura-select">
               <option value="">— Sugerido —</option>
               {(() => {
-                const opts = assets.filter((a) => String(a.id) !== form.sourceAssetId);
+                const opts = suggests.filter((a) => String(a.id) !== form.sourceAssetId);
                 const recommended = opts.filter((a) => a.isRecommended);
                 const rest        = opts.filter((a) => !a.isRecommended);
                 return (
