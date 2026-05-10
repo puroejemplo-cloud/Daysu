@@ -50,3 +50,10 @@ next-env.d.ts
 /Paquetes/
 Blueprint_EventMaster_Pro.pdf
 /public/hero-bg-original.mp4
+
+# Claude Code
+.claude/
+
+# Archivos de diseño (fuentes PSD/AI)
+*.psd
+*.ai

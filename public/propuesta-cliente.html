@@ -1,0 +1,1251 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EventMaster Pro — Propuesta Comercial</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap');
+
+    :root {
+      --gold: #C9A84C;
+      --gold-dark: #a8862c;
+      --black: #05051a;
+      --white: #ffffff;
+      --cream: #faf8f4;
+      --gray: #6b7280;
+      --light: #f3f4f6;
+      --border: #e5e7eb;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'DM Sans', system-ui, sans-serif;
+      background: var(--white);
+      color: #1a1a2e;
+      font-size: 10pt;
+      line-height: 1.6;
+    }
+
+    /* ── PÁGINAS ── */
+    .page {
+      width: 210mm;
+      min-height: 297mm;
+      margin: 0 auto;
+      position: relative;
+      page-break-after: always;
+      overflow: hidden;
+    }
+
+    /* ══════════════════════════════════════
+       PORTADA
+    ══════════════════════════════════════ */
+    .cover {
+      background: var(--black);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 0;
+    }
+
+    .cover-top {
+      width: 100%;
+      background: linear-gradient(135deg, #0d0d2b 0%, #1a1040 50%, #0d0d2b 100%);
+      padding: 60px 50px 50px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .cover-badge {
+      display: inline-block;
+      border: 1px solid rgba(201,168,76,0.5);
+      color: var(--gold);
+      font-size: 7.5pt;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      padding: 5px 16px;
+      border-radius: 20px;
+      margin-bottom: 28px;
+    }
+
+    .cover-logo-ring {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--gold) 0%, #8b6914 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 28px;
+      font-size: 32pt;
+      color: var(--black);
+      font-weight: 700;
+    }
+
+    .cover h1 {
+      font-size: 36pt;
+      font-weight: 700;
+      color: var(--white);
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+      margin-bottom: 8px;
+    }
+
+    .cover h1 span { color: var(--gold); }
+
+    .cover-subtitle {
+      font-size: 13pt;
+      color: rgba(255,255,255,0.55);
+      font-weight: 300;
+      margin-bottom: 40px;
+      letter-spacing: 0.04em;
+    }
+
+    .cover-divider {
+      width: 60px;
+      height: 2px;
+      background: var(--gold);
+      margin: 0 auto 40px;
+    }
+
+    .cover-tagline {
+      font-size: 14pt;
+      color: rgba(255,255,255,0.85);
+      max-width: 340px;
+      line-height: 1.5;
+      font-weight: 400;
+    }
+
+    .cover-bottom {
+      width: 100%;
+      background: var(--gold);
+      padding: 22px 50px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .cover-bottom p {
+      color: var(--black);
+      font-size: 8.5pt;
+      font-weight: 600;
+    }
+
+    .cover-bottom .url {
+      font-size: 9pt;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+    }
+
+    /* ══════════════════════════════════════
+       PÁGINAS INTERIORES — ESTRUCTURA
+    ══════════════════════════════════════ */
+    .inner {
+      padding: 50px 50px 40px;
+      background: var(--white);
+    }
+
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 32px;
+      padding-bottom: 14px;
+      border-bottom: 2px solid var(--black);
+    }
+
+    .page-header h2 {
+      font-size: 20pt;
+      font-weight: 700;
+      color: var(--black);
+      letter-spacing: -0.02em;
+    }
+
+    .page-header h2 span { color: var(--gold); }
+
+    .page-num {
+      font-size: 7.5pt;
+      color: var(--gray);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    /* ══════════════════════════════════════
+       SECCIÓN: RESUMEN EJECUTIVO
+    ══════════════════════════════════════ */
+    .exec-hero {
+      background: linear-gradient(135deg, var(--black) 0%, #1a1040 100%);
+      border-radius: 12px;
+      padding: 32px 36px;
+      margin-bottom: 28px;
+      color: var(--white);
+    }
+
+    .exec-hero p {
+      font-size: 11.5pt;
+      line-height: 1.7;
+      color: rgba(255,255,255,0.85);
+    }
+
+    .exec-hero strong { color: var(--gold); }
+
+    .exec-stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-bottom: 28px;
+    }
+
+    .stat-card {
+      background: var(--light);
+      border-radius: 10px;
+      padding: 18px 16px;
+      text-align: center;
+      border-top: 3px solid var(--gold);
+    }
+
+    .stat-card .num {
+      font-size: 22pt;
+      font-weight: 700;
+      color: var(--black);
+      line-height: 1;
+      margin-bottom: 5px;
+    }
+
+    .stat-card .lbl {
+      font-size: 7.5pt;
+      color: var(--gray);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .problem-solution {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .ps-card {
+      border-radius: 10px;
+      padding: 20px;
+    }
+
+    .ps-card.problem {
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+    }
+
+    .ps-card.solution {
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+    }
+
+    .ps-card h4 {
+      font-size: 9pt;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 12px;
+    }
+
+    .ps-card.problem h4 { color: #dc2626; }
+    .ps-card.solution h4 { color: #16a34a; }
+
+    .ps-card ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .ps-card ul li {
+      font-size: 8.5pt;
+      color: #374151;
+      display: flex;
+      gap: 8px;
+      align-items: flex-start;
+    }
+
+    .ps-card ul li::before {
+      content: '✗';
+      font-weight: 700;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .ps-card.problem ul li::before { color: #dc2626; }
+
+    .ps-card.solution ul li::before {
+      content: '✓';
+      color: #16a34a;
+    }
+
+    /* ══════════════════════════════════════
+       SECCIÓN: FUNCIONALIDADES
+    ══════════════════════════════════════ */
+    .module-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+
+    .module-card {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 18px 20px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .module-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--gold), var(--gold-dark));
+    }
+
+    .module-icon {
+      font-size: 18pt;
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .module-card h3 {
+      font-size: 10pt;
+      font-weight: 700;
+      color: var(--black);
+      margin-bottom: 7px;
+    }
+
+    .module-card p {
+      font-size: 8pt;
+      color: var(--gray);
+      line-height: 1.55;
+    }
+
+    .module-card ul {
+      list-style: none;
+      margin-top: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .module-card ul li {
+      font-size: 7.5pt;
+      color: #374151;
+      display: flex;
+      gap: 6px;
+    }
+
+    .module-card ul li::before {
+      content: '→';
+      color: var(--gold);
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    /* ══════════════════════════════════════
+       SECCIÓN: FLUJO DE RESERVAS
+    ══════════════════════════════════════ */
+    .flow-steps {
+      display: flex;
+      align-items: stretch;
+      gap: 0;
+      margin-bottom: 28px;
+      background: var(--light);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .flow-step {
+      flex: 1;
+      padding: 20px 14px;
+      text-align: center;
+      position: relative;
+    }
+
+    .flow-step:not(:last-child)::after {
+      content: '▶';
+      position: absolute;
+      right: -8px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--gold);
+      font-size: 10pt;
+      z-index: 2;
+    }
+
+    .flow-step .step-num {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--gold);
+      color: var(--black);
+      font-weight: 700;
+      font-size: 8.5pt;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 8px;
+    }
+
+    .flow-step h4 {
+      font-size: 8pt;
+      font-weight: 700;
+      color: var(--black);
+      margin-bottom: 4px;
+    }
+
+    .flow-step p {
+      font-size: 7pt;
+      color: var(--gray);
+      line-height: 1.4;
+    }
+
+    /* ══════════════════════════════════════
+       SECCIÓN: VENTAJAS
+    ══════════════════════════════════════ */
+    .advantage-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .advantage-item {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+      padding: 18px 20px;
+      background: var(--cream);
+      border-radius: 10px;
+      border-left: 4px solid var(--gold);
+    }
+
+    .advantage-num {
+      font-size: 20pt;
+      font-weight: 700;
+      color: rgba(201,168,76,0.25);
+      line-height: 1;
+      min-width: 36px;
+    }
+
+    .advantage-item h4 {
+      font-size: 9.5pt;
+      font-weight: 700;
+      color: var(--black);
+      margin-bottom: 4px;
+    }
+
+    .advantage-item p {
+      font-size: 8pt;
+      color: var(--gray);
+      line-height: 1.55;
+    }
+
+    /* ══════════════════════════════════════
+       SECCIÓN: PUBLICIDAD / MARKETING
+    ══════════════════════════════════════ */
+    .promo-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+
+    .promo-card {
+      border-radius: 10px;
+      padding: 20px;
+      background: var(--black);
+      color: var(--white);
+    }
+
+    .promo-card .promo-icon {
+      font-size: 20pt;
+      margin-bottom: 10px;
+      display: block;
+    }
+
+    .promo-card h3 {
+      font-size: 10pt;
+      font-weight: 700;
+      color: var(--gold);
+      margin-bottom: 7px;
+    }
+
+    .promo-card p {
+      font-size: 8pt;
+      color: rgba(255,255,255,0.7);
+      line-height: 1.55;
+    }
+
+    .promo-card ul {
+      list-style: none;
+      margin-top: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .promo-card ul li {
+      font-size: 7.5pt;
+      color: rgba(255,255,255,0.75);
+      display: flex;
+      gap: 7px;
+    }
+
+    .promo-card ul li::before {
+      content: '★';
+      color: var(--gold);
+      flex-shrink: 0;
+    }
+
+    .roi-box {
+      background: linear-gradient(135deg, #0d0d2b 0%, #1a1040 100%);
+      border-radius: 12px;
+      padding: 28px 32px;
+      text-align: center;
+      margin-bottom: 14px;
+    }
+
+    .roi-box h3 {
+      font-size: 11pt;
+      font-weight: 700;
+      color: var(--gold);
+      margin-bottom: 16px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .roi-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .roi-item .big {
+      font-size: 22pt;
+      font-weight: 700;
+      color: var(--white);
+      line-height: 1;
+    }
+
+    .roi-item .small {
+      font-size: 7.5pt;
+      color: rgba(255,255,255,0.55);
+      margin-top: 4px;
+      letter-spacing: 0.05em;
+    }
+
+    /* ══════════════════════════════════════
+       SECCIÓN: STACK TECNOLÓGICO
+    ══════════════════════════════════════ */
+    .tech-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+
+    .tech-pill {
+      background: var(--light);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .tech-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--gold);
+      flex-shrink: 0;
+    }
+
+    .tech-pill div p:first-child {
+      font-size: 8pt;
+      font-weight: 700;
+      color: var(--black);
+    }
+
+    .tech-pill div p:last-child {
+      font-size: 7pt;
+      color: var(--gray);
+    }
+
+    .security-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 10px;
+    }
+
+    .security-card {
+      background: var(--cream);
+      border-radius: 8px;
+      padding: 14px;
+      text-align: center;
+    }
+
+    .security-card .icon { font-size: 16pt; margin-bottom: 6px; display: block; }
+
+    .security-card h4 {
+      font-size: 8.5pt;
+      font-weight: 700;
+      color: var(--black);
+      margin-bottom: 3px;
+    }
+
+    .security-card p { font-size: 7pt; color: var(--gray); }
+
+    /* ══════════════════════════════════════
+       SECCIÓN: CIERRE / CTA
+    ══════════════════════════════════════ */
+    .cta-page {
+      background: var(--black);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 60px 50px;
+    }
+
+    .cta-page .eyebrow {
+      font-size: 7.5pt;
+      color: var(--gold);
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+
+    .cta-page h2 {
+      font-size: 26pt;
+      font-weight: 700;
+      color: var(--white);
+      text-align: center;
+      line-height: 1.2;
+      margin-bottom: 12px;
+    }
+
+    .cta-page h2 span { color: var(--gold); }
+
+    .cta-page .desc {
+      font-size: 10pt;
+      color: rgba(255,255,255,0.6);
+      text-align: center;
+      max-width: 360px;
+      line-height: 1.6;
+      margin-bottom: 44px;
+    }
+
+    .cta-boxes {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 14px;
+      width: 100%;
+      max-width: 460px;
+      margin-bottom: 44px;
+    }
+
+    .cta-box {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 10px;
+      padding: 16px;
+      text-align: center;
+    }
+
+    .cta-box .icon { font-size: 18pt; display: block; margin-bottom: 6px; }
+
+    .cta-box p {
+      font-size: 7.5pt;
+      color: rgba(255,255,255,0.6);
+      line-height: 1.4;
+    }
+
+    .cta-box .val {
+      font-size: 8.5pt;
+      font-weight: 700;
+      color: var(--gold);
+      margin-bottom: 2px;
+    }
+
+    .cta-divider {
+      width: 100%;
+      height: 1px;
+      background: rgba(255,255,255,0.08);
+      margin-bottom: 32px;
+    }
+
+    .cta-footer {
+      text-align: center;
+    }
+
+    .cta-footer .url-big {
+      font-size: 18pt;
+      font-weight: 700;
+      color: var(--gold);
+      letter-spacing: 0.04em;
+      margin-bottom: 10px;
+    }
+
+    .cta-footer p {
+      font-size: 8pt;
+      color: rgba(255,255,255,0.4);
+    }
+
+    /* ══════════════════════════════════════
+       PRINT
+    ══════════════════════════════════════ */
+    @media print {
+      body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .page { page-break-after: always; }
+    }
+
+    /* ══════════════════════════════════════
+       UTILIDADES
+    ══════════════════════════════════════ */
+    .section-label {
+      font-size: 7.5pt;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--gold);
+      margin-bottom: 6px;
+    }
+
+    .section-title {
+      font-size: 14pt;
+      font-weight: 700;
+      color: var(--black);
+      margin-bottom: 18px;
+      letter-spacing: -0.01em;
+    }
+
+    .highlight-bar {
+      background: linear-gradient(90deg, rgba(201,168,76,0.12), transparent);
+      border-left: 3px solid var(--gold);
+      padding: 12px 16px;
+      border-radius: 0 8px 8px 0;
+      margin-bottom: 20px;
+      font-size: 9pt;
+      color: #374151;
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════
+     PÁGINA 1 — PORTADA
+══════════════════════════════════════ -->
+<div class="page cover">
+  <div class="cover-top">
+    <div class="cover-badge">Propuesta Comercial · 2025</div>
+
+    <div class="cover-logo-ring">A</div>
+
+    <h1>EventMaster<br><span>Pro</span></h1>
+    <p class="cover-subtitle">by Aura Producciones</p>
+
+    <div class="cover-divider"></div>
+
+    <p class="cover-tagline">
+      La plataforma todo-en-uno que transforma la gestión de eventos en una experiencia premium — desde la reserva hasta el cierre del evento.
+    </p>
+  </div>
+
+  <div class="cover-bottom">
+    <p>Documento preparado para presentación</p>
+    <p class="url">daysu.vercel.app</p>
+    <p>Confidencial · 2025</p>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════
+     PÁGINA 2 — RESUMEN EJECUTIVO
+══════════════════════════════════════ -->
+<div class="page inner">
+  <div class="page-header">
+    <h2>Resumen <span>Ejecutivo</span></h2>
+    <span class="page-num">01 / 05</span>
+  </div>
+
+  <div class="exec-hero">
+    <p>
+      <strong>EventMaster Pro</strong> es un sistema de gestión integral diseñado específicamente para empresas de producción de eventos. Centraliza en una sola plataforma todo lo necesario: <strong>catálogo de paquetes, disponibilidad en tiempo real, reservas con pago en línea, CRM de clientes, logística y reportes.</strong>
+    </p>
+    <p style="margin-top:12px;">
+      Elimina el caos de los WhatsApps, las hojas de Excel y los malentendidos. Tu equipo opera con información actualizada al instante; tus clientes reservan con confianza y pagan de forma segura.
+    </p>
+  </div>
+
+  <div class="exec-stats">
+    <div class="stat-card">
+      <div class="num">100%</div>
+      <div class="lbl">Digital y automatizado</div>
+    </div>
+    <div class="stat-card">
+      <div class="num">24/7</div>
+      <div class="lbl">Disponible en línea</div>
+    </div>
+    <div class="stat-card">
+      <div class="num">0</div>
+      <div class="lbl">Dobles reservas posibles</div>
+    </div>
+    <div class="stat-card">
+      <div class="num">+8</div>
+      <div class="lbl">Módulos integrados</div>
+    </div>
+  </div>
+
+  <div class="problem-solution">
+    <div class="ps-card problem">
+      <h4>❌ Sin el sistema</h4>
+      <ul>
+        <li>Reservas por WhatsApp sin control de stock</li>
+        <li>Dobles reservas y errores manuales</li>
+        <li>Sin historial de clientes ni seguimiento</li>
+        <li>Cobros informales sin comprobante digital</li>
+        <li>Checklist de logística en papel o en la memoria</li>
+        <li>No sabes qué equipo está disponible hoy</li>
+        <li>Tiempo perdido coordinando entre el equipo</li>
+      </ul>
+    </div>
+    <div class="ps-card solution">
+      <h4>✓ Con EventMaster Pro</h4>
+      <ul>
+        <li>Reservas en línea con disponibilidad en tiempo real</li>
+        <li>Stock bloqueado automáticamente al reservar</li>
+        <li>CRM con historial completo por cliente</li>
+        <li>Pago de apartado vía Stripe (tarjeta/OXXO)</li>
+        <li>Checklists de salida/entrada por evento</li>
+        <li>Dashboard con todas las reservas activas</li>
+        <li>Todo el equipo con la misma información</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════
+     PÁGINA 3 — FUNCIONALIDADES
+══════════════════════════════════════ -->
+<div class="page inner">
+  <div class="page-header">
+    <h2>Módulos y <span>Funcionalidades</span></h2>
+    <span class="page-num">02 / 05</span>
+  </div>
+
+  <div class="highlight-bar">
+    Cada módulo está diseñado para resolver un problema real de la operación diaria de una empresa de eventos. No es software genérico — está construido para este negocio.
+  </div>
+
+  <div class="module-grid">
+    <div class="module-card">
+      <span class="module-icon">📦</span>
+      <h3>Catálogo de Paquetes e Inventario</h3>
+      <p>Gestiona todo tu catálogo con fotos, descripciones y precios. Soporte para paquetes completos con componentes incluidos (BOM).</p>
+      <ul>
+        <li>Paquetes con servicios incluidos automáticamente</li>
+        <li>Tiers de precio por hora o capacidad</li>
+        <li>Galerías de fotos por paquete</li>
+        <li>Control de unidades disponibles</li>
+      </ul>
+    </div>
+
+    <div class="module-card">
+      <span class="module-icon">📅</span>
+      <h3>Motor de Disponibilidad en Tiempo Real</h3>
+      <p>El sistema calcula automáticamente qué equipo está libre en cada fecha. Imposible reservar lo que ya está ocupado.</p>
+      <ul>
+        <li>Bloqueo automático al confirmar reserva</li>
+        <li>Bloqueos manuales (mantenimiento, logística)</li>
+        <li>Vista de calendario mensual con eventos</li>
+        <li>Alerta visual si hay conflicto de fechas</li>
+      </ul>
+    </div>
+
+    <div class="module-card">
+      <span class="module-icon">💳</span>
+      <h3>Reservas con Pago en Línea (Stripe)</h3>
+      <p>El cliente llena el formulario, elige su paquete y paga el 30% de apartado directamente con tarjeta. Tú recibes la notificación al instante.</p>
+      <ul>
+        <li>Wizard de reserva guiado paso a paso</li>
+        <li>Pago seguro con Stripe (PCI-DSS)</li>
+        <li>Expiración automática de reservas sin pago</li>
+        <li>Confirmación por correo electrónico</li>
+      </ul>
+    </div>
+
+    <div class="module-card">
+      <span class="module-icon">👥</span>
+      <h3>CRM de Clientes</h3>
+      <p>Historial completo de cada cliente: sus eventos pasados, preferencias, notas internas y fechas especiales para hacer seguimiento.</p>
+      <ul>
+        <li>Perfil con historial de reservas</li>
+        <li>Notas internas y preferencias del cliente</li>
+        <li>Recordatorios de cumpleaños y aniversarios</li>
+        <li>¿Cómo nos encontró? (referido por...)</li>
+      </ul>
+    </div>
+
+    <div class="module-card">
+      <span class="module-icon">✅</span>
+      <h3>Checklists de Logística</h3>
+      <p>Para cada evento se genera automáticamente una checklist de salida y una de regreso del equipo. Nada se olvida.</p>
+      <ul>
+        <li>Generación automática por reserva</li>
+        <li>Fase salida + fase entrada del equipo</li>
+        <li>Ítems de equipo y tareas operativas</li>
+        <li>Marca completado desde el celular</li>
+      </ul>
+    </div>
+
+    <div class="module-card">
+      <span class="module-icon">📊</span>
+      <h3>Panel de Administración</h3>
+      <p>Dashboard completo para el equipo admin. Ver reservas activas, gestionar clientes, controlar inventario y configurar el sistema.</p>
+      <ul>
+        <li>Dashboard con resumen del día</li>
+        <li>Registro de ventas manuales</li>
+        <li>Reglas de upsell automáticas</li>
+        <li>Galería pública administrable</li>
+      </ul>
+    </div>
+  </div>
+
+  <div style="margin-top:6px;">
+    <p class="section-label">Flujo de una reserva</p>
+    <div class="flow-steps">
+      <div class="flow-step">
+        <div class="step-num">1</div>
+        <h4>Cliente elige</h4>
+        <p>Selecciona paquete, fecha, horario y datos del evento</p>
+      </div>
+      <div class="flow-step">
+        <div class="step-num">2</div>
+        <h4>Sistema verifica</h4>
+        <p>Confirma disponibilidad real en la BD al instante</p>
+      </div>
+      <div class="flow-step">
+        <div class="step-num">3</div>
+        <h4>Pago de apartado</h4>
+        <p>30% vía Stripe · tarjeta, OXXO o transferencia</p>
+      </div>
+      <div class="flow-step">
+        <div class="step-num">4</div>
+        <h4>Confirmado</h4>
+        <p>Stock bloqueado, admin notificado, cliente confirma</p>
+      </div>
+      <div class="flow-step">
+        <div class="step-num">5</div>
+        <h4>El día del evento</h4>
+        <p>Checklist de salida → evento → checklist de entrada</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════
+     PÁGINA 4 — VENTAJAS + PUBLICIDAD
+══════════════════════════════════════ -->
+<div class="page inner">
+  <div class="page-header">
+    <h2>Ventajas y <span>Estrategia de Marketing</span></h2>
+    <span class="page-num">03 / 05</span>
+  </div>
+
+  <p class="section-label">Por qué elegir EventMaster Pro</p>
+  <div class="advantage-list" style="margin-bottom:24px;">
+    <div class="advantage-item">
+      <div class="advantage-num">01</div>
+      <div>
+        <h4>Diseñado exclusivamente para empresas de eventos en México</h4>
+        <p>No es un software genérico adaptado. Cada campo, cada flujo y cada regla de negocio fue construida pensando en cómo opera una empresa de producción de eventos: precios en MXN, zonas de cobertura locales, apartados del 30%, etc.</p>
+      </div>
+    </div>
+    <div class="advantage-item">
+      <div class="advantage-num">02</div>
+      <div>
+        <h4>Tu cliente reserva en 5 minutos, tú cobras en línea de forma segura</h4>
+        <p>El wizard guiado reduce la fricción al mínimo. Stripe maneja el pago con seguridad bancaria nivel enterprise — sin comisiones escondidas, sin intermediarios locales, sin transferencias manuales inseguras.</p>
+      </div>
+    </div>
+    <div class="advantage-item">
+      <div class="advantage-num">03</div>
+      <div>
+        <h4>Instalable como app (PWA) — funciona en iPhone y Android</h4>
+        <p>Tu equipo puede agregar la app a su pantalla de inicio sin pasar por App Store o Play Store. El panel admin y el sitio público son completamente responsivos y funcionan offline para tareas básicas.</p>
+      </div>
+    </div>
+    <div class="advantage-item">
+      <div class="advantage-num">04</div>
+      <div>
+        <h4>Escala contigo — sin límite de paquetes, clientes ni eventos</h4>
+        <p>La plataforma está desplegada en infraestructura cloud de nivel global (Vercel + Neon Postgres). No importa si tienes 5 eventos al mes o 500, el sistema no tiene cuellos de botella.</p>
+      </div>
+    </div>
+  </div>
+
+  <p class="section-label">Oportunidades de marketing incluidas en la plataforma</p>
+  <div class="promo-grid">
+    <div class="promo-card">
+      <span class="promo-icon">🖼️</span>
+      <h3>Galería Pública Profesional</h3>
+      <p>Sube fotos de tus eventos reales. La galería se muestra en la web con efectos de blur personalizables, carrusel animado en la homepage y optimización automática de imágenes (WebP).</p>
+      <ul>
+        <li>Imágenes optimizadas automáticamente</li>
+        <li>Carrusel seleccionable desde el panel</li>
+        <li>Gestión total sin programar nada</li>
+      </ul>
+    </div>
+    <div class="promo-card">
+      <span class="promo-icon">📦</span>
+      <h3>Comparador de Paquetes</h3>
+      <p>Los clientes pueden comparar paquetes lado a lado antes de reservar. Más transparencia = más confianza = más conversiones.</p>
+      <ul>
+        <li>Comparación visual de hasta 3 paquetes</li>
+        <li>Precio, capacidad y servicios incluidos</li>
+        <li>CTA directo a la reserva</li>
+      </ul>
+    </div>
+    <div class="promo-card">
+      <span class="promo-icon">🎯</span>
+      <h3>Upsell Automático Inteligente</h3>
+      <p>El sistema sugiere servicios adicionales durante el proceso de reserva basándose en reglas que tú configuras (p.ej. "al reservar iluminación, sugerir DJ con 10% desc.").</p>
+      <ul>
+        <li>Reglas configurables desde el panel admin</li>
+        <li>Descuento automático al agregar servicio</li>
+        <li>Aumenta el ticket promedio sin esfuerzo</li>
+      </ul>
+    </div>
+    <div class="promo-card">
+      <span class="promo-icon">💬</span>
+      <h3>WhatsApp + Web Optimizada</h3>
+      <p>Botón flotante de WhatsApp con mensaje predefinido configurable. El sitio está optimizado para SEO, carga rápida y apariencia profesional en cualquier dispositivo.</p>
+      <ul>
+        <li>Número y mensaje editable desde admin</li>
+        <li>URL amigable para compartir en redes</li>
+        <li>Diseño premium que transmite confianza</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="roi-box">
+    <h3>Impacto esperado en el negocio</h3>
+    <div class="roi-grid">
+      <div class="roi-item">
+        <div class="big">−80%</div>
+        <div class="small">Tiempo en gestión administrativa</div>
+      </div>
+      <div class="roi-item">
+        <div class="big">+35%</div>
+        <div class="small">Conversión de cotizaciones a reservas pagadas</div>
+      </div>
+      <div class="roi-item">
+        <div class="big">0</div>
+        <div class="small">Dobles reservas desde el primer día</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════
+     PÁGINA 5 — TECNOLOGÍA
+══════════════════════════════════════ -->
+<div class="page inner">
+  <div class="page-header">
+    <h2>Tecnología y <span>Confiabilidad</span></h2>
+    <span class="page-num">04 / 05</span>
+  </div>
+
+  <div class="highlight-bar">
+    EventMaster Pro está construido con el mismo stack tecnológico que usan empresas como Netflix, Airbnb y Linear — tecnología de clase mundial adaptada a tu operación.
+  </div>
+
+  <p class="section-label" style="margin-bottom:10px;">Stack tecnológico</p>
+  <div class="tech-grid" style="margin-bottom:24px;">
+    <div class="tech-pill">
+      <div class="tech-dot"></div>
+      <div>
+        <p>Next.js 16</p>
+        <p>Framework web líder de la industria</p>
+      </div>
+    </div>
+    <div class="tech-pill">
+      <div class="tech-dot"></div>
+      <div>
+        <p>PostgreSQL 16</p>
+        <p>Base de datos relacional empresarial</p>
+      </div>
+    </div>
+    <div class="tech-pill">
+      <div class="tech-dot"></div>
+      <div>
+        <p>Stripe</p>
+        <p>Pagos online nivel bancario (PCI-DSS)</p>
+      </div>
+    </div>
+    <div class="tech-pill">
+      <div class="tech-dot"></div>
+      <div>
+        <p>Vercel Cloud</p>
+        <p>Deploy global, 99.99% uptime garantizado</p>
+      </div>
+    </div>
+    <div class="tech-pill">
+      <div class="tech-dot"></div>
+      <div>
+        <p>NextAuth v5</p>
+        <p>Autenticación segura con roles de acceso</p>
+      </div>
+    </div>
+    <div class="tech-pill">
+      <div class="tech-dot"></div>
+      <div>
+        <p>Vercel Blob</p>
+        <p>Almacenamiento de imágenes en la nube</p>
+      </div>
+    </div>
+    <div class="tech-pill">
+      <div class="tech-dot"></div>
+      <div>
+        <p>TypeScript 5</p>
+        <p>Código robusto sin errores de tipo</p>
+      </div>
+    </div>
+    <div class="tech-pill">
+      <div class="tech-dot"></div>
+      <div>
+        <p>Tailwind CSS 4</p>
+        <p>UI responsiva y profesional</p>
+      </div>
+    </div>
+    <div class="tech-pill">
+      <div class="tech-dot"></div>
+      <div>
+        <p>Prisma ORM 7</p>
+        <p>Acceso a datos seguro y escalable</p>
+      </div>
+    </div>
+  </div>
+
+  <p class="section-label" style="margin-bottom:10px;">Seguridad y confiabilidad</p>
+  <div class="security-grid" style="margin-bottom:24px;">
+    <div class="security-card">
+      <span class="icon">🔒</span>
+      <h4>Autenticación segura</h4>
+      <p>Contraseñas cifradas con bcrypt. Sesiones JWT con expiración automática.</p>
+    </div>
+    <div class="security-card">
+      <span class="icon">🛡️</span>
+      <h4>Roles de acceso</h4>
+      <p>Admin y Superadmin. Cada usuario solo ve y edita lo que le corresponde.</p>
+    </div>
+    <div class="security-card">
+      <span class="icon">💳</span>
+      <h4>Pagos PCI-DSS</h4>
+      <p>Stripe procesa el cobro. Ningún dato de tarjeta pasa por tu servidor.</p>
+    </div>
+    <div class="security-card">
+      <span class="icon">🔄</span>
+      <h4>Backups automáticos</h4>
+      <p>Neon Postgres tiene backups point-in-time incluidos. Sin pérdida de datos.</p>
+    </div>
+    <div class="security-card">
+      <span class="icon">⚡</span>
+      <h4>Alta disponibilidad</h4>
+      <p>Infraestructura global de Vercel. Disponible 24/7 desde cualquier dispositivo.</p>
+    </div>
+    <div class="security-card">
+      <span class="icon">📱</span>
+      <h4>PWA instalable</h4>
+      <p>Se instala como app nativa en iPhone y Android. Sin App Store.</p>
+    </div>
+  </div>
+
+  <p class="section-label" style="margin-bottom:10px;">Lo que incluye la plataforma</p>
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+    <div style="background:var(--light); border-radius:8px; padding:14px 16px;">
+      <p style="font-size:8.5pt; font-weight:700; color:var(--black); margin-bottom:8px;">Panel Público (clientes)</p>
+      <ul style="list-style:none; display:flex; flex-direction:column; gap:5px;">
+        <li style="font-size:7.5pt; color:#374151; display:flex; gap:7px;"><span style="color:var(--gold)">✓</span> Homepage con paquetes y galería</li>
+        <li style="font-size:7.5pt; color:#374151; display:flex; gap:7px;"><span style="color:var(--gold)">✓</span> Catálogo filtrable por categoría</li>
+        <li style="font-size:7.5pt; color:#374151; display:flex; gap:7px;"><span style="color:var(--gold)">✓</span> Wizard de reserva multi-paso</li>
+        <li style="font-size:7.5pt; color:#374151; display:flex; gap:7px;"><span style="color:var(--gold)">✓</span> Comparador de paquetes</li>
+        <li style="font-size:7.5pt; color:#374151; display:flex; gap:7px;"><span style="color:var(--gold)">✓</span> Confirmación de reserva con UUID</li>
+        <li style="font-size:7.5pt; color:#374151; display:flex; gap:7px;"><span style="color:var(--gold)">✓</span> Botón de WhatsApp configurable</li>
+      </ul>
+    </div>
+    <div style="background:var(--light); border-radius:8px; padding:14px 16px;">
+      <p style="font-size:8.5pt; font-weight:700; color:var(--black); margin-bottom:8px;">Panel Admin (tu equipo)</p>
+      <ul style="list-style:none; display:flex; flex-direction:column; gap:5px;">
+        <li style="font-size:7.5pt; color:#374151; display:flex; gap:7px;"><span style="color:var(--gold)">✓</span> Dashboard + calendario de eventos</li>
+        <li style="font-size:7.5pt; color:#374151; display:flex; gap:7px;"><span style="color:var(--gold)">✓</span> Gestión de productos y BOM</li>
+        <li style="font-size:7.5pt; color:#374151; display:flex; gap:7px;"><span style="color:var(--gold)">✓</span> CRM de clientes con historial</li>
+        <li style="font-size:7.5pt; color:#374151; display:flex; gap:7px;"><span style="color:var(--gold)">✓</span> Checklists de logística</li>
+        <li style="font-size:7.5pt; color:#374151; display:flex; gap:7px;"><span style="color:var(--gold)">✓</span> Galería administrable</li>
+        <li style="font-size:7.5pt; color:#374151; display:flex; gap:7px;"><span style="color:var(--gold)">✓</span> Registro de ventas manuales</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════
+     PÁGINA 6 — CIERRE / CTA
+══════════════════════════════════════ -->
+<div class="page cta-page">
+  <p class="eyebrow">¿Listo para transformar tu operación?</p>
+
+  <h2>Menos caos.<br><span>Más eventos.</span><br>Más ingresos.</h2>
+
+  <p class="desc">
+    EventMaster Pro está en producción hoy mismo. Puedes ver la plataforma funcionando en vivo, con datos reales, antes de tomar cualquier decisión.
+  </p>
+
+  <div class="cta-boxes">
+    <div class="cta-box">
+      <span class="icon">🌐</span>
+      <p class="val">Demo en vivo</p>
+      <p>Agenda una sesión guiada y ve la plataforma con tus propios datos</p>
+    </div>
+    <div class="cta-box">
+      <span class="icon">⚙️</span>
+      <p class="val">Personalizable</p>
+      <p>Tu marca, tus paquetes, tus precios y tu dominio propio</p>
+    </div>
+    <div class="cta-box">
+      <span class="icon">🚀</span>
+      <p class="val">Listo en días</p>
+      <p>Onboarding rápido con carga inicial de datos incluida</p>
+    </div>
+  </div>
+
+  <div class="cta-divider"></div>
+
+  <div class="cta-footer">
+    <div class="url-big">daysu.vercel.app</div>
+    <p>Ver la plataforma en acción · Solicitar demo · Cotización personalizada</p>
+    <p style="margin-top:20px; font-size:7pt; color:rgba(255,255,255,0.25);">
+      EventMaster Pro · Aura Producciones · Todos los derechos reservados 2025
+    </p>
+  </div>
+</div>
+
+</body>
+</html>
