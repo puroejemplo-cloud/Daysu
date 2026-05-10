@@ -8,14 +8,16 @@ export const authConfig: NextAuthConfig = {
 
   callbacks: {
     authorized({ auth, request: { nextUrl } }) {
-      const isLoggedIn       = !!auth?.user;
-      const isSuperAdmin     = auth?.user?.role === "superadmin";
-      const isAdminRoute     = nextUrl.pathname.startsWith("/admin");
+      const isLoggedIn        = !!auth?.user;
+      const isSuperAdmin      = auth?.user?.role === "superadmin";
+      const isAdminRoute      = nextUrl.pathname.startsWith("/admin");
       const isSuperAdminRoute = nextUrl.pathname.startsWith("/superadmin");
 
-      if (!isLoggedIn) return false;
-      if (isSuperAdminRoute && !isSuperAdmin) {
-        return Response.redirect(new URL("/admin", nextUrl));
+      if (isAdminRoute || isSuperAdminRoute) {
+        if (!isLoggedIn) return false;
+        if (isSuperAdminRoute && !isSuperAdmin) {
+          return Response.redirect(new URL("/admin", nextUrl));
+        }
       }
       return true;
     },
