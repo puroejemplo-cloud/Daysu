@@ -68,8 +68,6 @@ export default function BookingConfirmation({ bookingId }: { bookingId: string }
         <div style={{
           background: isConf
             ? "linear-gradient(135deg, #001a0d 0%, #0d0d0d 60%, #001a05 100%)"
-            : isPend
-            ? "linear-gradient(135deg, #130033 0%, #0d0d2b 55%, #1a000d 100%)"
             : "linear-gradient(135deg, #0d0d0d, #1a1a2e)",
           padding: "1.75rem", position: "relative", overflow: "hidden",
         }}>
