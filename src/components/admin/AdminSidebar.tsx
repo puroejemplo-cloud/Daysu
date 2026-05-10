@@ -147,6 +147,15 @@ function SidebarInner({ onClose }: { onClose?: () => void }) {
             Cerrar sesión
           </button>
         </form>
+
+        {/* Versión del build */}
+        <p style={{
+          textAlign: "center", marginTop: "0.6rem",
+          fontSize: "0.58rem", color: "#3f3f46", letterSpacing: "0.05em",
+          fontFamily: "monospace",
+        }}>
+          build · {process.env.NEXT_PUBLIC_APP_VERSION}
+        </p>
       </div>
     </div>
   );
