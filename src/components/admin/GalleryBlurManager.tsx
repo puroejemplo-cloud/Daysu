@@ -141,14 +141,19 @@ export default function GalleryBlurManager() {
       const fd = new FormData();
       fd.append("file", file);
       const res = await fetch("/api/admin/galeria", { method: "PATCH", body: fd });
-      if (res.ok) count++;
+      if (res.ok) {
+        count++;
+      } else {
+        const j = await res.json().catch(() => ({}));
+        setMsg(`❌ Error: ${j.error ?? res.statusText}`);
+      }
     }
     const r = await fetch("/api/admin/galeria");
     const j = await r.json();
     const data: GalleryImage[] = j.data ?? [];
     setImages(data);
     setCarouselSelected(new Set(data.filter((img) => img.inCarousel).map((img) => img.name)));
-    setMsg(`✅ ${count} imagen${count !== 1 ? "es" : ""} subida${count !== 1 ? "s" : ""} correctamente.`);
+    if (count > 0) setMsg(`✅ ${count} imagen${count !== 1 ? "es" : ""} subida${count !== 1 ? "s" : ""} correctamente.`);
     setUploading(false);
   };
 

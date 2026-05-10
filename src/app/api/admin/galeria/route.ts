@@ -83,13 +83,13 @@ export async function GET() {
   const ts         = Date.now();
 
   return ok(sorted.map(name => {
+    const origBlob = fileMap.get(name)!;
     const webpName = toWebpName(name);
     const procUrl  = procMap.get(webpName) ?? null;
-    const proxy    = (path: string) => `/api/admin/galeria/img?p=${encodeURIComponent(path)}`;
     return {
       name,
-      original:   proxy(P_ORIG + name),
-      webp:       procUrl ? `${proxy(P_PROC + webpName)}&v=${ts}` : null,
+      original:   origBlob.url,
+      webp:       procUrl ? `${procUrl}?v=${ts}` : null,
       regions:    blurConfig[name] ?? [],
       processed:  procSet.has(webpName),
       inCarousel: carousel.includes(name),
@@ -98,49 +98,51 @@ export async function GET() {
 }
 
 export async function PATCH(req: NextRequest) {
-  const session = await auth();
-  if (!session) return err("No autorizado", 401);
+  try {
+    const session = await auth();
+    if (!session) return err("No autorizado", 401);
 
-  const formData = await req.formData();
-  const file = formData.get("file") as File | null;
-  if (!file) return err("No se recibió archivo");
+    const formData = await req.formData();
+    const file = formData.get("file") as File | null;
+    if (!file) return err("No se recibió archivo");
 
-  const ext = extname(file.name).toLowerCase();
-  if (![".jpg", ".jpeg", ".png", ".webp"].includes(ext)) return err("Formato no soportado");
+    const ext = extname(file.name).toLowerCase();
+    if (![".jpg", ".jpeg", ".png", ".webp"].includes(ext)) return err("Formato no soportado");
 
-  const safeName = file.name
-    .replace(/\s+/g, "-").replace(/[^a-zA-Z0-9._-]/g, "-")
-    .replace(/-+/g, "-").replace(/^-|-$/g, "");
+    const safeName = file.name
+      .replace(/\s+/g, "-").replace(/[^a-zA-Z0-9._-]/g, "-")
+      .replace(/-+/g, "-").replace(/^-|-$/g, "");
 
-  const buffer = Buffer.from(await file.arrayBuffer());
+    const buffer = Buffer.from(await file.arrayBuffer());
 
-  // Derivar content-type desde extensión (file.type puede venir vacío en WhatsApp/mobile)
-  const MIME: Record<string, string> = {
-    ".jpg": "image/jpeg", ".jpeg": "image/jpeg",
-    ".png": "image/png",  ".webp": "image/webp",
-  };
-  const contentType = MIME[ext] ?? "image/jpeg";
+    const MIME: Record<string, string> = {
+      ".jpg": "image/jpeg", ".jpeg": "image/jpeg",
+      ".png": "image/png",  ".webp": "image/webp",
+    };
+    const contentType = MIME[ext] ?? "image/jpeg";
 
-  // Upload original
-  await putBlob(P_ORIG + safeName, buffer, contentType);
+    await putBlob(P_ORIG + safeName, buffer, contentType);
 
-  // Process + upload WebP
-  const sharp   = (await import("sharp")).default;
-  const meta    = await sharp(buffer).metadata();
-  const maxW    = Math.min(meta.width ?? 1280, 1400);
-  const webpBuf = await sharp(buffer)
-    .resize({ width: maxW, withoutEnlargement: true })
-    .webp({ quality: 85 }).toBuffer();
+    const sharp   = (await import("sharp")).default;
+    const meta    = await sharp(buffer).metadata();
+    const maxW    = Math.min(meta.width ?? 1280, 1400);
+    const webpBuf = await sharp(buffer)
+      .resize({ width: maxW, withoutEnlargement: true })
+      .webp({ quality: 85 }).toBuffer();
 
-  await putBlob(P_PROC + toWebpName(safeName), webpBuf, "image/webp");
+    await putBlob(P_PROC + toWebpName(safeName), webpBuf, "image/webp");
 
-  const order = await loadJson<string[]>(P_ORDER, []);
-  await saveJson(P_ORDER, [safeName, ...order.filter(n => n !== safeName)]);
+    const order = await loadJson<string[]>(P_ORDER, []);
+    await saveJson(P_ORDER, [safeName, ...order.filter(n => n !== safeName)]);
 
-  const { revalidatePath } = await import("next/cache");
-  revalidatePath("/");
+    const { revalidatePath } = await import("next/cache");
+    revalidatePath("/");
 
-  return ok({ name: safeName });
+    return ok({ name: safeName });
+  } catch (e: unknown) {
+    const msg = e instanceof Error ? e.message : String(e);
+    return err(`Error al subir: ${msg}`, 500);
+  }
 }
 
 export async function POST(req: NextRequest) {
