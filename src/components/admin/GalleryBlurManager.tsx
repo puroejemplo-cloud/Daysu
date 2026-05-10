@@ -28,6 +28,7 @@ export default function GalleryBlurManager() {
   const [currentR,      setCurrentR]      = useState<Region | null>(null);
   const [saving,        setSaving]        = useState(false);
   const [refreshing,    setRefreshing]    = useState(false);
+  const [refreshProgress, setRefreshProgress] = useState<{ done: number; total: number } | null>(null);
   const [uploading,     setUploading]     = useState(false);
   const [carouselSelected, setCarouselSelected] = useState<Set<string>>(new Set());
   const [carouselSaving,   setCarouselSaving]   = useState(false);
@@ -131,43 +132,94 @@ export default function GalleryBlurManager() {
     }
   };
 
+  // ── Redimensiona en el navegador antes de subir (evita timeout en Vercel Hobby) ──
+  async function resizeBeforeUpload(file: File, maxW = 1400): Promise<{ blob: Blob; name: string }> {
+    const safeName = file.name
+      .replace(/\s+/g, "-").replace(/[^a-zA-Z0-9._-]/g, "-")
+      .replace(/-+/g, "-").replace(/^-|-$/g, "");
+
+    return new Promise((resolve) => {
+      const img = new Image();
+      const url = URL.createObjectURL(file);
+      img.onload = () => {
+        const scale = Math.min(1, maxW / img.width);
+        const w = Math.round(img.width * scale);
+        const h = Math.round(img.height * scale);
+        const canvas = document.createElement("canvas");
+        canvas.width = w; canvas.height = h;
+        canvas.getContext("2d")!.drawImage(img, 0, 0, w, h);
+        URL.revokeObjectURL(url);
+        canvas.toBlob(
+          (blob) => resolve({ blob: blob!, name: safeName.replace(/\.[^.]+$/, ".jpg") }),
+          "image/jpeg", 0.88,
+        );
+      };
+      img.src = url;
+    });
+  }
+
   // ── Subida ────────────────────────────────────────────────────────────────
   const uploadFiles = async (files: FileList | null) => {
     if (!files || files.length === 0) return;
     setUploading(true); setMsg("");
     let count = 0;
     for (const file of Array.from(files)) {
+      const { blob, name } = await resizeBeforeUpload(file);
       const fd = new FormData();
-      fd.append("file", file);
+      fd.append("file", blob, name);
       const res = await fetch("/api/admin/galeria", { method: "PATCH", body: fd });
-      if (res.ok) count++;
+      if (res.ok) {
+        count++;
+      } else {
+        const j = await res.json().catch(() => ({}));
+        setMsg(`❌ Error: ${j.error ?? res.statusText}`);
+      }
     }
     const r = await fetch("/api/admin/galeria");
     const j = await r.json();
     const data: GalleryImage[] = j.data ?? [];
     setImages(data);
     setCarouselSelected(new Set(data.filter((img) => img.inCarousel).map((img) => img.name)));
-    setMsg(`✅ ${count} imagen${count !== 1 ? "es" : ""} subida${count !== 1 ? "s" : ""} correctamente.`);
+    if (count > 0) setMsg(`✅ ${count} imagen${count !== 1 ? "es" : ""} subida${count !== 1 ? "s" : ""} correctamente.`);
     setUploading(false);
   };
 
   const refreshAll = useCallback(async () => {
-    setRefreshing(true); setMsg("");
-    const res  = await fetch("/api/admin/galeria", { method: "PUT" });
-    const json = await res.json();
-    if (res.ok) {
-      setMsg(`✅ ${json.data.processed} imágenes actualizadas. Recargando...`);
-      setTimeout(async () => {
-        const r = await fetch("/api/admin/galeria");
-        const j = await r.json();
-        setImages(j.data ?? []);
-        setMsg(`✅ Galería actualizada (${json.data.processed} imágenes).`);
-        setRefreshing(false);
-      }, 1500);
-    } else {
-      setMsg("❌ Error al actualizar. Intenta de nuevo.");
+    setRefreshing(true); setMsg(""); setRefreshProgress(null);
+
+    // Obtener lista actual de imágenes
+    const listRes = await fetch("/api/admin/galeria");
+    const listJson = await listRes.json();
+    const allImages: GalleryImage[] = listJson.data ?? [];
+
+    if (allImages.length === 0) {
+      setMsg("No hay imágenes para procesar.");
       setRefreshing(false);
+      return;
     }
+
+    // Procesar una por una para evitar timeout de Vercel
+    let done = 0;
+    const total = allImages.length;
+    setRefreshProgress({ done: 0, total });
+
+    for (const img of allImages) {
+      const res = await fetch("/api/admin/galeria", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ file: img.name }),
+      });
+      if (res.ok) done++;
+      setRefreshProgress({ done, total });
+    }
+
+    // Recargar lista
+    const r = await fetch("/api/admin/galeria");
+    const j = await r.json();
+    setImages(j.data ?? []);
+    setRefreshProgress(null);
+    setMsg(`✅ Galería actualizada (${done}/${total} imágenes).`);
+    setRefreshing(false);
   }, []);
 
   // ── Carrusel ──────────────────────────────────────────────────────────────
@@ -240,7 +292,11 @@ export default function GalleryBlurManager() {
             <button onClick={refreshAll} disabled={refreshing}
               className="btn-gold text-sm disabled:opacity-50"
               style={{ display: "flex", alignItems: "center", gap: "0.4rem", padding: "0.5rem 1.25rem" }}>
-              {refreshing ? "⟳ Procesando..." : "🔄 Actualizar galería en el sitio"}
+              {refreshing
+                ? refreshProgress
+                  ? `⟳ Procesando ${refreshProgress.done}/${refreshProgress.total}...`
+                  : "⟳ Iniciando..."
+                : "🔄 Actualizar galería en el sitio"}
             </button>
           </div>
         </div>

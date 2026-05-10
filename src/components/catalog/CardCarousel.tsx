@@ -12,26 +12,40 @@ interface Props {
 export default function CardCarousel({ images, alt, className, style }: Props) {
   const [current,  setCurrent]  = useState(0);
   const [paused,   setPaused]   = useState(false);
+  const [failed,   setFailed]   = useState<Set<string>>(new Set());
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  const next = useCallback(() => setCurrent((c) => (c + 1) % images.length), [images.length]);
-  const prev = useCallback(() => setCurrent((c) => (c - 1 + images.length) % images.length), [images.length]);
+  const validImages = images.filter((src) => !failed.has(src));
+  const count = validImages.length;
+
+  const handleError = useCallback((src: string) => {
+    setFailed((prev) => new Set(prev).add(src));
+  }, []);
+
+  const next = useCallback(() => setCurrent((c) => (c + 1) % count), [count]);
+  const prev = useCallback(() => setCurrent((c) => (c - 1 + count) % count), [count]);
 
   // Auto-avance cada 3s cuando no está pausado y hay más de 1 imagen
   useEffect(() => {
-    if (images.length <= 1 || paused) return;
+    if (count <= 1 || paused) return;
     timerRef.current = setInterval(next, 3000);
     return () => { if (timerRef.current) clearInterval(timerRef.current); };
-  }, [images.length, paused, next]);
+  }, [count, paused, next]);
 
-  if (!images.length) return null;
+  // Ajusta índice si quedó fuera de rango tras filtrar fallidas
+  useEffect(() => {
+    if (count > 0 && current >= count) setCurrent(count - 1);
+  }, [count, current]);
+
+  if (!count) return null;
 
   // Con una sola imagen: render simple sin controles
-  if (images.length === 1) {
+  if (count === 1) {
     return (
       <div className={className} style={{ overflow: "hidden", ...style }}>
-        <Image src={images[0]} alt={alt} fill unoptimized
+        <Image src={validImages[0]} alt={alt} fill unoptimized
           className="img-fade-in"
+          onError={() => handleError(validImages[0])}
           style={{ objectFit: "cover", objectPosition: "center" }} />
       </div>
     );
@@ -43,7 +57,7 @@ export default function CardCarousel({ images, alt, className, style }: Props) {
       onMouseLeave={() => setPaused(false)}>
 
       {/* Imágenes con fade */}
-      {images.map((src, i) => (
+      {validImages.map((src, i) => (
         <div key={src} style={{
           position: "absolute", inset: 0,
           opacity: i === current ? 1 : 0,
@@ -51,6 +65,7 @@ export default function CardCarousel({ images, alt, className, style }: Props) {
           pointerEvents: i === current ? "auto" : "none",
         }}>
           <Image src={src} alt={`${alt} — foto ${i + 1}`} fill unoptimized
+            onError={() => handleError(src)}
             style={{ objectFit: "cover", objectPosition: "center" }} />
         </div>
       ))}
@@ -85,7 +100,7 @@ export default function CardCarousel({ images, alt, className, style }: Props) {
         display: "flex", justifyContent: "center", gap: "0.3rem",
         zIndex: 10, pointerEvents: "none",
       }}>
-        {images.map((_, i) => (
+        {validImages.map((_, i) => (
           <span key={i} style={{
             width: i === current ? 14 : 5, height: 5,
             borderRadius: 99,
@@ -101,7 +116,7 @@ export default function CardCarousel({ images, alt, className, style }: Props) {
         fontSize: "0.6rem", fontWeight: 700, color: "rgba(255,255,255,.7)",
         background: "rgba(5,5,26,.6)", padding: "0.15rem 0.45rem", borderRadius: 999,
       }}>
-        {current + 1}/{images.length}
+        {current + 1}/{count}
       </span>
     </div>
   );

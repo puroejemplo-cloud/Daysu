@@ -1,5 +1,6 @@
 import HomeClient from "@/components/home/HomeClient";
 import { prisma } from "@/lib/prisma";
+import { fetchGoogleReviews } from "@/lib/google-places";
 import { extname, basename } from "path";
 
 function toWebpName(name: string): string {
@@ -46,44 +47,60 @@ export const revalidate = 60;
 export default async function HomePage() {
   const carouselImages = await loadCarouselImages();
 
-  // Leer homepage_packages para filtrar paquetes del index
-  const homepageSetting = await prisma.systemSetting.findUnique({ where: { key: "homepage_packages" } }).catch(() => null);
-  let homepagePkgIds: number[] = [];
+  type PkgRow = {
+    id: number; name: string; sku: string; isRecommended: boolean;
+    description: string | null;
+    dailyRate: { toString(): string };
+    originalPrice: { toString(): string } | null;
+    ownerAdmin: { fullName: string } | null;
+  };
+  let packages:        PkgRow[]                                                         = [];
+  let whatsappSetting: { value: string } | null = null;
+  let imageRows:       { id: number; imageUrl: string | null; imageGallery: unknown }[] = [];
+  let componentLinks:  { parentAssetId: number; childAssetId: number }[]               = [];
+
   try {
-    if (homepageSetting?.value) homepagePkgIds = JSON.parse(homepageSetting.value);
-  } catch { /* muestra todos */ }
+    // Leer homepage_packages para filtrar paquetes del index
+    const homepageSetting = await prisma.systemSetting.findUnique({ where: { key: "homepage_packages" } }).catch(() => null);
+    let homepagePkgIds: number[] = [];
+    try {
+      if (homepageSetting?.value) homepagePkgIds = JSON.parse(homepageSetting.value);
+    } catch { /* muestra todos */ }
 
-  const [packages, whatsappSetting] = await Promise.all([
-    prisma.asset.findMany({
-      where: {
-        isActive: true,
-        isRentable: true,
-        assetType: "package",
-        ...(homepagePkgIds.length > 0 ? { id: { in: homepagePkgIds } } : {}),
-      },
-      select: {
-        id: true, name: true, dailyRate: true, originalPrice: true,
-        description: true, sku: true, isRecommended: true,
-        ownerAdmin: { select: { fullName: true } },
-      },
-      orderBy: { dailyRate: "asc" },
-    }),
-    prisma.systemSetting.findUnique({ where: { key: "whatsapp_number" } }).catch(() => null),
-  ]);
+    [packages, whatsappSetting] = await Promise.all([
+      prisma.asset.findMany({
+        where: {
+          isActive: true,
+          isRentable: true,
+          assetType: "package",
+          ...(homepagePkgIds.length > 0 ? { id: { in: homepagePkgIds } } : {}),
+        },
+        select: {
+          id: true, name: true, dailyRate: true, originalPrice: true,
+          description: true, sku: true, isRecommended: true,
+          ownerAdmin: { select: { fullName: true } },
+        },
+        orderBy: { dailyRate: "asc" },
+      }),
+      prisma.systemSetting.findUnique({ where: { key: "whatsapp_number" } }).catch(() => null),
+    ]);
 
-  const pkgIds = packages.map((p) => p.id);
+    const pkgIds = packages.map((p) => p.id);
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [imageRows, componentLinks] = await Promise.all([
-    (prisma.asset.findMany as any)({
-      where: { id: { in: pkgIds } },
-      select: { id: true, imageUrl: true, imageGallery: true },
-    }).catch(() => [] as { id: number; imageUrl: string | null; imageGallery: unknown }[]),
-    prisma.assetComponent.findMany({
-      where:  { parentAssetId: { in: pkgIds } },
-      select: { parentAssetId: true, childAssetId: true },
-    }).catch(() => [] as { parentAssetId: number; childAssetId: number }[]),
-  ]);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    [imageRows, componentLinks] = await Promise.all([
+      (prisma.asset.findMany as any)({
+        where: { id: { in: pkgIds } },
+        select: { id: true, imageUrl: true, imageGallery: true },
+      }).catch(() => []),
+      prisma.assetComponent.findMany({
+        where:  { parentAssetId: { in: pkgIds } },
+        select: { parentAssetId: true, childAssetId: true },
+      }).catch(() => []),
+    ]);
+  } catch { /* BD no disponible en build time — la página carga vacía */ }
+
+  const googleReviews = await fetchGoogleReviews();
 
   const imageMap   = new Map<number, string | null>(imageRows.map((r: any) => [r.id as number, (r.imageUrl as string | null) ?? null]));
   const galleryMap = new Map<number, string[]>(imageRows.map((r: any) => [
@@ -93,11 +110,11 @@ export default async function HomePage() {
 
   // Componentes ordenados por precio descendente
   const childIds = [...new Set(componentLinks.map((c) => c.childAssetId))];
-  const childAssets = childIds.length
+  const childAssets: { id: number; name: string; dailyRate: { toString(): string } }[] = childIds.length
     ? await prisma.asset.findMany({
         where: { id: { in: childIds } },
         select: { id: true, name: true, dailyRate: true },
-      })
+      }).catch(() => [])
     : [];
   const childAssetMap = new Map(childAssets.map((a) => [a.id, { name: a.name, price: Number(a.dailyRate) }]));
 
@@ -117,6 +134,7 @@ export default async function HomePage() {
     <HomeClient
       carouselImages={carouselImages}
       whatsappNumber={whatsappSetting?.value ?? "524929496372"}
+      googleReviews={googleReviews}
       packages={packages.map((p) => ({
         ...p,
         dailyRate:      p.dailyRate.toString(),

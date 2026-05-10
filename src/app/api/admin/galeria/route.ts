@@ -1,8 +1,10 @@
 import { NextRequest } from "next/server";
 import { ok, err } from "@/lib/api";
 import { auth } from "@/auth";
-import { put, del, list } from "@vercel/blob";
+import { put, del, list } from "@vercel/blob"; // del se usa en DELETE y carousel
 import { basename, extname } from "path";
+
+export const maxDuration = 60; // Pro plan: permite hasta 60s (Hobby = 10s)
 
 type OverlayOptions = import("sharp").OverlayOptions;
 interface BlurRegion { x: number; y: number; w: number; h: number }
@@ -31,13 +33,7 @@ async function loadJson<T>(pathname: string, fallback: T): Promise<T> {
 }
 
 async function saveJson<T>(pathname: string, data: T): Promise<void> {
-  // Delete existing before re-creating to avoid duplicates
-  try {
-    const { blobs } = await list({ prefix: pathname });
-    const existing = blobs.find(x => x.pathname === pathname);
-    if (existing) await del(existing.url);
-  } catch { /* si falla el borrado, igual intentamos escribir */ }
-
+  // put() con addRandomSuffix:false sobreescribe el blob existente — no necesita del() previo
   await put(pathname, JSON.stringify(data), {
     access: "public",
     contentType: "application/json",
@@ -46,13 +42,6 @@ async function saveJson<T>(pathname: string, data: T): Promise<void> {
 }
 
 async function putBlob(pathname: string, data: Buffer, contentType: string): Promise<void> {
-  // Delete existing before re-creating
-  try {
-    const { blobs } = await list({ prefix: pathname });
-    const existing = blobs.find(x => x.pathname === pathname);
-    if (existing) await del(existing.url);
-  } catch { /* continúa */ }
-
   await put(pathname, data, { access: "public", contentType, addRandomSuffix: false });
 }
 
@@ -98,42 +87,51 @@ export async function GET() {
 }
 
 export async function PATCH(req: NextRequest) {
-  const session = await auth();
-  if (!session) return err("No autorizado", 401);
+  try {
+    const session = await auth();
+    if (!session) return err("No autorizado", 401);
 
-  const formData = await req.formData();
-  const file = formData.get("file") as File | null;
-  if (!file) return err("No se recibió archivo");
+    const formData = await req.formData();
+    const file = formData.get("file") as File | null;
+    if (!file) return err("No se recibió archivo");
 
-  const ext = extname(file.name).toLowerCase();
-  if (![".jpg", ".jpeg", ".png", ".webp"].includes(ext)) return err("Formato no soportado");
+    const ext = extname(file.name).toLowerCase();
+    if (![".jpg", ".jpeg", ".png", ".webp"].includes(ext)) return err("Formato no soportado");
 
-  const safeName = file.name
-    .replace(/\s+/g, "-").replace(/[^a-zA-Z0-9._-]/g, "-")
-    .replace(/-+/g, "-").replace(/^-|-$/g, "");
+    const safeName = file.name
+      .replace(/\s+/g, "-").replace(/[^a-zA-Z0-9._-]/g, "-")
+      .replace(/-+/g, "-").replace(/^-|-$/g, "");
 
-  const buffer = Buffer.from(await file.arrayBuffer());
+    const buffer = Buffer.from(await file.arrayBuffer());
 
-  // Upload original
-  await putBlob(P_ORIG + safeName, buffer, file.type || "image/jpeg");
+    const MIME: Record<string, string> = {
+      ".jpg": "image/jpeg", ".jpeg": "image/jpeg",
+      ".png": "image/png",  ".webp": "image/webp",
+    };
+    const contentType = MIME[ext] ?? "image/jpeg";
 
-  // Process + upload WebP
-  const sharp   = (await import("sharp")).default;
-  const meta    = await sharp(buffer).metadata();
-  const maxW    = Math.min(meta.width ?? 1280, 1400);
-  const webpBuf = await sharp(buffer)
-    .resize({ width: maxW, withoutEnlargement: true })
-    .webp({ quality: 85 }).toBuffer();
+    await putBlob(P_ORIG + safeName, buffer, contentType);
 
-  await putBlob(P_PROC + toWebpName(safeName), webpBuf, "image/webp");
+    const sharp   = (await import("sharp")).default;
+    const meta    = await sharp(buffer).metadata();
+    const maxW    = Math.min(meta.width ?? 1280, 1400);
+    const webpBuf = await sharp(buffer)
+      .resize({ width: maxW, withoutEnlargement: true })
+      .webp({ quality: 85 }).toBuffer();
 
-  const order = await loadJson<string[]>(P_ORDER, []);
-  await saveJson(P_ORDER, [safeName, ...order.filter(n => n !== safeName)]);
+    await putBlob(P_PROC + toWebpName(safeName), webpBuf, "image/webp");
 
-  const { revalidatePath } = await import("next/cache");
-  revalidatePath("/");
+    const order = await loadJson<string[]>(P_ORDER, []);
+    await saveJson(P_ORDER, [safeName, ...order.filter(n => n !== safeName)]);
 
-  return ok({ name: safeName });
+    const { revalidatePath } = await import("next/cache");
+    revalidatePath("/");
+
+    return ok({ name: safeName });
+  } catch (e: unknown) {
+    const msg = e instanceof Error ? e.message : String(e);
+    return err(`Error al subir: ${msg}`, 500);
+  }
 }
 
 export async function POST(req: NextRequest) {
@@ -189,61 +187,62 @@ export async function POST(req: NextRequest) {
   return ok({ ok: true, webp: P_PROC + toWebpName(file) });
 }
 
-export async function PUT() {
+// PUT — procesa UNA imagen (llamar una vez por imagen para evitar timeout)
+export async function PUT(req: NextRequest) {
   const session = await auth();
   if (!session) return err("No autorizado", 401);
 
+  const { file }: { file: string } = await req.json();
+  if (!file) return err("file requerido");
+
+  const safeName = basename(file);
+
   const [origBlobs, blurConfig] = await Promise.all([
-    list({ prefix: P_ORIG }).then(r => r.blobs),
+    list({ prefix: P_ORIG + safeName }).then(r => r.blobs),
     loadJson<BlurConfig>(P_BLUR, {}),
   ]);
 
+  const origBlob = origBlobs.find(b => b.pathname === P_ORIG + safeName);
+  if (!origBlob) return err("Archivo original no encontrado");
+
+  const regions = blurConfig[safeName] ?? [];
+
+  const origBuf = Buffer.from(await (await fetch(origBlob.url)).arrayBuffer());
   const sharp   = (await import("sharp")).default;
-  const results: string[] = [];
+  const meta    = await sharp(origBuf).metadata();
+  const W = meta.width ?? 1280, H = meta.height ?? 720;
+  const maxW = Math.min(W, 1400), scale = maxW / W;
+  const newW = maxW, newH = Math.round(H * scale);
 
-  for (const blob of origBlobs) {
-    const filename = basename(blob.pathname);
-    const regions  = blurConfig[filename] ?? [];
-    try {
-      const origBuf = Buffer.from(await (await fetch(blob.url)).arrayBuffer());
-      const meta    = await sharp(origBuf).metadata();
-      const W = meta.width ?? 1280, H = meta.height ?? 720;
-      const maxW = Math.min(W, 1400), scale = maxW / W;
-      const newW = maxW, newH = Math.round(H * scale);
+  const base = await sharp(origBuf)
+    .resize({ width: newW, withoutEnlargement: true })
+    .jpeg({ quality: 88 }).toBuffer();
 
-      const base = await sharp(origBuf)
-        .resize({ width: newW, withoutEnlargement: true })
-        .jpeg({ quality: 88 }).toBuffer();
-
-      let processed: Buffer;
-      if (regions.length === 0) {
-        processed = await sharp(base).webp({ quality: 85 }).toBuffer();
-      } else {
-        const composites: OverlayOptions[] = [];
-        for (const r of regions) {
-          const rx = Math.max(0, Math.round(r.x * newW));
-          const ry = Math.max(0, Math.round(r.y * newH));
-          const rw = Math.min(newW - rx, Math.round(r.w * newW));
-          const rh = Math.min(newH - ry, Math.round(r.h * newH));
-          if (rw < 4 || rh < 4) continue;
-          const blurred = await sharp(base)
-            .extract({ left: rx, top: ry, width: rw, height: rh })
-            .blur(16).jpeg({ quality: 75 }).toBuffer();
-          composites.push({ input: blurred, left: rx, top: ry, blend: "over" });
-        }
-        processed = await sharp(base).composite(composites).webp({ quality: 82 }).toBuffer();
-      }
-
-      await putBlob(P_PROC + toWebpName(filename), processed, "image/webp");
-      results.push(filename);
-    } catch { /* continúa con las demás */ }
+  let processed: Buffer;
+  if (regions.length === 0) {
+    processed = await sharp(base).webp({ quality: 85 }).toBuffer();
+  } else {
+    const composites: OverlayOptions[] = [];
+    for (const r of regions) {
+      const rx = Math.max(0, Math.round(r.x * newW));
+      const ry = Math.max(0, Math.round(r.y * newH));
+      const rw = Math.min(newW - rx, Math.round(r.w * newW));
+      const rh = Math.min(newH - ry, Math.round(r.h * newH));
+      if (rw < 4 || rh < 4) continue;
+      const blurred = await sharp(base)
+        .extract({ left: rx, top: ry, width: rw, height: rh })
+        .blur(16).jpeg({ quality: 75 }).toBuffer();
+      composites.push({ input: blurred, left: rx, top: ry, blend: "over" });
+    }
+    processed = await sharp(base).composite(composites).webp({ quality: 82 }).toBuffer();
   }
+
+  await putBlob(P_PROC + toWebpName(safeName), processed, "image/webp");
 
   const { revalidatePath } = await import("next/cache");
   revalidatePath("/");
-  revalidatePath("/catalogo");
 
-  return ok({ processed: results.length, files: results });
+  return ok({ processed: safeName });
 }
 
 export async function DELETE(req: NextRequest) {

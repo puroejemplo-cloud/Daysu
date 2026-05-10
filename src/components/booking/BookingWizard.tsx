@@ -48,6 +48,14 @@ const CAT_ICON: Record<string, string> = {
 const STEPS_PKG    = ["Tus datos", "Fecha y hora", "Complementos", "Confirmar"];
 const STEPS_NO_PKG = ["Tus datos", "Fecha y hora", "Elige paquete", "Confirmar"];
 
+const EVENT_ICONS: Record<string, string> = {
+  "Boda": "💍", "XV Años": "👑", "Quinceañera": "👑",
+  "Cumpleaños": "🎂", "Cumpleaños VIP": "🎂",
+  "Corporativo": "💼", "Graduación": "🎓",
+  "Bautizo": "👶", "Baby Shower": "🍼",
+  "Aniversario": "💑", "Fiesta": "🎊",
+};
+
 export default function BookingWizard({ forcedAssetId }: { forcedAssetId?: number | null } = {}) {
   const router = useRouter();
   const params = useSearchParams();
@@ -252,7 +260,10 @@ export default function BookingWizard({ forcedAssetId }: { forcedAssetId?: numbe
     return sum + price * s.quantity;
   }, 0);
 
-  const outOfZone = isOutOfZone(venue);
+  const outOfZone  = isOutOfZone(venue);
+  const hasSoundPkg = preselectedPkg?.hasSound === true ||
+    selected.some((s) => allProducts.find((p) => p.id === s.assetId)?.category?.name === "Sonido");
+  const eventIcon  = EVENT_ICONS[eventName ?? ""] ?? "🎉";
   const muted    = { color: "#71717a" } as React.CSSProperties;
   const gold     = { color: "#FF3DA8" } as React.CSSProperties;
   const lb       = "block text-xs font-semibold uppercase tracking-widest mb-2";
@@ -501,7 +512,8 @@ export default function BookingWizard({ forcedAssetId }: { forcedAssetId?: numbe
             )}
           </div>
 
-          <div className="flex justify-end pt-2">
+          <div className="flex justify-between items-center pt-2">
+            <button onClick={() => router.back()} className="text-sm font-bold" style={muted}>← Volver</button>
             <button onClick={() => goStep(1)} disabled={!canNext0} className="btn-gold disabled:opacity-40 px-8 py-3 text-sm">
               Siguiente →
             </button>
@@ -900,114 +912,224 @@ export default function BookingWizard({ forcedAssetId }: { forcedAssetId?: numbe
 
       {/* ══ PASO 3: CONFIRMAR ══ */}
       {step === 3 && (
-        <div className="space-y-5">
-          <div className="aura-card p-6">
-            <p className="text-xs font-bold uppercase tracking-widest mb-4" style={gold}>✦ Resumen</p>
-            <div className="space-y-2.5 text-sm">
-              <div className="flex gap-2"><span style={muted}>👤</span><span className="font-bold text-white">{client.fullName}</span></div>
-              <div className="flex gap-2"><span style={muted}>📱</span><span className="text-white">{client.phone}</span></div>
-              {client.email && <div className="flex gap-2"><span style={muted}>✉️</span><span className="text-white">{client.email}</span></div>}
-              <div className="flex gap-2"><span style={muted}>👥</span><span className="text-white">{guestNum} invitados</span></div>
-              <div className="flex gap-2"><span style={muted}>📅</span><span className="text-white">{dl}</span></div>
-              <div className="flex gap-2"><span style={muted}>⏰</span><span className="text-white">{setupHour}h</span></div>
-              {eventName && <div className="flex gap-2"><span style={muted}>🎉</span><span className="text-white">{eventName}</span></div>}
-              {venue     && <div className="flex gap-2"><span style={muted}>📍</span><span className="text-white">{venue}</span></div>}
-            </div>
-            <div className="mt-5 pt-4" style={{ borderTop: "1px solid rgba(124,58,237,.2)" }}>
-              <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: "#7C3AED" }}>Servicios</p>
-              {selected.map((s) => (
-                <div key={s.assetId} className="flex items-center justify-between text-sm gap-2 mb-2">
-                  <div className="flex items-center gap-2 min-w-0">
-                    <span className="text-xs px-1.5 py-0.5 rounded font-bold flex-shrink-0"
-                      style={{ background: preselectedPkg?.id === s.assetId ? "rgba(124,58,237,.2)" : "rgba(212,175,55,.12)", color: preselectedPkg?.id === s.assetId ? "#9333EA" : "#FF3DA8" }}>
-                      {preselectedPkg?.id === s.assetId ? "Principal" : "Extra"}
-                    </span>
-                    <span className="text-white truncate">{s.assetName}</span>
-                  </div>
-                  <span className="font-bold flex-shrink-0" style={gold}>×{s.quantity}</span>
+        <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+
+          {/* ── TICKET ───────────────────────────── */}
+          <div style={{
+            borderRadius: 20, overflow: "hidden",
+            border: "1px solid rgba(232,25,138,.25)",
+            boxShadow: "0 0 40px rgba(232,25,138,.1), 0 2px 40px rgba(0,0,0,.4)",
+          }}>
+            {/* Cabecera del ticket */}
+            <div style={{
+              background: "linear-gradient(135deg, #130033 0%, #0d0d2b 55%, #1a000d 100%)",
+              padding: "1.5rem", position: "relative", overflow: "hidden",
+            }}>
+              <div style={{
+                position: "absolute", top: -60, right: -60, width: 200, height: 200, borderRadius: "50%",
+                background: "radial-gradient(circle, rgba(232,25,138,.18) 0%, transparent 70%)",
+                pointerEvents: "none",
+              }} />
+              <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "1.25rem" }}>
+                <div style={{
+                  width: 48, height: 48, borderRadius: 12, flexShrink: 0,
+                  background: "rgba(232,25,138,.15)", border: "1px solid rgba(232,25,138,.3)",
+                  display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1.6rem",
+                }}>
+                  {eventIcon}
                 </div>
-              ))}
+                <div>
+                  <p style={{ color: "var(--gold)", fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.15em", textTransform: "uppercase" }}>Reserva VIP · Daysu.vip</p>
+                  <p style={{ color: "#fff", fontSize: "1.15rem", fontWeight: 900, lineHeight: 1.2 }}>{eventName || "Evento especial"}</p>
+                </div>
+              </div>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+                <div>
+                  <p style={{ color: "rgba(255,255,255,.35)", fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: "0.2rem" }}>Fecha</p>
+                  <p style={{ color: "#fff", fontWeight: 800, fontSize: "0.9rem", lineHeight: 1.3 }}>{dl}</p>
+                </div>
+                <div>
+                  <p style={{ color: "rgba(255,255,255,.35)", fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: "0.2rem" }}>Hora de inicio</p>
+                  <p style={{ color: "#fff", fontWeight: 800, fontSize: "0.9rem" }}>{setupHour}:00 h</p>
+                </div>
+                <div>
+                  <p style={{ color: "rgba(255,255,255,.35)", fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: "0.2rem" }}>Invitados</p>
+                  <p style={{ color: "#fff", fontWeight: 800, fontSize: "0.9rem" }}>{guestNum} personas</p>
+                </div>
+                {venue && (
+                  <div>
+                    <p style={{ color: "rgba(255,255,255,.35)", fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: "0.2rem" }}>Venue</p>
+                    <p style={{ color: "#fff", fontWeight: 700, fontSize: "0.85rem", lineHeight: 1.3 }}>{venue}</p>
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
-          {/* Desglose de precios */}
-          {total > 0 && (
-            <div className="rounded-xl p-4" style={{ background: "rgba(232,25,138,.07)", border: "1px solid rgba(232,25,138,.2)" }}>
-              <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: "#94a3b8" }}>Desglose de precios</p>
-              <div className="space-y-1.5">
+
+            {/* Separador perforado */}
+            <div style={{ position: "relative", height: 0 }}>
+              <div style={{ borderTop: "2px dashed rgba(232,25,138,.2)" }} />
+              <div style={{ position: "absolute", left: -14, top: -14, width: 28, height: 28, borderRadius: "50%", background: "var(--black)", border: "1px solid rgba(232,25,138,.15)" }} />
+              <div style={{ position: "absolute", right: -14, top: -14, width: 28, height: 28, borderRadius: "50%", background: "var(--black)", border: "1px solid rgba(232,25,138,.15)" }} />
+            </div>
+
+            {/* Cliente */}
+            <div style={{ background: "#0a0a18", padding: "1rem 1.5rem" }}>
+              <p style={{ color: "rgba(255,255,255,.35)", fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: "0.65rem" }}>Cliente</p>
+              <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+                <div style={{
+                  width: 38, height: 38, borderRadius: "50%", flexShrink: 0,
+                  background: "linear-gradient(135deg, var(--gold), #7C3AED)",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  fontWeight: 900, color: "#fff", fontSize: "1rem",
+                }}>
+                  {client.fullName.charAt(0).toUpperCase()}
+                </div>
+                <div>
+                  <p style={{ color: "#fff", fontWeight: 700, fontSize: "0.9rem" }}>{client.fullName}</p>
+                  <p style={{ color: "var(--muted)", fontSize: "0.78rem" }}>
+                    {client.phone}{client.email ? ` · ${client.email}` : ""}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Servicios contratados */}
+            <div style={{ background: "#07070f", padding: "1rem 1.5rem", borderTop: "1px solid rgba(255,255,255,.04)" }}>
+              <p style={{ color: "rgba(255,255,255,.35)", fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: "0.75rem" }}>Servicios contratados</p>
+              <div style={{ display: "flex", flexDirection: "column", gap: "0.6rem" }}>
                 {selected.map((s) => {
-                  const prod  = allProducts.find((p) => p.id === s.assetId);
-                  const price = s.overridePrice != null
-                    ? s.overridePrice
-                    : Number(prod?.dailyRate ?? 0);
-                  const label = getTierLabel(s.assetName, prod?.sku ?? "", s.overridePrice, s.quantity);
+                  const isPrincipal = preselectedPkg?.id === s.assetId;
+                  const prod        = allProducts.find((p) => p.id === s.assetId);
+                  const price       = s.overridePrice != null ? s.overridePrice : Number(prod?.dailyRate ?? 0);
+                  const lineTotal   = getHourlyTiers(prod?.sku ?? "", prod?.pricingTiers) ? price : price * s.quantity;
                   return (
-                    <div key={s.assetId} className="flex justify-between text-sm">
-                      <span style={{ color: "#94a3b8" }}>
-                        {label}
-                        {/* Para no-tiered con qty > 1 mostrar ×N */}
-                        {!getHourlyTiers(prod?.sku ?? "", prod?.pricingTiers) && !getCapacityTiers(prod?.sku ?? "", prod?.pricingTiers) && s.quantity > 1 ? ` ×${s.quantity}` : ""}
-                      </span>
-                      <span className="font-bold" style={gold}>
-                        ${(getHourlyTiers(prod?.sku ?? "", prod?.pricingTiers) ? price : price * s.quantity).toLocaleString("es-MX")}
+                    <div key={s.assetId} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "0.5rem" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", minWidth: 0 }}>
+                        <span style={{
+                          fontSize: "0.58rem", fontWeight: 800, letterSpacing: "0.08em", textTransform: "uppercase",
+                          padding: "0.2rem 0.55rem", borderRadius: 6, flexShrink: 0,
+                          background: isPrincipal ? "rgba(124,58,237,.2)" : "rgba(232,25,138,.12)",
+                          color: isPrincipal ? "#9333ea" : "var(--gold2)",
+                          border: `1px solid ${isPrincipal ? "rgba(124,58,237,.3)" : "rgba(232,25,138,.2)"}`,
+                        }}>
+                          {isPrincipal ? "Principal" : "Extra"}
+                        </span>
+                        <span style={{ color: "#fff", fontWeight: 600, fontSize: "0.88rem", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{s.assetName}</span>
+                      </div>
+                      <span style={{ color: "var(--gold)", fontWeight: 700, fontSize: "0.88rem", flexShrink: 0 }}>
+                        ${lineTotal.toLocaleString("es-MX")}
                       </span>
                     </div>
                   );
                 })}
                 {outOfZone && (
-                  <div className="flex justify-between text-sm pt-1" style={{ borderTop: "1px solid rgba(255,255,255,.06)" }}>
-                    <span style={{ color: "#fde68a" }}>🚗 Gastos de traslado</span>
-                    <span style={{ color: "#fde68a", fontWeight: 700 }}>Por confirmar</span>
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "0.5rem", paddingTop: "0.5rem", borderTop: "1px solid rgba(245,158,11,.12)" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
+                      <span style={{ fontSize: "0.58rem", fontWeight: 800, letterSpacing: "0.08em", textTransform: "uppercase", padding: "0.2rem 0.55rem", borderRadius: 6, background: "rgba(245,158,11,.1)", color: "#fde68a", border: "1px solid rgba(245,158,11,.2)", flexShrink: 0 }}>
+                        Traslado
+                      </span>
+                      <span style={{ color: "#fde68a", fontSize: "0.88rem" }}>Gastos de traslado</span>
+                    </div>
+                    <span style={{ color: "#fde68a", fontWeight: 700, fontSize: "0.85rem" }}>Por confirmar</span>
                   </div>
                 )}
               </div>
-              <div className="flex justify-between items-center mt-3 pt-3" style={{ borderTop: "1px solid rgba(232,25,138,.25)" }}>
-                <p className="text-sm font-bold" style={{ color: "#94a3b8" }}>TOTAL ESTIMADO</p>
-                <p className="text-2xl font-black" style={gold}>${total.toLocaleString("es-MX")} MXN</p>
-              </div>
-              <p className="text-xs mt-2" style={{ color: "#475569" }}>
-                * El depósito para apartar es el 30% del total: <strong style={gold}>${Math.round(total * 0.3).toLocaleString("es-MX")} MXN</strong>
-              </p>
             </div>
-          )}
-
-          {capacityWarn && (
-            <div className="rounded-xl p-4 text-sm" style={{ background: "rgba(239,68,68,.08)", border: "1px solid rgba(239,68,68,.3)", color: "#fca5a5" }}>
-              ⚠️ Recuerda: el paquete es para hasta {pkgCapacity} personas, tu evento tiene {guestNum}.
-            </div>
-          )}
-
-          {/* Aviso traslado en confirmación */}
-          {outOfZone && (
-            <div className="rounded-xl p-4 text-sm" style={{ background: "rgba(245,158,11,.08)", border: "1px solid rgba(245,158,11,.3)", color: "#fde68a" }}>
-              🚗 <strong>Gastos de traslado:</strong> Tu evento está fuera de la zona Zacatecas–Guadalupe. Te contactaremos para confirmar el costo adicional de traslado antes de cobrar el depósito.
-            </div>
-          )}
-
-          {(() => {
-            const hasSoundPkg =
-              preselectedPkg?.hasSound === true ||
-              selected.some((s) => {
-                const prod = allProducts.find((p) => p.id === s.assetId);
-                return prod?.category?.name === "Sonido";
-              });
-            return hasSoundPkg ? (
-              <div className="rounded-2xl p-5 text-sm border" style={{ background: "rgba(212,175,55,.07)", borderColor: "rgba(212,175,55,.3)" }}>
-                <p className="font-black mb-1" style={gold}>📌 Incluye 5 hrs de servicio + 1 hr de bienvenida</p>
-                <p style={muted}>Tu paquete cubre 1 hora de recepción antes del evento y 5 horas de servicio completo.</p>
-              </div>
-            ) : null;
-          })()}
-          <div className="rounded-2xl p-5 text-sm border" style={{ background: "rgba(212,175,55,.07)", borderColor: "rgba(212,175,55,.3)" }}>
-            <p className="font-black mb-1" style={gold}>⏳ Hold VIP de 48 horas</p>
-            <p style={muted}>Tu fecha quedará apartada 48 horas para que confirmes el pago.</p>
           </div>
-          {error && <div className="rounded-xl p-4 text-sm" style={{ background: "rgba(239,68,68,.1)", border: "1px solid rgba(239,68,68,.3)", color: "#EF4444" }}>{error}</div>}
-          <div className="flex justify-between">
-            <button onClick={() => goStep(2)} className="text-sm font-bold" style={muted}>← Atrás</button>
-            <button onClick={handleSubmit} disabled={submitting} className="btn-gold disabled:opacity-50 px-8 py-3 text-sm">
-              {submitting ? "Procesando..." : "✦ Confirmar y apartar fecha"}
+
+          {/* ── PRECIO ───────────────────────────── */}
+          {total > 0 && (
+            <div style={{ borderRadius: 20, border: "1px solid rgba(232,25,138,.2)", overflow: "hidden" }}>
+              <div style={{
+                padding: "1.25rem 1.5rem",
+                background: "linear-gradient(135deg, rgba(232,25,138,.07), rgba(124,58,237,.05))",
+                display: "flex", alignItems: "center", justifyContent: "space-between", gap: "1rem",
+              }}>
+                <div>
+                  <p style={{ color: "var(--muted)", fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase" }}>Total estimado</p>
+                  {outOfZone && <p style={{ color: "#475569", fontSize: "0.7rem", marginTop: "0.1rem" }}>Sin incluir traslado</p>}
+                </div>
+                <p style={{ color: "#fff", fontWeight: 900, fontSize: "1.5rem", flexShrink: 0 }}>
+                  ${total.toLocaleString("es-MX")} <span style={{ fontSize: "0.75rem", color: "var(--muted)", fontWeight: 600 }}>MXN</span>
+                </p>
+              </div>
+              <div style={{
+                padding: "1.25rem 1.5rem",
+                background: "rgba(232,25,138,.05)",
+                borderTop: "1px solid rgba(232,25,138,.18)",
+                display: "flex", alignItems: "center", justifyContent: "space-between", gap: "1rem",
+              }}>
+                <div>
+                  <p style={{ color: "var(--gold)", fontWeight: 800, fontSize: "0.95rem" }}>Depósito para apartar</p>
+                  <p style={{ color: "var(--muted)", fontSize: "0.7rem", marginTop: "0.1rem" }}>30% · Pago seguro vía Stripe</p>
+                </div>
+                <p style={{ color: "var(--gold)", fontWeight: 900, fontSize: "1.9rem", flexShrink: 0 }}>
+                  ${Math.round(total * 0.3).toLocaleString("es-MX")}
+                  <span style={{ fontSize: "0.75rem", fontWeight: 600, color: "var(--muted)", marginLeft: "0.25rem" }}>MXN</span>
+                </p>
+              </div>
+            </div>
+          )}
+
+          {/* ── AVISOS ───────────────────────────── */}
+          {outOfZone && (
+            <div style={{ borderRadius: 14, padding: "1rem 1.25rem", background: "rgba(245,158,11,.07)", border: "1px solid rgba(245,158,11,.25)", fontSize: "0.84rem", color: "#fde68a", lineHeight: 1.55 }}>
+              🚗 <strong>Gastos de traslado:</strong> Tu evento está fuera de la zona Zacatecas–Guadalupe. Te contactaremos para confirmar el costo adicional antes de cobrar el depósito.
+            </div>
+          )}
+          {capacityWarn && (
+            <div style={{ borderRadius: 14, padding: "1rem 1.25rem", background: "rgba(239,68,68,.07)", border: "1px solid rgba(239,68,68,.25)", fontSize: "0.84rem", color: "#fca5a5", lineHeight: 1.55 }}>
+              ⚠️ El paquete es para máx. {pkgCapacity} personas y tu evento tiene {guestNum}.
+              {recommendation && <span> Considera <strong style={{ color: "#fff" }}>{recommendation.name}</strong> para mayor comodidad.</span>}
+            </div>
+          )}
+
+          {/* ── GARANTÍAS ────────────────────────── */}
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.75rem" }}>
+            <div style={{ borderRadius: 14, padding: "1rem", background: "rgba(124,58,237,.07)", border: "1px solid rgba(124,58,237,.18)", textAlign: "center" }}>
+              <p style={{ fontSize: "1.5rem", marginBottom: "0.3rem" }}>⏳</p>
+              <p style={{ color: "#9333ea", fontWeight: 800, fontSize: "0.84rem" }}>Hold 48 horas</p>
+              <p style={{ color: "var(--muted)", fontSize: "0.69rem", marginTop: "0.15rem", lineHeight: 1.4 }}>Fecha bloqueada solo para ti</p>
+            </div>
+            <div style={{ borderRadius: 14, padding: "1rem", background: "rgba(232,25,138,.07)", border: "1px solid rgba(232,25,138,.18)", textAlign: "center" }}>
+              <p style={{ fontSize: "1.5rem", marginBottom: "0.3rem" }}>🔒</p>
+              <p style={{ color: "var(--gold)", fontWeight: 800, fontSize: "0.84rem" }}>Pago seguro</p>
+              <p style={{ color: "var(--muted)", fontSize: "0.69rem", marginTop: "0.15rem", lineHeight: 1.4 }}>Procesado por Stripe</p>
+            </div>
+            {hasSoundPkg && (
+              <div style={{ gridColumn: "1 / -1", borderRadius: 14, padding: "1rem 1.25rem", background: "rgba(212,175,55,.06)", border: "1px solid rgba(212,175,55,.2)", display: "flex", gap: "0.75rem", alignItems: "center" }}>
+                <span style={{ fontSize: "1.4rem", flexShrink: 0 }}>📌</span>
+                <div>
+                  <p style={{ color: "#d4af37", fontWeight: 800, fontSize: "0.84rem" }}>5 hrs de servicio + 1 hr de bienvenida</p>
+                  <p style={{ color: "var(--muted)", fontSize: "0.72rem", marginTop: "0.1rem" }}>Recepción previa + evento completo incluidos</p>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Error */}
+          {error && (
+            <div style={{ borderRadius: 14, padding: "1rem 1.25rem", background: "rgba(239,68,68,.1)", border: "1px solid rgba(239,68,68,.3)", color: "#EF4444", fontSize: "0.85rem" }}>
+              {error}
+            </div>
+          )}
+
+          {/* ── CTA ──────────────────────────────── */}
+          <div>
+            <button onClick={handleSubmit} disabled={submitting}
+              className="btn-gold disabled:opacity-50"
+              style={{ width: "100%", padding: "1rem 1.5rem", fontSize: "1rem", fontWeight: 900, letterSpacing: "0.04em", borderRadius: 14 }}>
+              {submitting ? "Procesando tu reserva..." : "✦ Confirmar y apartar fecha"}
+            </button>
+            <p style={{ textAlign: "center", marginTop: "0.6rem", fontSize: "0.67rem", color: "#475569", lineHeight: 1.5 }}>
+              Al confirmar, tu fecha queda bloqueada 48 h. Solo se cobra el 30% de depósito vía Stripe.
+            </p>
+            <button onClick={() => goStep(2)}
+              style={{ display: "block", margin: "0.6rem auto 0", background: "none", border: "none", cursor: "pointer", color: "#52525b", fontSize: "0.82rem", fontWeight: 600 }}>
+              ← Volver y editar
             </button>
           </div>
+
         </div>
       )}
 
