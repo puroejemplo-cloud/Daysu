@@ -302,23 +302,30 @@ export default function BookingWizard({ forcedAssetId }: { forcedAssetId?: numbe
           {STEPS.map((s, i) => (
             <div key={i} style={{ flex: i < STEPS.length - 1 ? 1 : 0, display: "flex", alignItems: "flex-start" }}>
               <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "0.4rem", flexShrink: 0 }}>
-                <div style={{
-                  width: 32, height: 32, borderRadius: "50%",
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                  fontSize: "0.72rem", fontWeight: 700,
-                  background: i < step ? "rgba(22,163,74,0.15)" : i === step ? "var(--gold)" : "rgba(255,255,255,0.05)",
-                  color:      i < step ? "#4ade80"             : i === step ? "#05051a"      : "#52525b",
-                  border:     `1.5px solid ${i < step ? "rgba(22,163,74,0.3)" : i === step ? "var(--gold)" : "rgba(255,255,255,0.08)"}`,
-                  transition: "all 0.25s",
-                  boxShadow:  i === step ? "0 0 12px rgba(232,25,138,0.3)" : "none",
-                }}>
+                <div
+                  onClick={() => i < step && goStep(i)}
+                  title={i < step ? `Volver a: ${s}` : undefined}
+                  style={{
+                    width: 32, height: 32, borderRadius: "50%",
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    fontSize: "0.72rem", fontWeight: 700,
+                    background: i < step ? "rgba(22,163,74,0.15)" : i === step ? "var(--gold)" : "rgba(255,255,255,0.05)",
+                    color:      i < step ? "#4ade80"              : i === step ? "#05051a"      : "#52525b",
+                    border:     `1.5px solid ${i < step ? "rgba(22,163,74,0.3)" : i === step ? "var(--gold)" : "rgba(255,255,255,0.08)"}`,
+                    transition: "all 0.25s",
+                    boxShadow:  i === step ? "0 0 12px rgba(232,25,138,0.3)" : "none",
+                    cursor: i < step ? "pointer" : "default",
+                  }}>
                   {i < step ? "✓" : i + 1}
                 </div>
-                <span style={{
-                  fontSize: "0.65rem", fontWeight: 600, whiteSpace: "nowrap",
-                  color: i === step ? "#e4e4e7" : i < step ? "#4ade80" : "#3f3f46",
-                  transition: "color 0.25s",
-                }}>{s}</span>
+                <span
+                  onClick={() => i < step && goStep(i)}
+                  style={{
+                    fontSize: "0.65rem", fontWeight: 600, whiteSpace: "nowrap",
+                    color: i === step ? "#e4e4e7" : i < step ? "#4ade80" : "#3f3f46",
+                    transition: "color 0.25s",
+                    cursor: i < step ? "pointer" : "default",
+                  }}>{s}</span>
               </div>
               {/* Línea conectora con fill animado */}
               {i < STEPS.length - 1 && (
@@ -1116,6 +1123,9 @@ export default function BookingWizard({ forcedAssetId }: { forcedAssetId?: numbe
 
           {/* ── CTA ──────────────────────────────── */}
           <div>
+            <div className="flex justify-between items-center pt-2" style={{ marginBottom: "0.75rem" }}>
+              <button onClick={() => goStep(2)} className="text-sm font-bold" style={muted}>← Atrás</button>
+            </div>
             <button onClick={handleSubmit} disabled={submitting}
               className="btn-gold disabled:opacity-50"
               style={{ width: "100%", padding: "1rem 1.5rem", fontSize: "1rem", fontWeight: 900, letterSpacing: "0.04em", borderRadius: 14 }}>
