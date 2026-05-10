@@ -2,10 +2,8 @@ import { NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { ok, err } from "@/lib/api";
 import { auth } from "@/auth";
-import { join, extname } from "path";
-import { mkdirSync, writeFileSync } from "fs";
-
-const OUT_DIR = join(process.cwd(), "public", "productos");
+import { extname } from "path";
+import { put } from "@vercel/blob";
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -31,13 +29,11 @@ export async function POST(req: NextRequest, { params }: Params) {
     if (![".jpg", ".jpeg", ".png", ".webp", ".avif"].includes(ext))
       return err("Formato no soportado. Usa JPG, PNG o WebP.");
 
-    mkdirSync(OUT_DIR, { recursive: true });
-
     // Nombre único: sku + timestamp
-    const safeName = `${asset.sku.toLowerCase().replace(/[^a-z0-9-]/g, "-")}-${Date.now()}${ext}`;
-    writeFileSync(join(OUT_DIR, safeName), Buffer.from(await file.arrayBuffer()));
+    const safeName = `productos/${asset.sku.toLowerCase().replace(/[^a-z0-9-]/g, "-")}-${Date.now()}${ext}`;
+    const blob = await put(safeName, file, { access: "public" });
 
-    const imageUrl   = `/productos/${safeName}`;
+    const imageUrl   = blob.url;
     const current    = (asset.imageGallery as string[] | null) ?? [];
     const newGallery = [...current, imageUrl];
 
