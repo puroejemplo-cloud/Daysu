@@ -114,8 +114,15 @@ export async function PATCH(req: NextRequest) {
 
   const buffer = Buffer.from(await file.arrayBuffer());
 
+  // Derivar content-type desde extensión (file.type puede venir vacío en WhatsApp/mobile)
+  const MIME: Record<string, string> = {
+    ".jpg": "image/jpeg", ".jpeg": "image/jpeg",
+    ".png": "image/png",  ".webp": "image/webp",
+  };
+  const contentType = MIME[ext] ?? "image/jpeg";
+
   // Upload original
-  await putBlob(P_ORIG + safeName, buffer, file.type || "image/jpeg");
+  await putBlob(P_ORIG + safeName, buffer, contentType);
 
   // Process + upload WebP
   const sharp   = (await import("sharp")).default;
