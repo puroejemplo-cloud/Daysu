@@ -52,9 +52,11 @@ export default function BookingConfirmation({ bookingId }: { bookingId: string }
     </div>
   );
 
-  const st    = STATUS[booking.status] ?? { label: booking.status, bg: "rgba(100,116,139,.08)", color: "#64748B", border: "rgba(100,116,139,.3)", icon: "•" };
-  const total = Number(booking.totalAmount);
-  const isConf = booking.status === "confirmed";
+  const st      = STATUS[booking.status] ?? { label: booking.status, bg: "rgba(100,116,139,.08)", color: "#64748B", border: "rgba(100,116,139,.3)", icon: "•" };
+  const total   = Number(booking.totalAmount);
+  const deposit = Number(booking.depositAmount);
+  const depositPct = total > 0 ? Math.round((deposit / total) * 100) : 0;
+  const isConf  = booking.status === "confirmed";
 
   return (
     <div style={{ maxWidth: 600, margin: "0 auto", padding: "2rem 1.25rem 4rem", display: "flex", flexDirection: "column", gap: "1rem" }}>
@@ -172,11 +174,17 @@ export default function BookingConfirmation({ bookingId }: { bookingId: string }
             </div>
           ))}
         </div>
-        <div style={{ padding: "1rem 1.5rem", background: "#0a0a18", borderTop: "1px solid rgba(255,255,255,.04)" }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <span style={{ color: "var(--muted)", fontSize: "0.84rem", fontWeight: 600 }}>Total del evento</span>
-            <span style={{ color: "var(--gold)", fontWeight: 900, fontSize: "1.05rem" }}>${total.toLocaleString("es-MX", { minimumFractionDigits: 0 })} MXN</span>
+        <div style={{ padding: "1rem 1.5rem", background: "#0a0a18", borderTop: "1px solid rgba(255,255,255,.04)", display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.84rem" }}>
+            <span style={{ color: "#52525b" }}>Total del evento</span>
+            <span style={{ color: "#94A3B8", fontWeight: 600 }}>${total.toLocaleString("es-MX", { minimumFractionDigits: 0 })} MXN</span>
           </div>
+          {deposit > 0 && (
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <span style={{ color: "var(--muted)", fontSize: "0.84rem", fontWeight: 600 }}>Anticipo a pagar ({depositPct}%)</span>
+              <span style={{ color: "var(--gold)", fontWeight: 900, fontSize: "1.05rem" }}>${deposit.toLocaleString("es-MX", { minimumFractionDigits: 0 })} MXN</span>
+            </div>
+          )}
         </div>
       </div>
 

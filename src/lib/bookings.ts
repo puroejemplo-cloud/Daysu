@@ -51,6 +51,12 @@ export async function getHoldHours(): Promise<number> {
   return setting ? Number(setting.value) : 48;
 }
 
+export async function getDepositPercent(): Promise<number> {
+  const setting = await prisma.systemSetting.findUnique({ where: { key: "deposit_percent" } });
+  const val = setting ? Number(setting.value) : 30;
+  return Math.min(100, Math.max(1, val));
+}
+
 /**
  * Verifica disponibilidad para todos los ítems del input.
  * Lanza un error descriptivo si algún activo no tiene stock suficiente.

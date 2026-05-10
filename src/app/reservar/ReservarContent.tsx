@@ -14,9 +14,11 @@ interface DbPkg {
 export default function ReservarContent({
   packages,
   initialAssetId,
+  depositPercent,
 }: {
   packages: DbPkg[];
   initialAssetId: number | null;
+  depositPercent: number;
 }) {
   const [selectedPkgId, setSelectedPkgId] = useState<number | null>(initialAssetId);
   const wizardRef     = useRef<HTMLDivElement>(null);
@@ -42,7 +44,7 @@ export default function ReservarContent({
       <div ref={wizardRef}>
         <BookingWizardErrorBoundary>
           <Suspense fallback={<BookingWizardSkeleton />}>
-            <BookingWizard forcedAssetId={selectedPkgId} />
+            <BookingWizard forcedAssetId={selectedPkgId} depositPercent={depositPercent} />
           </Suspense>
         </BookingWizardErrorBoundary>
       </div>

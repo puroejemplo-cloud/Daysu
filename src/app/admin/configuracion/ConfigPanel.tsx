@@ -12,6 +12,13 @@ interface SettingMeta {
 }
 
 const SETTING_META: Record<string, SettingMeta> = {
+  deposit_percent: {
+    label: "Porcentaje de anticipo",
+    description: "Porcentaje del total que el cliente debe pagar como depósito para confirmar su reserva. Se muestra en el wizard de reserva y en el ticket de confirmación.",
+    type: "number",
+    unit: "%",
+    placeholder: "30",
+  },
   payment_hold_hours: {
     label: "Ventana de pago (hold)",
     description: "Horas que una reserva permanece en estado 'pendiente de pago' antes de expirar automáticamente.",

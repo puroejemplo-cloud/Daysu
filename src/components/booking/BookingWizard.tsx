@@ -56,7 +56,7 @@ const EVENT_ICONS: Record<string, string> = {
   "Aniversario": "💑", "Fiesta": "🎊",
 };
 
-export default function BookingWizard({ forcedAssetId }: { forcedAssetId?: number | null } = {}) {
+export default function BookingWizard({ forcedAssetId, depositPercent = 30 }: { forcedAssetId?: number | null; depositPercent?: number } = {}) {
   const router = useRouter();
   const params = useSearchParams();
   const prevForcedId = useRef<number | null | undefined>(undefined);
@@ -1066,14 +1066,24 @@ export default function BookingWizard({ forcedAssetId }: { forcedAssetId?: numbe
                 borderTop: "1px solid rgba(232,25,138,.18)",
                 display: "flex", alignItems: "center", justifyContent: "space-between", gap: "1rem",
               }}>
-                <div>
-                  <p style={{ color: "var(--gold)", fontWeight: 800, fontSize: "0.95rem" }}>Total del evento</p>
-                  <p style={{ color: "var(--muted)", fontSize: "0.7rem", marginTop: "0.1rem" }}>El equipo te contactará para coordinar el pago</p>
+                <div style={{ flex: 1 }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: "0.4rem" }}>
+                    <p style={{ color: "var(--muted)", fontWeight: 600, fontSize: "0.82rem" }}>Total del evento</p>
+                    <p style={{ color: "var(--cream)", fontWeight: 700, fontSize: "1rem" }}>
+                      ${total.toLocaleString("es-MX")} MXN
+                    </p>
+                  </div>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
+                    <p style={{ color: "var(--gold)", fontWeight: 800, fontSize: "0.95rem" }}>
+                      Anticipo a pagar ({depositPercent}%)
+                    </p>
+                    <p style={{ color: "var(--gold)", fontWeight: 900, fontSize: "1.6rem", flexShrink: 0 }}>
+                      ${Math.round(total * (depositPercent / 100)).toLocaleString("es-MX")}
+                      <span style={{ fontSize: "0.72rem", fontWeight: 600, color: "var(--muted)", marginLeft: "0.25rem" }}>MXN</span>
+                    </p>
+                  </div>
+                  <p style={{ color: "var(--muted)", fontSize: "0.7rem", marginTop: "0.3rem" }}>El equipo te contactará para coordinar el pago</p>
                 </div>
-                <p style={{ color: "var(--gold)", fontWeight: 900, fontSize: "1.9rem", flexShrink: 0 }}>
-                  ${total.toLocaleString("es-MX")}
-                  <span style={{ fontSize: "0.75rem", fontWeight: 600, color: "var(--muted)", marginLeft: "0.25rem" }}>MXN</span>
-                </p>
               </div>
             </div>
           )}

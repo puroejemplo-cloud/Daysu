@@ -1,13 +1,14 @@
-﻿import type { Metadata } from "next";
+import type { Metadata } from "next";
 import { prisma } from "@/lib/prisma";
+import { getDepositPercent } from "@/lib/bookings";
 import ReservarContent from "./ReservarContent";
 
 export const metadata: Metadata = {
   title: "Cotiza tu evento",
-  description: "Reserva tu paquete con 30% de depósito. Tu fecha queda apartada por 48 horas. Bodas, XV Años y eventos en Zacatecas.",
+  description: "Reserva tu paquete en Zacatecas. Bodas, XV Años y eventos con Daysu.vip.",
   openGraph: {
     title: "Cotiza tu evento — Daysu.vip",
-    description: "Reserva con 30% de depósito. Cobertura en Zacatecas–Guadalupe.",
+    description: "Reserva tu paquete. Cobertura en Zacatecas–Guadalupe.",
   },
 };
 
@@ -18,14 +19,15 @@ export default async function ReservarPage({
 }) {
   const sp = await searchParams;
 
-  // Paquetes activos de la BD para el comparador
-  const packages = await prisma.asset.findMany({
-    where: { isActive: true, isRentable: true, assetType: "package" },
-    select: { id: true, name: true, sku: true, dailyRate: true, maxGuests: true, isRecommended: true },
-    orderBy: { dailyRate: "asc" },
-  });
+  const [packages, depositPercent] = await Promise.all([
+    prisma.asset.findMany({
+      where: { isActive: true, isRentable: true, assetType: "package" },
+      select: { id: true, name: true, sku: true, dailyRate: true, maxGuests: true, isRecommended: true },
+      orderBy: { dailyRate: "asc" },
+    }),
+    getDepositPercent(),
+  ]);
 
-  // Si viene ?asset=ID desde el catálogo, inicializar el wizard con ese paquete
   const initialAssetId = sp.asset ? parseInt(sp.asset, 10) || null : null;
 
   return (
@@ -43,7 +45,7 @@ export default async function ReservarPage({
           Cotiza tu evento
         </h1>
         <p style={{ color: "#71717a", fontSize: "0.88rem", marginBottom: "2.5rem" }}>
-          Completa el formulario — tu fecha quedará apartada por 48 hrs.
+          Completa el formulario y el equipo de Daysu se pondrá en contacto contigo.
         </p>
 
         <ReservarContent
@@ -52,6 +54,7 @@ export default async function ReservarPage({
             dailyRate: p.dailyRate.toString(),
           }))}
           initialAssetId={initialAssetId}
+          depositPercent={depositPercent}
         />
       </div>
     </div>

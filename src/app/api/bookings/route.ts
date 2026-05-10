@@ -1,7 +1,7 @@
 import { NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { ok, err } from "@/lib/api";
-import { expandBomItems, getHoldHours, assertAvailability } from "@/lib/bookings";
+import { expandBomItems, getHoldHours, getDepositPercent, assertAvailability } from "@/lib/bookings";
 import { rateLimit } from "@/lib/rate-limit";
 
 export async function GET(req: NextRequest) {
@@ -45,14 +45,14 @@ export async function POST(req: NextRequest) {
     // ── Expandir BOM ─────────────────────────────────────────────────────
     const expandedItems = await expandBomItems(items);
 
-    const holdHours = await getHoldHours();
+    const [holdHours, depositPercent] = await Promise.all([getHoldHours(), getDepositPercent()]);
     const expiresAt = new Date(Date.now() + holdHours * 60 * 60 * 1000);
 
     const totalAmount = expandedItems.reduce(
       (sum, item) => sum + item.unitPrice * item.quantity,
       0
     );
-    const depositAmount = totalAmount * 0.3; // 30% de anticipo por defecto
+    const depositAmount = Math.round(totalAmount * (depositPercent / 100));
 
     // ── Crear cliente si no existe, reserva e ítems en una transacción ───
     const booking = await prisma.$transaction(async (tx) => {
