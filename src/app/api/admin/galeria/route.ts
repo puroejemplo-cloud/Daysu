@@ -1,7 +1,7 @@
 import { NextRequest } from "next/server";
 import { ok, err } from "@/lib/api";
 import { auth } from "@/auth";
-import { put, del, list } from "@vercel/blob";
+import { put, del, list } from "@vercel/blob"; // del se usa en DELETE y carousel
 import { basename, extname } from "path";
 
 type OverlayOptions = import("sharp").OverlayOptions;
@@ -31,13 +31,7 @@ async function loadJson<T>(pathname: string, fallback: T): Promise<T> {
 }
 
 async function saveJson<T>(pathname: string, data: T): Promise<void> {
-  // Delete existing before re-creating to avoid duplicates
-  try {
-    const { blobs } = await list({ prefix: pathname });
-    const existing = blobs.find(x => x.pathname === pathname);
-    if (existing) await del(existing.url);
-  } catch { /* si falla el borrado, igual intentamos escribir */ }
-
+  // put() con addRandomSuffix:false sobreescribe el blob existente — no necesita del() previo
   await put(pathname, JSON.stringify(data), {
     access: "public",
     contentType: "application/json",
@@ -46,13 +40,6 @@ async function saveJson<T>(pathname: string, data: T): Promise<void> {
 }
 
 async function putBlob(pathname: string, data: Buffer, contentType: string): Promise<void> {
-  // Delete existing before re-creating
-  try {
-    const { blobs } = await list({ prefix: pathname });
-    const existing = blobs.find(x => x.pathname === pathname);
-    if (existing) await del(existing.url);
-  } catch { /* continúa */ }
-
   await put(pathname, data, { access: "public", contentType, addRandomSuffix: false });
 }
 
