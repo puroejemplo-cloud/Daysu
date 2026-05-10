@@ -189,61 +189,62 @@ export async function POST(req: NextRequest) {
   return ok({ ok: true, webp: P_PROC + toWebpName(file) });
 }
 
-export async function PUT() {
+// PUT — procesa UNA imagen (llamar una vez por imagen para evitar timeout)
+export async function PUT(req: NextRequest) {
   const session = await auth();
   if (!session) return err("No autorizado", 401);
 
+  const { file }: { file: string } = await req.json();
+  if (!file) return err("file requerido");
+
+  const safeName = basename(file);
+
   const [origBlobs, blurConfig] = await Promise.all([
-    list({ prefix: P_ORIG }).then(r => r.blobs),
+    list({ prefix: P_ORIG + safeName }).then(r => r.blobs),
     loadJson<BlurConfig>(P_BLUR, {}),
   ]);
 
+  const origBlob = origBlobs.find(b => b.pathname === P_ORIG + safeName);
+  if (!origBlob) return err("Archivo original no encontrado");
+
+  const regions = blurConfig[safeName] ?? [];
+
+  const origBuf = Buffer.from(await (await fetch(origBlob.url)).arrayBuffer());
   const sharp   = (await import("sharp")).default;
-  const results: string[] = [];
+  const meta    = await sharp(origBuf).metadata();
+  const W = meta.width ?? 1280, H = meta.height ?? 720;
+  const maxW = Math.min(W, 1400), scale = maxW / W;
+  const newW = maxW, newH = Math.round(H * scale);
 
-  for (const blob of origBlobs) {
-    const filename = basename(blob.pathname);
-    const regions  = blurConfig[filename] ?? [];
-    try {
-      const origBuf = Buffer.from(await (await fetch(blob.url)).arrayBuffer());
-      const meta    = await sharp(origBuf).metadata();
-      const W = meta.width ?? 1280, H = meta.height ?? 720;
-      const maxW = Math.min(W, 1400), scale = maxW / W;
-      const newW = maxW, newH = Math.round(H * scale);
+  const base = await sharp(origBuf)
+    .resize({ width: newW, withoutEnlargement: true })
+    .jpeg({ quality: 88 }).toBuffer();
 
-      const base = await sharp(origBuf)
-        .resize({ width: newW, withoutEnlargement: true })
-        .jpeg({ quality: 88 }).toBuffer();
-
-      let processed: Buffer;
-      if (regions.length === 0) {
-        processed = await sharp(base).webp({ quality: 85 }).toBuffer();
-      } else {
-        const composites: OverlayOptions[] = [];
-        for (const r of regions) {
-          const rx = Math.max(0, Math.round(r.x * newW));
-          const ry = Math.max(0, Math.round(r.y * newH));
-          const rw = Math.min(newW - rx, Math.round(r.w * newW));
-          const rh = Math.min(newH - ry, Math.round(r.h * newH));
-          if (rw < 4 || rh < 4) continue;
-          const blurred = await sharp(base)
-            .extract({ left: rx, top: ry, width: rw, height: rh })
-            .blur(16).jpeg({ quality: 75 }).toBuffer();
-          composites.push({ input: blurred, left: rx, top: ry, blend: "over" });
-        }
-        processed = await sharp(base).composite(composites).webp({ quality: 82 }).toBuffer();
-      }
-
-      await putBlob(P_PROC + toWebpName(filename), processed, "image/webp");
-      results.push(filename);
-    } catch { /* continúa con las demás */ }
+  let processed: Buffer;
+  if (regions.length === 0) {
+    processed = await sharp(base).webp({ quality: 85 }).toBuffer();
+  } else {
+    const composites: OverlayOptions[] = [];
+    for (const r of regions) {
+      const rx = Math.max(0, Math.round(r.x * newW));
+      const ry = Math.max(0, Math.round(r.y * newH));
+      const rw = Math.min(newW - rx, Math.round(r.w * newW));
+      const rh = Math.min(newH - ry, Math.round(r.h * newH));
+      if (rw < 4 || rh < 4) continue;
+      const blurred = await sharp(base)
+        .extract({ left: rx, top: ry, width: rw, height: rh })
+        .blur(16).jpeg({ quality: 75 }).toBuffer();
+      composites.push({ input: blurred, left: rx, top: ry, blend: "over" });
+    }
+    processed = await sharp(base).composite(composites).webp({ quality: 82 }).toBuffer();
   }
+
+  await putBlob(P_PROC + toWebpName(safeName), processed, "image/webp");
 
   const { revalidatePath } = await import("next/cache");
   revalidatePath("/");
-  revalidatePath("/catalogo");
 
-  return ok({ processed: results.length, files: results });
+  return ok({ processed: safeName });
 }
 
 export async function DELETE(req: NextRequest) {

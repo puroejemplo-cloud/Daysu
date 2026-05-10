@@ -28,6 +28,7 @@ export default function GalleryBlurManager() {
   const [currentR,      setCurrentR]      = useState<Region | null>(null);
   const [saving,        setSaving]        = useState(false);
   const [refreshing,    setRefreshing]    = useState(false);
+  const [refreshProgress, setRefreshProgress] = useState<{ done: number; total: number } | null>(null);
   const [uploading,     setUploading]     = useState(false);
   const [carouselSelected, setCarouselSelected] = useState<Set<string>>(new Set());
   const [carouselSaving,   setCarouselSaving]   = useState(false);
@@ -152,22 +153,41 @@ export default function GalleryBlurManager() {
   };
 
   const refreshAll = useCallback(async () => {
-    setRefreshing(true); setMsg("");
-    const res  = await fetch("/api/admin/galeria", { method: "PUT" });
-    const json = await res.json();
-    if (res.ok) {
-      setMsg(`✅ ${json.data.processed} imágenes actualizadas. Recargando...`);
-      setTimeout(async () => {
-        const r = await fetch("/api/admin/galeria");
-        const j = await r.json();
-        setImages(j.data ?? []);
-        setMsg(`✅ Galería actualizada (${json.data.processed} imágenes).`);
-        setRefreshing(false);
-      }, 1500);
-    } else {
-      setMsg("❌ Error al actualizar. Intenta de nuevo.");
+    setRefreshing(true); setMsg(""); setRefreshProgress(null);
+
+    // Obtener lista actual de imágenes
+    const listRes = await fetch("/api/admin/galeria");
+    const listJson = await listRes.json();
+    const allImages: GalleryImage[] = listJson.data ?? [];
+
+    if (allImages.length === 0) {
+      setMsg("No hay imágenes para procesar.");
       setRefreshing(false);
+      return;
     }
+
+    // Procesar una por una para evitar timeout de Vercel
+    let done = 0;
+    const total = allImages.length;
+    setRefreshProgress({ done: 0, total });
+
+    for (const img of allImages) {
+      const res = await fetch("/api/admin/galeria", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ file: img.name }),
+      });
+      if (res.ok) done++;
+      setRefreshProgress({ done, total });
+    }
+
+    // Recargar lista
+    const r = await fetch("/api/admin/galeria");
+    const j = await r.json();
+    setImages(j.data ?? []);
+    setRefreshProgress(null);
+    setMsg(`✅ Galería actualizada (${done}/${total} imágenes).`);
+    setRefreshing(false);
   }, []);
 
   // ── Carrusel ──────────────────────────────────────────────────────────────
@@ -240,7 +260,11 @@ export default function GalleryBlurManager() {
             <button onClick={refreshAll} disabled={refreshing}
               className="btn-gold text-sm disabled:opacity-50"
               style={{ display: "flex", alignItems: "center", gap: "0.4rem", padding: "0.5rem 1.25rem" }}>
-              {refreshing ? "⟳ Procesando..." : "🔄 Actualizar galería en el sitio"}
+              {refreshing
+                ? refreshProgress
+                  ? `⟳ Procesando ${refreshProgress.done}/${refreshProgress.total}...`
+                  : "⟳ Iniciando..."
+                : "🔄 Actualizar galería en el sitio"}
             </button>
           </div>
         </div>
