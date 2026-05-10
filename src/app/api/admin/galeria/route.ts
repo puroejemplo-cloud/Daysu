@@ -83,13 +83,13 @@ export async function GET() {
   const ts         = Date.now();
 
   return ok(sorted.map(name => {
-    const origBlob = fileMap.get(name)!;
     const webpName = toWebpName(name);
     const procUrl  = procMap.get(webpName) ?? null;
+    const proxy    = (path: string) => `/api/admin/galeria/img?p=${encodeURIComponent(path)}`;
     return {
       name,
-      original:   origBlob.url,
-      webp:       procUrl ? `${procUrl}?v=${ts}` : null,
+      original:   proxy(P_ORIG + name),
+      webp:       procUrl ? `${proxy(P_PROC + webpName)}&v=${ts}` : null,
       regions:    blurConfig[name] ?? [],
       processed:  procSet.has(webpName),
       inCarousel: carousel.includes(name),
