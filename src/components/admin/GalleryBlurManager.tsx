@@ -132,14 +132,41 @@ export default function GalleryBlurManager() {
     }
   };
 
+  // ── Redimensiona en el navegador antes de subir (evita timeout en Vercel Hobby) ──
+  async function resizeBeforeUpload(file: File, maxW = 1400): Promise<{ blob: Blob; name: string }> {
+    const safeName = file.name
+      .replace(/\s+/g, "-").replace(/[^a-zA-Z0-9._-]/g, "-")
+      .replace(/-+/g, "-").replace(/^-|-$/g, "");
+
+    return new Promise((resolve) => {
+      const img = new Image();
+      const url = URL.createObjectURL(file);
+      img.onload = () => {
+        const scale = Math.min(1, maxW / img.width);
+        const w = Math.round(img.width * scale);
+        const h = Math.round(img.height * scale);
+        const canvas = document.createElement("canvas");
+        canvas.width = w; canvas.height = h;
+        canvas.getContext("2d")!.drawImage(img, 0, 0, w, h);
+        URL.revokeObjectURL(url);
+        canvas.toBlob(
+          (blob) => resolve({ blob: blob!, name: safeName.replace(/\.[^.]+$/, ".jpg") }),
+          "image/jpeg", 0.88,
+        );
+      };
+      img.src = url;
+    });
+  }
+
   // ── Subida ────────────────────────────────────────────────────────────────
   const uploadFiles = async (files: FileList | null) => {
     if (!files || files.length === 0) return;
     setUploading(true); setMsg("");
     let count = 0;
     for (const file of Array.from(files)) {
+      const { blob, name } = await resizeBeforeUpload(file);
       const fd = new FormData();
-      fd.append("file", file);
+      fd.append("file", blob, name);
       const res = await fetch("/api/admin/galeria", { method: "PATCH", body: fd });
       if (res.ok) {
         count++;

@@ -4,6 +4,8 @@ import { auth } from "@/auth";
 import { put, del, list } from "@vercel/blob"; // del se usa en DELETE y carousel
 import { basename, extname } from "path";
 
+export const maxDuration = 60; // Pro plan: permite hasta 60s (Hobby = 10s)
+
 type OverlayOptions = import("sharp").OverlayOptions;
 interface BlurRegion { x: number; y: number; w: number; h: number }
 interface BlurConfig  { [filename: string]: BlurRegion[] }
