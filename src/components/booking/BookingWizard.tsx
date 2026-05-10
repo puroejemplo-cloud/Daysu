@@ -1060,11 +1060,11 @@ export default function BookingWizard({ forcedAssetId }: { forcedAssetId?: numbe
                 display: "flex", alignItems: "center", justifyContent: "space-between", gap: "1rem",
               }}>
                 <div>
-                  <p style={{ color: "var(--gold)", fontWeight: 800, fontSize: "0.95rem" }}>Depósito para apartar</p>
-                  <p style={{ color: "var(--muted)", fontSize: "0.7rem", marginTop: "0.1rem" }}>30% · Pago seguro vía Stripe</p>
+                  <p style={{ color: "var(--gold)", fontWeight: 800, fontSize: "0.95rem" }}>Total del evento</p>
+                  <p style={{ color: "var(--muted)", fontSize: "0.7rem", marginTop: "0.1rem" }}>El equipo te contactará para coordinar el pago</p>
                 </div>
                 <p style={{ color: "var(--gold)", fontWeight: 900, fontSize: "1.9rem", flexShrink: 0 }}>
-                  ${Math.round(total * 0.3).toLocaleString("es-MX")}
+                  ${total.toLocaleString("es-MX")}
                   <span style={{ fontSize: "0.75rem", fontWeight: 600, color: "var(--muted)", marginLeft: "0.25rem" }}>MXN</span>
                 </p>
               </div>
@@ -1074,7 +1074,7 @@ export default function BookingWizard({ forcedAssetId }: { forcedAssetId?: numbe
           {/* ── AVISOS ───────────────────────────── */}
           {outOfZone && (
             <div style={{ borderRadius: 14, padding: "1rem 1.25rem", background: "rgba(245,158,11,.07)", border: "1px solid rgba(245,158,11,.25)", fontSize: "0.84rem", color: "#fde68a", lineHeight: 1.55 }}>
-              🚗 <strong>Gastos de traslado:</strong> Tu evento está fuera de la zona Zacatecas–Guadalupe. Te contactaremos para confirmar el costo adicional antes de cobrar el depósito.
+              🚗 <strong>Gastos de traslado:</strong> Tu evento está fuera de la zona Zacatecas–Guadalupe. Te contactaremos para confirmar el costo adicional de traslado.
             </div>
           )}
           {capacityWarn && (
@@ -1092,9 +1092,9 @@ export default function BookingWizard({ forcedAssetId }: { forcedAssetId?: numbe
               <p style={{ color: "var(--muted)", fontSize: "0.69rem", marginTop: "0.15rem", lineHeight: 1.4 }}>Fecha bloqueada solo para ti</p>
             </div>
             <div style={{ borderRadius: 14, padding: "1rem", background: "rgba(232,25,138,.07)", border: "1px solid rgba(232,25,138,.18)", textAlign: "center" }}>
-              <p style={{ fontSize: "1.5rem", marginBottom: "0.3rem" }}>🔒</p>
-              <p style={{ color: "var(--gold)", fontWeight: 800, fontSize: "0.84rem" }}>Pago seguro</p>
-              <p style={{ color: "var(--muted)", fontSize: "0.69rem", marginTop: "0.15rem", lineHeight: 1.4 }}>Procesado por Stripe</p>
+              <p style={{ fontSize: "1.5rem", marginBottom: "0.3rem" }}>🤝</p>
+              <p style={{ color: "var(--gold)", fontWeight: 800, fontSize: "0.84rem" }}>Atención personalizada</p>
+              <p style={{ color: "var(--muted)", fontSize: "0.69rem", marginTop: "0.15rem", lineHeight: 1.4 }}>Te contactamos para coordinar</p>
             </div>
             {hasSoundPkg && (
               <div style={{ gridColumn: "1 / -1", borderRadius: 14, padding: "1rem 1.25rem", background: "rgba(212,175,55,.06)", border: "1px solid rgba(212,175,55,.2)", display: "flex", gap: "0.75rem", alignItems: "center" }}>
@@ -1122,7 +1122,7 @@ export default function BookingWizard({ forcedAssetId }: { forcedAssetId?: numbe
               {submitting ? "Procesando tu reserva..." : "✦ Confirmar y apartar fecha"}
             </button>
             <p style={{ textAlign: "center", marginTop: "0.6rem", fontSize: "0.67rem", color: "#475569", lineHeight: 1.5 }}>
-              Al confirmar, tu fecha queda bloqueada 48 h. Solo se cobra el 30% de depósito vía Stripe.
+              Al confirmar, el equipo de Daysu se pondrá en contacto contigo para coordinar el pago y los detalles.
             </p>
             <button onClick={() => goStep(2)}
               style={{ display: "block", margin: "0.6rem auto 0", background: "none", border: "none", cursor: "pointer", color: "#52525b", fontSize: "0.82rem", fontWeight: 600 }}>

@@ -84,10 +84,10 @@ export async function POST(req: NextRequest) {
           setupAt: start,
           teardownAt: end,
           venueAddress: venueAddress?.trim() ?? null,
-          status: "pending_payment",
+          status: "confirmed",
           totalAmount,
           depositAmount,
-          expiresAt,
+          expiresAt: null,
           notes: notes?.trim() ?? null,
           items: {
             create: expandedItems.map((item, idx) => ({
@@ -101,7 +101,7 @@ export async function POST(req: NextRequest) {
           notifications: {
             create: {
               type: "hold_created",
-              message: `Nueva solicitud de reserva para '${eventName}' — vence en ${holdHours}h. Pendiente de pago de apartado.`,
+              message: `Nueva solicitud de reserva para '${eventName}' — pendiente de confirmación de pago manual.`,
             },
           },
         },
@@ -117,8 +117,7 @@ export async function POST(req: NextRequest) {
     return ok(
       {
         booking,
-        message: `Reserva creada. Tienes ${holdHours} horas para realizar el pago del apartado.`,
-        expiresAt,
+        message: `Reserva creada. El equipo de Daysu se pondrá en contacto para coordinar el pago.`,
       },
       201
     );
