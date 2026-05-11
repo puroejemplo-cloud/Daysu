@@ -59,8 +59,9 @@ model Asset {
   // "package" | "product" | "component"
   isRentable    Boolean  @default(true) @map("is_rentable")
   isActive      Boolean  @default(true) @map("is_active")
-  pricingTiers  Json?    @map("pricing_tiers")
-  imageUrl      String?  @map("image_url")      @db.VarChar(500)
+  pricingTiers      Json?    @map("pricing_tiers")
+  extraCategoryIds  Json?    @map("extra_category_ids") // Int[] — categorías adicionales
+  imageUrl          String?  @map("image_url")      @db.VarChar(500)
   imageGallery  Json?    @map("image_gallery")  // string[] — URLs de las fotos del carrusel
   isRecommended Boolean  @default(false) @map("is_recommended")
   promoType     String?  @map("promo_type")     @db.VarChar(20) // "hours" | "guests" | "fixed"

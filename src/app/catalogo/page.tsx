@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 type CatalogAsset = {
   id: number; name: string; sku: string;
   dailyRate: string; originalPrice: string | null;
-  categoryId: number; description: string | null;
+  categoryId: number; extraCategoryIds: number[]; description: string | null;
   ownerName: string | null; categoryName: string | null;
   pricingTiers: PricingConfig | null;
   imageUrl: string | null; imageGallery: string[];
@@ -89,24 +89,43 @@ const getCatalogData = unstable_cache(
     }
   } catch { /* columnas aún no disponibles en cliente cacheado */ }
 
-  const activeCatIds = new Set(assets.map((a) => a.categoryId));
+  // extraCategoryIds desde el campo JSON de cada asset
+  const extraCatMap = new Map<number, number[]>();
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const extras2 = await (prisma.asset.findMany as any)({
+      where: { id: { in: assets.map((a) => a.id) } },
+      select: { id: true, extraCategoryIds: true },
+    }) as { id: number; extraCategoryIds: unknown }[];
+    for (const a of extras2) {
+      extraCatMap.set(a.id, Array.isArray(a.extraCategoryIds) ? (a.extraCategoryIds as number[]) : []);
+    }
+  } catch { /* columna aún no migrada */ }
+
+  // Las categorías activas incluyen tanto la principal como las adicionales
+  const activeCatIds = new Set<number>();
+  for (const a of assets) {
+    activeCatIds.add(a.categoryId);
+    for (const id of extraCatMap.get(a.id) ?? []) activeCatIds.add(id);
+  }
 
   return {
     categories: allCategories.filter((c) => activeCatIds.has(c.id)),
     assets: assets.map((a) => ({
-      id:             a.id,
-      name:           a.name,
-      sku:            a.sku,
-      dailyRate:      a.dailyRate.toString(),
-      originalPrice:  a.originalPrice?.toString() ?? null,
-      categoryId:     a.categoryId,
-      description:    a.description,
-      ownerName:      a.ownerAdmin?.fullName ?? null,
-      categoryName:   (a as typeof a & { category: { name: string } }).category?.name ?? null,
-      pricingTiers:   pricingMap.get(a.id) ?? null,
-      imageUrl:       imageUrlMap.get(a.id) ?? null,
-      imageGallery:   imageGalleryMap.get(a.id) ?? [],
-      componentNames: compMap.get(a.id) ?? [],
+      id:               a.id,
+      name:             a.name,
+      sku:              a.sku,
+      dailyRate:        a.dailyRate.toString(),
+      originalPrice:    a.originalPrice?.toString() ?? null,
+      categoryId:       a.categoryId,
+      extraCategoryIds: extraCatMap.get(a.id) ?? [],
+      description:      a.description,
+      ownerName:        a.ownerAdmin?.fullName ?? null,
+      categoryName:     (a as typeof a & { category: { name: string } }).category?.name ?? null,
+      pricingTiers:     pricingMap.get(a.id) ?? null,
+      imageUrl:         imageUrlMap.get(a.id) ?? null,
+      imageGallery:     imageGalleryMap.get(a.id) ?? [],
+      componentNames:   compMap.get(a.id) ?? [],
     })),
   };
   },

@@ -77,7 +77,7 @@ export async function PATCH(req: NextRequest, { params }: Params) {
     if (!asset) return err("Activo no encontrado", 404);
 
     const body = await req.json();
-    const { name, sku, description, totalUnits, dailyRate, originalPrice, maxGuests, isRentable, isActive, categoryId, pricingTiers, imageUrl, imageGallery, assetType, isRecommended, promoType, promoMinValue } = body;
+    const { name, sku, description, totalUnits, dailyRate, originalPrice, maxGuests, isRentable, isActive, categoryId, extraCategoryIds, pricingTiers, imageUrl, imageGallery, assetType, isRecommended, promoType, promoMinValue } = body;
 
     const isSuperAdmin = session.user.role === "superadmin";
     const isOwner      = asset.ownerAdminId === Number(session.user.id);
@@ -88,7 +88,8 @@ export async function PATCH(req: NextRequest, { params }: Params) {
       if (conflict) return err(`El SKU '${sku}' ya existe`, 409);
     }
 
-    const updated = await prisma.asset.update({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const updated = await (prisma.asset.update as any)({
       where: { id: Number(id) },
       data: {
         ...(name          !== undefined && { name:          name.trim() }),
@@ -105,7 +106,8 @@ export async function PATCH(req: NextRequest, { params }: Params) {
         }),
         ...(assetType === undefined && isRentable !== undefined && { isRentable }),
         ...(isActive      !== undefined && { isActive }),
-        ...(categoryId    !== undefined && { categoryId:    Number(categoryId) }),
+        ...(categoryId        !== undefined && { categoryId:        Number(categoryId) }),
+        ...(extraCategoryIds  !== undefined && { extraCategoryIds:  Array.isArray(extraCategoryIds) ? extraCategoryIds.map(Number) : null }),
         ...(pricingTiers  !== undefined && { pricingTiers:  pricingTiers ?? null }),
         ...(imageUrl        !== undefined && { imageUrl:        imageUrl ?? null }),
         ...(imageGallery    !== undefined && { imageGallery:    Array.isArray(imageGallery) ? imageGallery : [] }),

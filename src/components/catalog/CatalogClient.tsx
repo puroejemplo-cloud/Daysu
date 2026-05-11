@@ -14,7 +14,7 @@ interface Category { id: number; name: string }
 interface AssetInfo {
   id: number; name: string; sku: string;
   dailyRate: string; originalPrice: string | null;
-  categoryId: number; description: string | null;
+  categoryId: number; extraCategoryIds?: number[]; description: string | null;
   ownerName: string | null; categoryName: string | null;
   pricingTiers?: PricingConfig | null;
   imageUrl?: string | null;
@@ -90,7 +90,9 @@ export default function CatalogClient({
       : format(range.from, "d MMMM yyyy", { locale: es })
     : "Selecciona tu fecha";
 
-  const shown = (catFilter ? assets.filter((a) => a.categoryId === catFilter) : assets)
+  const shown = (catFilter
+    ? assets.filter((a) => a.categoryId === catFilter || (a.extraCategoryIds ?? []).includes(catFilter))
+    : assets)
     .slice()
     .sort((a, b) => {
       if (!checked) return 0;

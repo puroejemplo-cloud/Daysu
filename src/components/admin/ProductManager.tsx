@@ -13,6 +13,7 @@ interface Asset {
   ownerSuffix: string | null; categoryId: number; maxGuests: number | null;
   assetType: string; // "package" | "product" | "component"
   description: string | null; imageUrl: string | null; imageGallery: string[] | null;
+  extraCategoryIds?: number[] | null;
   pricingTiers?: PricingConfig | null;
   isRecommended: boolean;
   promoType: string | null;
@@ -56,6 +57,7 @@ export default function ProductManager({ categories, userSuffix }: { categories:
   const [galleryImages,  setGalleryImages]  = useState<{ name: string; webp: string | null; original: string }[]>([]);
   const [loadingGallery, setLoadingGallery] = useState(false);
   const [urlInput,       setUrlInput]       = useState("");
+  const [editExtraCatIds, setEditExtraCatIds] = useState<number[]>([]);
 
   function normalizeDriveUrl(url: string): string {
     const fileMatch = url.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/);
@@ -113,6 +115,7 @@ export default function ProductManager({ categories, userSuffix }: { categories:
     setEditGallery(asset.imageGallery ?? []);
     setShowPicker(false);
     setUrlInput("");
+    setEditExtraCatIds(Array.isArray(asset.extraCategoryIds) ? asset.extraCategoryIds : []);
     const res  = await fetch(`/api/admin/assets/${asset.id}`);
     const json = await res.json();
     setEditDetail(json.data);
@@ -157,8 +160,9 @@ export default function ProductManager({ categories, userSuffix }: { categories:
         isRentable:    Boolean(editForm.isRentable),
         assetType:     String(editForm.assetType ?? "product"),
         description:   String(editForm.description ?? "").trim() || null,
-        imageGallery:  editGallery,
-        imageUrl:      editGallery[0] ?? null,
+        imageGallery:     editGallery,
+        imageUrl:         editGallery[0] ?? null,
+        extraCategoryIds: editExtraCatIds,
         pricingTiers,
         isRecommended: Boolean(editForm.isRecommended),
         promoType:     editForm.promoType     || null,
@@ -534,6 +538,62 @@ export default function ProductManager({ categories, userSuffix }: { categories:
                           className="w-4 h-4 accent-[#7C3AED]" />
                         <span className="text-sm text-white">Activo (visible)</span>
                       </label>
+                    </div>
+                  </div>
+
+                  {/* ── CATEGORÍAS ── */}
+                  <div className="rounded-xl p-4 space-y-3" style={{ background: "rgba(255,255,255,.02)", border: "1px solid rgba(255,255,255,.07)" }}>
+                    <p className="text-xs font-black uppercase tracking-widest" style={{ color: "#94A3B8" }}>Categorías</p>
+
+                    {/* Categoría principal */}
+                    <div>
+                      <label className="block text-xs font-semibold mb-1" style={{ color: "#64748b" }}>Principal *</label>
+                      <select
+                        value={String(editForm.categoryId ?? asset.categoryId)}
+                        onChange={(e) => setEditForm((f) => ({ ...f, categoryId: e.target.value }))}
+                        className="aura-input"
+                        style={{ fontSize: "0.85rem" }}>
+                        {categories.map((c) => (
+                          <option key={c.id} value={c.id}>{c.name}</option>
+                        ))}
+                      </select>
+                    </div>
+
+                    {/* Categorías adicionales */}
+                    <div>
+                      <label className="block text-xs font-semibold mb-2" style={{ color: "#64748b" }}>
+                        Adicionales <span style={{ fontWeight: 400 }}>(el producto aparece en todas)</span>
+                      </label>
+                      <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
+                        {categories
+                          .filter((c) => c.id !== Number(editForm.categoryId ?? asset.categoryId))
+                          .map((c) => {
+                            const checked = editExtraCatIds.includes(c.id);
+                            return (
+                              <label key={c.id}
+                                style={{
+                                  display: "flex", alignItems: "center", gap: "0.4rem",
+                                  padding: "0.3rem 0.7rem", borderRadius: 999, cursor: "pointer",
+                                  border: `1px solid ${checked ? "rgba(124,58,237,.6)" : "rgba(255,255,255,.1)"}`,
+                                  background: checked ? "rgba(124,58,237,.2)" : "transparent",
+                                  fontSize: "0.78rem", color: checked ? "#c4b5fd" : "#64748b",
+                                  transition: "all 0.15s",
+                                }}>
+                                <input
+                                  type="checkbox"
+                                  checked={checked}
+                                  onChange={(e) => {
+                                    setEditExtraCatIds((prev) =>
+                                      e.target.checked ? [...prev, c.id] : prev.filter((id) => id !== c.id)
+                                    );
+                                  }}
+                                  style={{ accentColor: "#7C3AED", width: 13, height: 13 }}
+                                />
+                                {c.name}
+                              </label>
+                            );
+                          })}
+                      </div>
                     </div>
                   </div>
 
