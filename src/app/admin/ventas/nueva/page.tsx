@@ -1,7 +1,6 @@
 import ManualSaleForm from "@/components/admin/ManualSaleForm";
 import { prisma } from "@/lib/prisma";
 
-export const dynamic = "force-dynamic";
 
 export default async function NuevaVentaPage() {
   const categories = await prisma.assetCategory.findMany({ orderBy: { name: "asc" } });

@@ -1,6 +1,5 @@
 import ClientList from "@/components/crm/ClientList";
 
-export const dynamic = "force-dynamic";
 
 export default function ClientesPage() {
   return (

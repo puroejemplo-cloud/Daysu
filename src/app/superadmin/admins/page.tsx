@@ -1,6 +1,5 @@
 import SuperAdminPanel from "@/components/admin/SuperAdminPanel";
 
-export const dynamic = "force-dynamic";
 
 export default function AdminsPage() {
   return (

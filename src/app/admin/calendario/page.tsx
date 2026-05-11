@@ -3,7 +3,6 @@ import CalendarView from "@/components/admin/CalendarView";
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 
-export const dynamic = "force-dynamic";
 
 export default async function CalendarioPage() {
   const session = await auth();

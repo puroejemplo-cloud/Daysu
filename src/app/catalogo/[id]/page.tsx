@@ -58,7 +58,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-export const dynamic = "force-dynamic";
 
 export default async function PackageDetailPage({ params }: Props) {
   const { id: slug } = await params;

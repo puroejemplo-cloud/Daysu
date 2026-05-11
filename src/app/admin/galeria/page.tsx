@@ -2,7 +2,6 @@ import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import GalleryBlurManager from "@/components/admin/GalleryBlurManager";
 
-export const dynamic = "force-dynamic";
 
 export default async function GaleriaAdminPage() {
   const session = await auth();

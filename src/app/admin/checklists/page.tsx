@@ -3,7 +3,6 @@ import Link from "next/link";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 
-export const dynamic = "force-dynamic";
 
 export default async function ChecklistsPage() {
   // Eventos confirmados o en curso, ordenados por fecha más próxima

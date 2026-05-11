@@ -1,7 +1,6 @@
 import UpsellAdmin from "@/components/admin/UpsellAdmin";
 import { prisma } from "@/lib/prisma";
 
-export const dynamic = "force-dynamic";
 
 export default async function UpsellAdminPage() {
   // "Cuando elija" — solo rentables (paquetes y productos)

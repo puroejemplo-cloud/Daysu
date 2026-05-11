@@ -5,7 +5,6 @@ import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import Link from "next/link";
 
-export const dynamic = "force-dynamic";
 
 export default async function ChecklistPage({ params }: { params: Promise<{ bookingId: string }> }) {
   const { bookingId } = await params;

@@ -3,7 +3,6 @@ import ConfigPanel from "./ConfigPanel";
 import HomepagePackagesPanel from "./HomepagePackagesPanel";
 import { prisma } from "@/lib/prisma";
 
-export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "Configuración del sistema",
   robots: { index: false },

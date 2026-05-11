@@ -43,8 +43,6 @@ async function loadCarouselImages(): Promise<{ src: string; alt: string }[]> {
   } catch { return []; }
 }
 
-export const revalidate = 60;
-
 export default async function HomePage() {
   const carouselImages = await loadCarouselImages();
 

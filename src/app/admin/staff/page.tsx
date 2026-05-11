@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { prisma } from "@/lib/prisma";
 import StaffAdmin from "@/components/admin/StaffAdmin";
 
-export const dynamic = "force-dynamic";
 export const metadata: Metadata = { title: "Staff · EventMaster" };
 
 export default async function StaffPage() {

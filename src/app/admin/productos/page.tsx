@@ -2,7 +2,6 @@ import ProductManager from "@/components/admin/ProductManager";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/auth";
 
-export const dynamic = "force-dynamic";
 
 export default async function ProductosPage() {
   const session    = await auth();
