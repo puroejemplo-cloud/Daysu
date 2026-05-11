@@ -40,7 +40,15 @@ async function loadCarouselImages(): Promise<{ src: string; alt: string }[]> {
         };
       })
       .filter((x): x is { src: string; alt: string } => x !== null);
-  } catch { return []; }
+  } catch {
+    // Blob suspendido o no disponible — usar URLs de fallback si están configuradas
+    const fallback = process.env.CAROUSEL_FALLBACK_URLS;
+    if (!fallback) return [];
+    return fallback.split(",").map((url, i) => ({
+      src: url.trim(),
+      alt: `Evento ${i + 1}`,
+    }));
+  }
 }
 
 export default async function HomePage() {
