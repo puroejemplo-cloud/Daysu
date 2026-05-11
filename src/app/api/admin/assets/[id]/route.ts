@@ -106,8 +106,8 @@ export async function PATCH(req: NextRequest, { params }: Params) {
         }),
         ...(assetType === undefined && isRentable !== undefined && { isRentable }),
         ...(isActive      !== undefined && { isActive }),
-        ...(categoryId !== undefined && { categoryId: Number(categoryId) }),
-        // extraCategoryIds: pendiente migración BD (columna extra_category_ids)
+        ...(categoryId        !== undefined && { categoryId:        Number(categoryId) }),
+        ...(extraCategoryIds  !== undefined && { extraCategoryIds:  Array.isArray(extraCategoryIds) ? extraCategoryIds.map(Number) : null }),
         ...(pricingTiers  !== undefined && { pricingTiers:  pricingTiers ?? null }),
         ...(imageUrl        !== undefined && { imageUrl:        imageUrl ?? null }),
         ...(imageGallery    !== undefined && { imageGallery:    Array.isArray(imageGallery) ? imageGallery : [] }),

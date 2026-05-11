@@ -60,8 +60,7 @@ model Asset {
   isRentable    Boolean  @default(true) @map("is_rentable")
   isActive      Boolean  @default(true) @map("is_active")
   pricingTiers      Json?    @map("pricing_tiers")
-  // extraCategoryIds pendiente de migración: agregar columna extra_category_ids JSONB en BD y descomentar
-  // extraCategoryIds Json? @map("extra_category_ids")
+  extraCategoryIds  Json?    @map("extra_category_ids") // Int[] — categorías adicionales
   imageUrl          String?  @map("image_url")      @db.VarChar(500)
   imageGallery  Json?    @map("image_gallery")  // string[] — URLs de las fotos del carrusel
   isRecommended Boolean  @default(false) @map("is_recommended")
