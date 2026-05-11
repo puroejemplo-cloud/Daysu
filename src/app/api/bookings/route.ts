@@ -3,8 +3,12 @@ import { prisma } from "@/lib/prisma";
 import { ok, err } from "@/lib/api";
 import { expandBomItems, getHoldHours, getDepositPercent, assertAvailability } from "@/lib/bookings";
 import { rateLimit } from "@/lib/rate-limit";
+import { auth } from "@/auth";
 
 export async function GET(req: NextRequest) {
+  const session = await auth();
+  if (!session) return err("No autenticado", 401);
+
   const { searchParams } = new URL(req.url);
   const status = searchParams.get("status");
 

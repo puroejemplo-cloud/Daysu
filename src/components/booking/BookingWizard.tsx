@@ -1,6 +1,7 @@
 ﻿"use client";
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { Loader2 } from "lucide-react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { getHourlyTiers, getCapacityTiers, getPricingTiers, getTierLabel, type PricingConfig } from "@/lib/product-tiers";
@@ -80,6 +81,8 @@ export default function BookingWizard({ forcedAssetId, depositPercent = 30 }: { 
   const [submitting,    setSubmitting]    = useState(false);
   const [error,         setError]         = useState("");
   const [prefillError,  setPrefillError]  = useState("");
+  const [touched,       setTouched]       = useState<Record<string, boolean>>({});
+  const touch = (field: string) => setTouched((t) => ({ ...t, [field]: true }));
 
   // hora fin = inicio + 6h
   const teardownHour = (() => {
@@ -303,8 +306,11 @@ export default function BookingWizard({ forcedAssetId, depositPercent = 30 }: { 
             <div key={i} style={{ flex: i < STEPS.length - 1 ? 1 : 0, display: "flex", alignItems: "flex-start" }}>
               <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "0.4rem", flexShrink: 0 }}>
                 <div
+                  role={i < step ? "button" : undefined}
+                  tabIndex={i < step ? 0 : -1}
+                  aria-label={i < step ? `Volver al paso: ${s}` : undefined}
                   onClick={() => i < step && goStep(i)}
-                  title={i < step ? `Volver a: ${s}` : undefined}
+                  onKeyDown={(e) => { if (i < step && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); goStep(i); } }}
                   style={{
                     width: 32, height: 32, borderRadius: "50%",
                     display: "flex", alignItems: "center", justifyContent: "center",
@@ -315,7 +321,10 @@ export default function BookingWizard({ forcedAssetId, depositPercent = 30 }: { 
                     transition: "all 0.25s",
                     boxShadow:  i === step ? "0 0 12px rgba(232,25,138,0.3)" : "none",
                     cursor: i < step ? "pointer" : "default",
-                  }}>
+                    outline: "none",
+                  }}
+                  onFocus={(e) => { if (i < step) e.currentTarget.style.boxShadow = "0 0 0 3px rgba(232,25,138,0.5)"; }}
+                  onBlur={(e) => { e.currentTarget.style.boxShadow = i === step ? "0 0 12px rgba(232,25,138,0.3)" : "none"; }}>
                   {i < step ? "✓" : i + 1}
                 </div>
                 <span
@@ -484,30 +493,51 @@ export default function BookingWizard({ forcedAssetId, depositPercent = 30 }: { 
           })()}
 
           <div>
-            <label className={lb} style={muted}>Nombre completo *</label>
-            <input value={client.fullName} onChange={(e) => setClient((c) => ({ ...c, fullName: e.target.value }))}
+            <label htmlFor="wiz-name" className={lb} style={muted}>Nombre completo *</label>
+            <input id="wiz-name" value={client.fullName}
+              onChange={(e) => setClient((c) => ({ ...c, fullName: e.target.value }))}
+              onBlur={() => touch("fullName")}
               placeholder="Juan García López" className="aura-input" autoComplete="name" />
+            {touched.fullName && client.fullName.trim().length < 2 && (
+              <p className="text-xs mt-1" style={{ color: "#EF4444" }} role="alert">
+                Ingresa tu nombre completo (mínimo 2 caracteres)
+              </p>
+            )}
           </div>
           <div>
-            <label className={lb} style={muted}>Teléfono *</label>
-            <input type="tel" value={client.phone} onChange={(e) => setClient((c) => ({ ...c, phone: e.target.value }))}
+            <label htmlFor="wiz-phone" className={lb} style={muted}>Teléfono *</label>
+            <input id="wiz-phone" type="tel" value={client.phone}
+              onChange={(e) => setClient((c) => ({ ...c, phone: e.target.value }))}
+              onBlur={() => touch("phone")}
               placeholder="492 123 4567" className="aura-input" autoComplete="tel" />
+            {touched.phone && client.phone.trim().length < 8 && (
+              <p className="text-xs mt-1" style={{ color: "#EF4444" }} role="alert">
+                Ingresa un número de teléfono válido (mínimo 8 dígitos)
+              </p>
+            )}
           </div>
           <div>
-            <label className={lb} style={muted}>
+            <label htmlFor="wiz-email" className={lb} style={muted}>
               Correo electrónico <span className="normal-case font-normal ml-1" style={{ color: "#475569" }}>(opcional)</span>
             </label>
-            <input type="email" value={client.email} onChange={(e) => setClient((c) => ({ ...c, email: e.target.value }))}
+            <input id="wiz-email" type="email" value={client.email}
+              onChange={(e) => setClient((c) => ({ ...c, email: e.target.value }))}
               placeholder="juan@correo.com" className="aura-input" />
           </div>
 
           {/* Número de invitados */}
           <div>
-            <label className={lb} style={muted}>Número de invitados *</label>
-            <input type="number" min={1} max={2000}
+            <label htmlFor="wiz-guests" className={lb} style={muted}>Número de invitados *</label>
+            <input id="wiz-guests" type="number" min={1} max={2000}
               value={guests}
               onChange={(e) => setGuests(e.target.value === "" ? "" : Number(e.target.value))}
+              onBlur={() => touch("guests")}
               placeholder="Ej: 150" className="aura-input" style={{ maxWidth: 180 }} />
+            {touched.guests && (!guests || Number(guests) < 1) && (
+              <p className="text-xs mt-1" style={{ color: "#EF4444" }} role="alert">
+                Indica cuántos invitados aproximadamente tendrá tu evento
+              </p>
+            )}
             {/* Alerta inmediata de capacidad */}
             {capacityWarn && (
               <div className="mt-3 p-3 rounded-xl text-sm" style={{ background: "rgba(239,68,68,.1)", border: "1px solid rgba(239,68,68,.3)", color: "#fca5a5" }}>
@@ -833,10 +863,14 @@ export default function BookingWizard({ forcedAssetId, depositPercent = 30 }: { 
                               {sel && (availability[p.id]?.availableUnits ?? 1) > 1 && (
                                 <div className="flex items-center gap-1 mt-1 justify-end" onClick={(e) => e.stopPropagation()}>
                                   <button onClick={() => updateQty(p.id, sel.quantity - 1)}
-                                    className="w-6 h-6 rounded font-black text-white text-xs" style={{ background: "rgba(124,58,237,.4)" }}>−</button>
-                                  <span className="text-white font-black text-xs w-4 text-center">{sel.quantity}</span>
+                                    aria-label={`Reducir cantidad de ${p.name}`}
+                                    className="flex items-center justify-center rounded font-black text-white text-xs"
+                                    style={{ background: "rgba(124,58,237,.4)", minWidth: 44, minHeight: 44 }}>−</button>
+                                  <span className="text-white font-black text-xs w-6 text-center" aria-label={`Cantidad: ${sel.quantity}`}>{sel.quantity}</span>
                                   <button onClick={() => updateQty(p.id, sel.quantity + 1)}
-                                    className="w-6 h-6 rounded font-black text-white text-xs" style={{ background: "rgba(124,58,237,.4)" }}>+</button>
+                                    aria-label={`Aumentar cantidad de ${p.name}`}
+                                    className="flex items-center justify-center rounded font-black text-white text-xs"
+                                    style={{ background: "rgba(124,58,237,.4)", minWidth: 44, minHeight: 44 }}>+</button>
                                 </div>
                               )}
                             </>
@@ -1126,8 +1160,13 @@ export default function BookingWizard({ forcedAssetId, depositPercent = 30 }: { 
 
           {/* Error */}
           {error && (
-            <div style={{ borderRadius: 14, padding: "1rem 1.25rem", background: "rgba(239,68,68,.1)", border: "1px solid rgba(239,68,68,.3)", color: "#EF4444", fontSize: "0.85rem" }}>
-              {error}
+            <div role="alert" aria-live="assertive"
+              style={{ borderRadius: 14, padding: "1rem 1.25rem", background: "rgba(239,68,68,.1)", border: "1px solid rgba(239,68,68,.3)", color: "#EF4444", fontSize: "0.85rem" }}>
+              <p className="font-bold">No pudimos procesar tu reserva</p>
+              <p className="mt-1" style={{ color: "#fca5a5" }}>{error}</p>
+              <p className="text-xs mt-2" style={{ color: "#94a3b8" }}>
+                Intenta de nuevo o escríbenos por WhatsApp para que te ayudemos directamente.
+              </p>
             </div>
           )}
 
@@ -1137,9 +1176,12 @@ export default function BookingWizard({ forcedAssetId, depositPercent = 30 }: { 
               <button onClick={() => goStep(2)} className="text-sm font-bold" style={muted}>← Atrás</button>
             </div>
             <button onClick={handleSubmit} disabled={submitting}
+              aria-busy={submitting}
               className="btn-gold disabled:opacity-50"
-              style={{ width: "100%", padding: "1rem 1.5rem", fontSize: "1rem", fontWeight: 900, letterSpacing: "0.04em", borderRadius: 14 }}>
-              {submitting ? "Procesando tu reserva..." : "✦ Confirmar y apartar fecha"}
+              style={{ width: "100%", padding: "1rem 1.5rem", fontSize: "1rem", fontWeight: 900, letterSpacing: "0.04em", borderRadius: 14, display: "flex", alignItems: "center", justifyContent: "center", gap: "0.6rem" }}>
+              {submitting
+                ? <><Loader2 size={18} className="animate-spin" aria-hidden="true" /> Procesando tu reserva...</>
+                : "✦ Confirmar y apartar fecha"}
             </button>
             <p style={{ textAlign: "center", marginTop: "0.6rem", fontSize: "0.67rem", color: "#475569", lineHeight: 1.5 }}>
               Al confirmar, el equipo de Daysu se pondrá en contacto contigo para coordinar el pago y los detalles.

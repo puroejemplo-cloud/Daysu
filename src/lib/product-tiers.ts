@@ -10,12 +10,12 @@ const CAPACITY_FALLBACK: Record<string, PricingTierItem[]> = {};
 // ── Helpers: BD primero, fallback después ──────────────────────────────────────
 export function getHourlyTiers(sku: string, db?: PricingConfig | null): PricingTierItem[] | null {
   if (db?.type === "hourly" && db.tiers.length) return db.tiers;
-  return HOURLY_FALLBACK[sku] ?? null;
+  return Object.hasOwn(HOURLY_FALLBACK, sku) ? HOURLY_FALLBACK[sku] : null;
 }
 
 export function getCapacityTiers(sku: string, db?: PricingConfig | null): PricingTierItem[] | null {
   if (db?.type === "capacity" && db.tiers.length) return db.tiers;
-  return CAPACITY_FALLBACK[sku] ?? null;
+  return Object.hasOwn(CAPACITY_FALLBACK, sku) ? CAPACITY_FALLBACK[sku] : null;
 }
 
 export function getPricingTiers(sku: string, db?: PricingConfig | null): PricingConfig | null {

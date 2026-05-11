@@ -1,6 +1,7 @@
 import { NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { ok, err } from "@/lib/api";
+import { auth } from "@/auth";
 
 export async function GET() {
   const rules = await prisma.upsellRule.findMany({
@@ -14,6 +15,9 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
+  const session = await auth();
+  if (!session) return err("No autenticado", 401);
+
   const body = await req.json();
   const { sourceAssetId, suggestedAssetId, discountPercent, label } = body;
 

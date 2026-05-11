@@ -2,6 +2,7 @@ import { NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { ok, err } from "@/lib/api";
 import { auth } from "@/auth";
+import { revalidateTag } from "next/cache";
 
 // GET  — todos los activos con info de propietario
 export async function GET(req: NextRequest) {
@@ -66,5 +67,6 @@ export async function POST(req: NextRequest) {
     include: { category: true, ownerAdmin: { select: { suffix: true } } },
   });
 
+  revalidateTag("catalog", "default");
   return ok({ ...asset, displayName: `${asset.name} [${admin?.suffix}]` }, 201);
 }

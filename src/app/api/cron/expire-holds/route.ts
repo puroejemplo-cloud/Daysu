@@ -7,7 +7,8 @@ import { ok } from "@/lib/api";
 // En producción proteger con CRON_SECRET en headers.
 export async function GET(req: NextRequest) {
   const secret = req.headers.get("x-cron-secret");
-  if (process.env.NODE_ENV === "production" && secret !== process.env.CRON_SECRET) {
+  const cronSecret = process.env.CRON_SECRET;
+  if (cronSecret && secret !== cronSecret) {
     return new Response("Unauthorized", { status: 401 });
   }
 

@@ -22,7 +22,8 @@ export async function POST(_req: NextRequest, { params }: Params) {
     return err("El período de pago ha vencido", 410);
   }
 
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? "http://localhost:3000";
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+  if (!baseUrl) return err("NEXT_PUBLIC_BASE_URL no está configurada", 500);
   const depositCents = Math.round(Number(booking.depositAmount) * 100);
 
   const session = await stripe.checkout.sessions.create({

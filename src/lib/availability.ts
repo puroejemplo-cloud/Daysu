@@ -3,6 +3,27 @@ import { prisma } from "@/lib/prisma";
 // Estados que consumen stock real
 const STOCK_BLOCKING_STATUSES = ["pending_payment", "confirmed", "in_progress"] as const;
 
+// ── Helpers puros (sin I/O) ──────────────────────────────────────────────────
+
+/** Devuelve true si los intervalos [aStart, aEnd) y [bStart, bEnd) se solapan. */
+export function intervalsOverlap(aStart: Date, aEnd: Date, bStart: Date, bEnd: Date): boolean {
+  return aStart < bEnd && aEnd > bStart;
+}
+
+/**
+ * Calcula las unidades disponibles de un activo dado su stock total, las
+ * unidades reservadas por bookings activos y si existe algún bloqueo manual.
+ * Un bloqueo manual ocupa todas las unidades del activo.
+ */
+export function computeAvailableUnits(
+  totalUnits: number,
+  reservedUnits: number,
+  hasManualBlock: boolean
+): number {
+  const blockedUnits = hasManualBlock ? totalUnits : 0;
+  return Math.max(0, totalUnits - reservedUnits - blockedUnits);
+}
+
 export interface AssetAvailability {
   assetId: number;
   assetName: string;
@@ -59,16 +80,18 @@ export async function getAvailability(
 
   return assets.map((asset) => {
     const reservedUnits = asset.bookingItems.reduce((sum, item) => sum + item.quantity, 0);
-    // Cada bloqueo manual ocupa 1 unidad de "capacidad operativa" del activo
-    const blockedUnits = asset.availabilityBlocks.length > 0 ? asset.totalUnits : 0;
-    const availableUnits = Math.max(0, asset.totalUnits - reservedUnits - blockedUnits);
+    const availableUnits = computeAvailableUnits(
+      asset.totalUnits,
+      reservedUnits,
+      asset.availabilityBlocks.length > 0
+    );
 
     return {
       assetId: asset.id,
       assetName: asset.name,
       totalUnits: asset.totalUnits,
       reservedUnits,
-      blockedUnits,
+      blockedUnits: asset.availabilityBlocks.length > 0 ? asset.totalUnits : 0,
       availableUnits,
       isAvailable: availableUnits > 0,
     };

@@ -2,6 +2,7 @@ import { NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { ok, err } from "@/lib/api";
 import { auth } from "@/auth";
+import { revalidateTag } from "next/cache";
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -56,6 +57,7 @@ export async function DELETE(_req: NextRequest, { params }: Params) {
   if (!isSuperAdmin && !isOwner) return err("Solo el propietario puede eliminar este activo", 403);
 
   await prisma.asset.update({ where: { id: Number(id) }, data: { isActive: false } });
+  revalidateTag("catalog", "default");
   return ok({ message: "Activo eliminado correctamente" });
 }
 
@@ -111,6 +113,7 @@ export async function PATCH(req: NextRequest, { params }: Params) {
       },
     });
 
+    revalidateTag("catalog", "default");
     return ok({ ...updated, displayName: updated.ownerSuffix ? `${updated.name} [${updated.ownerSuffix}]` : updated.name });
   } catch (e: unknown) {
     console.error("PATCH /api/admin/assets/[id] error:", e);

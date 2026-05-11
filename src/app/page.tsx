@@ -2,6 +2,7 @@ import HomeClient from "@/components/home/HomeClient";
 import { prisma } from "@/lib/prisma";
 import { fetchGoogleReviews } from "@/lib/google-places";
 import { extname, basename } from "path";
+import { getHomepagePackageIds } from "@/lib/cached-settings";
 
 function toWebpName(name: string): string {
   return basename(name, extname(name))
@@ -60,12 +61,7 @@ export default async function HomePage() {
   let componentLinks:  { parentAssetId: number; childAssetId: number }[]               = [];
 
   try {
-    // Leer homepage_packages para filtrar paquetes del index
-    const homepageSetting = await prisma.systemSetting.findUnique({ where: { key: "homepage_packages" } }).catch(() => null);
-    let homepagePkgIds: number[] = [];
-    try {
-      if (homepageSetting?.value) homepagePkgIds = JSON.parse(homepageSetting.value);
-    } catch { /* muestra todos */ }
+    const homepagePkgIds = await getHomepagePackageIds();
 
     [packages, whatsappSetting] = await Promise.all([
       prisma.asset.findMany({

@@ -1,5 +1,5 @@
 import { NextRequest } from "next/server";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { ok, err } from "@/lib/api";
 import { auth } from "@/auth";
@@ -27,7 +27,9 @@ export async function PATCH(req: NextRequest) {
     create: { key: body.key, value: String(body.value) },
   });
 
-  revalidatePath("/");
+  revalidatePath("/", "page");
+  revalidateTag("system-settings", "default");
+  if (body.key === "homepage_packages") revalidateTag("catalog", "default");
 
   return ok(updated);
 }

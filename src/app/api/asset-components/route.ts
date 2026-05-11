@@ -1,6 +1,7 @@
 import { NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { ok, err } from "@/lib/api";
+import { auth } from "@/auth";
 
 // GET /api/asset-components?parent_id=X  → componentes de un activo padre
 export async function GET(req: NextRequest) {
@@ -16,6 +17,9 @@ export async function GET(req: NextRequest) {
 
 // POST /api/asset-components  → agrega un componente al BOM de un padre
 export async function POST(req: NextRequest) {
+  const session = await auth();
+  if (!session) return err("No autenticado", 401);
+
   const body = await req.json();
   const { parentAssetId, childAssetId, quantity, isRequired } = body;
 
@@ -46,6 +50,9 @@ export async function POST(req: NextRequest) {
 
 // DELETE /api/asset-components  → elimina un componente del BOM
 export async function DELETE(req: NextRequest) {
+  const session = await auth();
+  if (!session) return err("No autenticado", 401);
+
   const body = await req.json();
   const { parentAssetId, childAssetId } = body;
 

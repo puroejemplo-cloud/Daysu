@@ -2,8 +2,8 @@ import { Suspense } from "react";
 import type { Metadata } from "next";
 import CatalogClient from "@/components/catalog/CatalogClient";
 import { prisma } from "@/lib/prisma";
-
-export const dynamic = "force-dynamic";
+import { cacheLife, cacheTag } from "next/cache";
+import type { PricingConfig } from "@/lib/product-tiers";
 
 export const metadata: Metadata = {
   title: "Catálogo de paquetes y servicios",
@@ -14,8 +14,26 @@ export const metadata: Metadata = {
   },
 };
 
+type CatalogAsset = {
+  id: number; name: string; sku: string;
+  dailyRate: string; originalPrice: string | null;
+  categoryId: number; description: string | null;
+  ownerName: string | null; categoryName: string | null;
+  pricingTiers: PricingConfig | null;
+  imageUrl: string | null; imageGallery: string[];
+  componentNames: string[];
+};
 
-export default async function CatalogoPage() {
+type CatalogData = {
+  categories: { id: number; name: string; _count?: { assets: number } }[];
+  assets: CatalogAsset[];
+};
+
+async function getCatalogData(): Promise<CatalogData> {
+  "use cache";
+  cacheLife("default");
+  cacheTag("catalog");
+
   const [allCategories, assets, componentLinks] = await Promise.all([
     prisma.assetCategory.findMany({ orderBy: { name: "asc" } }),
     prisma.asset.findMany({
@@ -28,16 +46,12 @@ export default async function CatalogoPage() {
       },
       orderBy: { dailyRate: "asc" },
     }),
-    // Componentes BOM en query separada para evitar problemas de nesting
     prisma.assetComponent.findMany({
-      select: {
-        parentAssetId: true,
-        childAssetId:  true,
-      },
+      select: { parentAssetId: true, childAssetId: true },
     }),
   ]);
 
-  // Construir mapa de nombres de componentes ordenados por precio descendente
+  // Componentes BOM con precio para ordenar descendente
   const childIds    = [...new Set(componentLinks.map((c) => c.childAssetId))];
   const childAssets = childIds.length
     ? await prisma.asset.findMany({
@@ -56,12 +70,12 @@ export default async function CatalogoPage() {
   }
   const compMap = new Map<number, string[]>();
   for (const [parentId, items] of compWithPrice) {
-    compMap.set(parentId, items.sort((a, b) => b.price - a.price).map(i => i.name));
+    compMap.set(parentId, items.sort((a, b) => b.price - a.price).map((i) => i.name));
   }
 
-  // Campos nuevos (imageUrl, pricingTiers) en query separada con fallback
-  const pricingMap     = new Map<number, import("@/lib/product-tiers").PricingConfig | null>();
-  const imageUrlMap    = new Map<number, string | null>();
+  // Campos extendidos (imageUrl, pricingTiers, imageGallery)
+  const pricingMap      = new Map<number, PricingConfig | null>();
+  const imageUrlMap     = new Map<number, string | null>();
   const imageGalleryMap = new Map<number, string[]>();
   try {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -70,37 +84,41 @@ export default async function CatalogoPage() {
       select: { id: true, pricingTiers: true, imageUrl: true, imageGallery: true },
     }) as { id: number; pricingTiers: unknown; imageUrl: string | null; imageGallery: unknown }[];
     for (const a of extras) {
-      pricingMap.set(a.id, (a.pricingTiers ?? null) as import("@/lib/product-tiers").PricingConfig | null);
+      pricingMap.set(a.id, (a.pricingTiers ?? null) as PricingConfig | null);
       imageUrlMap.set(a.id, a.imageUrl ?? null);
       const gallery = Array.isArray(a.imageGallery) ? (a.imageGallery as string[]) : [];
       if (gallery.length) imageGalleryMap.set(a.id, gallery);
     }
-  } catch {
-    // nuevas columnas aún no disponibles en el cliente cacheado — se ignoran
-  }
+  } catch { /* columnas aún no disponibles en cliente cacheado */ }
 
-  // IDs de categorías que realmente tienen productos rentables
   const activeCatIds = new Set(assets.map((a) => a.categoryId));
 
-  // Solo categorías que tienen al menos 1 producto activo y rentable
-  const categories = allCategories.filter((c) => activeCatIds.has(c.id));
+  return {
+    categories: allCategories.filter((c) => activeCatIds.has(c.id)),
+    assets: assets.map((a) => ({
+      id:             a.id,
+      name:           a.name,
+      sku:            a.sku,
+      dailyRate:      a.dailyRate.toString(),
+      originalPrice:  a.originalPrice?.toString() ?? null,
+      categoryId:     a.categoryId,
+      description:    a.description,
+      ownerName:      a.ownerAdmin?.fullName ?? null,
+      categoryName:   (a as typeof a & { category: { name: string } }).category?.name ?? null,
+      pricingTiers:   pricingMap.get(a.id) ?? null,
+      imageUrl:       imageUrlMap.get(a.id) ?? null,
+      imageGallery:   imageGalleryMap.get(a.id) ?? [],
+      componentNames: compMap.get(a.id) ?? [],
+    })),
+  };
+}
+
+export default async function CatalogoPage() {
+  const { categories, assets } = await getCatalogData();
 
   return (
     <Suspense fallback={<div style={{ background: "#05051a", minHeight: "100vh" }} />}>
-    <CatalogClient
-      categories={categories}
-      assets={assets.map((a) => ({
-        ...a,
-        dailyRate: a.dailyRate.toString(),
-        originalPrice: a.originalPrice?.toString() ?? null,
-        ownerName: a.ownerAdmin?.fullName ?? null,
-        categoryName: (a as typeof a & { category: { name: string } }).category?.name ?? null,
-        pricingTiers:  pricingMap.get(a.id) ?? null,
-        imageUrl:      imageUrlMap.get(a.id) ?? null,
-        imageGallery:  imageGalleryMap.get(a.id) ?? [],
-        componentNames: compMap.get(a.id) ?? [],
-      }))}
-    />
+      <CatalogClient categories={categories} assets={assets} />
     </Suspense>
   );
 }

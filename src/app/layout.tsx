@@ -5,7 +5,7 @@ import Navbar from "@/components/ui/Navbar";
 import AuthSessionProvider from "@/components/ui/SessionProvider";
 import PWARegister     from "@/components/ui/PWARegister";
 import WhatsAppButton  from "@/components/ui/WhatsAppButton";
-import { prisma } from "@/lib/prisma";
+import { getWhatsAppSettings } from "@/lib/cached-settings";
 
 const bebas = Bebas_Neue({
   weight: "400",
@@ -76,15 +76,7 @@ export const viewport: Viewport = {
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  let waNumber: string | undefined, waMessage: string | undefined;
-  try {
-    const [waN, waM] = await Promise.all([
-      prisma.systemSetting.findUnique({ where: { key: "whatsapp_number" } }),
-      prisma.systemSetting.findUnique({ where: { key: "whatsapp_message" } }),
-    ]);
-    waNumber  = waN?.value;
-    waMessage = waM?.value;
-  } catch { /* usa defaults del componente */ }
+  const { number: waNumber, message: waMessage } = await getWhatsAppSettings();
 
   return (
     <html lang="es" className={`${bebas.variable} ${dm.variable}`}
