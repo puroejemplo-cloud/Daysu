@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import type { Metadata } from "next";
 import CatalogClient from "@/components/catalog/CatalogClient";
 import { prisma } from "@/lib/prisma";
-import { cacheLife, cacheTag } from "next/cache";
+import { unstable_cache } from "next/cache";
 import type { PricingConfig } from "@/lib/product-tiers";
 
 export const metadata: Metadata = {
@@ -29,10 +29,8 @@ type CatalogData = {
   assets: CatalogAsset[];
 };
 
-async function getCatalogData(): Promise<CatalogData> {
-  "use cache";
-  cacheLife("default");
-  cacheTag("catalog");
+const getCatalogData = unstable_cache(
+  async (): Promise<CatalogData> => {
 
   const [allCategories, assets, componentLinks] = await Promise.all([
     prisma.assetCategory.findMany({ orderBy: { name: "asc" } }),
@@ -111,7 +109,10 @@ async function getCatalogData(): Promise<CatalogData> {
       componentNames: compMap.get(a.id) ?? [],
     })),
   };
-}
+  },
+  ["catalog-data"],
+  { revalidate: 300, tags: ["catalog"] }
+);
 
 export default async function CatalogoPage() {
   const { categories, assets } = await getCatalogData();

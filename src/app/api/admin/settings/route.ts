@@ -27,7 +27,7 @@ export async function PATCH(req: NextRequest) {
     create: { key: body.key, value: String(body.value) },
   });
 
-  revalidatePath("/", "page");
+  revalidatePath("/");
   revalidateTag("system-settings", "default");
   if (body.key === "homepage_packages") revalidateTag("catalog", "default");
 

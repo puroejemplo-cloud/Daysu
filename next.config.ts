@@ -1,7 +1,6 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  cacheComponents: true,
   allowedDevOrigins: ["192.168.100.98"],
   // Versión visible en el panel admin — usa el SHA del commit en Vercel, "dev" en local
   env: {
