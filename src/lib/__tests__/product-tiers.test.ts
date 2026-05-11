@@ -5,9 +5,10 @@ import {
   getHourlyTiers,
   getCapacityTiers,
   getTierLabel,
-  type PricingConfig,
   type PricingTierItem,
 } from "@/lib/product-tiers";
+
+type TieredConfig = { type: "hourly" | "capacity"; tiers: PricingTierItem[] };
 
 // ── Arbitrarios ──────────────────────────────────────────────────────────────
 
@@ -18,8 +19,8 @@ const tierItem = fc.record<PricingTierItem>({
 
 const nonEmptyTiers = fc.array(tierItem, { minLength: 1, maxLength: 20 });
 
-const hourlyConfig = nonEmptyTiers.map<PricingConfig>((tiers) => ({ type: "hourly", tiers }));
-const capacityConfig = nonEmptyTiers.map<PricingConfig>((tiers) => ({ type: "capacity", tiers }));
+const hourlyConfig   = nonEmptyTiers.map<TieredConfig>((tiers) => ({ type: "hourly",   tiers }));
+const capacityConfig = nonEmptyTiers.map<TieredConfig>((tiers) => ({ type: "capacity", tiers }));
 
 const sku = fc.string({ minLength: 1, maxLength: 20 });
 const assetName = fc.string({ minLength: 1, maxLength: 100 });
@@ -58,7 +59,7 @@ describe("getPricingTiers", () => {
     fc.assert(
       fc.property(
         sku,
-        fc.constantFrom<PricingConfig>(
+        fc.constantFrom<TieredConfig>(
           { type: "hourly",    tiers: [] },
           { type: "capacity",  tiers: [] }
         ),

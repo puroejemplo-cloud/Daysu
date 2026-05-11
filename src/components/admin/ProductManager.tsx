@@ -47,7 +47,7 @@ export default function ProductManager({ categories, userSuffix }: { categories:
   const [tab, setTab]               = useState<Tab>("paquetes");
   const [showForm, setShowForm]     = useState(false);
   // ── Pricing tiers editor ──────────────────────────────────────────────────
-  const [editPricingType, setEditPricingType] = useState<"none" | "hourly" | "capacity">("none");
+  const [editPricingType, setEditPricingType] = useState<"none" | "hourly" | "capacity" | "per_person">("none");
   const [editTierRows, setEditTierRows]       = useState<{ label: string; amount: string }[]>([]);
   // ── Gallery picker ────────────────────────────────────────────────────────
   const [editImageUrl,   setEditImageUrl]   = useState<string | null>(null);
@@ -118,11 +118,14 @@ export default function ProductManager({ categories, userSuffix }: { categories:
     setEditDetail(json.data);
     // Inicializar editor de tiers desde la BD
     const pt = json.data?.pricingTiers as PricingConfig | null;
-    if (pt?.type && pt.tiers?.length) {
-      setEditPricingType(pt.type);
-      setEditTierRows(pt.tiers.map((t: { label: string; price?: number; qty?: number }) => ({
+    if (pt?.type === "per_person") {
+      setEditPricingType("per_person");
+      setEditTierRows([]);
+    } else if (pt?.type && (pt as { type: string; tiers?: unknown[] }).tiers?.length) {
+      setEditPricingType(pt.type as "hourly" | "capacity");
+      setEditTierRows((pt as { tiers: { label: string; price?: number; qty?: number }[] }).tiers.map((t) => ({
         label:  t.label,
-        amount: String(t.price ?? t.qty ?? 0), // compatibilidad con formato antiguo (qty)
+        amount: String(t.price ?? t.qty ?? 0),
       })));
     } else {
       setEditPricingType("none");
@@ -135,9 +138,12 @@ export default function ProductManager({ categories, userSuffix }: { categories:
     setSavingEdit(true);
     // Componer el JSON de pricing tiers
     const validRows = editTierRows.filter((r) => r.label.trim() && r.amount.trim() && Number(r.amount) > 0);
-    const pricingTiers: PricingConfig | null = editPricingType === "none" || validRows.length === 0
-      ? null
-      : { type: editPricingType, tiers: validRows.map((r) => ({ label: r.label.trim(), price: Number(r.amount) })) };
+    const pricingTiers: PricingConfig | null =
+      editPricingType === "per_person"
+        ? { type: "per_person" }
+        : editPricingType === "none" || validRows.length === 0
+          ? null
+          : { type: editPricingType, tiers: validRows.map((r) => ({ label: r.label.trim(), price: Number(r.amount) })) };
 
     const res = await fetch(`/api/admin/assets/${editingId}`, {
       method: "PATCH",
@@ -720,8 +726,8 @@ export default function ProductManager({ categories, userSuffix }: { categories:
                       <p className="text-xs font-black uppercase tracking-widest" style={{ color: "#7C3AED" }}>⚙ Tipo de precio</p>
                       {/* Selector de tipo */}
                       <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
-                        {(["none", "hourly", "capacity"] as const).map((t) => {
-                          const labels = { none: "Precio único", hourly: "Por hora", capacity: "Por capacidad" };
+                        {(["none", "hourly", "capacity", "per_person"] as const).map((t) => {
+                          const labels = { none: "Precio único", hourly: "Por hora", capacity: "Por capacidad", per_person: "Por persona" };
                           const active = editPricingType === t;
                           return (
                             <button key={t} type="button"
@@ -744,8 +750,15 @@ export default function ProductManager({ categories, userSuffix }: { categories:
                         })}
                       </div>
 
+                      {/* Nota por persona */}
+                      {editPricingType === "per_person" && (
+                        <p className="text-xs" style={{ color: "#94a3b8", background: "rgba(124,58,237,.08)", borderRadius: 8, padding: "0.5rem 0.75rem" }}>
+                          El precio final = <strong className="text-white">Tarifa × N personas</strong>. Al reservar, la cantidad se llena automáticamente con el número de invitados del evento y el cliente puede modificarla.
+                        </p>
+                      )}
+
                       {/* Editor de filas */}
-                      {editPricingType !== "none" && (
+                      {editPricingType !== "none" && editPricingType !== "per_person" && (
                         <div className="space-y-2">
                           <p className="text-xs" style={{ color: "#475569" }}>
                             {editPricingType === "hourly"
@@ -977,8 +990,8 @@ export default function ProductManager({ categories, userSuffix }: { categories:
                               </button>
                             </div>
 
-                            {/* Selector de tier si el producto lo tiene */}
-                            {tierConfig && (
+                            {/* Selector de tier si el producto lo tiene (no aplica a per_person) */}
+                            {tierConfig && tierConfig.type !== "per_person" && (
                               <div style={{ padding: "0.75rem", borderRadius: 10, background: "rgba(124,58,237,.06)", border: "1px solid rgba(124,58,237,.2)" }}>
                                 <p style={{ fontSize: "0.68rem", color: "#94a3b8", marginBottom: "0.5rem", fontWeight: 700 }}>
                                   {tierConfig.type === "hourly" ? "¿Cuántas horas incluye el paquete?" : "¿Para cuántas personas?"}

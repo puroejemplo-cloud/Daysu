@@ -4,7 +4,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
-import { getHourlyTiers, getCapacityTiers, getPricingTiers, getTierLabel, type PricingConfig } from "@/lib/product-tiers";
+import { getHourlyTiers, getCapacityTiers, getPricingTiers, getTierLabel, isPerPerson, type PricingConfig } from "@/lib/product-tiers";
 import WizardDatePicker from "./WizardDatePicker";
 import UpsellBanner from "./UpsellBanner";
 
@@ -176,7 +176,8 @@ export default function BookingWizard({ forcedAssetId, depositPercent = 30 }: { 
     setSelected((prev) => {
       const exists = prev.find((s) => s.assetId === p.id);
       if (exists) return prev.filter((s) => s.assetId !== p.id);
-      return [...prev, { assetId: p.id, assetName: p.name, quantity: 1, max: availability[p.id]?.availableUnits ?? 1 }];
+      const defaultQty = isPerPerson(p.pricingTiers ?? null) && guestNum > 0 ? guestNum : 1;
+      return [...prev, { assetId: p.id, assetName: p.name, quantity: defaultQty, max: availability[p.id]?.availableUnits ?? 999 }];
     });
   };
 
@@ -818,6 +819,45 @@ export default function BookingWizard({ forcedAssetId, depositPercent = 30 }: { 
                             </div>
                           )}
 
+                          {/* Editor por persona — cantidad = invitados, editable */}
+                          {isPerPerson(p.pricingTiers ?? null) && sel && (
+                            <div style={{ marginTop: "0.5rem" }} onClick={(e) => e.stopPropagation()}>
+                              <p style={{ fontSize: "0.68rem", color: "#475569", marginBottom: "0.35rem" }}>
+                                Número de personas (precio × cantidad):
+                              </p>
+                              <div className="flex items-center gap-2">
+                                <button
+                                  onClick={() => updateQty(p.id, sel.quantity - 1)}
+                                  aria-label="Reducir personas"
+                                  style={{
+                                    minWidth: 36, minHeight: 36, borderRadius: 8,
+                                    background: "rgba(124,58,237,.3)", color: "#fff",
+                                    fontWeight: 900, fontSize: "1rem", border: "none", cursor: "pointer",
+                                  }}>−</button>
+                                <input
+                                  type="number" min={1}
+                                  value={sel.quantity}
+                                  onChange={(e) => updateQty(p.id, Number(e.target.value) || 1)}
+                                  style={{
+                                    width: 70, textAlign: "center", background: "#18181b",
+                                    border: "1px solid rgba(124,58,237,.4)", borderRadius: 8,
+                                    color: "#fff", fontWeight: 700, fontSize: "0.9rem",
+                                    padding: "0.35rem 0.5rem",
+                                  }}
+                                />
+                                <button
+                                  onClick={() => updateQty(p.id, sel.quantity + 1)}
+                                  aria-label="Aumentar personas"
+                                  style={{
+                                    minWidth: 36, minHeight: 36, borderRadius: 8,
+                                    background: "rgba(124,58,237,.3)", color: "#fff",
+                                    fontWeight: 900, fontSize: "1rem", border: "none", cursor: "pointer",
+                                  }}>+</button>
+                                <span style={{ fontSize: "0.72rem", color: "#64748b" }}>personas</span>
+                              </div>
+                            </div>
+                          )}
+
                           {/* Selector de capacidad — Maruchan (solo cuando está seleccionado) */}
                           {capacityTiers && sel && (
                             <div style={{ marginTop: "0.5rem" }} onClick={(e) => e.stopPropagation()}>
@@ -847,7 +887,20 @@ export default function BookingWizard({ forcedAssetId, depositPercent = 30 }: { 
 
                         {/* Precio */}
                         <div className="flex-shrink-0 text-right">
-                          {hourlyTiers ? (
+                          {isPerPerson(p.pricingTiers ?? null) ? (
+                            sel
+                              ? <>
+                                  <p className="text-sm font-black" style={gold}>
+                                    +${(Number(p.dailyRate) * sel.quantity).toLocaleString("es-MX")}
+                                  </p>
+                                  <p style={{ fontSize: "0.65rem", color: "#64748b" }}>
+                                    ${Number(p.dailyRate).toLocaleString("es-MX")} × {sel.quantity}
+                                  </p>
+                                </>
+                              : <p style={{ fontSize: "0.7rem", color: "#475569" }}>
+                                  ${Number(p.dailyRate).toLocaleString("es-MX")}/persona
+                                </p>
+                          ) : hourlyTiers ? (
                             sel?.overridePrice
                               ? <p className="text-sm font-black" style={gold}>+${sel.overridePrice.toLocaleString("es-MX")}</p>
                               : <p style={{ fontSize: "0.7rem", color: "#475569" }}>Desde $2,000</p>

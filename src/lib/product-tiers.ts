@@ -1,7 +1,14 @@
 // ── Tipos ──────────────────────────────────────────────────────────────────────
 /** Tier unificado: tanto hourly como capacity usan label + price explícito */
 export interface PricingTierItem { label: string; price: number }
-export type PricingConfig = { type: "hourly" | "capacity"; tiers: PricingTierItem[] };
+export type PricingConfig =
+  | { type: "hourly" | "capacity"; tiers: PricingTierItem[] }
+  | { type: "per_person" };
+
+/** Devuelve true si el activo usa precio por persona (dailyRate × cantidad de invitados). */
+export function isPerPerson(db?: PricingConfig | null): boolean {
+  return db?.type === "per_person";
+}
 
 // Sin fallbacks hardcodeados — el admin configura los tiers desde el panel
 const HOURLY_FALLBACK:   Record<string, PricingTierItem[]> = {};
