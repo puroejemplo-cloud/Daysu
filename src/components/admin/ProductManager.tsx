@@ -57,6 +57,24 @@ export default function ProductManager({ categories, userSuffix }: { categories:
   const [loadingGallery, setLoadingGallery] = useState(false);
   const [urlInput,       setUrlInput]       = useState("");
 
+  function normalizeDriveUrl(url: string): string {
+    const fileMatch = url.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/);
+    if (fileMatch) return `https://lh3.googleusercontent.com/d/${fileMatch[1]}`;
+    const openMatch = url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+    if (openMatch && url.includes("drive.google.com")) return `https://lh3.googleusercontent.com/d/${openMatch[1]}`;
+    return url;
+  }
+
+  function addUrlToGallery(raw: string) {
+    const url = normalizeDriveUrl(raw.trim());
+    if (!url) return;
+    if (editGallery.includes(url)) return;
+    const ng = [...editGallery, url];
+    setEditGallery(ng);
+    setEditImageUrl(ng[0] ?? null);
+    setUrlInput("");
+  }
+
   // Carga todos los activos y la lista de componentes disponibles para BOM
   const load = useCallback(async () => {
     setLoading(true);
@@ -586,33 +604,14 @@ export default function ProductManager({ categories, userSuffix }: { categories:
                         type="url"
                         value={urlInput}
                         onChange={(e) => setUrlInput(e.target.value)}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter") {
-                            e.preventDefault();
-                            const url = urlInput.trim();
-                            if (url && !editGallery.includes(url)) {
-                              const ng = [...editGallery, url];
-                              setEditGallery(ng);
-                              setEditImageUrl(ng[0] ?? null);
-                            }
-                            setUrlInput("");
-                          }
-                        }}
-                        placeholder="Pega URL de imagen (Drive, Cloudinary…)"
+                        onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addUrlToGallery(urlInput); } }}
+                        placeholder="Pega URL de Drive o imagen directa"
                         className="aura-input"
                         style={{ flex: 1, fontSize: "0.78rem" }}
                       />
                       <button
                         type="button"
-                        onClick={() => {
-                          const url = urlInput.trim();
-                          if (url && !editGallery.includes(url)) {
-                            const ng = [...editGallery, url];
-                            setEditGallery(ng);
-                            setEditImageUrl(ng[0] ?? null);
-                          }
-                          setUrlInput("");
-                        }}
+                        onClick={() => addUrlToGallery(urlInput)}
                         className="btn-ghost"
                         style={{ fontSize: "0.78rem", whiteSpace: "nowrap" }}>
                         + Agregar
