@@ -55,6 +55,7 @@ export default function ProductManager({ categories, userSuffix }: { categories:
   const [showPicker,     setShowPicker]     = useState(false);
   const [galleryImages,  setGalleryImages]  = useState<{ name: string; webp: string | null; original: string }[]>([]);
   const [loadingGallery, setLoadingGallery] = useState(false);
+  const [urlInput,       setUrlInput]       = useState("");
 
   // Carga todos los activos y la lista de componentes disponibles para BOM
   const load = useCallback(async () => {
@@ -93,6 +94,7 @@ export default function ProductManager({ categories, userSuffix }: { categories:
     setEditImageUrl(asset.imageUrl ?? null);
     setEditGallery(asset.imageGallery ?? []);
     setShowPicker(false);
+    setUrlInput("");
     const res  = await fetch(`/api/admin/assets/${asset.id}`);
     const json = await res.json();
     setEditDetail(json.data);
@@ -577,6 +579,45 @@ export default function ProductManager({ categories, userSuffix }: { categories:
                         Sin fotos asignadas. Usa el selector para escoger de la Galería.
                       </p>
                     )}
+
+                    {/* Pegar URL directa (Google Drive, Cloudinary, etc.) */}
+                    <div style={{ display: "flex", gap: "0.5rem", marginBottom: "0.75rem" }}>
+                      <input
+                        type="url"
+                        value={urlInput}
+                        onChange={(e) => setUrlInput(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            e.preventDefault();
+                            const url = urlInput.trim();
+                            if (url && !editGallery.includes(url)) {
+                              const ng = [...editGallery, url];
+                              setEditGallery(ng);
+                              setEditImageUrl(ng[0] ?? null);
+                            }
+                            setUrlInput("");
+                          }
+                        }}
+                        placeholder="Pega URL de imagen (Drive, Cloudinary…)"
+                        className="aura-input"
+                        style={{ flex: 1, fontSize: "0.78rem" }}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const url = urlInput.trim();
+                          if (url && !editGallery.includes(url)) {
+                            const ng = [...editGallery, url];
+                            setEditGallery(ng);
+                            setEditImageUrl(ng[0] ?? null);
+                          }
+                          setUrlInput("");
+                        }}
+                        className="btn-ghost"
+                        style={{ fontSize: "0.78rem", whiteSpace: "nowrap" }}>
+                        + Agregar
+                      </button>
+                    </div>
 
                     {/* Botón abrir picker */}
                     <button type="button"
