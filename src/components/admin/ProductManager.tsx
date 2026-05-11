@@ -750,11 +750,30 @@ export default function ProductManager({ categories, userSuffix }: { categories:
                         })}
                       </div>
 
-                      {/* Nota por persona */}
+                      {/* Precio por persona */}
                       {editPricingType === "per_person" && (
-                        <p className="text-xs" style={{ color: "#94a3b8", background: "rgba(124,58,237,.08)", borderRadius: 8, padding: "0.5rem 0.75rem" }}>
-                          El precio final = <strong className="text-white">Tarifa × N personas</strong>. Al reservar, la cantidad se llena automáticamente con el número de invitados del evento y el cliente puede modificarla.
-                        </p>
+                        <div style={{ background: "rgba(124,58,237,.08)", borderRadius: 10, padding: "0.75rem" }}>
+                          <label htmlFor="price-per-person" className="text-xs font-bold uppercase tracking-widest block mb-2" style={{ color: "#9333EA" }}>
+                            Precio por persona (MXN) *
+                          </label>
+                          <div className="flex items-center gap-2">
+                            <span style={{ color: "#64748b", fontWeight: 700 }}>$</span>
+                            <input
+                              id="price-per-person"
+                              type="number"
+                              min={0}
+                              value={editForm.dailyRate as string ?? ""}
+                              onChange={(e) => setEditForm((f) => ({ ...f, dailyRate: e.target.value }))}
+                              placeholder="ej: 50"
+                              className="aura-input"
+                              style={{ maxWidth: 140 }}
+                            />
+                            <span style={{ fontSize: "0.78rem", color: "#64748b" }}>MXN / persona</span>
+                          </div>
+                          <p className="text-xs mt-2" style={{ color: "#64748b" }}>
+                            Al reservar la cantidad se llena con el número de invitados y el cliente puede modificarla.
+                          </p>
+                        </div>
                       )}
 
                       {/* Editor de filas */}
