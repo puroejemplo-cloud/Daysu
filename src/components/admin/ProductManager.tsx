@@ -48,7 +48,8 @@ export default function ProductManager({ categories, userSuffix }: { categories:
   const [tab, setTab]               = useState<Tab>("paquetes");
   const [showForm, setShowForm]     = useState(false);
   // ── Pricing tiers editor ──────────────────────────────────────────────────
-  const [editPricingType, setEditPricingType] = useState<"none" | "hourly" | "capacity" | "per_person">("none");
+  const [editPricingType,  setEditPricingType]  = useState<"none" | "hourly" | "capacity" | "per_person">("none");
+  const [editMinPersons,   setEditMinPersons]   = useState<string>("25");
   const [editTierRows, setEditTierRows]       = useState<{ label: string; amount: string }[]>([]);
   // ── Gallery picker ────────────────────────────────────────────────────────
   const [editImageUrl,   setEditImageUrl]   = useState<string | null>(null);
@@ -123,6 +124,7 @@ export default function ProductManager({ categories, userSuffix }: { categories:
     const pt = json.data?.pricingTiers as PricingConfig | null;
     if (pt?.type === "per_person") {
       setEditPricingType("per_person");
+      setEditMinPersons(String(pt.minPersons ?? 25));
       setEditTierRows([]);
     } else if (pt?.type && (pt as { type: string; tiers?: unknown[] }).tiers?.length) {
       setEditPricingType(pt.type as "hourly" | "capacity");
@@ -143,7 +145,7 @@ export default function ProductManager({ categories, userSuffix }: { categories:
     const validRows = editTierRows.filter((r) => r.label.trim() && r.amount.trim() && Number(r.amount) > 0);
     const pricingTiers: PricingConfig | null =
       editPricingType === "per_person"
-        ? { type: "per_person" }
+        ? { type: "per_person", minPersons: Math.max(1, Number(editMinPersons) || 25) }
         : editPricingType === "none" || validRows.length === 0
           ? null
           : { type: editPricingType, tiers: validRows.map((r) => ({ label: r.label.trim(), price: Number(r.amount) })) };
@@ -812,27 +814,46 @@ export default function ProductManager({ categories, userSuffix }: { categories:
 
                       {/* Precio por persona */}
                       {editPricingType === "per_person" && (
-                        <div style={{ background: "rgba(124,58,237,.08)", borderRadius: 10, padding: "0.75rem" }}>
-                          <label htmlFor="price-per-person" className="text-xs font-bold uppercase tracking-widest block mb-2" style={{ color: "#9333EA" }}>
-                            Precio por persona (MXN) *
-                          </label>
-                          <div className="flex items-center gap-2">
-                            <span style={{ color: "#64748b", fontWeight: 700 }}>$</span>
-                            <input
-                              id="price-per-person"
-                              type="number"
-                              min={0}
-                              value={editForm.dailyRate as string ?? ""}
-                              onChange={(e) => setEditForm((f) => ({ ...f, dailyRate: e.target.value }))}
-                              placeholder="ej: 50"
-                              className="aura-input"
-                              style={{ maxWidth: 140 }}
-                            />
-                            <span style={{ fontSize: "0.78rem", color: "#64748b" }}>MXN / persona</span>
+                        <div style={{ background: "rgba(124,58,237,.08)", borderRadius: 10, padding: "0.75rem", display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+                          {/* Precio unitario */}
+                          <div>
+                            <label htmlFor="price-per-person" className="text-xs font-bold uppercase tracking-widest block mb-2" style={{ color: "#9333EA" }}>
+                              Precio por persona (MXN) *
+                            </label>
+                            <div className="flex items-center gap-2">
+                              <span style={{ color: "#64748b", fontWeight: 700 }}>$</span>
+                              <input
+                                id="price-per-person"
+                                type="number" min={0}
+                                value={editForm.dailyRate as string ?? ""}
+                                onChange={(e) => setEditForm((f) => ({ ...f, dailyRate: e.target.value }))}
+                                placeholder="ej: 50"
+                                className="aura-input"
+                                style={{ maxWidth: 140 }}
+                              />
+                              <span style={{ fontSize: "0.78rem", color: "#64748b" }}>MXN / persona</span>
+                            </div>
                           </div>
-                          <p className="text-xs mt-2" style={{ color: "#64748b" }}>
-                            Al reservar la cantidad se llena con el número de invitados y el cliente puede modificarla.
-                          </p>
+                          {/* Mínimo de personas */}
+                          <div>
+                            <label htmlFor="min-persons" className="text-xs font-bold uppercase tracking-widest block mb-2" style={{ color: "#9333EA" }}>
+                              Mínimo de personas
+                            </label>
+                            <div className="flex items-center gap-2">
+                              <input
+                                id="min-persons"
+                                type="number" min={1}
+                                value={editMinPersons}
+                                onChange={(e) => setEditMinPersons(e.target.value)}
+                                className="aura-input"
+                                style={{ maxWidth: 100 }}
+                              />
+                              <span style={{ fontSize: "0.78rem", color: "#64748b" }}>personas (default: 25)</span>
+                            </div>
+                            <p className="text-xs mt-1" style={{ color: "#64748b" }}>
+                              El calculador y el wizard de reservas arrancan desde este mínimo.
+                            </p>
+                          </div>
                         </div>
                       )}
 

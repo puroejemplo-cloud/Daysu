@@ -5,7 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { ArrowLeft, CalendarCheck, Users, Star, ChevronLeft, ChevronRight, Sparkles, Zap } from "lucide-react";
-import { getHourlyTiers, getCapacityTiers, isPerPerson, type PricingConfig } from "@/lib/product-tiers";
+import { getHourlyTiers, getCapacityTiers, isPerPerson, getMinPersons, type PricingConfig } from "@/lib/product-tiers";
 import WizardDatePicker from "@/components/booking/WizardDatePicker";
 
 interface Asset {
@@ -34,7 +34,8 @@ export default function PackageDetail({ asset }: { asset: Asset }) {
   const [hour,       setHour]       = useState(initHour);
   const [avail,      setAvail]      = useState<boolean | null>(null);
   const [checking,   setChecking]   = useState(false);
-  const [persons,    setPersons]    = useState(25);
+  const minPersons = getMinPersons(asset.pricingTiers);
+  const [persons,    setPersons]    = useState(minPersons);
 
   const descLines = (asset.description ?? "").split("\n").map((l) => l.trim()).filter(Boolean);
   const features  = descLines.length > 0 ? descLines : asset.componentNames;
@@ -258,15 +259,20 @@ export default function PackageDetail({ asset }: { asset: Asset }) {
                 </p>
 
                 {/* Calculador de precio */}
-                <p className="admin-label" style={{ marginBottom: "0.6rem" }}>Calcula tu precio</p>
+                <p className="admin-label" style={{ marginBottom: "0.6rem" }}>
+                  Calcula tu precio
+                  <span style={{ fontSize: "0.68rem", fontWeight: 400, color: "#475569", marginLeft: "0.5rem", textTransform: "none", letterSpacing: 0 }}>
+                    (mínimo {minPersons} personas)
+                  </span>
+                </p>
                 <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "1rem", flexWrap: "wrap" }}>
-                  <button onClick={() => setPersons((p) => Math.max(1, p - 10))}
+                  <button onClick={() => setPersons((p) => Math.max(minPersons, p - 10))}
                     style={{ padding: "0.4rem 0.75rem", borderRadius: 8, background: "rgba(255,255,255,.06)", border: "1px solid rgba(255,255,255,.1)", color: "#94a3b8", fontSize: "0.78rem", cursor: "pointer", fontWeight: 700 }}>−10</button>
-                  <button onClick={() => setPersons((p) => Math.max(1, p - 1))}
+                  <button onClick={() => setPersons((p) => Math.max(minPersons, p - 1))}
                     style={{ padding: "0.4rem 0.75rem", borderRadius: 8, background: "rgba(255,255,255,.06)", border: "1px solid rgba(255,255,255,.1)", color: "#94a3b8", fontSize: "0.78rem", cursor: "pointer", fontWeight: 700 }}>−</button>
                   <input
                     type="number" min={1} value={persons}
-                    onChange={(e) => setPersons(Math.max(1, Number(e.target.value) || 1))}
+                    onChange={(e) => setPersons(Math.max(minPersons, Number(e.target.value) || minPersons))}
                     style={{
                       width: 72, textAlign: "center", background: "#18181b",
                       border: `1px solid ${accent}50`, borderRadius: 8,

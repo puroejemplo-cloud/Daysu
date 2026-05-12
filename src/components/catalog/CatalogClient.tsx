@@ -1,6 +1,6 @@
 "use client";
 import { useState, useCallback, useEffect } from "react";
-import { getHourlyTiers, getCapacityTiers, isPerPerson, type PricingConfig } from "@/lib/product-tiers";
+import { getHourlyTiers, getCapacityTiers, isPerPerson, getMinPersons, type PricingConfig } from "@/lib/product-tiers";
 import CardCarousel from "./CardCarousel";
 import { useSearchParams } from "next/navigation";
 import { DayPicker } from "react-day-picker";
@@ -11,10 +11,10 @@ import Link from "next/link";
 import { CalendarDays, PackageSearch, Sparkles } from "lucide-react";
 
 // Calculador interactivo de precio por persona (necesita su propio estado)
-function PersonCalc({ pricePerPerson, accent }: { pricePerPerson: number; accent: string }) {
-  const [persons, setPersons] = useState(25);
+function PersonCalc({ pricePerPerson, accent, minPersons = 25 }: { pricePerPerson: number; accent: string; minPersons?: number }) {
+  const [persons, setPersons] = useState(minPersons);
   const total = pricePerPerson * persons;
-  const change = (delta: number) => setPersons((p) => Math.max(1, p + delta));
+  const change = (delta: number) => setPersons((p) => Math.max(minPersons, p + delta));
   return (
     <div
       onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}
@@ -480,7 +480,7 @@ export default function CatalogClient({
                         const cTiers = getCapacityTiers(asset.sku, asset.pricingTiers);
                         const perPerson = isPerPerson(asset.pricingTiers ?? null);
                         return perPerson ? (
-                          <PersonCalc pricePerPerson={Number(asset.dailyRate)} accent={accent} />
+                          <PersonCalc pricePerPerson={Number(asset.dailyRate)} accent={accent} minPersons={getMinPersons(asset.pricingTiers ?? null)} />
                         ) : hTiers ? (
                           <div style={{ padding: "0.65rem 0.75rem", borderRadius: 10, background: "rgba(255,255,255,0.03)", border: `1px solid ${accent}20` }}>
                             <p style={{ fontSize: "0.52rem", fontWeight: 700, letterSpacing: "0.15em", textTransform: "uppercase", color: "#52525b", marginBottom: "0.4rem" }}>Por hora</p>

@@ -4,7 +4,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
-import { getHourlyTiers, getCapacityTiers, getPricingTiers, getTierLabel, isPerPerson, type PricingConfig } from "@/lib/product-tiers";
+import { getHourlyTiers, getCapacityTiers, getPricingTiers, getTierLabel, isPerPerson, getMinPersons, type PricingConfig } from "@/lib/product-tiers";
 import WizardDatePicker from "./WizardDatePicker";
 import UpsellBanner from "./UpsellBanner";
 
@@ -176,14 +176,17 @@ export default function BookingWizard({ forcedAssetId, depositPercent = 30 }: { 
     setSelected((prev) => {
       const exists = prev.find((s) => s.assetId === p.id);
       if (exists) return prev.filter((s) => s.assetId !== p.id);
-      const defaultQty = isPerPerson(p.pricingTiers ?? null) && guestNum > 0 ? guestNum : 1;
+      const minP = getMinPersons(p.pricingTiers ?? null);
+      const defaultQty = isPerPerson(p.pricingTiers ?? null) ? Math.max(minP, guestNum > 0 ? guestNum : minP) : 1;
       return [...prev, { assetId: p.id, assetName: p.name, quantity: defaultQty, max: availability[p.id]?.availableUnits ?? 999 }];
     });
   };
 
   const updateQty = (assetId: number, qty: number) => {
     if (preselectedPkg && assetId === preselectedPkg.id) return;
-    setSelected((prev) => prev.map((s) => s.assetId === assetId ? { ...s, quantity: Math.max(1, Math.min(qty, s.max)) } : s));
+    const asset = allProducts.find((p) => p.id === assetId);
+    const minQ  = isPerPerson(asset?.pricingTiers ?? null) ? getMinPersons(asset?.pricingTiers ?? null) : 1;
+    setSelected((prev) => prev.map((s) => s.assetId === assetId ? { ...s, quantity: Math.max(minQ, Math.min(qty, s.max)) } : s));
   };
 
   // ── Alerta de capacidad ───────────────────────────────────────────────────

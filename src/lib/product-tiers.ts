@@ -3,11 +3,17 @@
 export interface PricingTierItem { label: string; price: number }
 export type PricingConfig =
   | { type: "hourly" | "capacity"; tiers: PricingTierItem[] }
-  | { type: "per_person" };
+  | { type: "per_person"; minPersons?: number };
 
 /** Devuelve true si el activo usa precio por persona (dailyRate × cantidad de invitados). */
 export function isPerPerson(db?: PricingConfig | null): boolean {
   return db?.type === "per_person";
+}
+
+/** Mínimo de personas para productos por persona. Default 25. */
+export function getMinPersons(db?: PricingConfig | null): number {
+  if (db?.type === "per_person") return db.minPersons ?? 25;
+  return 25;
 }
 
 // Sin fallbacks hardcodeados — el admin configura los tiers desde el panel
