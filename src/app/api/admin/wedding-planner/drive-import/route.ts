@@ -27,17 +27,26 @@ export async function POST(req: NextRequest) {
   const apiUrl = `https://www.googleapis.com/drive/v3/files?q=${query}&key=${apiKey}&fields=${fields}&pageSize=200&orderBy=name`;
 
   const res = await fetch(apiUrl);
+  const text = await res.text();
+
+  // Parsear respuesta — puede ser HTML de error si la API no está habilitada
+  let data: { files?: { id: string; name: string }[]; error?: { message?: string; status?: string } };
+  try {
+    data = JSON.parse(text);
+  } catch {
+    if (res.status === 403 || res.status === 400)
+      return err("Error de acceso. Ve a console.cloud.google.com → Biblioteca → busca 'Google Drive API' → Habilitar.", 500);
+    return err(`Error ${res.status} al consultar Google Drive. Intenta habilitar la Google Drive API en tu proyecto.`, 500);
+  }
+
   if (!res.ok) {
-    const data = await res.json() as { error?: { message?: string } };
     const msg = data.error?.message ?? "Error al consultar Google Drive";
-    if (msg.includes("notFound") || res.status === 404)
+    if (data.error?.status === "NOT_FOUND" || res.status === 404)
       return err("Carpeta no encontrada. Verifica que el enlace sea correcto y que la carpeta sea pública.");
-    if (res.status === 403)
+    if (data.error?.status === "PERMISSION_DENIED" || res.status === 403)
       return err("Sin acceso. Asegúrate de que la carpeta esté compartida como 'Cualquier persona con el enlace'.");
     return err(msg, 500);
   }
-
-  const data = await res.json() as { files?: { id: string; name: string }[] };
   const files = data.files ?? [];
 
   if (files.length === 0)
