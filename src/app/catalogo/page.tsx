@@ -38,11 +38,11 @@ const getCatalogData = unstable_cache(
       where: { isActive: true, isRentable: true, assetType: { in: ["package", "product"] } },
       select: {
         id: true, name: true, sku: true, dailyRate: true, originalPrice: true,
-        categoryId: true, description: true,
+        categoryId: true, description: true, isRecommended: true,
         ownerAdmin: { select: { fullName: true } },
         category: { select: { name: true } },
       },
-      orderBy: { dailyRate: "asc" },
+      orderBy: [{ isRecommended: "desc" }, { dailyRate: "asc" }],
     }),
     prisma.assetComponent.findMany({
       select: { parentAssetId: true, childAssetId: true },
