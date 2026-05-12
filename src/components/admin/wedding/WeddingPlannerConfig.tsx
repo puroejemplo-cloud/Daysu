@@ -1,6 +1,6 @@
 "use client";
-import { useState, useRef } from "react";
-import { Plus, Trash2, Loader2, Upload } from "lucide-react";
+import { useState } from "react";
+import { Plus, Trash2, Loader2 } from "lucide-react";
 
 interface Testimonial { name: string; eventType: string; text: string }
 interface Step { title: string; desc: string }
@@ -20,27 +20,6 @@ export function WeddingPlannerConfig({ initial }: Props) {
   const [settings, setSettings] = useState<WpSettings>(initial);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
-  const [uploadingHero, setUploadingHero] = useState(false);
-  const heroInputRef = useRef<HTMLInputElement>(null);
-
-  async function handleHeroUpload(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setUploadingHero(true);
-    try {
-      const fd = new FormData();
-      fd.append("file", file);
-      const res = await fetch("/api/admin/wedding-planner/hero-image", { method: "POST", body: fd });
-      const data = await res.json() as { data?: { url: string }; error?: string };
-      if (!res.ok) throw new Error(data.error ?? "Error al subir");
-      setSettings((s) => ({ ...s, wp_hero_image: data.data!.url }));
-    } catch (err) {
-      alert(err instanceof Error ? err.message : "Error al subir imagen");
-    } finally {
-      setUploadingHero(false);
-      if (heroInputRef.current) heroInputRef.current.value = "";
-    }
-  }
 
   function setField<K extends keyof WpSettings>(key: K, value: WpSettings[K]) {
     setSettings((s) => ({ ...s, [key]: value }));
@@ -66,38 +45,22 @@ export function WeddingPlannerConfig({ initial }: Props) {
       {/* Foto del hero */}
       <section>
         <h3 className="font-medium mb-2" style={{ color: "var(--cream)" }}>Foto de fondo del hero</h3>
-        <div className="flex items-start gap-4">
-          {settings.wp_hero_image && (
-            <img
-              src={settings.wp_hero_image}
-              alt="Hero actual"
-              style={{ width: 120, height: 80, objectFit: "cover", borderRadius: "0.5rem", flexShrink: 0 }}
-            />
-          )}
-          <div>
-            <input
-              ref={heroInputRef}
-              type="file"
-              accept=".jpg,.jpeg,.png,.webp,.avif"
-              style={{ display: "none" }}
-              onChange={handleHeroUpload}
-            />
-            <button
-              onClick={() => heroInputRef.current?.click()}
-              disabled={uploadingHero}
-              className="btn-ghost px-4 py-2 text-sm rounded-lg flex items-center gap-2"
-            >
-              {uploadingHero ? (
-                <><Loader2 size={14} className="animate-spin" /> Subiendo...</>
-              ) : (
-                <><Upload size={14} /> {settings.wp_hero_image ? "Cambiar foto" : "Subir foto"}</>
-              )}
-            </button>
-            <p className="text-xs mt-1" style={{ color: "var(--muted)" }}>
-              JPG, PNG o WebP. Recomendado: 1920×1080px o mayor.
-            </p>
-          </div>
-        </div>
+        {settings.wp_hero_image && (
+          <img
+            src={settings.wp_hero_image}
+            alt="Hero actual"
+            style={{ width: "100%", maxHeight: 160, objectFit: "cover", borderRadius: "0.5rem", marginBottom: "0.75rem" }}
+          />
+        )}
+        <input
+          className="aura-input w-full"
+          placeholder="https://... (URL de la imagen)"
+          value={settings.wp_hero_image ?? ""}
+          onChange={(e) => setSettings((s) => ({ ...s, wp_hero_image: e.target.value || null }))}
+        />
+        <p className="text-xs mt-1" style={{ color: "var(--muted)" }}>
+          Pega una URL directa de imagen. Recomendado: 1920×1080px o mayor.
+        </p>
       </section>
 
       {/* Hero subtitle */}

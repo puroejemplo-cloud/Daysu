@@ -50,7 +50,7 @@ export async function PATCH(req: NextRequest) {
   const session = await auth();
   if (!session) return err("No autorizado", 401);
 
-  const body = await req.json() as Partial<typeof WP_DEFAULTS>;
+  const body = await req.json() as Partial<typeof WP_DEFAULTS> & { wp_hero_image?: string | null };
 
   const updates: Array<{ key: string; value: string }> = [];
 
@@ -62,6 +62,8 @@ export async function PATCH(req: NextRequest) {
     updates.push({ key: "wp_testimonials", value: JSON.stringify(body.wp_testimonials) });
   if (body.wp_hero_subtitle !== undefined)
     updates.push({ key: "wp_hero_subtitle", value: body.wp_hero_subtitle });
+  if (body.wp_hero_image !== undefined)
+    updates.push({ key: "wp_hero_image", value: body.wp_hero_image ?? "" });
   if (body.wp_steps !== undefined)
     updates.push({ key: "wp_steps", value: JSON.stringify(body.wp_steps) });
 
