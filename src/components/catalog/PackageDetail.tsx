@@ -5,7 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { ArrowLeft, CalendarCheck, Users, Star, ChevronLeft, ChevronRight, Sparkles, Zap } from "lucide-react";
-import { getHourlyTiers, getCapacityTiers, type PricingConfig } from "@/lib/product-tiers";
+import { getHourlyTiers, getCapacityTiers, isPerPerson, type PricingConfig } from "@/lib/product-tiers";
 import WizardDatePicker from "@/components/booking/WizardDatePicker";
 
 interface Asset {
@@ -34,6 +34,7 @@ export default function PackageDetail({ asset }: { asset: Asset }) {
   const [hour,       setHour]       = useState(initHour);
   const [avail,      setAvail]      = useState<boolean | null>(null);
   const [checking,   setChecking]   = useState(false);
+  const [persons,    setPersons]    = useState(25);
 
   const descLines = (asset.description ?? "").split("\n").map((l) => l.trim()).filter(Boolean);
   const features  = descLines.length > 0 ? descLines : asset.componentNames;
@@ -247,7 +248,48 @@ export default function PackageDetail({ asset }: { asset: Asset }) {
               position: "absolute", top: 0, left: 0, right: 0, height: 2,
               background: `linear-gradient(90deg, transparent, ${accent}, transparent)`,
             }} />
-            {hTiers ? (
+            {isPerPerson(asset.pricingTiers) ? (
+              <>
+                <p className="admin-label" style={{ marginBottom: "0.75rem", display: "flex", alignItems: "center", gap: "0.4rem" }}>
+                  <Users size={12} style={{ color: accent }} /> Por persona
+                </p>
+                <p style={{ fontSize: "0.82rem", color: "#94a3b8", marginBottom: "1rem" }}>
+                  ${Number(asset.dailyRate).toLocaleString("es-MX")} MXN / persona
+                </p>
+
+                {/* Calculador de precio */}
+                <p className="admin-label" style={{ marginBottom: "0.6rem" }}>Calcula tu precio</p>
+                <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "1rem", flexWrap: "wrap" }}>
+                  <button onClick={() => setPersons((p) => Math.max(1, p - 10))}
+                    style={{ padding: "0.4rem 0.75rem", borderRadius: 8, background: "rgba(255,255,255,.06)", border: "1px solid rgba(255,255,255,.1)", color: "#94a3b8", fontSize: "0.78rem", cursor: "pointer", fontWeight: 700 }}>−10</button>
+                  <button onClick={() => setPersons((p) => Math.max(1, p - 1))}
+                    style={{ padding: "0.4rem 0.75rem", borderRadius: 8, background: "rgba(255,255,255,.06)", border: "1px solid rgba(255,255,255,.1)", color: "#94a3b8", fontSize: "0.78rem", cursor: "pointer", fontWeight: 700 }}>−</button>
+                  <input
+                    type="number" min={1} value={persons}
+                    onChange={(e) => setPersons(Math.max(1, Number(e.target.value) || 1))}
+                    style={{
+                      width: 72, textAlign: "center", background: "#18181b",
+                      border: `1px solid ${accent}50`, borderRadius: 8,
+                      color: "#fff", fontWeight: 700, fontSize: "1rem", padding: "0.4rem 0.5rem",
+                    }} />
+                  <button onClick={() => setPersons((p) => p + 1)}
+                    style={{ padding: "0.4rem 0.75rem", borderRadius: 8, background: "rgba(255,255,255,.06)", border: "1px solid rgba(255,255,255,.1)", color: "#94a3b8", fontSize: "0.78rem", cursor: "pointer", fontWeight: 700 }}>+</button>
+                  <button onClick={() => setPersons((p) => p + 10)}
+                    style={{ padding: "0.4rem 0.75rem", borderRadius: 8, background: "rgba(255,255,255,.06)", border: "1px solid rgba(255,255,255,.1)", color: "#94a3b8", fontSize: "0.78rem", cursor: "pointer", fontWeight: 700 }}>+10</button>
+                  <span style={{ fontSize: "0.78rem", color: "#475569" }}>personas</span>
+                </div>
+                <div style={{ display: "flex", alignItems: "baseline", gap: "0.5rem", borderTop: "1px solid rgba(255,255,255,.06)", paddingTop: "0.75rem" }}>
+                  <span style={{ fontSize: "0.85rem", color: "#64748b" }}>Total estimado:</span>
+                  <span style={{
+                    fontSize: "2.2rem", fontWeight: 300, letterSpacing: "-0.04em", lineHeight: 1,
+                    color: "var(--gold)", textShadow: "0 0 24px rgba(232,25,138,0.35)",
+                  }}>
+                    ${(Number(asset.dailyRate) * persons).toLocaleString("es-MX")}
+                  </span>
+                  <span style={{ fontSize: "0.75rem", color: "#52525b", alignSelf: "flex-end", paddingBottom: "0.2rem" }}>MXN</span>
+                </div>
+              </>
+            ) : hTiers ? (
               <>
                 <p className="admin-label" style={{ marginBottom: "0.75rem", display: "flex", alignItems: "center", gap: "0.4rem" }}>
                   <Zap size={12} style={{ color: accent }} /> Por hora

@@ -1,6 +1,6 @@
 "use client";
 import { useState, useCallback, useEffect } from "react";
-import { getHourlyTiers, getCapacityTiers, type PricingConfig } from "@/lib/product-tiers";
+import { getHourlyTiers, getCapacityTiers, isPerPerson, type PricingConfig } from "@/lib/product-tiers";
 import CardCarousel from "./CardCarousel";
 import { useSearchParams } from "next/navigation";
 import { DayPicker } from "react-day-picker";
@@ -9,6 +9,53 @@ import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import Link from "next/link";
 import { CalendarDays, PackageSearch, Sparkles } from "lucide-react";
+
+// Calculador interactivo de precio por persona (necesita su propio estado)
+function PersonCalc({ pricePerPerson, accent }: { pricePerPerson: number; accent: string }) {
+  const [persons, setPersons] = useState(25);
+  const total = pricePerPerson * persons;
+  const change = (delta: number) => setPersons((p) => Math.max(1, p + delta));
+  return (
+    <div
+      onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}
+      style={{ padding: "0.65rem 0.75rem", borderRadius: 10, background: "rgba(255,255,255,0.03)", border: `1px solid ${accent}20` }}>
+      <p style={{ fontSize: "0.52rem", fontWeight: 700, letterSpacing: "0.15em", textTransform: "uppercase", color: "#52525b", marginBottom: "0.5rem" }}>
+        Por persona
+      </p>
+      <p style={{ fontSize: "0.72rem", color: "#94a3b8", marginBottom: "0.5rem" }}>
+        ${pricePerPerson.toLocaleString("es-MX")} MXN / persona
+      </p>
+      {/* Selector de personas */}
+      <div style={{ display: "flex", alignItems: "center", gap: "0.4rem", marginBottom: "0.5rem" }}>
+        <button onClick={() => change(-5)}
+          style={{ minWidth: 28, height: 28, borderRadius: 6, background: "rgba(255,255,255,.06)", border: "1px solid rgba(255,255,255,.1)", color: "#94a3b8", fontSize: "0.75rem", cursor: "pointer", fontWeight: 700 }}>−5</button>
+        <button onClick={() => change(-1)}
+          style={{ minWidth: 28, height: 28, borderRadius: 6, background: "rgba(255,255,255,.06)", border: "1px solid rgba(255,255,255,.1)", color: "#94a3b8", fontSize: "0.75rem", cursor: "pointer", fontWeight: 700 }}>−</button>
+        <input
+          type="number" min={1} value={persons}
+          onChange={(e) => setPersons(Math.max(1, Number(e.target.value) || 1))}
+          style={{
+            width: 52, textAlign: "center", background: "#18181b",
+            border: `1px solid ${accent}40`, borderRadius: 6,
+            color: "#fff", fontWeight: 700, fontSize: "0.85rem", padding: "0.2rem 0.3rem",
+          }} />
+        <button onClick={() => change(1)}
+          style={{ minWidth: 28, height: 28, borderRadius: 6, background: "rgba(255,255,255,.06)", border: "1px solid rgba(255,255,255,.1)", color: "#94a3b8", fontSize: "0.75rem", cursor: "pointer", fontWeight: 700 }}>+</button>
+        <button onClick={() => change(5)}
+          style={{ minWidth: 28, height: 28, borderRadius: 6, background: "rgba(255,255,255,.06)", border: "1px solid rgba(255,255,255,.1)", color: "#94a3b8", fontSize: "0.75rem", cursor: "pointer", fontWeight: 700 }}>+5</button>
+        <span style={{ fontSize: "0.65rem", color: "#475569" }}>personas</span>
+      </div>
+      {/* Total */}
+      <div style={{ display: "flex", alignItems: "baseline", gap: "0.3rem" }}>
+        <span style={{ fontSize: "0.65rem", color: "#64748b" }}>Total:</span>
+        <span style={{ fontSize: "1.4rem", fontWeight: 300, letterSpacing: "-0.04em", color: "#FF3DA8", textShadow: "0 0 16px rgba(255,61,168,0.3)", lineHeight: 1 }}>
+          ${total.toLocaleString("es-MX")}
+        </span>
+        <span style={{ fontSize: "0.6rem", color: "#52525b" }}>MXN</span>
+      </div>
+    </div>
+  );
+}
 
 interface Category { id: number; name: string }
 interface AssetInfo {
@@ -431,7 +478,10 @@ export default function CatalogClient({
                       {(() => {
                         const hTiers = getHourlyTiers(asset.sku, asset.pricingTiers);
                         const cTiers = getCapacityTiers(asset.sku, asset.pricingTiers);
-                        return hTiers ? (
+                        const perPerson = isPerPerson(asset.pricingTiers ?? null);
+                        return perPerson ? (
+                          <PersonCalc pricePerPerson={Number(asset.dailyRate)} accent={accent} />
+                        ) : hTiers ? (
                           <div style={{ padding: "0.65rem 0.75rem", borderRadius: 10, background: "rgba(255,255,255,0.03)", border: `1px solid ${accent}20` }}>
                             <p style={{ fontSize: "0.52rem", fontWeight: 700, letterSpacing: "0.15em", textTransform: "uppercase", color: "#52525b", marginBottom: "0.4rem" }}>Por hora</p>
                             {hTiers.map((tier) => (
