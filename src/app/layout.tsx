@@ -53,13 +53,11 @@ export const metadata: Metadata = {
     url: BASE_URL,
     siteName: "Daysu.vip",
     locale: "es_MX",
-    images: [{ url: "/og-image.jpg", width: 1200, height: 630, alt: "Daysu.vip — Eventos en Zacatecas" }],
   },
   twitter: {
     card: "summary_large_image",
     title: "Daysu.vip",
     description: "Paquetes VIP para eventos en Zacatecas",
-    images: ["/og-image.jpg"],
   },
 };
 
