@@ -92,8 +92,16 @@ export function WeddingFloatingCTA({ heroImage }: Props) {
 
           {/* ── Mobile (dos filas) ── */}
           <div className="wp-mobile" style={{ display: "none", flexDirection: "column", padding: "0.75rem 0.875rem 0.875rem" }}>
-            <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: "0.6rem" }}>
-              <div style={{ flex: 1, paddingRight: "0.5rem" }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "0.6rem", gap: "0.5rem" }}>
+              {/* Foto en mobile */}
+              {heroImage && (
+                <div style={{
+                  width: 40, height: 40, borderRadius: "50%", flexShrink: 0,
+                  background: `url('${heroImage}') center/cover`,
+                  border: "2px solid var(--gold)",
+                }} />
+              )}
+              <div style={{ flex: 1, paddingRight: "0.25rem" }}>
                 <p style={{ fontSize: "0.65rem", color: "var(--muted)", marginBottom: 3 }}>✨ Wedding Planner</p>
                 <p style={{ fontSize: "0.875rem", fontWeight: 600, color: "var(--cream)", lineHeight: 1.35 }}>
                   ¿Nos encargamos de tu{" "}
