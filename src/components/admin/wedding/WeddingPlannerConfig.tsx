@@ -21,6 +21,14 @@ export function WeddingPlannerConfig({ initial }: Props) {
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
 
+  function normalizeDriveUrl(url: string): string {
+    const fileMatch = url.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/);
+    if (fileMatch) return `https://lh3.googleusercontent.com/d/${fileMatch[1]}`;
+    const openMatch = url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+    if (openMatch && url.includes("drive.google.com")) return `https://lh3.googleusercontent.com/d/${openMatch[1]}`;
+    return url;
+  }
+
   function setField<K extends keyof WpSettings>(key: K, value: WpSettings[K]) {
     setSettings((s) => ({ ...s, [key]: value }));
   }
@@ -56,7 +64,10 @@ export function WeddingPlannerConfig({ initial }: Props) {
           className="aura-input w-full"
           placeholder="https://... (URL de la imagen)"
           value={settings.wp_hero_image ?? ""}
-          onChange={(e) => setSettings((s) => ({ ...s, wp_hero_image: e.target.value || null }))}
+          onChange={(e) => {
+            const val = e.target.value;
+            setSettings((s) => ({ ...s, wp_hero_image: val ? normalizeDriveUrl(val) : null }));
+          }}
         />
         <p className="text-xs mt-1" style={{ color: "var(--muted)" }}>
           Pega una URL directa de imagen. Recomendado: 1920×1080px o mayor.
