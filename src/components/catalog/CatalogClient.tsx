@@ -344,10 +344,28 @@ export default function CatalogClient({
                     opacity: 0.7,
                   }} />
 
-                  {/* ── Imagen ── */}
+                  {/* ── Imagen principal (estática) ── */}
                   <div style={{ position: "relative" }}>
                     {gallery.length > 0 ? (
-                      <CardCarousel images={gallery} alt={asset.name} className="catalog-card-img" />
+                      <div className="catalog-card-img" style={{ overflow: "hidden", position: "relative" }}>
+                        <img
+                          src={gallery[0]}
+                          alt={asset.name}
+                          style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center", display: "block" }}
+                        />
+                        {/* Badge "N fotos" cuando hay galería de eventos */}
+                        {gallery.length > 1 && (
+                          <span style={{
+                            position: "absolute", bottom: 8, right: 8, zIndex: 5,
+                            fontSize: "0.58rem", fontWeight: 700, padding: "0.2rem 0.55rem", borderRadius: 999,
+                            background: "rgba(5,5,26,0.75)", backdropFilter: "blur(6px)",
+                            color: "rgba(255,255,255,0.8)", border: "1px solid rgba(255,255,255,0.12)",
+                            display: "flex", alignItems: "center", gap: "0.25rem",
+                          }}>
+                            📷 {gallery.length} fotos
+                          </span>
+                        )}
+                      </div>
                     ) : (
                       <div className="catalog-card-img" style={{
                         background: `linear-gradient(135deg, #0c0c10 0%, ${accent}18 100%)`,

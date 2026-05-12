@@ -182,20 +182,41 @@ export default function PackageDetail({ asset }: { asset: Asset }) {
             )}
           </div>
 
-          {/* Thumbnails */}
+          {/* Galería de fotos */}
           {images.length > 1 && (
-            <div style={{ display: "flex", gap: "0.5rem", marginTop: "0.75rem", overflowX: "auto", paddingBottom: "0.25rem" }}>
-              {images.map((src, i) => (
-                <button key={i} onClick={() => setActiveImg(i)} aria-label={`Foto ${i + 1}`} style={{
-                  flexShrink: 0, width: 72, height: 56, borderRadius: 8, overflow: "hidden", padding: 0,
-                  border: `2px solid ${i === activeImg ? accent : "rgba(255,255,255,0.08)"}`,
-                  cursor: "pointer", transition: "border-color 0.15s, box-shadow 0.15s",
-                  background: "#0c0c10",
-                  boxShadow: i === activeImg ? `0 0 10px ${accent}50` : "none",
-                }}>
-                  <img src={src} alt={`Miniatura ${i + 1}`} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                </button>
-              ))}
+            <div style={{ marginTop: "1rem" }}>
+              <p style={{
+                fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.18em",
+                textTransform: "uppercase", color: "#475569", marginBottom: "0.6rem",
+                display: "flex", alignItems: "center", gap: "0.4rem",
+              }}>
+                <span style={{ color: accent }}>📷</span>
+                Galería — {images.length} fotos
+              </p>
+              <div style={{ display: "flex", gap: "0.5rem", overflowX: "auto", paddingBottom: "0.5rem" }}>
+                {images.map((src, i) => (
+                  <button key={i} onClick={() => setActiveImg(i)} aria-label={`Ver foto ${i + 1}`}
+                    style={{
+                      flexShrink: 0, width: 90, height: 68, borderRadius: 10, overflow: "hidden", padding: 0,
+                      border: `2px solid ${i === activeImg ? accent : "rgba(255,255,255,0.08)"}`,
+                      cursor: "pointer", transition: "all 0.2s",
+                      background: "#0c0c10",
+                      boxShadow: i === activeImg ? `0 0 14px ${accent}60` : "none",
+                      transform: i === activeImg ? "scale(1.04)" : "scale(1)",
+                      position: "relative",
+                    }}>
+                    <img src={src} alt={`Foto ${i + 1}`} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                    {i === 0 && (
+                      <span style={{
+                        position: "absolute", bottom: 3, left: 3,
+                        fontSize: "0.45rem", fontWeight: 700, padding: "0.15rem 0.35rem",
+                        borderRadius: 4, background: "rgba(5,5,26,0.85)", color: accent,
+                        textTransform: "uppercase", letterSpacing: "0.08em",
+                      }}>Principal</span>
+                    )}
+                  </button>
+                ))}
+              </div>
             </div>
           )}
         </div>
