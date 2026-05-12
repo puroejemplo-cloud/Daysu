@@ -1,4 +1,5 @@
 import HomeClient from "@/components/home/HomeClient";
+import { WeddingFloatingCTA } from "@/components/wedding/WeddingFloatingCTA";
 import { prisma } from "@/lib/prisma";
 import { fetchGoogleReviews } from "@/lib/google-places";
 import { extname, basename } from "path";
@@ -66,6 +67,8 @@ export default async function HomePage() {
   let imageRows:       { id: number; imageUrl: string | null; imageGallery: unknown }[] = [];
   let componentLinks:  { parentAssetId: number; childAssetId: number }[]               = [];
 
+  let wpHeroImage: string | null = null;
+
   try {
     const homepagePkgIds = await getHomepagePackageIds();
 
@@ -86,6 +89,9 @@ export default async function HomePage() {
       }),
       prisma.systemSetting.findUnique({ where: { key: "whatsapp_number" } }).catch(() => null),
     ]);
+
+    const wpImg = await prisma.systemSetting.findUnique({ where: { key: "wp_hero_image" } }).catch(() => null);
+    wpHeroImage = wpImg?.value ?? null;
 
     const pkgIds = packages.map((p) => p.id);
 
@@ -133,6 +139,7 @@ export default async function HomePage() {
   }
 
   return (
+    <>
     <HomeClient
       carouselImages={carouselImages}
       whatsappNumber={whatsappSetting?.value ?? "524929496372"}
@@ -147,5 +154,7 @@ export default async function HomePage() {
         componentNames: compMap.get(p.id) ?? [],
       }))}
     />
+    <WeddingFloatingCTA heroImage={wpHeroImage} />
+    </>
   );
 }

@@ -36,7 +36,7 @@ function validate(form: FormState): Partial<Record<Field, string>> {
   };
 }
 
-export function WeddingForm() {
+export function WeddingForm({ compact = false }: { compact?: boolean }) {
   const [form, setForm] = useState<FormState>(INITIAL);
   const [touched, setTouched] = useState<Partial<Record<Field, boolean>>>({});
   const [loading, setLoading] = useState(false);
@@ -98,17 +98,25 @@ export function WeddingForm() {
   }
 
   return (
-    <section id="contacto" className="py-16 px-4" style={{ background: "#0a0a1a" }}>
+    <section
+      id="contacto"
+      className={compact ? "px-5 py-5" : "py-16 px-4"}
+      style={{ background: compact ? "transparent" : "#0a0a1a" }}
+    >
       <div className="max-w-2xl mx-auto">
-        <h2
-          className="text-center text-3xl font-semibold mb-2"
-          style={{ color: "var(--cream)" }}
-        >
-          Comencemos a planificar
-        </h2>
-        <p className="text-center text-sm mb-10" style={{ color: "var(--muted)" }}>
-          Cuéntanos sobre tu evento y te contactamos en menos de 24 horas.
-        </p>
+        {!compact && (
+          <>
+            <h2
+              className="text-center text-3xl font-semibold mb-2"
+              style={{ color: "var(--cream)" }}
+            >
+              Comencemos a planificar
+            </h2>
+            <p className="text-center text-sm mb-10" style={{ color: "var(--muted)" }}>
+              Cuéntanos sobre tu evento y te contactamos en menos de 24 horas.
+            </p>
+          </>
+        )}
 
         <form onSubmit={handleSubmit} noValidate className="space-y-4">
           {/* Nombre */}
