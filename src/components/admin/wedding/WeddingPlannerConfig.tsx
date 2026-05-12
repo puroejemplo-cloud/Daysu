@@ -1,0 +1,240 @@
+"use client";
+import { useState } from "react";
+import { Plus, Trash2, Loader2 } from "lucide-react";
+
+interface Testimonial { name: string; eventType: string; text: string }
+interface Step { title: string; desc: string }
+
+interface WpSettings {
+  wp_event_types: string[];
+  wp_gallery_images: string[];
+  wp_testimonials: Testimonial[];
+  wp_hero_subtitle: string;
+  wp_steps: Step[];
+}
+
+interface Props { initial: WpSettings }
+
+export function WeddingPlannerConfig({ initial }: Props) {
+  const [settings, setSettings] = useState<WpSettings>(initial);
+  const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
+
+  function setField<K extends keyof WpSettings>(key: K, value: WpSettings[K]) {
+    setSettings((s) => ({ ...s, [key]: value }));
+  }
+
+  async function handleSave() {
+    setSaving(true);
+    try {
+      await fetch("/api/admin/wedding-planner/settings", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(settings),
+      });
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2500);
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  return (
+    <div className="space-y-8 max-w-2xl">
+      {/* Hero subtitle */}
+      <section>
+        <h3 className="font-medium mb-2" style={{ color: "var(--cream)" }}>Subtítulo del hero</h3>
+        <input
+          className="aura-input w-full"
+          value={settings.wp_hero_subtitle}
+          onChange={(e) => setField("wp_hero_subtitle", e.target.value)}
+        />
+      </section>
+
+      {/* Tipos de evento */}
+      <section>
+        <h3 className="font-medium mb-2" style={{ color: "var(--cream)" }}>
+          Tipos de evento (texto animado)
+        </h3>
+        <div className="flex flex-wrap gap-2 mb-3">
+          {settings.wp_event_types.map((t, i) => (
+            <span
+              key={i}
+              className="admin-badge flex items-center gap-1"
+              style={{ background: "rgba(232,25,138,0.12)", color: "var(--gold)", border: "1px solid rgba(232,25,138,0.25)" }}
+            >
+              {t}
+              <button
+                onClick={() =>
+                  setField("wp_event_types", settings.wp_event_types.filter((_, j) => j !== i))
+                }
+                style={{ background: "none", border: "none", cursor: "pointer", color: "inherit", padding: 0 }}
+              >
+                <Trash2 size={11} />
+              </button>
+            </span>
+          ))}
+        </div>
+        <div className="flex gap-2">
+          <input
+            id="wp-new-type"
+            className="aura-input flex-1"
+            placeholder="Nuevo tipo..."
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                const val = (e.target as HTMLInputElement).value.trim();
+                if (val && !settings.wp_event_types.includes(val)) {
+                  setField("wp_event_types", [...settings.wp_event_types, val]);
+                  (e.target as HTMLInputElement).value = "";
+                }
+              }
+            }}
+          />
+          <button
+            className="btn-ghost px-3 py-2 text-sm rounded-lg flex items-center gap-1"
+            onClick={() => {
+              const input = document.getElementById("wp-new-type") as HTMLInputElement;
+              const val = input.value.trim();
+              if (val && !settings.wp_event_types.includes(val)) {
+                setField("wp_event_types", [...settings.wp_event_types, val]);
+                input.value = "";
+              }
+            }}
+          >
+            <Plus size={14} /> Agregar
+          </button>
+        </div>
+      </section>
+
+      {/* Galería */}
+      <section>
+        <h3 className="font-medium mb-1" style={{ color: "var(--cream)" }}>
+          Fotos de la galería
+        </h3>
+        <p className="text-xs mb-3" style={{ color: "var(--muted)" }}>
+          Pega las URLs de las imágenes procesadas de Vercel Blob (una por línea).
+        </p>
+        <textarea
+          className="aura-input w-full font-mono text-xs"
+          rows={6}
+          value={settings.wp_gallery_images.join("\n")}
+          onChange={(e) =>
+            setField(
+              "wp_gallery_images",
+              e.target.value.split("\n").map((s) => s.trim()).filter(Boolean)
+            )
+          }
+          placeholder="https://abc.public.blob.vercel-storage.com/galeria/processed/foto.webp"
+          style={{ resize: "vertical" }}
+        />
+      </section>
+
+      {/* Testimonios */}
+      <section>
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="font-medium" style={{ color: "var(--cream)" }}>Testimonios</h3>
+          <button
+            className="btn-ghost px-3 py-1 text-xs rounded-lg flex items-center gap-1"
+            onClick={() =>
+              setField("wp_testimonials", [
+                ...settings.wp_testimonials,
+                { name: "", eventType: "", text: "" },
+              ])
+            }
+          >
+            <Plus size={13} /> Agregar
+          </button>
+        </div>
+        <div className="space-y-4">
+          {settings.wp_testimonials.map((t, i) => (
+            <div key={i} className="admin-surface rounded-xl p-4 space-y-2">
+              <div className="flex justify-between items-start">
+                <p className="text-xs font-medium" style={{ color: "var(--muted)" }}>
+                  Testimonio {i + 1}
+                </p>
+                <button
+                  onClick={() =>
+                    setField("wp_testimonials", settings.wp_testimonials.filter((_, j) => j !== i))
+                  }
+                  style={{ background: "none", border: "none", cursor: "pointer", color: "var(--red)" }}
+                >
+                  <Trash2 size={14} />
+                </button>
+              </div>
+              {(["name", "eventType", "text"] as const).map((field) => (
+                <div key={field}>
+                  <label className="block text-xs mb-1" style={{ color: "var(--muted)" }}>
+                    {field === "name" ? "Nombre" : field === "eventType" ? "Tipo de evento" : "Texto"}
+                  </label>
+                  {field === "text" ? (
+                    <textarea
+                      className="aura-input w-full text-sm"
+                      rows={3}
+                      value={t[field]}
+                      onChange={(e) => {
+                        const updated = [...settings.wp_testimonials];
+                        updated[i] = { ...updated[i], [field]: e.target.value };
+                        setField("wp_testimonials", updated);
+                      }}
+                    />
+                  ) : (
+                    <input
+                      className="aura-input w-full text-sm"
+                      value={t[field]}
+                      onChange={(e) => {
+                        const updated = [...settings.wp_testimonials];
+                        updated[i] = { ...updated[i], [field]: e.target.value };
+                        setField("wp_testimonials", updated);
+                      }}
+                    />
+                  )}
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Pasos */}
+      <section>
+        <h3 className="font-medium mb-3" style={{ color: "var(--cream)" }}>Pasos "¿Cómo funciona?"</h3>
+        <div className="space-y-3">
+          {settings.wp_steps.map((step, i) => (
+            <div key={i} className="admin-surface rounded-xl p-4 space-y-2">
+              <p className="text-xs font-medium" style={{ color: "var(--muted)" }}>Paso {i + 1}</p>
+              {(["title", "desc"] as const).map((field) => (
+                <div key={field}>
+                  <label className="block text-xs mb-1" style={{ color: "var(--muted)" }}>
+                    {field === "title" ? "Título" : "Descripción"}
+                  </label>
+                  <input
+                    className="aura-input w-full text-sm"
+                    value={step[field]}
+                    onChange={(e) => {
+                      const updated = [...settings.wp_steps];
+                      updated[i] = { ...updated[i], [field]: e.target.value };
+                      setField("wp_steps", updated);
+                    }}
+                  />
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Guardar */}
+      <button
+        onClick={handleSave}
+        disabled={saving}
+        className="btn-gold px-8 py-3 rounded-lg text-sm"
+      >
+        {saving ? (
+          <span className="flex items-center gap-2">
+            <Loader2 size={15} className="animate-spin" /> Guardando...
+          </span>
+        ) : saved ? "¡Guardado!" : "Guardar configuración"}
+      </button>
+    </div>
+  );
+}
