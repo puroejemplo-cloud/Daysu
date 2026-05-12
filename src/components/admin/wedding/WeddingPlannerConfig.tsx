@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { Plus, Trash2, Loader2 } from "lucide-react";
+import { Plus, Trash2, Loader2, FolderOpen, CheckCircle2, AlertCircle } from "lucide-react";
 
 interface Testimonial { name: string; eventType: string; text: string }
 interface Step { title: string; desc: string }
@@ -20,6 +20,32 @@ export function WeddingPlannerConfig({ initial }: Props) {
   const [settings, setSettings] = useState<WpSettings>(initial);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [driveUrl, setDriveUrl] = useState("");
+  const [importing, setImporting] = useState(false);
+  const [importResult, setImportResult] = useState<{ ok: boolean; msg: string } | null>(null);
+
+  async function handleDriveImport() {
+    if (!driveUrl.trim()) return;
+    setImporting(true);
+    setImportResult(null);
+    try {
+      const res = await fetch("/api/admin/wedding-planner/drive-import", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ folderUrl: driveUrl }),
+      });
+      const data = await res.json() as { data?: { count: number; images: string[] }; error?: string };
+      if (!res.ok) throw new Error(data.error ?? "Error al importar");
+      const { count, images } = data.data!;
+      setSettings((s) => ({ ...s, wp_gallery_images: images }));
+      setImportResult({ ok: true, msg: `✓ ${count} fotos importadas correctamente` });
+      setDriveUrl("");
+    } catch (e) {
+      setImportResult({ ok: false, msg: e instanceof Error ? e.message : "Error al importar" });
+    } finally {
+      setImporting(false);
+    }
+  }
 
   function normalizeDriveUrl(url: string): string {
     const fileMatch = url.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/);
@@ -144,12 +170,54 @@ export function WeddingPlannerConfig({ initial }: Props) {
         <h3 className="font-medium mb-1" style={{ color: "var(--cream)" }}>
           Fotos de la galería
         </h3>
-        <p className="text-xs mb-3" style={{ color: "var(--muted)" }}>
-          Pega las URLs de las imágenes procesadas de Vercel Blob (una por línea).
+        <p className="text-xs mb-4" style={{ color: "var(--muted)" }}>
+          Importa automáticamente desde una carpeta de Google Drive, o pega URLs directas manualmente.
         </p>
+
+        {/* ── Importar desde Drive ── */}
+        <div className="admin-surface rounded-xl p-4 mb-4">
+          <p className="text-sm font-medium mb-2 flex items-center gap-2" style={{ color: "var(--cream)" }}>
+            <FolderOpen size={15} style={{ color: "var(--gold)" }} />
+            Importar desde carpeta de Google Drive
+          </p>
+          <p className="text-xs mb-3" style={{ color: "var(--muted)" }}>
+            La carpeta debe estar compartida como <strong style={{ color: "var(--cream)" }}>"Cualquier persona con el enlace puede ver"</strong>.
+          </p>
+          <div className="flex gap-2">
+            <input
+              className="aura-input flex-1 text-sm"
+              placeholder="https://drive.google.com/drive/folders/..."
+              value={driveUrl}
+              onChange={(e) => setDriveUrl(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && handleDriveImport()}
+            />
+            <button
+              onClick={handleDriveImport}
+              disabled={importing || !driveUrl.trim()}
+              className="btn-gold px-4 py-2 text-sm rounded-lg flex items-center gap-2"
+              style={{ flexShrink: 0 }}
+            >
+              {importing ? <Loader2 size={14} className="animate-spin" /> : <FolderOpen size={14} />}
+              {importing ? "Importando..." : "Importar"}
+            </button>
+          </div>
+          {importResult && (
+            <p className="text-xs mt-2 flex items-center gap-1" style={{ color: importResult.ok ? "#22c55e" : "var(--red)" }}>
+              {importResult.ok ? <CheckCircle2 size={13} /> : <AlertCircle size={13} />}
+              {importResult.msg}
+            </p>
+          )}
+        </div>
+
+        {/* ── URLs manuales ── */}
+        {settings.wp_gallery_images.length > 0 && (
+          <p className="text-xs mb-2" style={{ color: "var(--muted)" }}>
+            {settings.wp_gallery_images.length} fotos en la galería · También puedes editarlas manualmente:
+          </p>
+        )}
         <textarea
           className="aura-input w-full font-mono text-xs"
-          rows={6}
+          rows={4}
           value={settings.wp_gallery_images.join("\n")}
           onChange={(e) =>
             setField(
@@ -157,7 +225,7 @@ export function WeddingPlannerConfig({ initial }: Props) {
               e.target.value.split("\n").map((s) => s.trim()).filter(Boolean)
             )
           }
-          placeholder="https://abc.public.blob.vercel-storage.com/galeria/processed/foto.webp"
+          placeholder="O pega URLs directas de imagen (una por línea)"
           style={{ resize: "vertical" }}
         />
       </section>
