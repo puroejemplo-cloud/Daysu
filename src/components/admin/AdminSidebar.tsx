@@ -8,17 +8,18 @@ import { logoutAction } from "@/app/login/actions";
 import {
   LayoutDashboard, Package, PlusCircle, Images, CalendarDays,
   CheckSquare, Users, Bell, Settings, ShieldCheck, Menu, X, Eye, LogOut,
-  TrendingUp, UserCog,
+  TrendingUp, UserCog, Heart,
 } from "lucide-react";
 
 const NAV_PRIMARY = [
-  { href: "/admin",               label: "Panel",         Icon: LayoutDashboard },
-  { href: "/admin/productos",     label: "Productos",     Icon: Package         },
-  { href: "/admin/ventas/nueva",  label: "Nueva venta",   Icon: PlusCircle      },
-  { href: "/admin/calendario",    label: "Calendario",    Icon: CalendarDays    },
-  { href: "/admin/checklists",    label: "Checklists",    Icon: CheckSquare     },
-  { href: "/admin/clientes",      label: "Clientes",      Icon: Users           },
-  { href: "/admin/recordatorios", label: "Recordatorios", Icon: Bell            },
+  { href: "/admin",                   label: "Panel",           Icon: LayoutDashboard },
+  { href: "/admin/productos",         label: "Productos",       Icon: Package         },
+  { href: "/admin/ventas/nueva",      label: "Nueva venta",     Icon: PlusCircle      },
+  { href: "/admin/calendario",        label: "Calendario",      Icon: CalendarDays    },
+  { href: "/admin/checklists",        label: "Checklists",      Icon: CheckSquare     },
+  { href: "/admin/clientes",          label: "Clientes",        Icon: Users           },
+  { href: "/admin/recordatorios",     label: "Recordatorios",   Icon: Bell            },
+  { href: "/admin/wedding-planner",   label: "Wedding Planner", Icon: Heart           },
 ];
 
 const NAV_SECONDARY = [
