@@ -5,9 +5,10 @@ import { useState, useEffect } from "react";
 interface WeddingHeroProps {
   eventTypes: string[];
   subtitle: string;
+  heroImage?: string;
 }
 
-export function WeddingHero({ eventTypes, subtitle }: WeddingHeroProps) {
+export function WeddingHero({ eventTypes, subtitle, heroImage }: WeddingHeroProps) {
   const [index, setIndex] = useState(0);
   const [visible, setVisible] = useState(true);
 
@@ -31,7 +32,7 @@ export function WeddingHero({ eventTypes, subtitle }: WeddingHeroProps) {
       {/* Fondo */}
       <div
         className="absolute inset-0 bg-cover bg-center"
-        style={{ backgroundImage: "url('/wedding/hero.jpg')" }}
+        style={{ backgroundImage: `url('${heroImage ?? "/wedding/hero.jpg"}')` }}
       />
       <div className="absolute inset-0" style={{ background: "rgba(5,5,26,0.65)" }} />
 

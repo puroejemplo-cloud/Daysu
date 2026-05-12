@@ -37,6 +37,7 @@ export async function GET() {
       ? (JSON.parse(map.wp_testimonials) as typeof WP_DEFAULTS.wp_testimonials)
       : WP_DEFAULTS.wp_testimonials,
     wp_hero_subtitle: map.wp_hero_subtitle ?? WP_DEFAULTS.wp_hero_subtitle,
+    wp_hero_image: map.wp_hero_image ?? null,
     wp_steps: map.wp_steps
       ? (JSON.parse(map.wp_steps) as typeof WP_DEFAULTS.wp_steps)
       : WP_DEFAULTS.wp_steps,

@@ -35,6 +35,7 @@ async function getWpSettings() {
       ? (JSON.parse(map.wp_testimonials) as typeof DEFAULTS.testimonials)
       : DEFAULTS.testimonials,
     heroSubtitle: map.wp_hero_subtitle ?? DEFAULTS.heroSubtitle,
+    heroImage: map.wp_hero_image ?? null,
     steps: map.wp_steps
       ? (JSON.parse(map.wp_steps) as typeof DEFAULTS.steps)
       : DEFAULTS.steps,
@@ -46,7 +47,7 @@ export default async function WeddingPlannerPage() {
 
   return (
     <main>
-      <WeddingHero eventTypes={settings.eventTypes} subtitle={settings.heroSubtitle} />
+      <WeddingHero eventTypes={settings.eventTypes} subtitle={settings.heroSubtitle} heroImage={settings.heroImage ?? undefined} />
       <WeddingGallery images={settings.galleryImages} />
       <WeddingSteps steps={settings.steps} />
       <WeddingTestimonials testimonials={settings.testimonials} />

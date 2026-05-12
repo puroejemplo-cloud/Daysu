@@ -10,6 +10,7 @@ interface WpSettings {
   wp_gallery_images: string[];
   wp_testimonials: { name: string; eventType: string; text: string }[];
   wp_hero_subtitle: string;
+  wp_hero_image: string | null;
   wp_steps: { title: string; desc: string }[];
 }
 
