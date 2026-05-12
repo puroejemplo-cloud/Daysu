@@ -57,3 +57,5 @@ Blueprint_EventMaster_Pro.pdf
 # Archivos de diseño (fuentes PSD/AI)
 *.psd
 *.ai
+.env.migration
+.env.vercel
