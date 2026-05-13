@@ -40,10 +40,10 @@ export function WeddingHero({ eventTypes, subtitle, heroImage, plannerPhoto, pla
 
       {/* Layout: texto centrado + foto del planner flotante */}
       <div className="relative z-10 w-full" style={{ maxWidth: 1100, margin: "0 auto", padding: "0 1.25rem" }}>
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "3rem", flexWrap: "wrap" }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
 
           {/* Texto hero */}
-          <div style={{ textAlign: plannerPhoto ? "left" : "center", flex: "1 1 320px", minWidth: 260 }}>
+          <div style={{ textAlign: "center", maxWidth: 640 }}>
             <p
               className="text-lg md:text-2xl mb-1"
               style={{ color: "var(--cream)", fontWeight: 300, letterSpacing: "0.05em" }}
@@ -79,33 +79,40 @@ export function WeddingHero({ eventTypes, subtitle, heroImage, plannerPhoto, pla
             >
               Quiero planificar mi evento
             </a>
-          </div>
 
-          {/* Foto del planner */}
-          {plannerPhoto && (
-            <div style={{ flex: "0 0 auto", textAlign: "center" }}>
+            {/* Firma del planner */}
+            {plannerPhoto && (
               <div style={{
-                width: 260, height: 320,
-                borderRadius: "140px 140px 100px 100px",
-                overflow: "hidden",
-                border: "3px solid rgba(212,175,55,0.4)",
-                boxShadow: "0 0 0 8px rgba(212,175,55,0.08), 0 24px 48px rgba(0,0,0,0.5)",
-                background: "rgba(212,175,55,0.05)",
+                display: "inline-flex", alignItems: "center", gap: "0.625rem",
+                marginTop: "1.5rem",
+                padding: "0.45rem 0.875rem 0.45rem 0.45rem",
+                background: "rgba(255,255,255,0.06)",
+                border: "1px solid rgba(212,175,55,0.2)",
+                borderRadius: "9999px",
+                backdropFilter: "blur(8px)",
               }}>
                 <img
                   src={plannerPhoto}
-                  alt={plannerName ?? "Wedding Planner"}
-                  style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center top" }}
+                  alt={plannerName ?? "Planner"}
+                  style={{
+                    width: 36, height: 36, borderRadius: "50%",
+                    objectFit: "cover", objectPosition: "center top",
+                    border: "1.5px solid rgba(212,175,55,0.5)",
+                    flexShrink: 0,
+                  }}
                 />
-              </div>
-              {plannerName && (
-                <div style={{ marginTop: "0.875rem" }}>
-                  <p style={{ fontSize: "0.95rem", fontWeight: 600, color: "#f5f0e8", margin: 0 }}>{plannerName}</p>
-                  <p style={{ fontSize: "0.72rem", color: "#D4AF37", letterSpacing: "0.08em", textTransform: "uppercase", marginTop: 2 }}>Wedding Planner</p>
+                <div style={{ textAlign: "left" }}>
+                  <p style={{ fontSize: "0.8rem", fontWeight: 600, color: "#f5f0e8", lineHeight: 1.2, margin: 0 }}>
+                    {plannerName ?? "Wedding Planner"}
+                  </p>
+                  <p style={{ fontSize: "0.65rem", color: "#D4AF37", letterSpacing: "0.06em", margin: 0 }}>
+                    Wedding Planner
+                  </p>
                 </div>
-              )}
-            </div>
-          )}
+              </div>
+            )}
+          </div>
+
         </div>
       </div>
     </section>
