@@ -7,9 +7,10 @@ interface WeddingHeroProps {
   subtitle: string;
   heroImage?: string;
   plannerPhoto?: string;
+  plannerName?: string;
 }
 
-export function WeddingHero({ eventTypes, subtitle, heroImage, plannerPhoto }: WeddingHeroProps) {
+export function WeddingHero({ eventTypes, subtitle, heroImage, plannerPhoto, plannerName }: WeddingHeroProps) {
   const [index, setIndex] = useState(0);
   const [visible, setVisible] = useState(true);
 
@@ -93,10 +94,16 @@ export function WeddingHero({ eventTypes, subtitle, heroImage, plannerPhoto }: W
               }}>
                 <img
                   src={plannerPhoto}
-                  alt="Wedding Planner"
+                  alt={plannerName ?? "Wedding Planner"}
                   style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center top" }}
                 />
               </div>
+              {plannerName && (
+                <div style={{ marginTop: "0.875rem" }}>
+                  <p style={{ fontSize: "0.95rem", fontWeight: 600, color: "#f5f0e8", margin: 0 }}>{plannerName}</p>
+                  <p style={{ fontSize: "0.72rem", color: "#D4AF37", letterSpacing: "0.08em", textTransform: "uppercase", marginTop: 2 }}>Wedding Planner</p>
+                </div>
+              )}
             </div>
           )}
         </div>

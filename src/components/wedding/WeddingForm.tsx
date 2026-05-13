@@ -75,7 +75,7 @@ function ErrorMsg({ msg }: { msg?: string }) {
 }
 
 /* ── Componente principal ─────────────────────────────────── */
-export function WeddingForm({ compact = false, plannerPhoto }: { compact?: boolean; plannerPhoto?: string }) {
+export function WeddingForm({ compact = false, plannerPhoto, plannerName }: { compact?: boolean; plannerPhoto?: string; plannerName?: string }) {
   const [form,    setForm]    = useState<FormState>(INITIAL);
   const [touched, setTouched] = useState<Partial<Record<Field, boolean>>>({});
   const [loading, setLoading] = useState(false);
@@ -305,8 +305,13 @@ export function WeddingForm({ compact = false, plannerPhoto }: { compact?: boole
                   }}
                 />
                 <div>
-                  <p style={{ fontSize: "0.8rem", fontWeight: 600, color: GOLD, marginBottom: 2 }}>Wedding Planner</p>
-                  <p style={{ fontSize: "0.75rem", color: "rgba(245,240,232,0.45)" }}>Aura Producciones</p>
+                  <p style={{ fontSize: "0.875rem", fontWeight: 600, color: "#f5f0e8", marginBottom: 2 }}>
+                    {plannerName ?? "Wedding Planner"}
+                  </p>
+                  <p style={{ fontSize: "0.72rem", color: GOLD, letterSpacing: "0.06em", textTransform: "uppercase" }}>
+                    Wedding Planner
+                  </p>
+                  <p style={{ fontSize: "0.7rem", color: "rgba(245,240,232,0.35)" }}>Aura Producciones</p>
                 </div>
               </div>
             )}

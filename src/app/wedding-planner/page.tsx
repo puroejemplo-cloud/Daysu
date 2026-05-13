@@ -36,6 +36,7 @@ async function getWpSettings() {
     heroSubtitle:   map.wp_hero_subtitle  ?? DEFAULTS.heroSubtitle,
     heroImage:      map.wp_hero_image     ?? null,
     plannerPhoto:   map.wp_planner_photo  ?? null,
+    plannerName:    map.wp_planner_name   ?? null,
     steps:          map.wp_steps          ? (JSON.parse(map.wp_steps)          as typeof DEFAULTS.steps)                             : DEFAULTS.steps,
   };
 }
@@ -81,6 +82,7 @@ export default async function WeddingPlannerPage() {
         subtitle={s.heroSubtitle}
         heroImage={s.heroImage ?? undefined}
         plannerPhoto={s.plannerPhoto ?? undefined}
+        plannerName={s.plannerName ?? undefined}
       />
 
       {/* ── Stats ── */}
@@ -107,7 +109,7 @@ export default async function WeddingPlannerPage() {
       <WeddingTestimonials testimonials={s.testimonials} />
 
       {/* ── Formulario ── */}
-      <WeddingForm plannerPhoto={s.plannerPhoto ?? undefined} />
+      <WeddingForm plannerPhoto={s.plannerPhoto ?? undefined} plannerName={s.plannerName ?? undefined} />
 
     </main>
   );

@@ -12,6 +12,7 @@ interface WpSettings {
   wp_hero_subtitle: string;
   wp_hero_image: string | null;
   wp_planner_photo: string | null;
+  wp_planner_name: string | null;
   wp_steps: Step[];
 }
 
@@ -134,6 +135,18 @@ export function WeddingPlannerConfig({ initial }: Props) {
               Foto cuadrada o portrait. Se mostrará como círculo.
             </p>
           </div>
+        </div>
+        {/* Nombre del planner */}
+        <div className="mt-3">
+          <label className="block text-xs mb-1 font-medium" style={{ color: "var(--muted)", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+            Nombre del Planner
+          </label>
+          <input
+            className="aura-input w-full"
+            placeholder="Ej: Daniela Reyes"
+            value={settings.wp_planner_name ?? ""}
+            onChange={(e) => setSettings((s) => ({ ...s, wp_planner_name: e.target.value || null }))}
+          />
         </div>
       </section>
 

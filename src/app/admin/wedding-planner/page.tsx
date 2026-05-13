@@ -12,6 +12,7 @@ interface WpSettings {
   wp_hero_subtitle: string;
   wp_hero_image:    string | null;
   wp_planner_photo: string | null;
+  wp_planner_name:  string | null;
   wp_steps: { title: string; desc: string }[];
 }
 
