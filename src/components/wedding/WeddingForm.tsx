@@ -311,7 +311,7 @@ export function WeddingForm({ compact = false, plannerPhoto, plannerName }: { co
                   <p style={{ fontSize: "0.72rem", color: GOLD, letterSpacing: "0.06em", textTransform: "uppercase" }}>
                     Wedding Planner
                   </p>
-                  <p style={{ fontSize: "0.7rem", color: "rgba(245,240,232,0.35)" }}>Aura Producciones</p>
+                  <p style={{ fontSize: "0.7rem", color: "rgba(245,240,232,0.35)" }}>Daysu.vip</p>
                 </div>
               </div>
             )}
