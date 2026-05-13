@@ -356,7 +356,7 @@ model WeddingLead {
 
 model SystemSetting {
   key       String   @id @db.VarChar(100)
-  value     String   @db.VarChar(500)
+  value     String   @db.Text
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("system_settings")
