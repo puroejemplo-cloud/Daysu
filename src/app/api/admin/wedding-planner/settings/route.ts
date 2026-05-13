@@ -37,7 +37,8 @@ export async function GET() {
       ? (JSON.parse(map.wp_testimonials) as typeof WP_DEFAULTS.wp_testimonials)
       : WP_DEFAULTS.wp_testimonials,
     wp_hero_subtitle: map.wp_hero_subtitle ?? WP_DEFAULTS.wp_hero_subtitle,
-    wp_hero_image: map.wp_hero_image ?? null,
+    wp_hero_image:     map.wp_hero_image     ?? null,
+    wp_planner_photo:  map.wp_planner_photo  ?? null,
     wp_steps: map.wp_steps
       ? (JSON.parse(map.wp_steps) as typeof WP_DEFAULTS.wp_steps)
       : WP_DEFAULTS.wp_steps,
@@ -50,7 +51,7 @@ export async function PATCH(req: NextRequest) {
   const session = await auth();
   if (!session) return err("No autorizado", 401);
 
-  const body = await req.json() as Partial<typeof WP_DEFAULTS> & { wp_hero_image?: string | null };
+  const body = await req.json() as Partial<typeof WP_DEFAULTS> & { wp_hero_image?: string | null; wp_planner_photo?: string | null };
 
   const updates: Array<{ key: string; value: string }> = [];
 
@@ -63,7 +64,9 @@ export async function PATCH(req: NextRequest) {
   if (body.wp_hero_subtitle !== undefined)
     updates.push({ key: "wp_hero_subtitle", value: body.wp_hero_subtitle });
   if (body.wp_hero_image !== undefined)
-    updates.push({ key: "wp_hero_image", value: body.wp_hero_image ?? "" });
+    updates.push({ key: "wp_hero_image",    value: body.wp_hero_image    ?? "" });
+  if (body.wp_planner_photo !== undefined)
+    updates.push({ key: "wp_planner_photo", value: body.wp_planner_photo ?? "" });
   if (body.wp_steps !== undefined)
     updates.push({ key: "wp_steps", value: JSON.stringify(body.wp_steps) });
 

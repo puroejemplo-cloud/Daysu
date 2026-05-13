@@ -75,7 +75,7 @@ function ErrorMsg({ msg }: { msg?: string }) {
 }
 
 /* ── Componente principal ─────────────────────────────────── */
-export function WeddingForm({ compact = false }: { compact?: boolean }) {
+export function WeddingForm({ compact = false, plannerPhoto }: { compact?: boolean; plannerPhoto?: string }) {
   const [form,    setForm]    = useState<FormState>(INITIAL);
   const [touched, setTouched] = useState<Partial<Record<Field, boolean>>>({});
   const [loading, setLoading] = useState(false);
@@ -290,6 +290,27 @@ export function WeddingForm({ compact = false }: { compact?: boolean }) {
 
           {/* ── Columna izquierda: info ── */}
           <div style={{ display: "flex", flexDirection: "column", gap: "2rem", justifyContent: "center" }}>
+
+            {/* Foto del planner */}
+            {plannerPhoto && (
+              <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+                <img
+                  src={plannerPhoto}
+                  alt="Wedding Planner"
+                  style={{
+                    width: 80, height: 80, borderRadius: "50%", objectFit: "cover",
+                    objectPosition: "center top", flexShrink: 0,
+                    border: `2px solid rgba(212,175,55,0.4)`,
+                    boxShadow: `0 0 0 4px rgba(212,175,55,0.08)`,
+                  }}
+                />
+                <div>
+                  <p style={{ fontSize: "0.8rem", fontWeight: 600, color: GOLD, marginBottom: 2 }}>Wedding Planner</p>
+                  <p style={{ fontSize: "0.75rem", color: "rgba(245,240,232,0.45)" }}>Aura Producciones</p>
+                </div>
+              </div>
+            )}
+
             <div>
               <p style={{ color: "rgba(245,240,232,0.7)", fontSize: "0.95rem", lineHeight: 1.8, marginBottom: "1.5rem" }}>
                 Cada evento es único. Nos encargamos de cada detalle, desde la conceptualización hasta el último minuto, para que tú solo disfrutes.

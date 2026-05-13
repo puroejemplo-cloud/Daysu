@@ -33,9 +33,10 @@ async function getWpSettings() {
     eventTypes:    map.wp_event_types    ? (JSON.parse(map.wp_event_types)    as string[])                                          : DEFAULTS.eventTypes,
     galleryImages: map.wp_gallery_images ? (JSON.parse(map.wp_gallery_images) as string[])                                          : DEFAULTS.galleryImages,
     testimonials:  map.wp_testimonials   ? (JSON.parse(map.wp_testimonials)   as typeof DEFAULTS.testimonials)                      : DEFAULTS.testimonials,
-    heroSubtitle:  map.wp_hero_subtitle  ?? DEFAULTS.heroSubtitle,
-    heroImage:     map.wp_hero_image     ?? null,
-    steps:         map.wp_steps          ? (JSON.parse(map.wp_steps)          as typeof DEFAULTS.steps)                             : DEFAULTS.steps,
+    heroSubtitle:   map.wp_hero_subtitle  ?? DEFAULTS.heroSubtitle,
+    heroImage:      map.wp_hero_image     ?? null,
+    plannerPhoto:   map.wp_planner_photo  ?? null,
+    steps:          map.wp_steps          ? (JSON.parse(map.wp_steps)          as typeof DEFAULTS.steps)                             : DEFAULTS.steps,
   };
 }
 
@@ -79,6 +80,7 @@ export default async function WeddingPlannerPage() {
         eventTypes={s.eventTypes}
         subtitle={s.heroSubtitle}
         heroImage={s.heroImage ?? undefined}
+        plannerPhoto={s.plannerPhoto ?? undefined}
       />
 
       {/* ── Stats ── */}
@@ -105,7 +107,7 @@ export default async function WeddingPlannerPage() {
       <WeddingTestimonials testimonials={s.testimonials} />
 
       {/* ── Formulario ── */}
-      <WeddingForm />
+      <WeddingForm plannerPhoto={s.plannerPhoto ?? undefined} />
 
     </main>
   );

@@ -68,6 +68,7 @@ export default async function HomePage() {
   let componentLinks:  { parentAssetId: number; childAssetId: number }[]               = [];
 
   let wpHeroImage: string | null = null;
+  let wpPlannerPhoto: string | null = null;
 
   try {
     const homepagePkgIds = await getHomepagePackageIds();
@@ -90,8 +91,12 @@ export default async function HomePage() {
       prisma.systemSetting.findUnique({ where: { key: "whatsapp_number" } }).catch(() => null),
     ]);
 
-    const wpImg = await prisma.systemSetting.findUnique({ where: { key: "wp_hero_image" } }).catch(() => null);
-    wpHeroImage = wpImg?.value ?? null;
+    const [wpImg, wpPlanner] = await Promise.all([
+      prisma.systemSetting.findUnique({ where: { key: "wp_hero_image" } }).catch(() => null),
+      prisma.systemSetting.findUnique({ where: { key: "wp_planner_photo" } }).catch(() => null),
+    ]);
+    wpHeroImage    = wpImg?.value    ?? null;
+    wpPlannerPhoto = wpPlanner?.value ?? null;
 
     const pkgIds = packages.map((p) => p.id);
 
@@ -154,7 +159,7 @@ export default async function HomePage() {
         componentNames: compMap.get(p.id) ?? [],
       }))}
     />
-    <WeddingFloatingCTA heroImage={wpHeroImage} />
+    <WeddingFloatingCTA heroImage={wpPlannerPhoto ?? wpHeroImage} />
     </>
   );
 }

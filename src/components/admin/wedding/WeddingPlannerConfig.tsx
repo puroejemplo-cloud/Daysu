@@ -11,6 +11,7 @@ interface WpSettings {
   wp_testimonials: Testimonial[];
   wp_hero_subtitle: string;
   wp_hero_image: string | null;
+  wp_planner_photo: string | null;
   wp_steps: Step[];
 }
 
@@ -103,6 +104,37 @@ export function WeddingPlannerConfig({ initial }: Props) {
         <p className="text-xs mt-1" style={{ color: "var(--muted)" }}>
           Pega una URL directa de imagen. Recomendado: 1920×1080px o mayor.
         </p>
+      </section>
+
+      {/* Foto del Planner */}
+      <section>
+        <h3 className="font-medium mb-1" style={{ color: "var(--cream)" }}>Foto del Wedding Planner</h3>
+        <p className="text-xs mb-3" style={{ color: "var(--muted)" }}>
+          Retrato del planner — aparece en el banner del inicio y en la página dedicada.
+        </p>
+        <div className="flex items-start gap-4">
+          {settings.wp_planner_photo && (
+            <img
+              src={settings.wp_planner_photo}
+              alt="Foto planner"
+              style={{ width: 72, height: 72, objectFit: "cover", borderRadius: "50%", flexShrink: 0, border: "2px solid rgba(212,175,55,0.4)" }}
+            />
+          )}
+          <div className="flex-1">
+            <input
+              className="aura-input w-full"
+              placeholder="https://... (URL del retrato)"
+              value={settings.wp_planner_photo ?? ""}
+              onChange={(e) => {
+                const val = e.target.value;
+                setSettings((s) => ({ ...s, wp_planner_photo: val ? normalizeDriveUrl(val) : null }));
+              }}
+            />
+            <p className="text-xs mt-1" style={{ color: "var(--muted)" }}>
+              Foto cuadrada o portrait. Se mostrará como círculo.
+            </p>
+          </div>
+        </div>
       </section>
 
       {/* Hero subtitle */}
