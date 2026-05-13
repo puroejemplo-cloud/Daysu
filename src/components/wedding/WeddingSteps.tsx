@@ -25,7 +25,7 @@ export function WeddingSteps({ steps }: WeddingStepsProps) {
         pointerEvents: "none",
       }} />
 
-      <div style={{ maxWidth: 900, margin: "0 auto", position: "relative" }}>
+      <div style={{ maxWidth: 1100, margin: "0 auto", position: "relative" }}>
 
         {/* Heading */}
         <div style={{ textAlign: "center", marginBottom: "3.5rem" }}>

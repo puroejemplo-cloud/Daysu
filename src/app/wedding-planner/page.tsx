@@ -50,9 +50,9 @@ export default async function WeddingPlannerPage() {
         position: "fixed", top: 0, left: 0, right: 0, zIndex: 50,
         background: "rgba(5,5,26,0.85)", backdropFilter: "blur(12px)",
         borderBottom: "1px solid rgba(255,255,255,0.06)",
-        display: "flex", alignItems: "center", justifyContent: "space-between",
-        padding: "0.75rem 1.25rem",
+        padding: "0 1.25rem",
       }}>
+      <div style={{ maxWidth: 1100, margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "space-between", height: 52 }}>
         <Link href="/" style={{ display: "flex", alignItems: "center", gap: "0.5rem", textDecoration: "none", color: "var(--muted)", fontSize: "0.82rem" }}>
           <span style={{ fontSize: "1rem" }}>←</span> Daysu.vip
         </Link>
@@ -68,6 +68,7 @@ export default async function WeddingPlannerPage() {
         }}>
           Contáctanos
         </a>
+      </div>
       </nav>
 
       {/* Espacio para el nav fijo */}
@@ -82,18 +83,15 @@ export default async function WeddingPlannerPage() {
 
       {/* ── Stats ── */}
       <section style={{ background: "#0a0a1a", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
-        <div style={{
-          maxWidth: 720, margin: "0 auto",
-          display: "grid", gridTemplateColumns: "repeat(3, 1fr)",
-          padding: "2rem 1.5rem",
-          gap: "1rem",
-        }}>
-          {STATS.map(({ value, label }) => (
-            <div key={label} style={{ textAlign: "center" }}>
-              <p style={{ fontSize: "2rem", fontWeight: 800, color: "var(--gold)", lineHeight: 1 }}>{value}</p>
-              <p style={{ fontSize: "0.75rem", color: "var(--muted)", marginTop: 4 }}>{label}</p>
-            </div>
-          ))}
+        <div style={{ maxWidth: 1100, margin: "0 auto", padding: "2.5rem 1.5rem" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "1rem", maxWidth: 600, margin: "0 auto" }}>
+            {STATS.map(({ value, label }) => (
+              <div key={label} style={{ textAlign: "center" }}>
+                <p style={{ fontSize: "2rem", fontWeight: 800, color: "#D4AF37", lineHeight: 1 }}>{value}</p>
+                <p style={{ fontSize: "0.75rem", color: "var(--muted)", marginTop: 4 }}>{label}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 

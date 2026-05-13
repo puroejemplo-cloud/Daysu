@@ -13,7 +13,7 @@ export function WeddingTestimonials({ testimonials }: WeddingTestimonialsProps) 
 
   return (
     <section className="py-16 px-4" style={{ background: "var(--black)" }}>
-      <div className="max-w-4xl mx-auto">
+      <div style={{ maxWidth: 1100, margin: "0 auto" }}>
         <h2
           className="text-center text-3xl font-semibold mb-10"
           style={{ color: "var(--cream)" }}

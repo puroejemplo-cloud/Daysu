@@ -7,7 +7,7 @@ interface WeddingGalleryProps {
 export function WeddingGallery({ images }: WeddingGalleryProps) {
   return (
     <section className="py-16 px-4" style={{ background: "var(--black)" }}>
-      <div className="max-w-6xl mx-auto">
+      <div style={{ maxWidth: 1100, margin: "0 auto" }}>
         <p className="text-center text-xs font-semibold tracking-widest mb-2" style={{ color: "var(--gold)" }}>
           NUESTRO TRABAJO
         </p>

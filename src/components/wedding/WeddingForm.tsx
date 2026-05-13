@@ -272,7 +272,7 @@ export function WeddingForm({ compact = false }: { compact?: boolean }) {
   /* ── Full layout (dos columnas) ─────────────────────────── */
   return (
     <section id="contacto" style={{ background: "#05051a", padding: "5rem 1.25rem" }}>
-      <div style={{ maxWidth: "1000px", margin: "0 auto" }}>
+      <div style={{ maxWidth: 1100, margin: "0 auto" }}>
 
         {/* Heading */}
         <div style={{ textAlign: "center", marginBottom: "3.5rem" }}>
@@ -357,8 +357,8 @@ function WfStyles() {
       }
       .wf-grid {
         display: grid;
-        grid-template-columns: 1fr 1.25fr;
-        gap: 3.5rem;
+        grid-template-columns: 1fr 1fr;
+        gap: 4rem;
         align-items: start;
       }
       @media (max-width: 700px) {
