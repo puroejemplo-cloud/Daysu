@@ -34,11 +34,16 @@ export function WeddingPlannerConfig({ initial }: Props) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ folderUrl: driveUrl }),
       });
-      const data = await res.json() as { data?: { count: number; images: string[] }; error?: string };
+      let data: { data?: { count: number; images: string[] }; error?: string };
+      try {
+        data = await res.json();
+      } catch {
+        throw new Error(`Error ${res.status} — respuesta inválida del servidor`);
+      }
       if (!res.ok) throw new Error(data.error ?? "Error al importar");
       const { count, images } = data.data!;
       setSettings((s) => ({ ...s, wp_gallery_images: images }));
-      setImportResult({ ok: true, msg: `✓ ${count} fotos importadas correctamente` });
+      setImportResult({ ok: true, msg: `✓ ${count} fotos importadas. Pulsa "Guardar configuración" para aplicar.` });
       setDriveUrl("");
     } catch (e) {
       setImportResult({ ok: false, msg: e instanceof Error ? e.message : "Error al importar" });
