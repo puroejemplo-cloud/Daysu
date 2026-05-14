@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
-import { ArrowLeft, CalendarCheck, Users, Star, ChevronLeft, ChevronRight, Sparkles, Zap } from "lucide-react";
+import { ArrowLeft, CalendarCheck, Users, Star, ChevronLeft, ChevronRight, Sparkles, Zap, Share2, Check, ChevronRight as ChevRight } from "lucide-react";
 import { getHourlyTiers, getCapacityTiers, isPerPerson, getMinPersons, type PricingConfig } from "@/lib/product-tiers";
 import WizardDatePicker from "@/components/booking/WizardDatePicker";
 
@@ -18,9 +18,14 @@ interface Asset {
   promoType: string | null; componentNames: string[];
 }
 
+interface RelatedProduct {
+  id: number; name: string; sku: string;
+  dailyRate: string; imageUrl: string | null; imageGallery: string[];
+}
+
 const ACCENT_PALETTE = ["#e879f9", "#f472b6", "#38bdf8", "#f59e0b", "#a78bfa", "#4ade80", "#fb923c"];
 
-export default function PackageDetail({ asset }: { asset: Asset }) {
+export default function PackageDetail({ asset, relatedProducts = [] }: { asset: Asset; relatedProducts?: RelatedProduct[] }) {
   const searchParams = useSearchParams();
   const initDate = searchParams.get("start")?.split("T")[0] ?? "";
   const initHour = searchParams.get("sh") ?? "19:00";
@@ -30,6 +35,22 @@ export default function PackageDetail({ asset }: { asset: Asset }) {
     : asset.imageUrl ? [asset.imageUrl] : [];
 
   const [activeImg,  setActiveImg]  = useState(0);
+  const [shareCopied, setShareCopied] = useState(false);
+
+  async function handleShare() {
+    const url = typeof window !== "undefined"
+      ? `${window.location.origin}/catalogo/${asset.sku.toLowerCase()}`
+      : `https://daysu.vip/catalogo/${asset.sku.toLowerCase()}`;
+    try {
+      if (typeof navigator !== "undefined" && navigator.share) {
+        await navigator.share({ title: asset.name, text: `Mira este paquete en Daysu.vip: ${asset.name}`, url });
+      } else {
+        await navigator.clipboard.writeText(url);
+        setShareCopied(true);
+        setTimeout(() => setShareCopied(false), 2500);
+      }
+    } catch { /* cancelado */ }
+  }
   const [date,       setDate]       = useState(initDate);
   const [hour,       setHour]       = useState(initHour);
   const [avail,      setAvail]      = useState<boolean | null>(null);
@@ -82,7 +103,7 @@ export default function PackageDetail({ asset }: { asset: Asset }) {
       }} />
 
       {/* ── Back nav ── */}
-      <div style={{ maxWidth: 1200, margin: "0 auto", padding: "1.25rem 1.25rem 0", position: "relative", zIndex: 1 }}>
+      <div style={{ maxWidth: 1200, margin: "0 auto", padding: "1.25rem 1.25rem 0", position: "relative", zIndex: 1, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
         <Link href="/catalogo" style={{
           display: "inline-flex", alignItems: "center", gap: "0.4rem",
           fontSize: "0.78rem", color: "#52525b", textDecoration: "none",
@@ -92,6 +113,27 @@ export default function PackageDetail({ asset }: { asset: Asset }) {
           onMouseLeave={(e) => (e.currentTarget.style.color = "#52525b")}>
           <ArrowLeft size={14} /> Volver al catálogo
         </Link>
+
+        {/* Botón compartir */}
+        <button
+          onClick={handleShare}
+          style={{
+            display: "inline-flex", alignItems: "center", gap: "0.4rem",
+            fontSize: "0.78rem", fontWeight: 600,
+            padding: "0.4rem 0.875rem",
+            borderRadius: 9999,
+            background: shareCopied ? `${accent}18` : "rgba(255,255,255,0.05)",
+            border: `1px solid ${shareCopied ? accent + "50" : "rgba(255,255,255,0.1)"}`,
+            color: shareCopied ? accent : "#71717a",
+            cursor: "pointer",
+            transition: "all 0.2s",
+          }}
+          onMouseEnter={(e) => { if (!shareCopied) { (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.09)"; (e.currentTarget as HTMLElement).style.color = "#e4e4e7"; }}}
+          onMouseLeave={(e) => { if (!shareCopied) { (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.05)"; (e.currentTarget as HTMLElement).style.color = "#71717a"; }}}
+        >
+          {shareCopied ? <Check size={13} strokeWidth={2.5} /> : <Share2 size={13} />}
+          {shareCopied ? "¡Link copiado!" : "Compartir"}
+        </button>
       </div>
 
       {/* ── Main layout ── */}
@@ -495,6 +537,91 @@ export default function PackageDetail({ asset }: { asset: Asset }) {
           </p>
         </div>
       </div>
+
+      {/* ── También te puede interesar ── */}
+      {relatedProducts.length > 0 && (
+        <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 1.25rem 4rem", position: "relative", zIndex: 1 }}>
+          <div style={{ borderTop: "1px solid rgba(255,255,255,0.07)", paddingTop: "2.5rem" }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1.5rem" }}>
+              <div>
+                <p style={{ fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase", color: accent, marginBottom: 4 }}>
+                  ✦ Descubre más
+                </p>
+                <h3 style={{ fontSize: "1.25rem", fontWeight: 700, color: "#f4f4f5", margin: 0 }}>
+                  También te puede interesar
+                </h3>
+              </div>
+              <Link href="/catalogo" style={{
+                display: "flex", alignItems: "center", gap: 4,
+                fontSize: "0.75rem", color: "#52525b", textDecoration: "none",
+                transition: "color 0.15s",
+              }}
+                onMouseEnter={(e) => (e.currentTarget.style.color = "#e4e4e7")}
+                onMouseLeave={(e) => (e.currentTarget.style.color = "#52525b")}
+              >
+                Ver todo el catálogo <ChevRight size={14} />
+              </Link>
+            </div>
+
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: "1rem" }}>
+              {relatedProducts.map((p) => {
+                const img = p.imageGallery.length > 0 ? p.imageGallery[0] : p.imageUrl;
+                const pAccent = ACCENT_PALETTE[p.id % ACCENT_PALETTE.length];
+                return (
+                  <Link key={p.id} href={`/catalogo/${p.sku.toLowerCase()}`} style={{ textDecoration: "none" }}>
+                    <div style={{
+                      borderRadius: 12, overflow: "hidden",
+                      background: "rgba(255,255,255,0.03)",
+                      border: "1px solid rgba(255,255,255,0.07)",
+                      transition: "border-color 0.2s, transform 0.2s, box-shadow 0.2s",
+                    }}
+                      onMouseEnter={(e) => {
+                        const el = e.currentTarget as HTMLElement;
+                        el.style.borderColor = `${pAccent}40`;
+                        el.style.transform = "translateY(-3px)";
+                        el.style.boxShadow = `0 8px 24px ${pAccent}15`;
+                      }}
+                      onMouseLeave={(e) => {
+                        const el = e.currentTarget as HTMLElement;
+                        el.style.borderColor = "rgba(255,255,255,0.07)";
+                        el.style.transform = "translateY(0)";
+                        el.style.boxShadow = "none";
+                      }}
+                    >
+                      {/* Imagen */}
+                      <div style={{ height: 130, overflow: "hidden", position: "relative" }}>
+                        {img ? (
+                          <img src={img} alt={p.name} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} loading="lazy" />
+                        ) : (
+                          <div style={{ height: "100%", background: `linear-gradient(135deg, #0c0c10, ${pAccent}18)`, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                            <Sparkles size={24} style={{ color: `${pAccent}40` }} />
+                          </div>
+                        )}
+                        {/* Acento superior */}
+                        <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 2, background: `linear-gradient(90deg, transparent, ${pAccent}, transparent)` }} />
+                      </div>
+
+                      {/* Info */}
+                      <div style={{ padding: "0.75rem" }}>
+                        <p style={{ fontSize: "0.85rem", fontWeight: 600, color: "#e4e4e7", marginBottom: 4, lineHeight: 1.3 }}>{p.name}</p>
+                        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                          <span style={{ fontSize: "1rem", fontWeight: 700, color: "#FF3DA8" }}>
+                            ${Number(p.dailyRate).toLocaleString("es-MX")}
+                            <span style={{ fontSize: "0.55rem", color: "#52525b", marginLeft: 3 }}>MXN</span>
+                          </span>
+                          <span style={{ fontSize: "0.65rem", color: pAccent, display: "flex", alignItems: "center", gap: 2 }}>
+                            Ver <ChevRight size={11} />
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      )}
 
       <style>{`
         @keyframes imageFadeIn {

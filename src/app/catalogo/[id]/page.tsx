@@ -70,6 +70,21 @@ export default async function PackageDetailPage({ params }: Props) {
 
   const gallery = Array.isArray(asset.imageGallery) ? (asset.imageGallery as string[]) : [];
 
+  // Productos relacionados: misma categoría, máx 4, excluyendo el actual
+  const related = await prisma.asset.findMany({
+    where: { isActive: true, isRentable: true, categoryId: asset.categoryId, id: { not: asset.id } },
+    select: { id: true, name: true, sku: true, dailyRate: true, imageUrl: true, imageGallery: true, categoryId: true },
+    orderBy: { isRecommended: "desc" },
+    take: 4,
+  }).catch(() => []);
+
+  const relatedProducts = related.map((r) => ({
+    id: r.id, name: r.name, sku: r.sku,
+    dailyRate: r.dailyRate.toString(),
+    imageUrl: r.imageUrl ?? null,
+    imageGallery: Array.isArray(r.imageGallery) ? (r.imageGallery as string[]) : [],
+  }));
+
   return (
     <PackageDetail
       asset={{
@@ -89,6 +104,7 @@ export default async function PackageDetailPage({ params }: Props) {
         promoType:     asset.promoType,
         componentNames,
       }}
+      relatedProducts={relatedProducts}
     />
   );
 }
