@@ -8,7 +8,125 @@ import "react-day-picker/style.css";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import Link from "next/link";
-import { CalendarDays, PackageSearch, Sparkles } from "lucide-react";
+import { CalendarDays, PackageSearch, Sparkles, Share2, Check, LinkIcon } from "lucide-react";
+
+/* ── Botón de compartir ─────────────────────────────────────── */
+function ShareButton({ name, sku, accent }: { name: string; sku: string; accent: string }) {
+  const [state, setState] = useState<"idle" | "copied">("idle");
+
+  async function handleShare(e: React.MouseEvent) {
+    e.preventDefault();
+    e.stopPropagation();
+    const url = `${typeof window !== "undefined" ? window.location.origin : "https://daysu.vip"}/catalogo/${sku.toLowerCase()}`;
+    try {
+      if (typeof navigator !== "undefined" && navigator.share) {
+        await navigator.share({ title: name, text: `Mira este paquete: ${name}`, url });
+      } else {
+        await navigator.clipboard.writeText(url);
+        setState("copied");
+        setTimeout(() => setState("idle"), 2000);
+      }
+    } catch { /* usuario canceló */ }
+  }
+
+  return (
+    <button
+      onClick={handleShare}
+      title="Compartir"
+      style={{
+        position: "absolute", top: 10, left: 10, zIndex: 6,
+        width: 32, height: 32, borderRadius: "50%",
+        background: state === "copied" ? `${accent}22` : "rgba(5,5,26,0.72)",
+        border: `1px solid ${state === "copied" ? accent : "rgba(255,255,255,0.15)"}`,
+        backdropFilter: "blur(8px)",
+        display: "flex", alignItems: "center", justifyContent: "center",
+        cursor: "pointer",
+        transition: "background 0.2s, border-color 0.2s, transform 0.15s",
+        color: state === "copied" ? accent : "rgba(255,255,255,0.75)",
+        padding: 0,
+      }}
+      onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.transform = "scale(1.1)"; }}
+      onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.transform = "scale(1)"; }}
+    >
+      {state === "copied"
+        ? <Check size={13} strokeWidth={2.5} />
+        : <Share2 size={13} strokeWidth={2} />
+      }
+    </button>
+  );
+}
+
+/* ── Strip "También te puede interesar" ─────────────────────── */
+interface MiniAsset {
+  id: number; name: string; sku: string;
+  imageUrl?: string | null; imageGallery?: unknown; categoryId: number;
+}
+function RelatedStrip({ current, all }: { current: MiniAsset; all: MiniAsset[] }) {
+  const related = [
+    ...all.filter((p) => p.id !== current.id && p.categoryId === current.categoryId),
+    ...all.filter((p) => p.id !== current.id && p.categoryId !== current.categoryId),
+  ].slice(0, 3);
+
+  if (!related.length) return null;
+
+  return (
+    <div
+      onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}
+      style={{
+        padding: "0.65rem 0.875rem 0.75rem",
+        borderTop: "1px solid rgba(255,255,255,0.05)",
+        background: "rgba(0,0,0,0.2)",
+      }}
+    >
+      <p style={{
+        fontSize: "0.52rem", fontWeight: 700, letterSpacing: "0.16em",
+        textTransform: "uppercase", color: "#3f3f46", marginBottom: "0.5rem",
+      }}>
+        También te puede interesar
+      </p>
+      <div style={{ display: "flex", gap: "0.5rem" }}>
+        {related.map((p) => {
+          const img = (Array.isArray(p.imageGallery) && p.imageGallery.length > 0)
+            ? (p.imageGallery as string[])[0]
+            : p.imageUrl;
+          return (
+            <Link
+              key={p.id}
+              href={`/catalogo/${p.sku.toLowerCase()}`}
+              onClick={(e) => e.stopPropagation()}
+              style={{ textDecoration: "none", flex: 1, minWidth: 0 }}
+            >
+              <div style={{
+                borderRadius: 8, overflow: "hidden",
+                background: "rgba(255,255,255,0.04)",
+                border: "1px solid rgba(255,255,255,0.06)",
+                transition: "border-color 0.2s",
+              }}
+                onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.borderColor = "rgba(255,255,255,0.15)")}
+                onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.borderColor = "rgba(255,255,255,0.06)")}
+              >
+                {img ? (
+                  <img src={img} alt={p.name} style={{ width: "100%", height: 44, objectFit: "cover", display: "block" }} loading="lazy" />
+                ) : (
+                  <div style={{ height: 44, background: "rgba(255,255,255,0.03)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <LinkIcon size={12} style={{ color: "#3f3f46" }} />
+                  </div>
+                )}
+                <p style={{
+                  fontSize: "0.6rem", fontWeight: 500, color: "#71717a",
+                  padding: "0.3rem 0.4rem", lineHeight: 1.2,
+                  whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis",
+                }}>
+                  {p.name}
+                </p>
+              </div>
+            </Link>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
 
 // Calculador interactivo de precio por persona (necesita su propio estado)
 function PersonCalc({ pricePerPerson, accent, minPersons = 25 }: { pricePerPerson: number; accent: string; minPersons?: number }) {
@@ -346,6 +464,7 @@ export default function CatalogClient({
 
                   {/* ── Imagen principal (estática) ── */}
                   <div style={{ position: "relative" }}>
+                    <ShareButton name={asset.name} sku={asset.sku} accent={accent} />
                     {gallery.length > 0 ? (
                       <div className="catalog-card-img" style={{ overflow: "hidden", position: "relative" }}>
                         <img
@@ -572,6 +691,10 @@ export default function CatalogClient({
                       {checked && !isAvail ? "No disponible para esa fecha" : "Ver paquete →"}
                     </div>
                   </div>
+
+                  {/* ── También te puede interesar ── */}
+                  <RelatedStrip current={asset} all={shown} />
+
                 </Link>
               );
             })}
