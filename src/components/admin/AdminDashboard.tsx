@@ -6,16 +6,17 @@ import { es } from "date-fns/locale";
 import Link from "next/link";
 import {
   Package, PlusCircle, Users, CheckSquare, Bell, Images,
-  CalendarDays, Eye, RefreshCw, CalendarX,
+  CalendarDays, Eye, RefreshCw, CalendarX, Pencil,
 } from "lucide-react";
 import NotificationPermission from "@/components/ui/NotificationPermission";
+import EditBookingModal from "@/components/admin/EditBookingModal";
 
 interface Booking {
   id: string; eventName: string; status: string;
   setupAt: string; expiresAt: string | null;
   totalAmount: string; depositAmount: string;
-  client: { fullName: string; email: string };
-  notifications: { type: string; isRead: boolean; createdAt: string }[];
+  client: { fullName: string; email: string; phone: string | null };
+  notifications: { id: string }[];
 }
 
 interface Toast { id: number; message: string; type: "success" | "error" }
@@ -54,12 +55,13 @@ export default function AdminDashboard() {
   const searchParams = useSearchParams();
 
   const initialFilter = (searchParams.get("status") ?? "pending_payment") as FilterKey;
-  const [bookings,  setBookings]  = useState<Booking[]>([]);
-  const [loading,   setLoading]   = useState(true);
-  const [filter,    setFilter]    = useState<FilterKey>(initialFilter);
-  const [acting,    setActing]    = useState<string | null>(null);
-  const [toasts,    setToasts]    = useState<Toast[]>([]);
-  const [lastSync,  setLastSync]  = useState<Date | null>(null);
+  const [allBookings, setAllBookings] = useState<Booking[]>([]); // para stats — siempre activas
+  const [filter,      setFilter]      = useState<FilterKey>(initialFilter);
+  const [loading,     setLoading]     = useState(true);
+  const [acting,      setActing]      = useState<string | null>(null);
+  const [toasts,      setToasts]      = useState<Toast[]>([]);
+  const [lastSync,    setLastSync]    = useState<Date | null>(null);
+  const [editId,      setEditId]      = useState<string | null>(null);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const addToast = useCallback((message: string, type: Toast["type"] = "success") => {
@@ -70,12 +72,24 @@ export default function AdminDashboard() {
 
   const load = useCallback(async (silent = false) => {
     if (!silent) setLoading(true);
-    const qs = filter === "all" ? "" : `?status=${filter}`;
-    const res = await fetch(`/api/bookings${qs}`);
+    // Siempre carga todas las activas para tener stats correctos
+    const res  = await fetch("/api/admin/bookings");
     const json = await res.json();
-    setBookings(json.data ?? []);
+    setAllBookings(json.data ?? []);
     setLastSync(new Date());
     if (!silent) setLoading(false);
+  }, []);
+
+  // Para filtros de cancelled/expired hace fetch adicional (no están en la carga base)
+  const [extraBookings, setExtraBookings] = useState<Booking[]>([]);
+  useEffect(() => {
+    if (filter === "cancelled" || filter === "expired") {
+      fetch(`/api/admin/bookings?status=${filter}`)
+        .then((r) => r.json())
+        .then((j) => setExtraBookings(j.data ?? []));
+    } else {
+      setExtraBookings([]);
+    }
   }, [filter]);
 
   useEffect(() => {
@@ -95,7 +109,7 @@ export default function AdminDashboard() {
   const act = async (id: string, action: "confirm" | "cancel") => {
     setActing(id);
     const newStatus = ACTION_STATUS[action];
-    setBookings((prev) => prev.map((b) => b.id === id ? { ...b, status: newStatus } : b));
+    setAllBookings((prev) => prev.map((b) => b.id === id ? { ...b, status: newStatus } : b));
     try {
       const res = await fetch(`/api/bookings/${id}/${action}`, { method: "POST" });
       if (!res.ok) throw new Error();
@@ -109,13 +123,22 @@ export default function AdminDashboard() {
     }
   };
 
-  const pending   = bookings.filter((b) => b.status === "pending_payment").length;
-  const confirmed = bookings.filter((b) => b.status === "confirmed").length;
-  const unread    = bookings.reduce((n, b) => n + b.notifications.filter((n) => !n.isRead).length, 0);
-  const revenue   = bookings
+  // Stats — siempre sobre todas las activas (no dependen del filtro)
+  const pending   = allBookings.filter((b) => b.status === "pending_payment").length;
+  const confirmed = allBookings.filter((b) => b.status === "confirmed").length;
+  const unread    = allBookings.reduce((n, b) => n + b.notifications.length, 0);
+  const revenue   = allBookings
     .filter((b) => b.status === "confirmed")
     .reduce((sum, b) => sum + Number(b.depositAmount), 0);
-  const total     = bookings.length || 1; // evita división por cero
+  const total     = allBookings.length || 1;
+
+  // Bookings mostrados según filtro activo
+  const displayedBookings =
+    filter === "all"
+      ? allBookings
+      : filter === "cancelled" || filter === "expired"
+      ? extraBookings
+      : allBookings.filter((b) => b.status === filter);
 
   return (
     <div className="space-y-6">
@@ -141,6 +164,15 @@ export default function AdminDashboard() {
 
       <NotificationPermission />
 
+      {/* Modal de edición */}
+      {editId && (
+        <EditBookingModal
+          bookingId={editId}
+          onClose={() => setEditId(null)}
+          onSaved={() => { load(true); addToast("Reserva actualizada"); }}
+        />
+      )}
+
       {/* Accesos rápidos */}
       <div className="grid grid-cols-4 sm:grid-cols-8 gap-3">
         {QUICK_LINKS.map((item) => (
@@ -158,17 +190,21 @@ export default function AdminDashboard() {
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         {[
-          { label: "Holds activos", value: pending,   accent: "#ca8a04", pct: Math.round(pending   / total * 100) },
-          { label: "Confirmadas",   value: confirmed, accent: "#16a34a", pct: Math.round(confirmed / total * 100) },
-          { label: "Sin leer",      value: unread,    accent: "#dc2626", pct: null },
-          { label: "Apartados MXN", value: `$${revenue.toLocaleString("es-MX", { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`, accent: "#a78bfa", pct: null },
+          { label: "Holds activos",  value: pending,   accent: "#ca8a04", pct: Math.round(pending   / total * 100) },
+          { label: "Confirmadas",    value: confirmed, accent: "#16a34a", pct: Math.round(confirmed / total * 100) },
+          { label: "Sin leer",       value: unread,    accent: "#dc2626", pct: null },
+          {
+            label: "Apartados MXN",
+            value: `$${revenue.toLocaleString("es-MX", { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`,
+            accent: "#a78bfa", pct: null,
+          },
         ].map((s) => (
           <div key={s.label} className="aura-card p-6" style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
             <p style={{ fontSize: typeof s.value === "string" ? "1.5rem" : "2.5rem", fontWeight: 300, letterSpacing: "-0.04em", color: s.accent, lineHeight: 1 }}>
               {s.value}
             </p>
             <p className="admin-label">{s.label}</p>
-            {s.pct !== null && bookings.length > 0 && (
+            {s.pct !== null && allBookings.length > 0 && (
               <div style={{ marginTop: "0.25rem" }}>
                 <div style={{ height: 2, background: "rgba(255,255,255,0.05)", borderRadius: 1, overflow: "hidden" }}>
                   <div style={{ height: "100%", width: `${s.pct}%`, background: s.accent, borderRadius: 1, transition: "width 0.5s ease", opacity: 0.7 }} />
@@ -216,7 +252,7 @@ export default function AdminDashboard() {
           {[1, 2, 3].map((i) => <div key={i} className="skeleton" style={{ height: 80, borderRadius: 10 }} />)}
         </div>
       )}
-      {!loading && bookings.length === 0 && (
+      {!loading && displayedBookings.length === 0 && (
         <div className="empty-state">
           <CalendarX size={36} className="empty-state-icon" />
           <p className="empty-state-title">Sin reservas</p>
@@ -227,8 +263,8 @@ export default function AdminDashboard() {
       )}
       {!loading && (
         <div className="space-y-2">
-          {bookings.map((b) => {
-            const s        = ST[b.status] ?? { label: b.status, color: "#374151", dot: "#6b7280" };
+          {displayedBookings.map((b) => {
+            const s         = ST[b.status] ?? { label: b.status, color: "#374151", dot: "#6b7280" };
             const isExpired = b.expiresAt && new Date(b.expiresAt) < new Date();
             const isActing  = acting === b.id;
             return (
@@ -243,7 +279,6 @@ export default function AdminDashboard() {
                       style={{ textDecoration: "none" }}>
                       {b.eventName}
                     </Link>
-                    {/* Badge de estado minimalista */}
                     <span style={{
                       display: "inline-flex", alignItems: "center", gap: 5,
                       padding: "0.15rem 0.55rem", borderRadius: 999,
@@ -255,9 +290,22 @@ export default function AdminDashboard() {
                       <span style={{ width: 5, height: 5, borderRadius: "50%", background: s.dot, flexShrink: 0 }} />
                       {s.label}
                     </span>
+                    {b.notifications.length > 0 && (
+                      <span style={{
+                        padding: "0.1rem 0.45rem", borderRadius: 999,
+                        fontSize: "0.6rem", fontWeight: 700,
+                        background: "rgba(220,38,38,0.12)",
+                        border: "1px solid rgba(220,38,38,0.25)",
+                        color: "#fca5a5",
+                      }}>
+                        {b.notifications.length} sin leer
+                      </span>
+                    )}
                   </div>
                   <p className="text-xs" style={{ color: "#52525b" }}>
-                    {b.client.fullName} · {b.client.email}
+                    {b.client.fullName}
+                    {b.client.email && !b.client.email.includes("@aura.local") && ` · ${b.client.email}`}
+                    {b.client.phone && ` · ${b.client.phone}`}
                   </p>
                   <p className="text-xs mt-0.5" style={{ color: "#3f3f46" }}>
                     {format(new Date(b.setupAt), "d MMM yyyy · HH:mm'h'", { locale: es })}
@@ -275,6 +323,19 @@ export default function AdminDashboard() {
                     <p className="text-sm font-bold" style={{ color: "#d4af37" }}>${Number(b.depositAmount).toFixed(2)}</p>
                     <p className="admin-label">apartado</p>
                   </div>
+
+                  {/* Botón editar — siempre visible */}
+                  <button onClick={() => setEditId(b.id)} disabled={isActing}
+                    aria-label={`Editar ${b.eventName}`}
+                    title="Editar reserva"
+                    className="flex items-center gap-1 text-xs font-semibold px-3 py-1.5 rounded-md transition-colors disabled:opacity-40"
+                    style={{ background: "rgba(255,255,255,0.04)", color: "#71717a", border: "1px solid rgba(255,255,255,0.08)" }}
+                    onMouseEnter={(e) => { e.currentTarget.style.color = "#a1a1aa"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.16)"; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.color = "#71717a"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)"; }}>
+                    <Pencil size={11} />
+                    Editar
+                  </button>
+
                   {b.status === "pending_payment" && (
                     <>
                       <button onClick={() => act(b.id, "confirm")} disabled={isActing}

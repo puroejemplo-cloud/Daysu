@@ -23,13 +23,36 @@ const STATUS_LABEL: Record<string, string> = {
   completed:       "Completada",
 };
 
+const EVENT_TYPE_CFG: Record<string, { color: string; label: string }> = {
+  boda:        { color: "#e11d8a", label: "Boda" },
+  xv:          { color: "#7c3aed", label: "XV" },
+  graduacion:  { color: "#3b82f6", label: "Grad" },
+  cumpleanos:  { color: "#f97316", label: "Cumple" },
+  corporativo: { color: "#06b6d4", label: "Corp" },
+  baby:        { color: "#38bdf8", label: "Baby" },
+  infantil:    { color: "#eab308", label: "Inf" },
+  otro:        { color: "#71717a", label: "Evt" },
+};
+
+function detectType(eventName: string): string {
+  const n = eventName.toLowerCase();
+  if (n.includes("boda") || n.includes("matrimonio") || n.includes("wedding")) return "boda";
+  if (n.includes("xv") || n.includes("quinceañera") || n.includes("quince año")) return "xv";
+  if (n.includes("graduación") || n.includes("graduacion") || n.includes("egresado")) return "graduacion";
+  if (n.includes("cumpleaños") || n.includes("cumple") || n.includes("birthday")) return "cumpleanos";
+  if (n.includes("corporativo") || n.includes("empresa") || n.includes("congreso")) return "corporativo";
+  if (n.includes("baby") || n.includes("bebé") || n.includes("bebe")) return "baby";
+  if (n.includes("infantil") || n.includes("niño") || n.includes("nino")) return "infantil";
+  return "otro";
+}
+
 export default function CalendarView({ bookings }: { bookings: BookingItem[] }) {
   const [current,  setCurrent]  = useState(new Date());
   const [selected, setSelected] = useState<Date | null>(null);
 
-  const start = startOfMonth(current);
-  const end   = endOfMonth(current);
-  const days  = eachDayOfInterval({ start, end });
+  const start  = startOfMonth(current);
+  const end    = endOfMonth(current);
+  const days   = eachDayOfInterval({ start, end });
   const offset = (getDay(start) + 6) % 7;
 
   const bookingsForDay = (day: Date) =>
@@ -60,6 +83,16 @@ export default function CalendarView({ bookings }: { bookings: BookingItem[] }) 
         </button>
       </div>
 
+      {/* Leyenda de tipos */}
+      <div className="flex flex-wrap gap-x-4 gap-y-1">
+        {Object.entries(EVENT_TYPE_CFG).filter(([k]) => k !== "otro").map(([key, cfg]) => (
+          <span key={key} className="flex items-center gap-1.5 text-xs" style={{ color: "#71717a" }}>
+            <span style={{ width: 8, height: 8, borderRadius: 2, background: cfg.color, display: "inline-block", flexShrink: 0 }} />
+            {cfg.label}
+          </span>
+        ))}
+      </div>
+
       {/* Cabecera días */}
       <div className="grid grid-cols-7 gap-1">
         {["Lun","Mar","Mié","Jue","Vie","Sáb","Dom"].map((d) => (
@@ -78,7 +111,7 @@ export default function CalendarView({ bookings }: { bookings: BookingItem[] }) 
             <div key={day.toISOString()}
               onClick={() => setSelected(isSameDay(day, selected ?? new Date("2000-01-01")) ? null : day)}
               style={{
-                minHeight: 68,
+                minHeight: 72,
                 borderRadius: 8,
                 padding: "0.4rem",
                 cursor: hasEvents ? "pointer" : "default",
@@ -94,18 +127,22 @@ export default function CalendarView({ bookings }: { bookings: BookingItem[] }) 
                 style={{ color: isToday ? "#e4e4e7" : isSameMonth(day, current) ? "#71717a" : "#27272a" }}>
                 {format(day, "d")}
               </p>
-              {dayBookings.slice(0, 2).map((b) => (
-                <div key={b.id}
-                  style={{
-                    display: "flex", alignItems: "center", gap: 3,
-                    marginBottom: 2,
-                  }}>
-                  <span style={{ width: 5, height: 5, borderRadius: "50%", background: STATUS_DOT[b.status] ?? "#52525b", flexShrink: 0 }} />
-                  <span style={{ fontSize: "0.58rem", color: "#71717a", overflow: "hidden", whiteSpace: "nowrap", textOverflow: "ellipsis" }}>
-                    {b.clientName.split(" ")[0]}
-                  </span>
-                </div>
-              ))}
+              {dayBookings.slice(0, 2).map((b) => {
+                const type = detectType(b.eventName);
+                const cfg  = EVENT_TYPE_CFG[type];
+                return (
+                  <div key={b.id} style={{ display: "flex", alignItems: "center", gap: 3, marginBottom: 2 }}>
+                    <span style={{ width: 5, height: 5, borderRadius: "50%", background: STATUS_DOT[b.status] ?? "#52525b", flexShrink: 0 }} />
+                    <span style={{
+                      fontSize: "0.55rem", fontWeight: 700, letterSpacing: "0.03em",
+                      color: cfg.color,
+                      overflow: "hidden", whiteSpace: "nowrap", textOverflow: "ellipsis",
+                    }}>
+                      {cfg.label}
+                    </span>
+                  </div>
+                );
+              })}
               {dayBookings.length > 2 && (
                 <p style={{ fontSize: "0.58rem", color: "#52525b" }}>+{dayBookings.length - 2}</p>
               )}
@@ -123,25 +160,39 @@ export default function CalendarView({ bookings }: { bookings: BookingItem[] }) 
           {selectedBookings.length === 0 ? (
             <p className="text-sm" style={{ color: "#52525b" }}>Sin eventos este día.</p>
           ) : (
-            selectedBookings.map((b) => (
-              <div key={b.id} className="flex items-center justify-between gap-3 py-3 border-b"
-                style={{ borderColor: "rgba(255,255,255,0.06)" }}>
-                <div>
-                  <p className="text-sm font-semibold" style={{ color: "#e4e4e7" }}>{b.eventName}</p>
-                  <p className="text-xs mt-0.5" style={{ color: "#52525b" }}>{b.clientName}</p>
+            selectedBookings.map((b) => {
+              const type = detectType(b.eventName);
+              const cfg  = EVENT_TYPE_CFG[type];
+              return (
+                <div key={b.id} className="flex items-center justify-between gap-3 py-3 border-b"
+                  style={{ borderColor: "rgba(255,255,255,0.06)" }}>
+                  <div className="flex items-center gap-2 min-w-0">
+                    <span style={{
+                      flexShrink: 0,
+                      fontSize: "0.6rem", fontWeight: 800, padding: "2px 6px", borderRadius: 4,
+                      background: cfg.color + "22", color: cfg.color,
+                      border: `1px solid ${cfg.color}55`,
+                    }}>
+                      {cfg.label}
+                    </span>
+                    <div className="min-w-0">
+                      <p className="text-sm font-semibold" style={{ color: "#e4e4e7" }}>{b.eventName}</p>
+                      <p className="text-xs mt-0.5" style={{ color: "#52525b" }}>{b.clientName}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3 flex-shrink-0">
+                    <span style={{ display: "inline-flex", alignItems: "center", gap: 5, fontSize: "0.65rem", color: "#71717a" }}>
+                      <span style={{ width: 5, height: 5, borderRadius: "50%", background: STATUS_DOT[b.status] ?? "#52525b" }} />
+                      {STATUS_LABEL[b.status] ?? b.status}
+                    </span>
+                    <Link href={`/admin?booking=${b.id}`}
+                      className="text-xs font-semibold" style={{ color: "#a1a1aa", textDecoration: "none" }}>
+                      Ver →
+                    </Link>
+                  </div>
                 </div>
-                <div className="flex items-center gap-3">
-                  <span style={{ display: "inline-flex", alignItems: "center", gap: 5, fontSize: "0.65rem", color: "#71717a" }}>
-                    <span style={{ width: 5, height: 5, borderRadius: "50%", background: STATUS_DOT[b.status] ?? "#52525b" }} />
-                    {STATUS_LABEL[b.status] ?? b.status}
-                  </span>
-                  <Link href={`/admin?booking=${b.id}`}
-                    className="text-xs font-semibold" style={{ color: "#a1a1aa", textDecoration: "none" }}>
-                    Ver →
-                  </Link>
-                </div>
-              </div>
-            ))
+              );
+            })
           )}
         </div>
       )}

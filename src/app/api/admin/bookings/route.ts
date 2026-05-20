@@ -4,15 +4,51 @@ import { ok, err } from "@/lib/api";
 import { auth } from "@/auth";
 import { expandBomItems } from "@/lib/bookings";
 
-// POST — admin registra una venta manual → crea booking confirmado directamente
+// GET — lista reservas para el panel admin
+// Sin ?status → activas (excluye cancelled/expired)
+// ?status=cancelled|expired|confirmed|... → filtro específico
+// ?status=all → todas sin excepción
+export async function GET(req: NextRequest) {
+  const session = await auth();
+  if (!session) return err("No autenticado", 401);
+
+  const { searchParams } = new URL(req.url);
+  const status = searchParams.get("status");
+
+  const where =
+    status === "all"
+      ? {}
+      : status
+      ? { status: status as never }
+      : { status: { notIn: ["cancelled", "expired"] as never[] } };
+
+  const bookings = await prisma.booking.findMany({
+    where,
+    select: {
+      id: true, eventName: true, status: true,
+      setupAt: true, expiresAt: true,
+      totalAmount: true, depositAmount: true,
+      client: { select: { fullName: true, email: true, phone: true } },
+      // Solo las notificaciones sin leer — eficiente y exacto
+      notifications: {
+        where:  { isRead: false },
+        select: { id: true },
+      },
+    },
+    orderBy: { eventDate: "asc" },
+  });
+
+  return ok(bookings);
+}
+
+// POST — admin registra una venta manual → booking confirmado directo (sin Stripe)
 export async function POST(req: NextRequest) {
   const session = await auth();
   if (!session) return err("No autenticado", 401);
 
   const body = await req.json();
-  const { client, eventName, eventDate, setupAt, teardownAt, venueAddress, items, notes, totalAmount } = body;
+  const { client, eventName, eventDate, setupAt, teardownAt, venueAddress, items, notes, totalAmount, depositAmount } = body;
 
-  if (!client?.fullName || !client?.email) return err("Nombre y email del cliente son requeridos");
   if (!eventName?.trim())  return err("Nombre del evento requerido");
   if (!setupAt || !teardownAt) return err("Fechas del evento requeridas");
   if (!Array.isArray(items) || items.length === 0) return err("Selecciona al menos un artículo");
@@ -24,36 +60,51 @@ export async function POST(req: NextRequest) {
 
   try {
     const expandedItems = await expandBomItems(items);
-    const total = totalAmount
+    const total   = totalAmount
       ? Number(totalAmount)
       : expandedItems.reduce((s, i) => s + i.unitPrice * i.quantity, 0);
+    const deposit = depositAmount != null ? Number(depositAmount) : 0;
+
+    const clientEmail    = client?.email?.toLowerCase().trim() || null;
+    const clientFullName = client?.fullName?.trim() || "Cliente";
+    const clientPhone    = client?.phone?.trim() || null;
 
     const booking = await prisma.$transaction(async (tx) => {
-      const dbClient = await tx.client.upsert({
-        where:  { email: client.email.toLowerCase().trim() },
-        update: { fullName: client.fullName.trim(), phone: client.phone?.trim() ?? undefined },
-        create: { email: client.email.toLowerCase().trim(), fullName: client.fullName.trim(), phone: client.phone?.trim() ?? null },
-      });
+      let dbClient;
+
+      if (clientEmail) {
+        dbClient = await tx.client.upsert({
+          where:  { email: clientEmail },
+          update: { fullName: clientFullName, phone: clientPhone ?? undefined },
+          create: { email: clientEmail, fullName: clientFullName, phone: clientPhone },
+        });
+      } else {
+        // Sin email — placeholder único para mantener la restricción unique
+        const placeholder = `sin-email-${Date.now()}@aura.local`;
+        dbClient = await tx.client.create({
+          data: { email: placeholder, fullName: clientFullName, phone: clientPhone },
+        });
+      }
 
       return tx.booking.create({
         data: {
-          clientId:     dbClient.id,
-          eventName:    eventName.trim(),
-          eventDate:    new Date(eventDate ?? setupAt),
-          setupAt:      start,
-          teardownAt:   end,
-          venueAddress: venueAddress?.trim() ?? null,
-          status:       "confirmed",      // venta directa → confirmada de inmediato
-          totalAmount:  total,
-          depositAmount: total,           // pago total al contado
-          expiresAt:    null,
-          notes:        notes?.trim() ?? null,
+          clientId:      dbClient.id,
+          eventName:     eventName.trim(),
+          eventDate:     new Date(eventDate ?? setupAt),
+          setupAt:       start,
+          teardownAt:    end,
+          venueAddress:  venueAddress?.trim() ?? null,
+          status:        "confirmed",
+          totalAmount:   total,
+          depositAmount: deposit,
+          expiresAt:     null,
+          notes:         notes?.trim() ?? null,
           items: {
             create: expandedItems.map((item, idx) => ({
-              assetId:            item.assetId,
-              quantity:           item.quantity,
-              unitPrice:          item.overridePrice ?? item.unitPrice,
-              isAutoBlocked:      item.isAutoBlocked,
+              assetId:             item.assetId,
+              quantity:            item.quantity,
+              unitPrice:           item.overridePrice ?? item.unitPrice,
+              isAutoBlocked:       item.isAutoBlocked,
               parentBookingItemId: item.parentIndex !== null ? idx - 1 : null,
             })),
           },

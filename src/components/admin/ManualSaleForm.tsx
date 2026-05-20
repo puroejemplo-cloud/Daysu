@@ -6,14 +6,22 @@ interface Category  { id: number; name: string }
 interface AssetOpt  { id: number; displayName: string; dailyRate: string; ownerSuffix: string | null }
 interface SelItem   { assetId: number; name: string; quantity: number; unitPrice: number }
 
+const EVENT_TYPES = [
+  "Boda", "XV Años", "Graduación", "Cumpleaños",
+  "Corporativo", "Baby Shower", "Infantil", "Otro",
+];
+
 export default function ManualSaleForm({ categories }: { categories: Category[] }) {
   const router = useRouter();
-  const [assets, setAssets]  = useState<AssetOpt[]>([]);
+  const [assets, setAssets]    = useState<AssetOpt[]>([]);
   const [selected, setSelected] = useState<SelItem[]>([]);
-  const [client, setClient]  = useState({ fullName: "", email: "", phone: "" });
-  const [form, setForm]      = useState({ eventName: "", eventDate: "", setupHour: "19:00", teardownHour: "01:00", venueAddress: "", notes: "", customTotal: "" });
-  const [saving, setSaving]  = useState(false);
-  const [error, setError]    = useState("");
+  const [client, setClient]    = useState({ fullName: "", email: "", phone: "" });
+  const [form, setForm]        = useState({
+    eventName: "", eventDate: "", setupHour: "19:00",
+    venueAddress: "", notes: "", customTotal: "", depositAmount: "",
+  });
+  const [saving, setSaving]    = useState(false);
+  const [error, setError]      = useState("");
 
   const loadAssets = useCallback(async () => {
     const res = await fetch("/api/admin/assets?rentable=true");
@@ -22,6 +30,8 @@ export default function ManualSaleForm({ categories }: { categories: Category[] 
   }, []);
 
   useEffect(() => { loadAssets(); }, [loadAssets]);
+  // categories prop reserved for future category-filter UI
+  void categories;
 
   const toggleAsset = (a: AssetOpt) => {
     setSelected((prev) => {
@@ -33,31 +43,32 @@ export default function ManualSaleForm({ categories }: { categories: Category[] 
 
   const autoTotal = selected.reduce((s, i) => s + i.unitPrice * i.quantity, 0);
   const total     = form.customTotal ? Number(form.customTotal) : autoTotal;
+  const deposit   = form.depositAmount ? Number(form.depositAmount) : 0;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (selected.length === 0) { setError("Selecciona al menos un producto."); return; }
+    if (!form.eventDate) { setError("La fecha del evento es requerida."); return; }
     setSaving(true); setError("");
 
     const [sh, sm] = form.setupHour.split(":").map(Number);
-    const [th, tm] = form.teardownHour.split(":").map(Number);
     const setup    = new Date(form.eventDate); setup.setHours(sh, sm, 0, 0);
-    const teardown = new Date(form.eventDate); teardown.setHours(th, tm, 0, 0);
-    if (teardown <= setup) teardown.setDate(teardown.getDate() + 1);
+    const teardown = new Date(setup); teardown.setHours(teardown.getHours() + 6);
 
     const res = await fetch("/api/admin/bookings", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         client,
-        eventName:    form.eventName,
-        eventDate:    form.eventDate,
-        setupAt:      setup.toISOString(),
-        teardownAt:   teardown.toISOString(),
-        venueAddress: form.venueAddress,
-        notes:        form.notes,
-        totalAmount:  total,
-        items:        selected.map((s) => ({ assetId: s.assetId, quantity: s.quantity, overridePrice: s.unitPrice })),
+        eventName:     form.eventName || "Evento",
+        eventDate:     form.eventDate,
+        setupAt:       setup.toISOString(),
+        teardownAt:    teardown.toISOString(),
+        venueAddress:  form.venueAddress,
+        notes:         form.notes,
+        totalAmount:   total,
+        depositAmount: deposit,
+        items:         selected.map((s) => ({ assetId: s.assetId, quantity: s.quantity, overridePrice: s.unitPrice })),
       }),
     });
     const json = await res.json();
@@ -67,51 +78,75 @@ export default function ManualSaleForm({ categories }: { categories: Category[] 
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      {/* Datos del evento */}
+      {/* Tipo de evento — quick select */}
       <div className="aura-card p-6 space-y-4">
-        <p className="text-xs font-black uppercase tracking-widest" style={{ color: "var(--gold)" }}>Datos del evento</p>
+        <p className="text-xs font-black uppercase tracking-widest" style={{ color: "var(--gold)" }}>Tipo de evento</p>
+        <div className="flex flex-wrap gap-2">
+          {EVENT_TYPES.map((type) => {
+            const active = form.eventName === type;
+            return (
+              <button key={type} type="button"
+                onClick={() => setForm((f) => ({ ...f, eventName: active ? "" : type }))}
+                className="px-3 py-1.5 rounded-lg text-sm font-bold transition-all"
+                style={{
+                  background: active ? "var(--gold)" : "rgba(255,255,255,0.05)",
+                  color:      active ? "#05051a"     : "#94A3B8",
+                  border:     active ? "1.5px solid var(--gold)" : "1.5px solid rgba(255,255,255,0.1)",
+                }}>
+                {type}
+              </button>
+            );
+          })}
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="md:col-span-2">
-            <label className="block text-xs font-bold uppercase tracking-widest mb-1" style={{ color: "#94A3B8" }}>Nombre del evento</label>
-            <input value={form.eventName} onChange={(e) => setForm((f) => ({ ...f, eventName: e.target.value }))} required className="aura-input" placeholder="Boda García-López" />
+          <div>
+            <label className="block text-xs font-bold uppercase tracking-widest mb-1" style={{ color: "#94A3B8" }}>Nombre / detalle</label>
+            <input value={form.eventName} onChange={(e) => setForm((f) => ({ ...f, eventName: e.target.value }))}
+              className="aura-input" placeholder="Ej: Boda García-López" />
           </div>
           <div>
-            <label className="block text-xs font-bold uppercase tracking-widest mb-1" style={{ color: "#94A3B8" }}>Fecha</label>
-            <input type="date" value={form.eventDate} onChange={(e) => setForm((f) => ({ ...f, eventDate: e.target.value }))} required className="aura-input" />
+            <label className="block text-xs font-bold uppercase tracking-widest mb-1" style={{ color: "#94A3B8" }}>Fecha *</label>
+            <input type="date" value={form.eventDate} onChange={(e) => setForm((f) => ({ ...f, eventDate: e.target.value }))}
+              required className="aura-input" />
           </div>
-          <div className="flex gap-2">
-            <div className="flex-1">
-              <label className="block text-xs font-bold uppercase tracking-widest mb-1" style={{ color: "#94A3B8" }}>Hora inicio</label>
-              <input type="time" value={form.setupHour} onChange={(e) => setForm((f) => ({ ...f, setupHour: e.target.value }))} className="aura-input" />
-            </div>
-            <div className="flex-1">
-              <label className="block text-xs font-bold uppercase tracking-widest mb-1" style={{ color: "#94A3B8" }}>Hora fin</label>
-              <input type="time" value={form.teardownHour} onChange={(e) => setForm((f) => ({ ...f, teardownHour: e.target.value }))} className="aura-input" />
-            </div>
+          <div>
+            <label className="block text-xs font-bold uppercase tracking-widest mb-1" style={{ color: "#94A3B8" }}>Hora de inicio</label>
+            <input type="time" value={form.setupHour} onChange={(e) => setForm((f) => ({ ...f, setupHour: e.target.value }))}
+              className="aura-input" />
           </div>
-          <div className="md:col-span-2">
-            <label className="block text-xs font-bold uppercase tracking-widest mb-1" style={{ color: "#94A3B8" }}>Dirección</label>
-            <input value={form.venueAddress} onChange={(e) => setForm((f) => ({ ...f, venueAddress: e.target.value }))} className="aura-input" placeholder="Calle, colonia, ciudad..." />
+          <div>
+            <label className="block text-xs font-bold uppercase tracking-widest mb-1" style={{ color: "#94A3B8" }}>Dirección (opcional)</label>
+            <input value={form.venueAddress} onChange={(e) => setForm((f) => ({ ...f, venueAddress: e.target.value }))}
+              className="aura-input" placeholder="Calle, colonia, ciudad..." />
           </div>
         </div>
       </div>
 
-      {/* Datos del cliente */}
+      {/* Datos del cliente — todos opcionales */}
       <div className="aura-card p-6 space-y-4">
-        <p className="text-xs font-black uppercase tracking-widest" style={{ color: "var(--gold)" }}>Cliente</p>
+        <div className="flex items-center justify-between flex-wrap gap-2">
+          <p className="text-xs font-black uppercase tracking-widest" style={{ color: "var(--gold)" }}>Cliente</p>
+          <span className="text-xs" style={{ color: "#52525b" }}>Todos los campos se pueden completar después</span>
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {[
-            { label: "Nombre completo *", key: "fullName", placeholder: "Juan Pérez" },
-            { label: "Email *",           key: "email",    placeholder: "juan@correo.com", type: "email" },
-            { label: "Teléfono",          key: "phone",    placeholder: "+52 492 123 4567", type: "tel" },
-          ].map(({ label, key, placeholder, type }) => (
-            <div key={key}>
-              <label className="block text-xs font-bold uppercase tracking-widest mb-1" style={{ color: "#94A3B8" }}>{label}</label>
-              <input type={type ?? "text"} value={(client as never)[key] as string}
-                onChange={(e) => setClient((c) => ({ ...c, [key]: e.target.value }))}
-                placeholder={placeholder} required={key !== "phone"} className="aura-input" />
-            </div>
-          ))}
+          <div>
+            <label className="block text-xs font-bold uppercase tracking-widest mb-1" style={{ color: "#94A3B8" }}>Nombre completo</label>
+            <input type="text" value={client.fullName}
+              onChange={(e) => setClient((c) => ({ ...c, fullName: e.target.value }))}
+              placeholder="Juan Pérez" className="aura-input" />
+          </div>
+          <div>
+            <label className="block text-xs font-bold uppercase tracking-widest mb-1" style={{ color: "#94A3B8" }}>Email</label>
+            <input type="email" value={client.email}
+              onChange={(e) => setClient((c) => ({ ...c, email: e.target.value }))}
+              placeholder="juan@correo.com" className="aura-input" />
+          </div>
+          <div>
+            <label className="block text-xs font-bold uppercase tracking-widest mb-1" style={{ color: "#94A3B8" }}>Teléfono</label>
+            <input type="tel" value={client.phone}
+              onChange={(e) => setClient((c) => ({ ...c, phone: e.target.value }))}
+              placeholder="+52 492 123 4567" className="aura-input" />
+          </div>
         </div>
       </div>
 
@@ -155,29 +190,45 @@ export default function ManualSaleForm({ categories }: { categories: Category[] 
         </div>
       </div>
 
-      {/* Total y notas */}
+      {/* Total, anticipo y notas */}
       <div className="aura-card p-6 space-y-4">
-        <div className="flex items-center justify-between">
-          <p className="text-xs font-black uppercase tracking-widest" style={{ color: "var(--gold)" }}>Total acordado</p>
-          <div className="flex items-center gap-3">
-            <span className="text-sm" style={{ color: "#94A3B8" }}>Auto: ${autoTotal.toLocaleString("es-MX")}</span>
-            <input type="number" min={0} value={form.customTotal} onChange={(e) => setForm((f) => ({ ...f, customTotal: e.target.value }))}
-              placeholder={String(autoTotal)} className="aura-input text-right font-black" style={{ width: 140, color: "var(--gold)" }} />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <p className="text-xs font-black uppercase tracking-widest mb-2" style={{ color: "var(--gold)" }}>Total acordado</p>
+            <div className="flex items-center gap-3">
+              <span className="text-sm" style={{ color: "#94A3B8" }}>Auto: ${autoTotal.toLocaleString("es-MX")}</span>
+              <input type="number" min={0} value={form.customTotal}
+                onChange={(e) => setForm((f) => ({ ...f, customTotal: e.target.value }))}
+                placeholder={String(autoTotal)} className="aura-input text-right font-black"
+                style={{ width: 140, color: "var(--gold)" }} />
+            </div>
+          </div>
+          <div>
+            <p className="text-xs font-black uppercase tracking-widest mb-2" style={{ color: "#94A3B8" }}>Anticipo recibido</p>
+            <input type="number" min={0} value={form.depositAmount}
+              onChange={(e) => setForm((f) => ({ ...f, depositAmount: e.target.value }))}
+              placeholder="0" className="aura-input text-right font-black"
+              style={{ color: "#16a34a" }} />
           </div>
         </div>
         <div>
           <label className="block text-xs font-bold uppercase tracking-widest mb-1" style={{ color: "#94A3B8" }}>Notas internas</label>
           <textarea value={form.notes} onChange={(e) => setForm((f) => ({ ...f, notes: e.target.value }))}
-            rows={2} className="aura-input resize-none" placeholder="Condiciones especiales, anticipo recibido..." />
+            rows={2} className="aura-input resize-none" placeholder="Condiciones especiales, detalles del evento..." />
         </div>
       </div>
 
       {error && <p className="text-sm font-bold" style={{ color: "#EF4444" }}>{error}</p>}
 
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between flex-wrap gap-4">
         <div>
           <p className="text-xs uppercase tracking-widest" style={{ color: "#94A3B8" }}>Total a registrar</p>
           <p className="text-2xl font-black" style={{ color: "var(--gold)" }}>${total.toLocaleString("es-MX")} MXN</p>
+          {deposit > 0 && (
+            <p className="text-sm mt-0.5" style={{ color: "#16a34a" }}>
+              Anticipo: ${deposit.toLocaleString("es-MX")} — Saldo pendiente: ${(total - deposit).toLocaleString("es-MX")}
+            </p>
+          )}
         </div>
         <button type="submit" disabled={saving}
           className="font-black px-8 py-3.5 rounded-xl text-base disabled:opacity-50"
