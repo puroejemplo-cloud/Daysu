@@ -34,6 +34,12 @@ const EVENT_TYPE_CFG: Record<string, { color: string; label: string }> = {
   otro:        { color: "#71717a", label: "Evt" },
 };
 
+// Parsea "2025-05-19T00:00:00.000Z" como fecha local (evita UTC→local offset)
+function parseLocalDate(dateStr: string): Date {
+  const [y, m, d] = dateStr.split("T")[0].split("-").map(Number);
+  return new Date(y, m - 1, d);
+}
+
 function detectType(eventName: string): string {
   const n = eventName.toLowerCase();
   if (n.includes("boda") || n.includes("matrimonio") || n.includes("wedding")) return "boda";
@@ -56,7 +62,7 @@ export default function CalendarView({ bookings }: { bookings: BookingItem[] }) 
   const offset = (getDay(start) + 6) % 7;
 
   const bookingsForDay = (day: Date) =>
-    bookings.filter((b) => isSameDay(new Date(b.eventDate), day));
+    bookings.filter((b) => isSameDay(parseLocalDate(b.eventDate), day));
 
   const selectedBookings = selected ? bookingsForDay(selected) : [];
 
@@ -201,7 +207,7 @@ export default function CalendarView({ bookings }: { bookings: BookingItem[] }) 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
         {Object.entries(STATUS_DOT).map(([s, dot]) => {
           const count = bookings.filter((b) =>
-            b.status === s && isSameMonth(new Date(b.eventDate), current)
+            b.status === s && isSameMonth(parseLocalDate(b.eventDate), current)
           ).length;
           return (
             <div key={s} className="aura-card p-4 text-center">
