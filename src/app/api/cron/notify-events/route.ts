@@ -5,11 +5,8 @@ import { ok, err } from "@/lib/api";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 
-webpush.setVapidDetails(
-  process.env.VAPID_SUBJECT ?? "mailto:admin@daysu.vip",
-  process.env.VAPID_PUBLIC_KEY  ?? "",
-  process.env.VAPID_PRIVATE_KEY ?? "",
-);
+// Evita pre-rendering estático en build (env vars VAPID no disponibles en build time)
+export const dynamic = "force-dynamic";
 
 async function sendPushToAdmin(adminUserId: number, payload: object) {
   const subs = await prisma.pushSubscription.findMany({
@@ -26,6 +23,16 @@ async function sendPushToAdmin(adminUserId: number, payload: object) {
 }
 
 export async function GET(req: NextRequest) {
+  // Inicializar VAPID aquí (no en top-level) para que env vars estén disponibles en runtime
+  if (!process.env.VAPID_PUBLIC_KEY || !process.env.VAPID_PRIVATE_KEY) {
+    return err("VAPID keys no configuradas", 500);
+  }
+  webpush.setVapidDetails(
+    process.env.VAPID_SUBJECT ?? "mailto:admin@daysu.vip",
+    process.env.VAPID_PUBLIC_KEY,
+    process.env.VAPID_PRIVATE_KEY,
+  );
+
   // Proteger el endpoint en producción
   const secret = req.headers.get("x-cron-secret");
   if (process.env.NODE_ENV === "production" && secret !== process.env.CRON_SECRET) {
