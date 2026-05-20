@@ -185,14 +185,14 @@ export default function AdminSidebar() {
         <SidebarInner />
       </aside>
 
-      {/* ── Mobile top bar ── */}
+      {/* ── Mobile top bar ── fixed para que no desaparezca al hacer scroll en iOS standalone */}
       <div style={{
-        position: "sticky", top: 0, zIndex: 50,
+        position: "fixed", top: 0, left: 0, right: 0, zIndex: 50,
         background: "rgba(9,9,11,0.97)",
         borderBottom: "1px solid rgba(255,255,255,0.06)",
         backdropFilter: "blur(16px)",
         display: "flex", alignItems: "center", gap: "0.75rem",
-        padding: "0.7rem 1rem",
+        padding: "max(0.7rem, env(safe-area-inset-top)) 1rem 0.7rem",
       }} className="lg:hidden">
         {/* Botón toggle — izquierda, abre y cierra */}
         <button

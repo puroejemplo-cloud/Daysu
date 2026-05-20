@@ -1,16 +1,11 @@
-const CACHE_NAME = "aura-vip-v1";
+const CACHE_NAME = "aura-vip-v3";
 
-// Recursos del app shell que se cachean al instalar
 const APP_SHELL = [
-  "/",
-  "/catalogo",
-  "/reservar",
   "/manifest.json",
   "/icons/icon-192.png",
   "/icons/icon-512.png",
 ];
 
-// Instalar — cachear app shell
 self.addEventListener("install", (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => cache.addAll(APP_SHELL))
@@ -18,7 +13,6 @@ self.addEventListener("install", (event) => {
   self.skipWaiting();
 });
 
-// Activar — borrar caches viejos
 self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches.keys().then((keys) =>
@@ -28,14 +22,17 @@ self.addEventListener("activate", (event) => {
   self.clients.claim();
 });
 
-// Fetch — estrategia:
-// - API y auth: siempre network
-// - SVG/imágenes/fonts: cache-first
-// - Resto: network-first con fallback a cache
 self.addEventListener("fetch", (event) => {
   const url = new URL(event.request.url);
 
-  // API, auth y rutas dinámicas → siempre network
+  // Navegación de página → SIEMPRE red, nunca caché
+  // Evita que el SW sirva HTML viejo al navegar entre páginas
+  if (event.request.mode === "navigate") {
+    event.respondWith(fetch(event.request));
+    return;
+  }
+
+  // API, auth y assets de Next.js → siempre red
   if (
     url.pathname.startsWith("/api/") ||
     url.pathname.startsWith("/admin") ||
@@ -46,12 +43,10 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  // Imágenes y SVGs → cache-first
-  if (
-    url.pathname.match(/\.(png|jpg|jpeg|svg|webp|ico|gif)$/) ||
-    url.pathname.startsWith("/paquetes/") ||
-    url.pathname.startsWith("/icons/")
-  ) {
+  // Imágenes y SVGs → cache-first (estáticos, no cambian frecuentemente)
+  if (url.pathname.match(/\.(png|jpg|jpeg|svg|webp|ico|gif)$/) ||
+      url.pathname.startsWith("/paquetes/") ||
+      url.pathname.startsWith("/icons/")) {
     event.respondWith(
       caches.match(event.request).then(
         (cached) => cached || fetch(event.request).then((res) => {
@@ -66,7 +61,7 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  // Resto → network-first, fallback a cache
+  // Resto (CSS, JS, fuentes) → network-first, fallback a caché
   event.respondWith(
     fetch(event.request)
       .then((res) => {
