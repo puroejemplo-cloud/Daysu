@@ -24,7 +24,13 @@ export default async function AgendaPage() {
       },
       select: {
         id: true, eventName: true, eventDate: true, setupAt: true, status: true,
+        totalAmount: true, depositAmount: true,
         client: { select: { fullName: true, phone: true } },
+        items: {
+          where:  { isAutoBlocked: false },
+          select: { quantity: true, asset: { select: { name: true } } },
+          take: 4,
+        },
       },
       orderBy: [{ eventDate: "asc" }, { setupAt: "asc" }],
       take: 30,
@@ -43,13 +49,16 @@ export default async function AgendaPage() {
   return (
     <AgendaWidget
       upcoming={upcoming.map((b) => ({
-        id:         b.id,
-        eventName:  b.eventName,
-        eventDate:  b.eventDate.toISOString(),
-        setupAt:    b.setupAt.toISOString(),
-        status:     b.status,
-        clientName: b.client.fullName,
-        clientPhone: b.client.phone ?? null,
+        id:           b.id,
+        eventName:    b.eventName,
+        eventDate:    b.eventDate.toISOString(),
+        setupAt:      b.setupAt.toISOString(),
+        status:       b.status,
+        clientName:   b.client.fullName,
+        clientPhone:  b.client.phone ?? null,
+        totalAmount:  b.totalAmount.toString(),
+        depositAmount: b.depositAmount.toString(),
+        items:        b.items.map((i) => ({ name: i.asset.name, quantity: i.quantity })),
       }))}
       pending={pending.map((b) => ({
         id:           b.id,

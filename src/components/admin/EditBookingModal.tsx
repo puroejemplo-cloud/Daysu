@@ -96,7 +96,7 @@ export default function EditBookingModal({ bookingId, onClose, onSaved }: Props)
   return (
     <div
       style={{
-        position: "fixed", inset: 0, zIndex: 50,
+        position: "fixed", inset: 0, zIndex: 9990,
         background: "rgba(0,0,0,0.8)",
         display: "flex", alignItems: "center", justifyContent: "center",
         padding: "1rem",
