@@ -12,7 +12,13 @@ export default async function CalendarioPage() {
     where: { status: { notIn: ["cancelled", "expired"] } },
     select: {
       id: true, eventName: true, eventDate: true, setupAt: true, status: true,
+      totalAmount: true, depositAmount: true,
       client: { select: { fullName: true } },
+      items: {
+        where:  { isAutoBlocked: false },
+        select: { quantity: true, asset: { select: { name: true } } },
+        take: 4,
+      },
     },
     orderBy: { eventDate: "asc" },
   });
@@ -37,12 +43,15 @@ export default async function CalendarioPage() {
         </div>
       </header>
       <CalendarView bookings={bookings.map((b) => ({
-        id:         b.id,
-        eventName:  b.eventName,
-        eventDate:  b.eventDate.toISOString(),
-        setupAt:    b.setupAt.toISOString(),
-        status:     b.status,
-        clientName: b.client.fullName,
+        id:           b.id,
+        eventName:    b.eventName,
+        eventDate:    b.eventDate.toISOString(),
+        setupAt:      b.setupAt.toISOString(),
+        status:       b.status,
+        clientName:   b.client.fullName,
+        totalAmount:  b.totalAmount.toString(),
+        depositAmount: b.depositAmount.toString(),
+        items:        b.items.map((i) => ({ name: i.asset.name, quantity: i.quantity })),
       }))} />
     </div>
   );

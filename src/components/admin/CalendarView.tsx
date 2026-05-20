@@ -5,11 +5,21 @@ import { format, startOfMonth, endOfMonth, eachDayOfInterval,
          isToday as dateFnsIsToday, startOfDay } from "date-fns";
 import { es } from "date-fns/locale";
 import Link from "next/link";
-import { CalendarDays, List } from "lucide-react";
+import { CalendarDays, List, Pencil, Plus, X } from "lucide-react";
+import EditBookingModal from "@/components/admin/EditBookingModal";
+
+interface EventItem { name: string; quantity: number }
 
 interface BookingItem {
   id: string; eventName: string; eventDate: string;
   setupAt: string; status: string; clientName: string;
+  totalAmount: string; depositAmount: string;
+  items: EventItem[];
+}
+
+interface AbonoTarget {
+  id: string; eventName: string;
+  total: number; currentDeposit: number;
 }
 
 const STATUS_DOT: Record<string, string> = {
@@ -48,37 +58,60 @@ function detectType(eventName: string): string {
   return "otro";
 }
 
-// Parsea ISO string como fecha local (evita desfase UTC→local)
 function parseLocalDate(dateStr: string): Date {
   const [y, m, d] = dateStr.split("T")[0].split("-").map(Number);
   return new Date(y, m - 1, d);
 }
 
-// Agrupa bookings por clave de fecha local "YYYY-MM-DD"
 function groupByDate(bookings: BookingItem[]): Map<string, BookingItem[]> {
   const map = new Map<string, BookingItem[]>();
   for (const b of bookings) {
     const key = b.eventDate.split("T")[0];
-    const arr = map.get(key) ?? [];
-    arr.push(b);
-    map.set(key, arr);
+    map.set(key, [...(map.get(key) ?? []), b]);
   }
   return map;
 }
 
-export default function CalendarView({ bookings }: { bookings: BookingItem[] }) {
-  const [view,     setView]     = useState<"list" | "calendar">("list");
-  const [current,  setCurrent]  = useState(new Date());
-  const [selected, setSelected] = useState<Date | null>(null);
+export default function CalendarView({ bookings: initBookings }: { bookings: BookingItem[] }) {
+  const [bookings,  setBookings]  = useState(initBookings);
+  const [view,      setView]      = useState<"list" | "calendar">("list");
+  const [current,   setCurrent]   = useState(new Date());
+  const [selected,  setSelected]  = useState<Date | null>(null);
+  const [editId,    setEditId]    = useState<string | null>(null);
+  const [abono,     setAbono]     = useState<AbonoTarget | null>(null);
+  const [abonoAmt,  setAbonoAmt]  = useState("");
+  const [abonoSaving, setAbonoSaving] = useState(false);
+  const [abonoError,  setAbonoError]  = useState("");
 
-  // ── VISTA LISTA ─────────────────────────────────────────────────────────────
-  const today  = startOfDay(new Date());
+  const openAbono = (b: BookingItem) => {
+    setAbono({ id: b.id, eventName: b.eventName, total: Number(b.totalAmount), currentDeposit: Number(b.depositAmount) });
+    setAbonoAmt(""); setAbonoError("");
+  };
+
+  const submitAbono = async () => {
+    if (!abono) return;
+    const amount = Number(abonoAmt);
+    if (!amount || amount <= 0) { setAbonoError("Ingresa un monto válido"); return; }
+    setAbonoSaving(true); setAbonoError("");
+    const newDeposit = abono.currentDeposit + amount;
+    const res = await fetch(`/api/admin/bookings/${abono.id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ depositAmount: newDeposit }),
+    });
+    if (!res.ok) { setAbonoError("Error al guardar. Intenta de nuevo."); setAbonoSaving(false); return; }
+    setBookings((prev) => prev.map((b) => b.id === abono.id ? { ...b, depositAmount: String(newDeposit) } : b));
+    setAbono(null); setAbonoSaving(false);
+  };
+
+  // ── VISTA LISTA ──────────────────────────────────────────────────────────────
+  const today    = startOfDay(new Date());
   const upcoming = bookings
     .filter((b) => parseLocalDate(b.eventDate) >= today)
     .sort((a, b) => parseLocalDate(a.eventDate).getTime() - parseLocalDate(b.eventDate).getTime());
 
-  const grouped = groupByDate(upcoming);
-  const dateKeys = Array.from(grouped.keys()); // already sorted (bookings sorted from server)
+  const grouped  = groupByDate(upcoming);
+  const dateKeys = Array.from(grouped.keys());
 
   const ListView = () => (
     <div className="space-y-2">
@@ -97,81 +130,66 @@ export default function CalendarView({ bookings }: { bookings: BookingItem[] }) 
         return (
           <div key={key}>
             {/* Cabecera de fecha */}
-            <div style={{
-              display: "flex", alignItems: "center", gap: "0.6rem",
-              padding: "0.6rem 0 0.4rem",
-              borderBottom: "1px solid rgba(255,255,255,0.06)",
-              marginBottom: "0.4rem",
-            }}>
-              <span style={{
-                fontSize: "0.6rem", fontWeight: 800, letterSpacing: "0.08em",
-                textTransform: "uppercase",
-                padding: "0.15rem 0.5rem", borderRadius: 4,
-                background: isHoy ? "var(--gold)" : "rgba(255,255,255,0.06)",
-                color:      isHoy ? "#05051a"     : "#52525b",
-              }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", padding: "0.6rem 0 0.4rem", borderBottom: "1px solid rgba(255,255,255,0.06)", marginBottom: "0.4rem" }}>
+              <span style={{ fontSize: "0.6rem", fontWeight: 800, letterSpacing: "0.08em", textTransform: "uppercase", padding: "0.15rem 0.5rem", borderRadius: 4, background: isHoy ? "var(--gold)" : "rgba(255,255,255,0.06)", color: isHoy ? "#05051a" : "#52525b" }}>
                 {isHoy ? "Hoy" : dayLabel.charAt(0).toUpperCase() + dayLabel.slice(1)}
               </span>
-              <span style={{ fontSize: "0.78rem", fontWeight: 600, color: isHoy ? "#e4e4e7" : "#71717a" }}>
-                {dateLabel}
-              </span>
+              <span style={{ fontSize: "0.78rem", fontWeight: 600, color: isHoy ? "#e4e4e7" : "#71717a" }}>{dateLabel}</span>
             </div>
 
-            {/* Eventos del día */}
             {dayBookings.map((b) => {
-              const type    = detectType(b.eventName);
-              const cfg     = EVENT_TYPE_CFG[type];
-              const setupTime = format(new Date(b.setupAt), "HH:mm", { locale: es });
+              const type      = detectType(b.eventName);
+              const cfg       = EVENT_TYPE_CFG[type];
+              const setupTime = format(new Date(b.setupAt), "HH:mm");
+              const total     = Number(b.totalAmount);
+              const deposit   = Number(b.depositAmount);
+              const balance   = total - deposit;
+              const itemsLabel = b.items.map((i) => i.quantity > 1 ? `${i.name} ×${i.quantity}` : i.name).join(" · ");
+
               return (
-                <div key={b.id}
-                  style={{
-                    display: "flex", alignItems: "center", gap: "0.75rem",
-                    padding: "0.65rem 0.9rem", marginBottom: "0.3rem",
-                    borderRadius: 10,
-                    background: "rgba(255,255,255,0.025)",
-                    border: "1px solid rgba(255,255,255,0.05)",
-                  }}>
-                  {/* Tipo badge */}
-                  <span style={{
-                    flexShrink: 0,
-                    fontSize: "0.58rem", fontWeight: 800, padding: "2px 7px", borderRadius: 4,
-                    background: cfg.color + "20", color: cfg.color,
-                    border: `1px solid ${cfg.color}44`,
-                    letterSpacing: "0.04em",
-                  }}>
-                    {cfg.label}
-                  </span>
-
-                  {/* Nombre + cliente */}
-                  <div className="flex-1 min-w-0">
-                    <p style={{ fontSize: "0.85rem", fontWeight: 600, color: "#e4e4e7", margin: 0,
-                      overflow: "hidden", whiteSpace: "nowrap", textOverflow: "ellipsis" }}>
-                      {b.eventName}
-                    </p>
-                    <p style={{ fontSize: "0.7rem", color: "#52525b", margin: 0 }}>{b.clientName}</p>
+                <div key={b.id} style={{ marginBottom: "0.4rem", borderRadius: 10, background: "rgba(255,255,255,0.025)", border: "1px solid rgba(255,255,255,0.05)", borderLeft: `3px solid ${cfg.color}`, overflow: "hidden" }}>
+                  {/* Fila principal */}
+                  <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", padding: "0.65rem 0.9rem" }}>
+                    <span style={{ flexShrink: 0, fontSize: "0.58rem", fontWeight: 800, padding: "2px 7px", borderRadius: 4, background: cfg.color + "20", color: cfg.color, letterSpacing: "0.04em" }}>
+                      {cfg.label}
+                    </span>
+                    <div className="flex-1 min-w-0">
+                      <p style={{ margin: 0, fontSize: "0.85rem", fontWeight: 600, color: "#e4e4e7", overflow: "hidden", whiteSpace: "nowrap", textOverflow: "ellipsis" }}>
+                        {b.eventName}
+                      </p>
+                      <p style={{ margin: 0, fontSize: "0.7rem", color: "#52525b" }}>{b.clientName}</p>
+                      {itemsLabel && (
+                        <p style={{ margin: "0.1rem 0 0", fontSize: "0.62rem", color: "#3f3f46", overflow: "hidden", whiteSpace: "nowrap", textOverflow: "ellipsis" }}>
+                          {itemsLabel}
+                        </p>
+                      )}
+                    </div>
+                    <div style={{ flexShrink: 0, textAlign: "right" }}>
+                      <p style={{ margin: 0, fontSize: "0.9rem", fontWeight: 700, color: "#a1a1aa" }}>{setupTime}<span style={{ fontSize: "0.6rem", marginLeft: 1 }}>h</span></p>
+                      <p style={{ margin: 0, fontSize: "0.6rem", color: "#3f3f46" }}>llegada</p>
+                    </div>
                   </div>
 
-                  {/* Hora de llegada */}
-                  <div style={{ flexShrink: 0, textAlign: "right" }}>
-                    <p style={{ fontSize: "0.9rem", fontWeight: 700, color: "#a1a1aa", margin: 0 }}>
-                      {setupTime}<span style={{ fontSize: "0.6rem", marginLeft: 1 }}>h</span>
-                    </p>
-                    <p style={{ fontSize: "0.6rem", color: "#3f3f46", margin: 0 }}>llegada</p>
+                  {/* Fila finanzas + acciones */}
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0.4rem 0.9rem", borderTop: "1px solid rgba(255,255,255,0.04)", background: "rgba(0,0,0,0.15)" }}>
+                    <div style={{ display: "flex", gap: "0.7rem", fontSize: "0.65rem" }}>
+                      {total > 0 && <>
+                        <span style={{ color: "var(--gold)" }}>${total.toLocaleString("es-MX", { maximumFractionDigits: 0 })}</span>
+                        {deposit > 0 && <span style={{ color: "#16a34a" }}>+${deposit.toLocaleString("es-MX", { maximumFractionDigits: 0 })} pagado</span>}
+                        {balance > 0 && <span style={{ color: "#ca8a04" }}>saldo ${balance.toLocaleString("es-MX", { maximumFractionDigits: 0 })}</span>}
+                      </>}
+                    </div>
+                    <div style={{ display: "flex", gap: "0.4rem" }}>
+                      <button onClick={() => openAbono(b)}
+                        style={{ display: "flex", alignItems: "center", gap: "0.25rem", padding: "0.28rem 0.55rem", borderRadius: 6, background: "rgba(22,163,74,0.1)", border: "1px solid rgba(22,163,74,0.2)", color: "#4ade80", fontSize: "0.63rem", fontWeight: 700, cursor: "pointer" }}>
+                        <Plus size={9} /> Abono
+                      </button>
+                      <button onClick={() => setEditId(b.id)}
+                        style={{ display: "flex", alignItems: "center", gap: "0.25rem", padding: "0.28rem 0.55rem", borderRadius: 6, background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", color: "#71717a", fontSize: "0.63rem", fontWeight: 700, cursor: "pointer" }}>
+                        <Pencil size={9} /> Editar
+                      </button>
+                    </div>
                   </div>
-
-                  {/* Estado dot */}
-                  <span style={{
-                    flexShrink: 0,
-                    width: 7, height: 7, borderRadius: "50%",
-                    background: STATUS_DOT[b.status] ?? "#52525b",
-                  }} title={STATUS_LABEL[b.status] ?? b.status} />
-
-                  <Link href={`/admin?booking=${b.id}`}
-                    style={{ flexShrink: 0, fontSize: "0.72rem", fontWeight: 600, color: "#52525b", textDecoration: "none" }}
-                    onMouseEnter={(e) => (e.currentTarget.style.color = "#a1a1aa")}
-                    onMouseLeave={(e) => (e.currentTarget.style.color = "#52525b")}>
-                    Ver →
-                  </Link>
                 </div>
               );
             })}
@@ -181,7 +199,7 @@ export default function CalendarView({ bookings }: { bookings: BookingItem[] }) 
     </div>
   );
 
-  // ── VISTA CALENDARIO ────────────────────────────────────────────────────────
+  // ── VISTA CALENDARIO ─────────────────────────────────────────────────────────
   const start  = startOfMonth(current);
   const end    = endOfMonth(current);
   const days   = eachDayOfInterval({ start, end });
@@ -194,7 +212,6 @@ export default function CalendarView({ bookings }: { bookings: BookingItem[] }) 
 
   const CalendarGrid = () => (
     <div className="space-y-5">
-      {/* Nav mes */}
       <div className="flex items-center justify-between">
         <button onClick={() => setCurrent(subMonths(current, 1))}
           className="px-4 py-1.5 rounded-md text-sm font-semibold border transition-all"
@@ -215,7 +232,6 @@ export default function CalendarView({ bookings }: { bookings: BookingItem[] }) 
         </button>
       </div>
 
-      {/* Leyenda tipos */}
       <div className="flex flex-wrap gap-x-4 gap-y-1">
         {Object.entries(EVENT_TYPE_CFG).filter(([k]) => k !== "otro").map(([key, cfg]) => (
           <span key={key} className="flex items-center gap-1.5 text-xs" style={{ color: "#71717a" }}>
@@ -225,7 +241,6 @@ export default function CalendarView({ bookings }: { bookings: BookingItem[] }) 
         ))}
       </div>
 
-      {/* Grid */}
       <div className="grid grid-cols-7 gap-1">
         {["Lun","Mar","Mié","Jue","Vie","Sáb","Dom"].map((d) => (
           <div key={d} className="text-center text-xs font-semibold py-2 admin-label">{d}</div>
@@ -239,15 +254,8 @@ export default function CalendarView({ bookings }: { bookings: BookingItem[] }) 
           return (
             <div key={day.toISOString()}
               onClick={() => setSelected(isSel ? null : day)}
-              style={{
-                minHeight: 72, borderRadius: 8, padding: "0.4rem",
-                cursor: hasEvents ? "pointer" : "default",
-                background: isSel ? "rgba(212,175,55,0.08)" : isHoy ? "rgba(255,255,255,0.04)" : "transparent",
-                border: isSel ? "1px solid rgba(212,175,55,0.3)" : isHoy ? "1px solid rgba(255,255,255,0.1)" : "1px solid rgba(255,255,255,0.04)",
-                transition: "all 0.15s",
-              }}>
-              <p className="text-xs font-semibold mb-1"
-                style={{ color: isHoy ? "#e4e4e7" : isSameMonth(day, current) ? "#71717a" : "#27272a" }}>
+              style={{ minHeight: 72, borderRadius: 8, padding: "0.4rem", cursor: hasEvents ? "pointer" : "default", background: isSel ? "rgba(212,175,55,0.08)" : isHoy ? "rgba(255,255,255,0.04)" : "transparent", border: isSel ? "1px solid rgba(212,175,55,0.3)" : isHoy ? "1px solid rgba(255,255,255,0.1)" : "1px solid rgba(255,255,255,0.04)", transition: "all 0.15s" }}>
+              <p className="text-xs font-semibold mb-1" style={{ color: isHoy ? "#e4e4e7" : isSameMonth(day, current) ? "#71717a" : "#27272a" }}>
                 {format(day, "d")}
               </p>
               {dayBookings.slice(0, 2).map((b) => {
@@ -262,15 +270,13 @@ export default function CalendarView({ bookings }: { bookings: BookingItem[] }) 
                   </div>
                 );
               })}
-              {dayBookings.length > 2 && (
-                <p style={{ fontSize: "0.58rem", color: "#52525b" }}>+{dayBookings.length - 2}</p>
-              )}
+              {dayBookings.length > 2 && <p style={{ fontSize: "0.58rem", color: "#52525b" }}>+{dayBookings.length - 2}</p>}
             </div>
           );
         })}
       </div>
 
-      {/* Detalle día */}
+      {/* Detalle día seleccionado */}
       {selected && (
         <div className="aura-card p-5 space-y-3">
           <p className="admin-label">{format(selected, "EEEE d 'de' MMMM yyyy", { locale: es })}</p>
@@ -280,26 +286,48 @@ export default function CalendarView({ bookings }: { bookings: BookingItem[] }) 
             selectedBookings.map((b) => {
               const type      = detectType(b.eventName);
               const cfg       = EVENT_TYPE_CFG[type];
-              const setupTime = format(new Date(b.setupAt), "HH:mm", { locale: es });
+              const setupTime = format(new Date(b.setupAt), "HH:mm");
+              const total     = Number(b.totalAmount);
+              const deposit   = Number(b.depositAmount);
+              const balance   = total - deposit;
               return (
-                <div key={b.id} className="flex items-center justify-between gap-3 py-3 border-b"
-                  style={{ borderColor: "rgba(255,255,255,0.06)" }}>
-                  <div className="flex items-center gap-2 min-w-0">
-                    <span style={{ flexShrink: 0, fontSize: "0.6rem", fontWeight: 800, padding: "2px 6px", borderRadius: 4, background: cfg.color + "22", color: cfg.color, border: `1px solid ${cfg.color}55` }}>
-                      {cfg.label}
-                    </span>
-                    <div className="min-w-0">
-                      <p className="text-sm font-semibold" style={{ color: "#e4e4e7" }}>{b.eventName}</p>
-                      <p className="text-xs mt-0.5" style={{ color: "#52525b" }}>{b.clientName} · {setupTime}h</p>
+                <div key={b.id} style={{ paddingBottom: "0.75rem", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-2 min-w-0">
+                      <span style={{ flexShrink: 0, fontSize: "0.6rem", fontWeight: 800, padding: "2px 6px", borderRadius: 4, background: cfg.color + "22", color: cfg.color, border: `1px solid ${cfg.color}55` }}>{cfg.label}</span>
+                      <div className="min-w-0">
+                        <p className="text-sm font-semibold" style={{ color: "#e4e4e7" }}>{b.eventName}</p>
+                        <p className="text-xs mt-0.5" style={{ color: "#52525b" }}>{b.clientName} · {setupTime}h</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2 flex-shrink-0">
+                      <span style={{ display: "inline-flex", alignItems: "center", gap: 5, fontSize: "0.65rem", color: "#71717a" }}>
+                        <span style={{ width: 5, height: 5, borderRadius: "50%", background: STATUS_DOT[b.status] ?? "#52525b" }} />
+                        {STATUS_LABEL[b.status] ?? b.status}
+                      </span>
+                      <Link href={`/admin?booking=${b.id}`} className="text-xs font-semibold" style={{ color: "#a1a1aa", textDecoration: "none" }}>Ver →</Link>
                     </div>
                   </div>
-                  <div className="flex items-center gap-3 flex-shrink-0">
-                    <span style={{ display: "inline-flex", alignItems: "center", gap: 5, fontSize: "0.65rem", color: "#71717a" }}>
-                      <span style={{ width: 5, height: 5, borderRadius: "50%", background: STATUS_DOT[b.status] ?? "#52525b" }} />
-                      {STATUS_LABEL[b.status] ?? b.status}
-                    </span>
-                    <Link href={`/admin?booking=${b.id}`} className="text-xs font-semibold" style={{ color: "#a1a1aa", textDecoration: "none" }}>Ver →</Link>
-                  </div>
+                  {/* Finanzas + acciones en detalle */}
+                  {total > 0 && (
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: "0.5rem" }}>
+                      <div style={{ display: "flex", gap: "0.7rem", fontSize: "0.65rem" }}>
+                        <span style={{ color: "var(--gold)" }}>${total.toLocaleString("es-MX", { maximumFractionDigits: 0 })}</span>
+                        {deposit > 0 && <span style={{ color: "#16a34a" }}>+${deposit.toLocaleString("es-MX", { maximumFractionDigits: 0 })} pagado</span>}
+                        {balance > 0 && <span style={{ color: "#ca8a04" }}>saldo ${balance.toLocaleString("es-MX", { maximumFractionDigits: 0 })}</span>}
+                      </div>
+                      <div style={{ display: "flex", gap: "0.4rem" }}>
+                        <button onClick={() => openAbono(b)}
+                          style={{ display: "flex", alignItems: "center", gap: "0.25rem", padding: "0.28rem 0.55rem", borderRadius: 6, background: "rgba(22,163,74,0.1)", border: "1px solid rgba(22,163,74,0.2)", color: "#4ade80", fontSize: "0.63rem", fontWeight: 700, cursor: "pointer" }}>
+                          <Plus size={9} /> Abono
+                        </button>
+                        <button onClick={() => setEditId(b.id)}
+                          style={{ display: "flex", alignItems: "center", gap: "0.25rem", padding: "0.28rem 0.55rem", borderRadius: 6, background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", color: "#71717a", fontSize: "0.63rem", fontWeight: 700, cursor: "pointer" }}>
+                          <Pencil size={9} /> Editar
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </div>
               );
             })
@@ -307,7 +335,6 @@ export default function CalendarView({ bookings }: { bookings: BookingItem[] }) 
         </div>
       )}
 
-      {/* Resumen mes */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
         {Object.entries(STATUS_DOT).map(([s, dot]) => {
           const count = bookings.filter((b) => b.status === s && isSameMonth(parseLocalDate(b.eventDate), current)).length;
@@ -325,10 +352,84 @@ export default function CalendarView({ bookings }: { bookings: BookingItem[] }) 
     </div>
   );
 
+  // ── MODAL ABONO ──────────────────────────────────────────────────────────────
+  const AbonoModal = () => {
+    if (!abono) return null;
+    const balance    = abono.total - abono.currentDeposit;
+    const newAmt     = Number(abonoAmt) || 0;
+    const newBalance = balance - newAmt;
+    return (
+      <div style={{ position: "fixed", inset: 0, zIndex: 9992, background: "rgba(0,0,0,0.75)", display: "flex", alignItems: "center", justifyContent: "center", padding: "1rem" }}
+        onClick={(e) => { if (e.target === e.currentTarget) setAbono(null); }}>
+        <div style={{ background: "#0d0d1a", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 16, width: "100%", maxWidth: 420, padding: "1.5rem" }}>
+          <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: "1rem" }}>
+            <div>
+              <p style={{ margin: 0, fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "#16a34a" }}>Agregar abono</p>
+              <p style={{ margin: "0.2rem 0 0", fontSize: "0.9rem", fontWeight: 600, color: "#e4e4e7" }}>{abono.eventName}</p>
+            </div>
+            <button onClick={() => setAbono(null)} style={{ background: "transparent", border: "none", color: "#52525b", cursor: "pointer", padding: "0.25rem" }}>
+              <X size={18} />
+            </button>
+          </div>
+
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "0.5rem", marginBottom: "1rem" }}>
+            {[
+              { label: "Total",  value: abono.total,          color: "var(--gold)" },
+              { label: "Pagado", value: abono.currentDeposit, color: "#16a34a" },
+              { label: "Saldo",  value: balance,              color: "#ca8a04" },
+            ].map(({ label, value, color }) => (
+              <div key={label} style={{ background: "rgba(255,255,255,0.04)", borderRadius: 10, padding: "0.6rem 0.5rem", textAlign: "center" }}>
+                <p style={{ margin: 0, fontSize: "0.9rem", fontWeight: 700, color }}>${value.toLocaleString("es-MX", { maximumFractionDigits: 0 })}</p>
+                <p style={{ margin: 0, fontSize: "0.58rem", color: "#52525b", marginTop: "0.1rem" }}>{label}</p>
+              </div>
+            ))}
+          </div>
+
+          <div style={{ marginBottom: "0.75rem" }}>
+            <label className="block text-xs font-bold uppercase tracking-widest mb-1" style={{ color: "#94A3B8" }}>Monto del abono</label>
+            <div style={{ position: "relative" }}>
+              <span style={{ position: "absolute", left: "0.85rem", top: "50%", transform: "translateY(-50%)", color: "#52525b", fontSize: "0.9rem", fontWeight: 600 }}>$</span>
+              <input type="number" min={1} value={abonoAmt} onChange={(e) => setAbonoAmt(e.target.value)}
+                placeholder="0" autoFocus style={{ paddingLeft: "1.75rem", width: "100%", boxSizing: "border-box" as const }}
+                className="aura-input" />
+            </div>
+            {newAmt > 0 && (
+              <p style={{ margin: "0.4rem 0 0", fontSize: "0.7rem", color: newBalance >= 0 ? "#52525b" : "#ef4444" }}>
+                Nuevo saldo: ${newBalance.toLocaleString("es-MX", { maximumFractionDigits: 0 })}
+                {newBalance < 0 && " ⚠ excede el saldo"}
+              </p>
+            )}
+            {abonoError && <p style={{ margin: "0.4rem 0 0", fontSize: "0.7rem", color: "#ef4444" }}>{abonoError}</p>}
+          </div>
+
+          <div style={{ display: "flex", gap: "0.6rem" }}>
+            <button onClick={() => setAbono(null)}
+              style={{ flex: 1, padding: "0.65rem", borderRadius: 10, background: "transparent", border: "1px solid rgba(255,255,255,0.1)", color: "#71717a", fontWeight: 600, fontSize: "0.85rem", cursor: "pointer" }}>
+              Cancelar
+            </button>
+            <button onClick={submitAbono} disabled={abonoSaving || !abonoAmt}
+              style={{ flex: 2, padding: "0.65rem", borderRadius: 10, background: "var(--gold)", color: "#05051a", fontWeight: 800, fontSize: "0.85rem", cursor: "pointer", opacity: (abonoSaving || !abonoAmt) ? 0.5 : 1 }}>
+              {abonoSaving ? "Guardando..." : `Registrar $${(Number(abonoAmt) || 0).toLocaleString("es-MX", { maximumFractionDigits: 0 })}`}
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   // ── RENDER ───────────────────────────────────────────────────────────────────
   return (
     <div className="space-y-5">
-      {/* Toggle de vista */}
+      {editId && (
+        <EditBookingModal
+          bookingId={editId}
+          onClose={() => setEditId(null)}
+          onSaved={() => setEditId(null)}
+        />
+      )}
+      <AbonoModal />
+
+      {/* Toggle vista */}
       <div style={{ display: "flex", gap: "0.5rem" }}>
         {([
           { key: "list",     Icon: List,         label: "Próximos eventos" },
@@ -337,15 +438,7 @@ export default function CalendarView({ bookings }: { bookings: BookingItem[] }) 
           const active = view === key;
           return (
             <button key={key} onClick={() => setView(key)}
-              style={{
-                display: "inline-flex", alignItems: "center", gap: "0.4rem",
-                padding: "0.45rem 1rem", borderRadius: 8,
-                fontSize: "0.78rem", fontWeight: 600,
-                background:  active ? "rgba(255,255,255,0.08)" : "transparent",
-                border:      active ? "1px solid rgba(255,255,255,0.14)" : "1px solid rgba(255,255,255,0.06)",
-                color:       active ? "#e4e4e7" : "#52525b",
-                cursor: "pointer", transition: "all 0.15s",
-              }}
+              style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem", padding: "0.45rem 1rem", borderRadius: 8, fontSize: "0.78rem", fontWeight: 600, background: active ? "rgba(255,255,255,0.08)" : "transparent", border: active ? "1px solid rgba(255,255,255,0.14)" : "1px solid rgba(255,255,255,0.06)", color: active ? "#e4e4e7" : "#52525b", cursor: "pointer", transition: "all 0.15s" }}
               onMouseEnter={(e) => { if (!active) e.currentTarget.style.color = "#a1a1aa"; }}
               onMouseLeave={(e) => { if (!active) e.currentTarget.style.color = "#52525b"; }}>
               <Icon size={13} />
