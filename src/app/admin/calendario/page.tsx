@@ -11,7 +11,7 @@ export default async function CalendarioPage() {
   const bookings = await prisma.booking.findMany({
     where: { status: { notIn: ["cancelled", "expired"] } },
     select: {
-      id: true, eventName: true, eventDate: true, status: true,
+      id: true, eventName: true, eventDate: true, setupAt: true, status: true,
       client: { select: { fullName: true } },
     },
     orderBy: { eventDate: "asc" },
@@ -37,10 +37,11 @@ export default async function CalendarioPage() {
         </div>
       </header>
       <CalendarView bookings={bookings.map((b) => ({
-        id:        b.id,
-        eventName: b.eventName,
-        eventDate: b.eventDate.toISOString(),
-        status:    b.status,
+        id:         b.id,
+        eventName:  b.eventName,
+        eventDate:  b.eventDate.toISOString(),
+        setupAt:    b.setupAt.toISOString(),
+        status:     b.status,
         clientName: b.client.fullName,
       }))} />
     </div>
