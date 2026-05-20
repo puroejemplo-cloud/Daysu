@@ -371,6 +371,17 @@ input, select, textarea {
   }
 }
 
+/* ── AdminQuickSale — sobre el bottom bar en móvil ──────────────────────── */
+.admin-quicksale {
+  /* móvil: sube por encima del bottom bar (≈3.5rem) + gap */
+  bottom: calc(3.5rem + env(safe-area-inset-bottom) + 0.85rem) !important;
+}
+@media (min-width: 1024px) {
+  .admin-quicksale {
+    bottom: 1.75rem !important; /* desktop: posición original */
+  }
+}
+
 /* ── Admin page layout — espaciado generoso ─────────────────────────────── */
 .admin-page {
   max-width: 80rem;

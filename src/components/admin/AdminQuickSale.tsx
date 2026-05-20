@@ -12,6 +12,7 @@ export default function AdminQuickSale() {
     <Link
       href="/admin/ventas/nueva"
       aria-label="Nueva venta"
+      className="admin-quicksale"
       style={{
         position: "fixed",
         bottom: "1.75rem",
