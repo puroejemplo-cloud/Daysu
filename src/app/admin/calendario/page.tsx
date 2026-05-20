@@ -8,8 +8,14 @@ export default async function CalendarioPage() {
   const session = await auth();
   if (!session) redirect("/login");
 
+  const isSuperAdmin = session.user.role === "superadmin";
+  const suffix       = session.user.suffix as string | undefined;
+  const ownerFilter  = isSuperAdmin || !suffix
+    ? {}
+    : { items: { some: { isAutoBlocked: false, asset: { ownerSuffix: suffix } } } };
+
   const bookings = await prisma.booking.findMany({
-    where: { status: { notIn: ["cancelled", "expired"] } },
+    where: { status: { notIn: ["cancelled", "expired"] }, ...ownerFilter },
     select: {
       id: true, eventName: true, eventDate: true, setupAt: true, status: true,
       totalAmount: true, depositAmount: true,

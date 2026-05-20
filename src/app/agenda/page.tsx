@@ -13,14 +13,21 @@ export default async function AgendaPage() {
   const session = await auth();
   if (!session) redirect("/login");
 
-  const todayStart = new Date();
+  const todayStart   = new Date();
   todayStart.setHours(0, 0, 0, 0);
+
+  const isSuperAdmin = session.user.role === "superadmin";
+  const suffix       = session.user.suffix as string | undefined;
+  const ownerFilter  = isSuperAdmin || !suffix
+    ? {}
+    : { items: { some: { isAutoBlocked: false, asset: { ownerSuffix: suffix } } } };
 
   const [upcoming, pending] = await Promise.all([
     prisma.booking.findMany({
       where: {
         status:    { in: ["confirmed", "in_progress"] },
         eventDate: { gte: todayStart },
+        ...ownerFilter,
       },
       select: {
         id: true, eventName: true, eventDate: true, setupAt: true, status: true,
@@ -36,7 +43,7 @@ export default async function AgendaPage() {
       take: 30,
     }),
     prisma.booking.findMany({
-      where: { status: "pending_payment" },
+      where: { status: "pending_payment", ...ownerFilter },
       select: {
         id: true, eventName: true, eventDate: true, expiresAt: true,
         totalAmount: true, depositAmount: true,

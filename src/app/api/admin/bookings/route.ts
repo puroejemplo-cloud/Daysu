@@ -15,12 +15,23 @@ export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const status = searchParams.get("status");
 
-  const where =
+  const isSuperAdmin = session.user.role === "superadmin";
+  const suffix       = session.user.suffix as string | undefined;
+
+  // Filtro de estado
+  const statusFilter =
     status === "all"
       ? {}
       : status
       ? { status: status as never }
       : { status: { notIn: ["cancelled", "expired"] as never[] } };
+
+  // Filtro por propiedad: admin solo ve eventos con al menos un producto suyo
+  const ownerFilter = isSuperAdmin || !suffix
+    ? {}
+    : { items: { some: { isAutoBlocked: false, asset: { ownerSuffix: suffix } } } };
+
+  const where = { ...statusFilter, ...ownerFilter };
 
   const bookings = await prisma.booking.findMany({
     where,

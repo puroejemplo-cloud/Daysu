@@ -1,4 +1,4 @@
-const CACHE_NAME = "aura-vip-v3";
+const CACHE_NAME = "aura-vip-v4";
 
 const APP_SHELL = [
   "/manifest.json",
@@ -25,8 +25,7 @@ self.addEventListener("activate", (event) => {
 self.addEventListener("fetch", (event) => {
   const url = new URL(event.request.url);
 
-  // Navegación de página → SIEMPRE red, nunca caché
-  // Evita que el SW sirva HTML viejo al navegar entre páginas
+  // Navegación de página → SIEMPRE red
   if (event.request.mode === "navigate") {
     event.respondWith(fetch(event.request));
     return;
@@ -43,7 +42,7 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  // Imágenes y SVGs → cache-first (estáticos, no cambian frecuentemente)
+  // Imágenes y SVGs → cache-first
   if (url.pathname.match(/\.(png|jpg|jpeg|svg|webp|ico|gif)$/) ||
       url.pathname.startsWith("/paquetes/") ||
       url.pathname.startsWith("/icons/")) {
@@ -61,7 +60,7 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  // Resto (CSS, JS, fuentes) → network-first, fallback a caché
+  // Resto → network-first, fallback a caché
   event.respondWith(
     fetch(event.request)
       .then((res) => {
@@ -72,5 +71,34 @@ self.addEventListener("fetch", (event) => {
         return res;
       })
       .catch(() => caches.match(event.request))
+  );
+});
+
+// ── PUSH NOTIFICATIONS ────────────────────────────────────────────────────────
+
+self.addEventListener("push", (event) => {
+  if (!event.data) return;
+  const data = event.data.json();
+  event.waitUntil(
+    self.registration.showNotification(data.title ?? "Daysu.vip", {
+      body:    data.body   ?? "",
+      icon:    "/api/icon?size=192",
+      badge:   "/api/icon?size=96",
+      tag:     data.tag    ?? "daysu-event",
+      data:    { url: data.url ?? "/admin/calendario" },
+      vibrate: [200, 100, 200],
+    })
+  );
+});
+
+self.addEventListener("notificationclick", (event) => {
+  event.notification.close();
+  const target = event.notification.data?.url ?? "/admin/calendario";
+  event.waitUntil(
+    clients.matchAll({ type: "window", includeUncontrolled: true }).then((list) => {
+      const existing = list.find((c) => c.url.includes(self.location.origin));
+      if (existing) { existing.focus(); existing.navigate(target); }
+      else           clients.openWindow(target);
+    })
   );
 });

@@ -22,7 +22,8 @@ model AdminUser {
   updatedAt DateTime  @updatedAt @map("updated_at")
   createdBy Int?      @map("created_by") // superadmin que lo creó
 
-  ownedAssets Asset[] @relation("AssetOwner")
+  ownedAssets        Asset[]            @relation("AssetOwner")
+  pushSubscriptions  PushSubscription[]
 
   @@map("admin_users")
 }
@@ -350,6 +351,21 @@ model WeddingLead {
   client Client? @relation(fields: [clientId], references: [id])
 
   @@map("wedding_leads")
+}
+
+// ─── PUSH NOTIFICATIONS ──────────────────────────────────────────────────────
+
+model PushSubscription {
+  id          Int       @id @default(autoincrement())
+  adminUserId Int       @map("admin_user_id")
+  endpoint    String    @unique @db.Text
+  p256dh      String    @db.Text
+  auth        String    @db.Text
+  createdAt   DateTime  @default(now()) @map("created_at")
+
+  adminUser AdminUser @relation(fields: [adminUserId], references: [id], onDelete: Cascade)
+
+  @@map("push_subscriptions")
 }
 
 // ─── CONFIGURACIÓN DEL SISTEMA ────────────────────────────────────────────────
