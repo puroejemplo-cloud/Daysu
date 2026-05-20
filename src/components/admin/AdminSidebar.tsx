@@ -185,16 +185,17 @@ export default function AdminSidebar() {
         <SidebarInner />
       </aside>
 
-      {/* ── Mobile top bar ── fixed para que no desaparezca al hacer scroll en iOS standalone */}
+      {/* ── Mobile bottom bar ── */}
       <div style={{
-        position: "fixed", top: 0, left: 0, right: 0, zIndex: 50,
+        position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 50,
         background: "rgba(9,9,11,0.97)",
-        borderBottom: "1px solid rgba(255,255,255,0.06)",
+        borderTop: "1px solid rgba(255,255,255,0.06)",
         backdropFilter: "blur(16px)",
-        display: "flex", alignItems: "center", gap: "0.75rem",
-        padding: "max(0.7rem, env(safe-area-inset-top)) 1rem 0.7rem",
+        display: "flex", alignItems: "center",
+        padding: "0.65rem 1.25rem max(0.65rem, env(safe-area-inset-bottom))",
       }} className="lg:hidden">
-        {/* Botón toggle — izquierda, abre y cierra */}
+
+        {/* Botón menú — izquierda */}
         <button
           onClick={() => setOpen((v) => !v)}
           aria-label={open ? "Cerrar menú" : "Abrir menú"}
@@ -202,37 +203,38 @@ export default function AdminSidebar() {
           style={{
             background: open ? "rgba(232,25,138,0.12)" : "transparent",
             border: `1px solid ${open ? "rgba(232,25,138,0.3)" : "rgba(255,255,255,0.08)"}`,
-            borderRadius: "0.4rem", padding: "0.3rem 0.45rem",
+            borderRadius: "0.45rem", padding: "0.35rem 0.5rem",
             color: open ? "var(--gold)" : "#71717a",
-            cursor: "pointer", display: "flex", flexShrink: 0,
-            transition: "all 0.15s",
+            cursor: "pointer", display: "flex", alignItems: "center",
+            flexShrink: 0, transition: "all 0.15s",
           }}>
           {open ? <X size={17} /> : <Menu size={17} />}
         </button>
 
-        {/* Logo + página actual */}
-        <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", minWidth: 0 }}>
+        {/* Logo + página actual — centrado */}
+        <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: "0.45rem" }}>
           <img src="/logo-daysu.png" alt="" aria-hidden="true"
             style={{ width: 22, height: 22, objectFit: "contain", flexShrink: 0 }} />
-          <span style={{ fontSize: "0.75rem", fontWeight: 500, color: "#a1a1aa", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-            {current?.label ?? "Admin"}
+          <span style={{ fontSize: "0.78rem", fontWeight: 600, color: "#a1a1aa", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+            {current?.label ?? "Daysu.vip"}
           </span>
         </div>
+
+        {/* Spacer simétrico al botón izquierdo */}
+        <div style={{ width: "2.5rem", flexShrink: 0 }} />
       </div>
 
-      {/* ── Mobile drawer ── */}
+      {/* ── Mobile drawer ── z-index por encima del bottom bar para cubrirlo */}
       {open && (
         <>
-          {/* Overlay — clic fuera cierra */}
           <div onClick={() => setOpen(false)}
-            style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.65)", zIndex: 48, backdropFilter: "blur(3px)" }} />
-          {/* Drawer */}
+            style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.65)", zIndex: 51, backdropFilter: "blur(3px)" }} />
           <aside style={{
             position: "fixed", top: 0, left: 0, bottom: 0,
             width: 260,
             background: "#09090b",
             borderRight: "1px solid rgba(255,255,255,0.06)",
-            zIndex: 49,
+            zIndex: 52,
             animation: "slideInLeft 0.2s ease",
           }}>
             <SidebarInner onClose={() => setOpen(false)} />

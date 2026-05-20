@@ -361,13 +361,13 @@ input, select, textarea {
 .admin-content {
   min-height: 100vh;
   background: #09090b;
-  /* Mobile: espacio para el topbar fixed (≈3rem) + safe-area-inset-top del notch */
-  padding-top: calc(3.25rem + env(safe-area-inset-top));
+  /* Mobile: espacio para el bottom bar fixed (≈3.5rem) + safe-area-inset-bottom */
+  padding-bottom: calc(3.5rem + env(safe-area-inset-bottom));
 }
 @media (min-width: 1024px) {
   .admin-content {
     margin-left: 220px;
-    padding-top: 0; /* desktop usa sidebar lateral, no topbar */
+    padding-bottom: 0; /* desktop usa sidebar lateral, no bottom bar */
   }
 }
 
