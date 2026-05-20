@@ -1,5 +1,6 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { format, startOfMonth, endOfMonth, eachDayOfInterval,
          isSameDay, isSameMonth, addMonths, subMonths, getDay,
          isToday as dateFnsIsToday, startOfDay } from "date-fns";
@@ -73,7 +74,11 @@ function groupByDate(bookings: BookingItem[]): Map<string, BookingItem[]> {
 }
 
 export default function CalendarView({ bookings: initBookings }: { bookings: BookingItem[] }) {
+  const router = useRouter();
   const [bookings,  setBookings]  = useState(initBookings);
+
+  // Sincroniza cuando el server component refresca los props (tras router.refresh())
+  useEffect(() => { setBookings(initBookings); }, [initBookings]);
   const [view,      setView]      = useState<"list" | "calendar">("list");
   const [current,   setCurrent]   = useState(new Date());
   const [selected,  setSelected]  = useState<Date | null>(null);
@@ -424,7 +429,7 @@ export default function CalendarView({ bookings: initBookings }: { bookings: Boo
         <EditBookingModal
           bookingId={editId}
           onClose={() => setEditId(null)}
-          onSaved={() => setEditId(null)}
+          onSaved={() => { setEditId(null); router.refresh(); }}
         />
       )}
       <AbonoModal />

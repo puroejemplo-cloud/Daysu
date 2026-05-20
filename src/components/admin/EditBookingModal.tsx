@@ -72,13 +72,23 @@ export default function EditBookingModal({ bookingId, onClose, onSaved }: Props)
 
   const handleSave = async () => {
     setSaving(true); setError("");
+
+    // Calcular setupAt/teardownAt en el CLIENTE para preservar zona horaria local
+    // (si se calcula en el servidor con UTC, 17:00 México → guarda como 17:00 UTC = 11:00 México)
+    const [year, month, day] = form.eventDate.split("-").map(Number);
+    const [h, m]             = form.setupHour.split(":").map(Number);
+    const setupDate          = new Date(year, month - 1, day, h, m, 0, 0);
+    const teardownDate       = new Date(setupDate);
+    teardownDate.setHours(teardownDate.getHours() + 6);
+
     const res = await fetch(`/api/admin/bookings/${bookingId}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         eventName:     form.eventName,
         eventDate:     form.eventDate,
-        setupHour:     form.setupHour,
+        setupAt:       setupDate.toISOString(),
+        teardownAt:    teardownDate.toISOString(),
         venueAddress:  form.venueAddress,
         notes:         form.notes,
         totalAmount:   total,

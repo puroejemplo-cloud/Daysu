@@ -33,7 +33,8 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
   const { id } = await params;
 
   let body: {
-    eventName?: string; eventDate?: string; setupHour?: string;
+    eventName?: string; eventDate?: string;
+    setupAt?: string; teardownAt?: string;   // ISO strings calculados en el cliente
     venueAddress?: string; notes?: string;
     totalAmount?: number; depositAmount?: number;
     status?: string;
@@ -45,7 +46,8 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
     return err("Body inválido", 400);
   }
 
-  const { eventName, eventDate, setupHour, venueAddress, notes, totalAmount, depositAmount, status, client } = body;
+  const { eventName, eventDate, setupAt: setupAtStr, teardownAt: teardownAtStr,
+          venueAddress, notes, totalAmount, depositAmount, status, client } = body;
 
   const existing = await prisma.booking.findUnique({
     where:  { id },
@@ -54,14 +56,14 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
   if (!existing) return err("Reserva no encontrada", 404);
 
   try {
-    // 1 — Actualizar cliente (sin transacción — operaciones independientes)
+    // 1 — Actualizar cliente
     if (client) {
       const fullName = client.fullName?.trim();
-      const phone    = client.phone !== undefined ? (client.phone?.trim() || null) : undefined;
+      const phone    = client.phone !== undefined ? (client.phone.trim() || null) : undefined;
       if (fullName || phone !== undefined) {
         await prisma.client.update({
           where: { id: existing.clientId },
-          data:  {
+          data: {
             ...(fullName           && { fullName }),
             ...(phone !== undefined && { phone }),
           },
@@ -69,31 +71,21 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
       }
     }
 
-    // 2 — Recalcular fechas si se envían
-    let setupAt    = existing.setupAt;
-    let teardownAt = existing.teardownAt;
-    if (eventDate || setupHour) {
-      const dateStr = eventDate ?? existing.eventDate.toISOString().split("T")[0];
-      const [h, m]  = (setupHour ?? "19:00").split(":").map(Number);
-      // Usar mediodía UTC para evitar desfase de zona horaria en campo @db.Date
-      const base    = new Date(`${dateStr}T12:00:00.000Z`);
-      setupAt    = new Date(base);
-      setupAt.setUTCHours(h, m, 0, 0);
-      teardownAt = new Date(setupAt);
-      teardownAt.setUTCHours(teardownAt.getUTCHours() + 6);
-    }
+    // 2 — Usar setupAt/teardownAt ISO del cliente (ya en UTC correcto para la zona horaria local)
+    const setupAt    = setupAtStr    ? new Date(setupAtStr)    : existing.setupAt;
+    const teardownAt = teardownAtStr ? new Date(teardownAtStr) : existing.teardownAt;
 
-    // 3 — Actualizar booking con tipos explícitos (no Record<string, unknown>)
+    // 3 — Actualizar booking con tipos explícitos
     const updated = await prisma.booking.update({
       where: { id },
       data: {
-        ...(eventName?.trim()       && { eventName:    eventName.trim() }),
-        ...(eventDate               && { eventDate:    new Date(`${eventDate}T12:00:00.000Z`) }),
+        ...(eventName?.trim() && { eventName: eventName.trim() }),
+        ...(eventDate && { eventDate: new Date(`${eventDate}T12:00:00.000Z`) }),
         setupAt,
         teardownAt,
         ...(venueAddress !== undefined && { venueAddress: venueAddress.trim() || null }),
         ...(notes        !== undefined && { notes:        notes.trim()        || null }),
-        ...(totalAmount  != null       && { totalAmount:  totalAmount }),
+        ...(totalAmount  != null       && { totalAmount }),
         ...(depositAmount != null      && { depositAmount }),
         ...(status && Object.values(BookingStatus).includes(status as BookingStatus) && {
           status: status as BookingStatus,
