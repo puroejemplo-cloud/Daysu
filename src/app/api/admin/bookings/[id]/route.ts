@@ -56,18 +56,44 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
   if (!existing) return err("Reserva no encontrada", 404);
 
   try {
-    // 1 — Actualizar cliente
+    // 1 — Manejar cliente
+    // Si el cliente tiene >1 reserva y se cambia el nombre, crear uno nuevo solo para esta
+    // reserva — evita que el cambio afecte a todas las demás reservas del mismo cliente.
+    let clientIdToUse = existing.clientId;
+
     if (client) {
-      const fullName = client.fullName?.trim();
-      const phone    = client.phone !== undefined ? (client.phone.trim() || null) : undefined;
-      if (fullName || phone !== undefined) {
-        await prisma.client.update({
-          where: { id: existing.clientId },
-          data: {
-            ...(fullName           && { fullName }),
-            ...(phone !== undefined && { phone }),
-          },
+      const newFullName = client.fullName?.trim();
+      const newPhone    = client.phone !== undefined ? (client.phone.trim() || null) : undefined;
+
+      if (newFullName || newPhone !== undefined) {
+        const sharedCount = await prisma.booking.count({
+          where: { clientId: existing.clientId },
         });
+
+        if (sharedCount > 1 && newFullName) {
+          // Cliente compartido con otras reservas — crear uno nuevo aislado para esta reserva
+          const base = await prisma.client.findUnique({
+            where:  { id: existing.clientId },
+            select: { phone: true },
+          });
+          const fresh = await prisma.client.create({
+            data: {
+              email:    `cliente-${id.slice(0, 8)}-${Date.now()}@aura.local`,
+              fullName: newFullName,
+              phone:    newPhone !== undefined ? newPhone : (base?.phone ?? null),
+            },
+          });
+          clientIdToUse = fresh.id;
+        } else {
+          // Cliente exclusivo — actualizar directamente sin riesgo de contaminación
+          await prisma.client.update({
+            where: { id: existing.clientId },
+            data: {
+              ...(newFullName              && { fullName: newFullName }),
+              ...(newPhone !== undefined   && { phone:    newPhone    }),
+            },
+          });
+        }
       }
     }
 
@@ -79,6 +105,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
     const updated = await prisma.booking.update({
       where: { id },
       data: {
+        ...(clientIdToUse !== existing.clientId && { clientId: clientIdToUse }),
         ...(eventName?.trim() && { eventName: eventName.trim() }),
         ...(eventDate && { eventDate: new Date(`${eventDate}T12:00:00.000Z`) }),
         setupAt,
