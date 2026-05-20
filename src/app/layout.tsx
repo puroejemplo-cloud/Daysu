@@ -55,7 +55,7 @@ export const metadata: Metadata = {
     locale: "es_MX",
     images: [
       {
-        url: `${BASE_URL}/og-daysu.jpg`,
+        url: `${BASE_URL}/api/og`,
         width: 1200,
         height: 630,
         alt: "Daysu.vip — Eventos Legendarios en Zacatecas",
@@ -66,7 +66,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Daysu.vip",
     description: "Paquetes VIP para eventos en Zacatecas",
-    images: [`${BASE_URL}/og-daysu.jpg`],
+    images: [`${BASE_URL}/api/og`],
   },
 };
 
