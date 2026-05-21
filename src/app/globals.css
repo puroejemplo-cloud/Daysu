@@ -650,6 +650,15 @@ input, select, textarea {
   color: var(--cream);
   transition: border-color 0.25s, box-shadow 0.25s, transform 0.25s;
 }
+/* Cubre :link, :visited, :hover, :active — Android Chrome ignoraría solo "color" */
+.pkg-hcard:link,
+.pkg-hcard:visited,
+.pkg-hcard:hover,
+.pkg-hcard:active,
+.pkg-hcard:focus {
+  color: var(--cream);
+  text-decoration: none;
+}
 .pkg-hcard::before {
   content: '';
   position: absolute;
@@ -688,7 +697,8 @@ input, select, textarea {
 .pkg-hcard-name {
   font-size: clamp(1.7rem, 5vw, 2.4rem);
   line-height: 1;
-  color: #f4f4f5;
+  color: #f4f4f5 !important;
+  -webkit-text-fill-color: #f4f4f5;
   margin: 0.3rem 0 0;
   letter-spacing: -0.01em;
 }

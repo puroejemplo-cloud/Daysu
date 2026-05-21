@@ -349,7 +349,7 @@ export default function HomeClient({
                         ${Number(pkg.originalPrice).toLocaleString("es-MX")}
                       </span>
                     )}
-                    <span className="bebas" style={{ fontSize: "clamp(1.8rem,4vw,2.4rem)", color: isPromo ? "#f87171" : "var(--gold)", lineHeight: 1 }}>
+                    <span className="bebas" style={{ fontSize: "clamp(1.8rem,4vw,2.4rem)", color: isPromo ? "#f87171" : "var(--gold)", WebkitTextFillColor: isPromo ? "#f87171" : "var(--gold)", lineHeight: 1 }}>
                       ${Number(pkg.dailyRate).toLocaleString("es-MX")}
                     </span>
                     <span style={{ fontSize: "0.75rem", color: "#52525b", fontWeight: 400 }}>MXN</span>
