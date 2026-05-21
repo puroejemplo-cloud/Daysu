@@ -217,23 +217,23 @@ export default function CalendarView({ bookings: initBookings }: { bookings: Boo
 
   const CalendarGrid = () => (
     <div className="space-y-5">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-2">
         <button onClick={() => setCurrent(subMonths(current, 1))}
-          className="px-4 py-1.5 rounded-md text-sm font-semibold border transition-all"
+          className="px-3 py-1.5 rounded-md text-sm font-semibold border transition-all flex-shrink-0"
           style={{ borderColor: "rgba(255,255,255,0.08)", color: "#71717a", background: "transparent" }}
           onMouseEnter={(e) => (e.currentTarget.style.color = "#a1a1aa")}
           onMouseLeave={(e) => (e.currentTarget.style.color = "#71717a")}>
-          ← Anterior
+          ←
         </button>
-        <h2 className="text-base font-bold tracking-widest" style={{ color: "#e4e4e7" }}>
+        <h2 className="font-bold tracking-widest text-center min-w-0" style={{ color: "#e4e4e7", fontSize: "clamp(0.75rem, 3vw, 1rem)" }}>
           {format(current, "MMMM yyyy", { locale: es }).toUpperCase()}
         </h2>
         <button onClick={() => setCurrent(addMonths(current, 1))}
-          className="px-4 py-1.5 rounded-md text-sm font-semibold border transition-all"
+          className="px-3 py-1.5 rounded-md text-sm font-semibold border transition-all flex-shrink-0"
           style={{ borderColor: "rgba(255,255,255,0.08)", color: "#71717a", background: "transparent" }}
           onMouseEnter={(e) => (e.currentTarget.style.color = "#a1a1aa")}
           onMouseLeave={(e) => (e.currentTarget.style.color = "#71717a")}>
-          Siguiente →
+          →
         </button>
       </div>
 
@@ -247,8 +247,11 @@ export default function CalendarView({ bookings: initBookings }: { bookings: Boo
       </div>
 
       <div className="grid grid-cols-7 gap-1">
-        {["Lun","Mar","Mié","Jue","Vie","Sáb","Dom"].map((d) => (
-          <div key={d} className="text-center text-xs font-semibold py-2 admin-label">{d}</div>
+        {[["Lun","L"],["Mar","M"],["Mié","X"],["Jue","J"],["Vie","V"],["Sáb","S"],["Dom","D"]].map(([full, short]) => (
+          <div key={full} className="text-center text-xs font-semibold py-2 admin-label">
+            <span className="hidden sm:inline">{full}</span>
+            <span className="sm:hidden">{short}</span>
+          </div>
         ))}
         {Array.from({ length: offset }).map((_, i) => <div key={`e-${i}`} />)}
         {days.map((day) => {

@@ -49,7 +49,7 @@ export function WeddingSteps({ steps }: WeddingStepsProps) {
             zIndex: 0,
           }} />
 
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "1.5rem", position: "relative", zIndex: 1 }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "1.5rem", position: "relative", zIndex: 1 }}>
             {items.map((step, i) => {
               const Icon = ICONS[i] ?? Sparkles;
               return (

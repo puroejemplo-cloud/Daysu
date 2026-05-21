@@ -116,7 +116,7 @@ export default function EditBookingModal({ bookingId, onClose, onSaved }: Props)
         background: "#0a0a18",
         border: "1px solid rgba(255,255,255,0.08)",
         borderRadius: 16,
-        width: "100%", maxWidth: 620,
+        width: "100%", maxWidth: "min(620px, calc(100vw - 1rem))",
         maxHeight: "92vh", overflowY: "auto",
       }}>
         {/* Header */}

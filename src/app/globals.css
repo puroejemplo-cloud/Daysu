@@ -371,6 +371,14 @@ input, select, textarea {
   }
 }
 
+/* ── Toast — sobre el bottom bar en móvil ───────────────────────────────── */
+.admin-toast-container {
+  bottom: calc(3.5rem + env(safe-area-inset-bottom) + 0.75rem);
+}
+@media (min-width: 1024px) {
+  .admin-toast-container { bottom: 2rem; }
+}
+
 /* ── AdminQuickSale — sobre el bottom bar en móvil ──────────────────────── */
 .admin-quicksale {
   /* móvil: sube por encima del bottom bar (≈3.5rem) + gap */
@@ -505,6 +513,7 @@ input, select, textarea {
   justify-content: flex-end;
   padding: 5rem 1.25rem 2.5rem;
   position: relative;
+  overflow: hidden;
 }
 @media (min-width: 768px) {
   .hero-section { padding: 80px 4rem 4rem; }
@@ -638,7 +647,7 @@ input, select, textarea {
   overflow: hidden;
   position: relative;
   text-decoration: none;
-  color: inherit;
+  color: var(--cream);
   transition: border-color 0.25s, box-shadow 0.25s, transform 0.25s;
 }
 .pkg-hcard::before {
@@ -728,9 +737,13 @@ input, select, textarea {
   border-color: rgba(232,25,138,0.5);
 }
 
+/* Mobile: imagen compacta (no 1:1 square) */
+@media (max-width: 639px) {
+  .pkg-hcard-img { aspect-ratio: unset; height: 200px; }
+}
 @media (min-width: 640px) {
   .pkg-hcard { flex-direction: row; }
-  .pkg-hcard-img { width: 300px; aspect-ratio: 1 / 1; }
+  .pkg-hcard-img { width: 300px; aspect-ratio: 1 / 1; height: auto; }
   .pkg-hcard-body {
     border-top: none;
     border-left: 1px solid rgba(232,25,138,0.1);

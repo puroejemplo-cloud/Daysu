@@ -84,7 +84,7 @@ export default function ClientList() {
       <div style={{ display: "flex", gap: "0.75rem", alignItems: "center", flexWrap: "wrap" }}>
         <input value={q} onChange={(e) => setQ(e.target.value)}
           placeholder="Buscar por nombre, email, teléfono..."
-          className="aura-input" style={{ flex: 1, minWidth: 220, maxWidth: 480 }} />
+          className="aura-input" style={{ flex: 1, minWidth: 0, maxWidth: 480 }} />
         <button onClick={openForm}
           style={{
             display: "flex", alignItems: "center", gap: "0.4rem",

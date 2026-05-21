@@ -143,7 +143,7 @@ export default function AdminDashboard() {
   return (
     <div className="space-y-6">
       {/* Toasts */}
-      <div style={{ position: "fixed", bottom: "2rem", right: "2rem", zIndex: 9999, display: "flex", flexDirection: "column", gap: "0.5rem", pointerEvents: "none" }}
+      <div className="admin-toast-container" style={{ position: "fixed", right: "1rem", zIndex: 9999, display: "flex", flexDirection: "column", gap: "0.5rem", pointerEvents: "none" }}
         aria-live="polite">
         {toasts.map((t) => (
           <div key={t.id} role="status"
@@ -318,7 +318,7 @@ export default function AdminDashboard() {
                 </div>
 
                 {/* Monto + acciones */}
-                <div className="flex items-center gap-2.5 flex-shrink-0">
+                <div className="flex items-center gap-2 flex-shrink-0 flex-wrap">
                   <div className="text-right">
                     <p className="text-sm font-bold" style={{ color: "#d4af37" }}>${Number(b.depositAmount).toFixed(2)}</p>
                     <p className="admin-label">apartado</p>

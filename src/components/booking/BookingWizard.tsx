@@ -334,10 +334,12 @@ export default function BookingWizard({ forcedAssetId, depositPercent = 30 }: { 
                 <span
                   onClick={() => i < step && goStep(i)}
                   style={{
-                    fontSize: "0.65rem", fontWeight: 600, whiteSpace: "nowrap",
+                    fontSize: "clamp(0.5rem, 2vw, 0.65rem)", fontWeight: 600,
+                    whiteSpace: "nowrap",
                     color: i === step ? "#e4e4e7" : i < step ? "#4ade80" : "#3f3f46",
                     transition: "color 0.25s",
                     cursor: i < step ? "pointer" : "default",
+                    maxWidth: "4rem", overflow: "hidden", textOverflow: "ellipsis",
                   }}>{s}</span>
               </div>
               {/* Línea conectora con fill animado */}

@@ -175,7 +175,7 @@ export default function HomeClient({
           Próximos eventos · {new Date().getFullYear()}
         </p>
 
-        <h1 className="fade-up-2 bebas" style={{ fontSize: "clamp(3.5rem,9vw,9rem)", lineHeight: 0.95, letterSpacing: "-0.01em" }}>
+        <h1 className="fade-up-2 bebas" style={{ fontSize: "clamp(2.4rem,9vw,9rem)", lineHeight: 0.95, letterSpacing: "-0.01em" }}>
           HAZ QUE TU<br />
           EVENTO SEA<br />
           <em style={{ fontStyle: "italic", color: "var(--gold)" }}>LEGENDARIO.</em>

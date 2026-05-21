@@ -25,9 +25,8 @@ self.addEventListener("activate", (event) => {
 self.addEventListener("fetch", (event) => {
   const url = new URL(event.request.url);
 
-  // Navegación de página → SIEMPRE red
+  // Navegación de página → no interceptar (Safari iOS falla con fetch en navigate mode)
   if (event.request.mode === "navigate") {
-    event.respondWith(fetch(event.request));
     return;
   }
 
