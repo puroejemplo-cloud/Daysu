@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import type { ServicePageConfig } from "@/lib/service-pages";
+import { SERVICE_PAGES } from "@/lib/service-pages";
 
 export interface ServicePackage {
   id: number;
@@ -127,6 +128,21 @@ export default function ServicePage({ config, packages, waNumber }: ServicePageP
               Ver todos los paquetes
             </Link>
           </div>
+        </div>
+      </section>
+
+      {/* Otros servicios */}
+      <section style={{ paddingBottom: "4rem", borderTop: "1px solid rgba(255,255,255,0.07)", paddingTop: "2.5rem" }}>
+        <p style={{ fontSize: "0.65rem", letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--gold)", fontWeight: 700, marginBottom: "1rem" }}>
+          Otros servicios en Zacatecas
+        </p>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem 1.5rem" }}>
+          {SERVICE_PAGES.filter((p) => p.slug !== config.slug).map((p) => (
+            <Link key={p.slug} href={`/servicios/${p.slug}`}
+              style={{ fontSize: "0.8rem", color: "var(--muted)", textDecoration: "none" }}>
+              {p.h1.replace(" en Zacatecas", "")}
+            </Link>
+          ))}
         </div>
       </section>
 

@@ -6,6 +6,7 @@ import Testimonials     from "./Testimonials";
 import PackageComparison from "./PackageComparison";
 import CardCarousel     from "@/components/catalog/CardCarousel";
 import type { PlaceInfo } from "@/lib/google-places";
+import { SERVICE_PAGES } from "@/lib/service-pages";
 
 const MAPS_URL   = "https://maps.app.goo.gl/jECw9oHjjJikhovE8";
 // TODO: actualizar con dirección completa cuando el usuario la proporcione
@@ -588,19 +589,39 @@ export default function HomeClient({
       </section>
 
       {/* ── FOOTER ─────────────────────────────────────────── */}
-      <footer className="footer-section">
-        <span className="bebas" style={{ fontSize: "1.3rem", color: "var(--gold)", letterSpacing: "0.12em" }}>
-          DAYSU.VIP
-        </span>
-        <p style={{ fontSize: "0.72rem", color: "var(--muted)", letterSpacing: "0.08em" }}>
-          © {new Date().getFullYear()} Daysu.vip · Sonido Daysu · DJ Iván Events
-        </p>
-        <p style={{ fontSize: "0.72rem", color: "var(--muted)", letterSpacing: "0.08em" }}>
-          {BUSINESS_ADDRESS}
-        </p>
-        <p style={{ fontSize: "0.72rem", color: "var(--muted)", letterSpacing: "0.08em" }}>
-          Instagram · TikTok · Facebook
-        </p>
+      <footer style={{ borderTop: "1px solid rgba(255,255,255,0.07)", padding: "3rem 1.5rem 2rem", maxWidth: "80rem", margin: "0 auto", width: "100%" }}>
+        {/* Links de servicios */}
+        <div style={{ marginBottom: "2.5rem" }}>
+          <p style={{ fontSize: "0.65rem", letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--gold)", fontWeight: 700, marginBottom: "1rem" }}>
+            Servicios en Zacatecas
+          </p>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem 1.5rem" }}>
+            {SERVICE_PAGES.map((p) => (
+              <Link key={p.slug} href={`/servicios/${p.slug}`}
+                style={{ fontSize: "0.75rem", color: "var(--muted)", textDecoration: "none" }}
+                onMouseEnter={(e) => (e.currentTarget.style.color = "var(--cream)")}
+                onMouseLeave={(e) => (e.currentTarget.style.color = "var(--muted)")}>
+                {p.h1.replace(" en Zacatecas", "")}
+              </Link>
+            ))}
+          </div>
+        </div>
+
+        {/* Datos y copyright */}
+        <div className="footer-section" style={{ borderTop: "none", padding: 0 }}>
+          <span className="bebas" style={{ fontSize: "1.3rem", color: "var(--gold)", letterSpacing: "0.12em" }}>
+            DAYSU.VIP
+          </span>
+          <p style={{ fontSize: "0.72rem", color: "var(--muted)", letterSpacing: "0.08em" }}>
+            © {new Date().getFullYear()} Daysu.vip · Sonido Daysu · DJ Iván Events
+          </p>
+          <p style={{ fontSize: "0.72rem", color: "var(--muted)", letterSpacing: "0.08em" }}>
+            {BUSINESS_ADDRESS}
+          </p>
+          <p style={{ fontSize: "0.72rem", color: "var(--muted)", letterSpacing: "0.08em" }}>
+            Instagram · TikTok · Facebook
+          </p>
+        </div>
       </footer>
     </div>
   );
