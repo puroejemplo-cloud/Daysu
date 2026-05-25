@@ -85,7 +85,35 @@ export default async function PackageDetailPage({ params }: Props) {
     imageGallery: Array.isArray(r.imageGallery) ? (r.imageGallery as string[]) : [],
   }));
 
+  const BASE_URL = process.env.NEXTAUTH_URL ?? "https://daysu.vip";
+  const firstLine = (asset.description ?? "").split("\n")[0]?.trim();
+  const ogImage = gallery[0] ?? asset.imageUrl ?? undefined;
+
+  const productJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": asset.name,
+    "description": firstLine || asset.name,
+    ...(ogImage ? { "image": ogImage } : {}),
+    "offers": {
+      "@type": "Offer",
+      "price": asset.dailyRate.toString(),
+      "priceCurrency": "MXN",
+      "availability": "https://schema.org/InStock",
+      "url": `${BASE_URL}/catalogo/${asset.sku.toLowerCase()}`,
+    },
+    "brand": {
+      "@type": "Brand",
+      "name": "Daysu.vip"
+    }
+  };
+
   return (
+    <>
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }}
+    />
     <PackageDetail
       asset={{
         id:            asset.id,
@@ -106,5 +134,6 @@ export default async function PackageDetailPage({ params }: Props) {
       }}
       relatedProducts={relatedProducts}
     />
+    </>
   );
 }
