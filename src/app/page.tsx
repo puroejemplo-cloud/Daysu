@@ -143,8 +143,29 @@ export default async function HomePage() {
     compMap.set(parentId, items.sort((a, b) => b.price - a.price).map(i => i.name));
   }
 
+  const localBusinessJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "name": "Daysu.vip — Aura Producciones",
+    "description": "Paquetes de DJ, audio, iluminación y shows para bodas, quinceañeras y eventos hasta 500 personas en Zacatecas.",
+    "url": "https://daysu.vip",
+    "telephone": `+${whatsappSetting?.value ?? "524929496372"}`,
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Zacatecas",
+      "addressRegion": "ZAC",
+      "addressCountry": "MX"
+    },
+    "priceRange": "$$",
+    "sameAs": []
+  };
+
   return (
     <>
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessJsonLd) }}
+    />
     <HomeClient
       carouselImages={carouselImages}
       whatsappNumber={whatsappSetting?.value ?? "524929496372"}
