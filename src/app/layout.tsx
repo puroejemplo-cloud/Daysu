@@ -6,6 +6,7 @@ import AuthSessionProvider from "@/components/ui/SessionProvider";
 import PWARegister     from "@/components/ui/PWARegister";
 import WhatsAppButton  from "@/components/ui/WhatsAppButton";
 import { getWhatsAppSettings } from "@/lib/cached-settings";
+import { GoogleAnalytics } from "@next/third-parties/google";
 
 const bebas = Bebas_Neue({
   weight: "400",
@@ -102,6 +103,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           {/* Safe area bottom — espacio para la barra home del iPhone */}
           <div style={{ height: "env(safe-area-inset-bottom)" }} />
         </AuthSessionProvider>
+        {process.env.NODE_ENV === "production" && process.env.NEXT_PUBLIC_GA_ID && (
+          <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />
+        )}
       </body>
     </html>
   );
