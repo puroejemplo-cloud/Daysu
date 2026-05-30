@@ -47,7 +47,7 @@ const FAQ_ITEMS = [
   },
   {
     q: "¿Qué pasa si cancelo mi reserva?",
-    a: "Cancelaciones con más de 15 días de anticipación tienen reembolso del 100% del depósito. Menos de 15 días: 50%. Menos de 72 horas: sin reembolso.",
+    a: "El depósito no es reembolsable — cubre el bloqueo de tu fecha en nuestra agenda. Si necesitas cambiar la fecha, lo trasladamos sin costo con al menos 15 días de anticipación y sujeto a disponibilidad. En caso de cancelación por nuestra parte, te devolvemos el 100%.",
   },
   {
     q: "¿El precio incluye instalación y desinstalación?",

@@ -44,11 +44,13 @@ export default function TerminosPage() {
         </Section>
 
         <Section title="4. Política de cancelación y reembolso">
+          <p style={{ marginBottom: "0.75rem" }}>
+            El depósito pagado al momento de la reserva <strong style={{ color: "#e4e4e7" }}>no es reembolsable</strong> bajo ninguna circunstancia, ya que cubre el bloqueo de la fecha en la agenda y los costos de coordinación previa al evento.
+          </p>
           <ul style={{ paddingLeft: "1.25rem", display: "flex", flexDirection: "column", gap: "0.4rem" }}>
-            <li><strong style={{ color: "#e4e4e7" }}>Más de 15 días antes del evento:</strong> reembolso del 100% del depósito.</li>
-            <li><strong style={{ color: "#e4e4e7" }}>Entre 8 y 15 días:</strong> reembolso del 50% del depósito.</li>
-            <li><strong style={{ color: "#e4e4e7" }}>Menos de 7 días:</strong> sin reembolso. El depósito se aplica como compensación por bloqueo de agenda.</li>
-            <li>En caso de cancelación por nuestra parte (fuerza mayor), se reembolsa el 100% del depósito.</li>
+            <li><strong style={{ color: "#e4e4e7" }}>Cancelación por el cliente:</strong> sin reembolso del depósito.</li>
+            <li><strong style={{ color: "#e4e4e7" }}>Cambio de fecha:</strong> sujeto a disponibilidad. El depósito se traslada a la nueva fecha si se solicita con al menos 15 días de anticipación.</li>
+            <li><strong style={{ color: "#e4e4e7" }}>Cancelación por causa nuestra (fuerza mayor):</strong> se reembolsa el 100% del depósito o se reagenda sin costo.</li>
           </ul>
         </Section>
 
