@@ -1,6 +1,7 @@
 import { MetadataRoute } from "next";
 import { prisma } from "@/lib/prisma";
 import { SERVICE_PAGES } from "@/lib/service-pages";
+import { BLOG_POSTS } from "@/lib/blog-posts";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = process.env.NEXTAUTH_URL ?? "https://daysu.vip";
@@ -11,7 +12,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${base}/catalogo`,   lastModified: now, changeFrequency: "weekly",  priority: 0.9  },
     { url: `${base}/servicios`,  lastModified: now, changeFrequency: "monthly", priority: 0.9  },
     { url: `${base}/reservar`,   lastModified: now, changeFrequency: "monthly", priority: 0.85 },
+    { url: `${base}/galeria`,    lastModified: now, changeFrequency: "weekly",  priority: 0.8  },
+    { url: `${base}/blog`,       lastModified: now, changeFrequency: "weekly",  priority: 0.8  },
+    { url: `${base}/privacidad`, lastModified: now, changeFrequency: "yearly",  priority: 0.3  },
+    { url: `${base}/terminos`,   lastModified: now, changeFrequency: "yearly",  priority: 0.3  },
   ];
+
+  const blogUrls: MetadataRoute.Sitemap = BLOG_POSTS.map((p) => ({
+    url:             `${base}/blog/${p.slug}`,
+    lastModified:    new Date(p.date),
+    changeFrequency: "monthly" as const,
+    priority:        0.75,
+  }));
 
   const serviceUrls: MetadataRoute.Sitemap = SERVICE_PAGES.map((p) => ({
     url:             `${base}/servicios/${p.slug}`,
@@ -33,8 +45,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority:        0.8,
     }));
 
-    return [...staticUrls, ...serviceUrls, ...catalogUrls];
+    return [...staticUrls, ...serviceUrls, ...blogUrls, ...catalogUrls];
   } catch {
-    return [...staticUrls, ...serviceUrls];
+    return [...staticUrls, ...serviceUrls, ...blogUrls];
   }
 }

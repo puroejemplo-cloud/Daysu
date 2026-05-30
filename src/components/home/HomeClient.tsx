@@ -214,7 +214,7 @@ export default function HomeClient({
             Para mejor performance: añadir /hero-bg.webm (30-50% más ligero)
             y /hero-bg-poster.jpg (primer frame, 1280×720) en /public/ */}
         <video
-          autoPlay muted loop playsInline
+          autoPlay muted loop playsInline preload="none"
           poster="/hero-bg-poster.jpg"
           aria-hidden="true"
           style={{
@@ -724,6 +724,25 @@ export default function HomeClient({
                 onMouseLeave={(e) => (e.currentTarget.style.color = "var(--muted)")}>
                 {sn.icon} {sn.label}
               </a>
+            ))}
+          </div>
+
+          {/* Explorar */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+            <p style={{ fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: "#3f3f46", marginBottom: "0.25rem" }}>
+              Explorar
+            </p>
+            {[
+              { label: "Galería de eventos", href: "/galeria"  },
+              { label: "Blog y guías",       href: "/blog"     },
+              { label: "Catálogo",           href: "/catalogo" },
+            ].map((l) => (
+              <Link key={l.href} href={l.href}
+                style={{ fontSize: "0.75rem", color: "var(--muted)", textDecoration: "none" }}
+                onMouseEnter={(e) => (e.currentTarget.style.color = "var(--cream)")}
+                onMouseLeave={(e) => (e.currentTarget.style.color = "var(--muted)")}>
+                {l.label}
+              </Link>
             ))}
           </div>
 

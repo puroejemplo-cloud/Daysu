@@ -12,6 +12,7 @@ import { logoutAction } from "@/app/login/actions";
 const PUBLIC_LINKS = [
   { href: "/",         label: "Inicio"    },
   { href: "/catalogo", label: "Servicios" },
+  { href: "/galeria",  label: "Galería"   },
   { href: "/reservar", label: "Reservar"  },
 ];
 
