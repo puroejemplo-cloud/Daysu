@@ -54,8 +54,7 @@ export default function BlogPage() {
                 transition: "border-color 0.2s, transform 0.2s",
                 cursor: "pointer",
               }}
-              onMouseEnter={(e) => { const el = e.currentTarget as HTMLElement; el.style.borderColor = `${accent}40`; el.style.transform = "translateY(-2px)"; }}
-              onMouseLeave={(e) => { const el = e.currentTarget as HTMLElement; el.style.borderColor = "rgba(255,255,255,0.06)"; el.style.transform = "none"; }}>
+              className="blog-card">
                 <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
                   <span style={{ fontSize: "0.62rem", fontWeight: 700, padding: "0.2rem 0.6rem", borderRadius: 99, background: `${accent}18`, color: accent, border: `1px solid ${accent}30`, letterSpacing: "0.06em" }}>
                     {post.category}

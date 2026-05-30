@@ -106,8 +106,7 @@ export default async function GaleriaPage() {
                 position: "relative",
                 transition: "transform 0.2s, border-color 0.2s",
               }}
-              onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.borderColor = "rgba(232,25,138,0.35)"; (e.currentTarget as HTMLElement).style.transform = "scale(1.01)"; }}
-              onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.borderColor = "rgba(255,255,255,0.06)"; (e.currentTarget as HTMLElement).style.transform = "scale(1)"; }}>
+              className="gallery-item">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={img.src}

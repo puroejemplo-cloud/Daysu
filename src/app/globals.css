@@ -1023,3 +1023,8 @@ input, select, textarea {
 .pkg-inner-small:nth-child(2), .pkg-inner-large:nth-child(2) { animation-delay: 0.12s; }
 .pkg-inner-small:nth-child(3), .pkg-inner-large:nth-child(3) { animation-delay: 0.19s; }
 .pkg-inner-small:nth-child(4), .pkg-inner-large:nth-child(4) { animation-delay: 0.26s; }
+
+/* ── Blog + Galería hover effects ── */
+.blog-card:hover { border-color: var(--card-hover-border, rgba(232,25,138,0.3)) !important; transform: translateY(-2px); }
+.gallery-item:hover { border-color: rgba(232,25,138,0.35) !important; transform: scale(1.01); }
+.gallery-item:hover .gallery-caption { opacity: 1 !important; }

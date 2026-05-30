@@ -60,9 +60,7 @@ export default async function BlogPostPage({ params }: Props) {
       <article style={{ maxWidth: "72rem", margin: "0 auto", padding: "0 1.25rem 5rem", color: "var(--cream)" }}>
         {/* Hero */}
         <header style={{ padding: "5rem 0 3rem", maxWidth: "52rem" }}>
-          <Link href="/blog" style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem", fontSize: "0.78rem", color: "#52525b", textDecoration: "none", marginBottom: "1.5rem" }}
-            onMouseEnter={(e) => (e.currentTarget.style.color = "var(--cream)")}
-            onMouseLeave={(e) => (e.currentTarget.style.color = "#52525b")}>
+          <Link href="/blog" style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem", fontSize: "0.78rem", color: "#71717a", textDecoration: "none", marginBottom: "1.5rem" }}>
             ← Blog
           </Link>
           <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "1.25rem", flexWrap: "wrap" }}>
@@ -127,9 +125,7 @@ export default async function BlogPostPage({ params }: Props) {
               <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
                 {related.map((p) => (
                   <Link key={p.slug} href={`/blog/${p.slug}`}
-                    style={{ textDecoration: "none", display: "flex", flexDirection: "column", gap: "0.25rem", padding: "0.625rem 0", borderBottom: "1px solid rgba(255,255,255,0.05)" }}
-                    onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.8")}
-                    onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}>
+                    style={{ textDecoration: "none", display: "flex", flexDirection: "column", gap: "0.25rem", padding: "0.625rem 0", borderBottom: "1px solid rgba(255,255,255,0.05)", opacity: 1 }}>
                     <span style={{ fontSize: "0.78rem", fontWeight: 600, color: "#e4e4e7", lineHeight: 1.4 }}>{p.title}</span>
                     <span style={{ fontSize: "0.65rem", color: "#52525b" }}>{p.readTime} min</span>
                   </Link>
