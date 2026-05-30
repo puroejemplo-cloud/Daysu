@@ -17,7 +17,7 @@ export type ServicePageConfig = {
 export const SERVICE_PAGES: ServicePageConfig[] = [
   {
     slug: "bodas-zacatecas",
-    metaTitle: "DJ y Sonido para Bodas en Zacatecas — Daysu.vip",
+    metaTitle: "DJ y Sonido para Bodas en Zacatecas",
     metaDescription: "Paquetes completos de DJ, audio, iluminación y shows para bodas en Zacatecas. Reserva en línea y aparta tu fecha con depósito.",
     h1: "DJ y Sonido para Bodas en Zacatecas",
     subtitle: "Hacemos que tu boda suene perfecta. Paquetes completos con DJ, iluminación y shows para hasta 500 invitados en Zacatecas.",
@@ -31,7 +31,7 @@ export const SERVICE_PAGES: ServicePageConfig[] = [
   },
   {
     slug: "xv-anos-zacatecas",
-    metaTitle: "Paquetes para XV Años en Zacatecas — Daysu.vip",
+    metaTitle: "Paquetes para XV Años en Zacatecas",
     metaDescription: "DJ, iluminación, cabina de fotos y shows para quinceañeras en Zacatecas. Paquetes completos para una noche inolvidable.",
     h1: "Paquetes para XV Años en Zacatecas",
     subtitle: "El día más especial merece el mejor servicio. DJ, iluminación, shows y más para tu quinceañera en Zacatecas.",
@@ -45,7 +45,7 @@ export const SERVICE_PAGES: ServicePageConfig[] = [
   },
   {
     slug: "fiestas-zacatecas",
-    metaTitle: "Sonido y Show para Fiestas en Zacatecas — Daysu.vip",
+    metaTitle: "Sonido y Show para Fiestas en Zacatecas",
     metaDescription: "Equipo de sonido profesional, DJ, luces y shows para todo tipo de fiestas en Zacatecas. Hasta 500 invitados.",
     h1: "Sonido y Show para Fiestas en Zacatecas",
     subtitle: "Desde una fiesta íntima hasta un evento masivo. Paquetes de sonido, DJ y show para todas las ocasiones en Zacatecas.",
@@ -59,7 +59,7 @@ export const SERVICE_PAGES: ServicePageConfig[] = [
   },
   {
     slug: "dj-zacatecas",
-    metaTitle: "DJ para Eventos en Zacatecas — Daysu.vip",
+    metaTitle: "DJ para Eventos en Zacatecas",
     metaDescription: "DJ profesional para bodas, XV años y fiestas en Zacatecas. Equipo de sonido completo, iluminación y coordinación incluidos.",
     h1: "DJ Profesional para Eventos en Zacatecas",
     subtitle: "El mejor sonido para tu evento. DJ profesional con equipo completo de audio e iluminación disponible en Zacatecas.",
@@ -73,7 +73,7 @@ export const SERVICE_PAGES: ServicePageConfig[] = [
   },
   {
     slug: "show-robot-zacatecas",
-    metaTitle: "Show Robot LED en Zacatecas — Daysu.vip",
+    metaTitle: "Show Robot LED en Zacatecas",
     metaDescription: "El espectacular Show Robot LED para bodas, XV años y fiestas en Zacatecas. El entretenimiento que todos recordarán.",
     h1: "Show Robot LED en Zacatecas",
     subtitle: "El show más espectacular para tu evento. El Robot LED es el entretenimiento que tus invitados no olvidarán en Zacatecas.",
@@ -87,7 +87,7 @@ export const SERVICE_PAGES: ServicePageConfig[] = [
   },
   {
     slug: "cabina-fotos-zacatecas",
-    metaTitle: "Cabina de Fotos para Eventos en Zacatecas — Daysu.vip",
+    metaTitle: "Cabina de Fotos para Eventos en Zacatecas",
     metaDescription: "Cabina de fotos profesional para bodas, XV años y fiestas en Zacatecas. Impresión instantánea y recuerdo para tus invitados.",
     h1: "Cabina de Fotos para Eventos en Zacatecas",
     subtitle: "El recuerdo perfecto para tus invitados. Cabina de fotos profesional con impresión instantánea para tu evento en Zacatecas.",
@@ -101,7 +101,7 @@ export const SERVICE_PAGES: ServicePageConfig[] = [
   },
   {
     slug: "carrito-shots-zacatecas",
-    metaTitle: "Carrito de Shots para Fiestas en Zacatecas — Daysu.vip",
+    metaTitle: "Carrito de Shots para Fiestas en Zacatecas",
     metaDescription: "Carrito de shots para bodas, XV años y fiestas en Zacatecas. El complemento perfecto para animar tu evento.",
     h1: "Carrito de Shots para Fiestas en Zacatecas",
     subtitle: "Anima tu evento con nuestro carrito de shots. Servicio profesional con presentación impecable para bodas y fiestas en Zacatecas.",
@@ -115,7 +115,7 @@ export const SERVICE_PAGES: ServicePageConfig[] = [
   },
   {
     slug: "graduaciones-zacatecas",
-    metaTitle: "DJ y Sonido para Graduaciones en Zacatecas — Daysu.vip",
+    metaTitle: "DJ y Sonido para Graduaciones en Zacatecas",
     metaDescription: "Paquetes de DJ, audio, iluminación y shows para graduaciones en Zacatecas. Celebra tu logro con el mejor sonido.",
     h1: "DJ y Sonido para Graduaciones en Zacatecas",
     subtitle: "Tu graduación merece una celebración épica. DJ profesional, iluminación y shows para la fiesta que siempre soñaste en Zacatecas.",
@@ -129,7 +129,7 @@ export const SERVICE_PAGES: ServicePageConfig[] = [
   },
   {
     slug: "eventos-corporativos-zacatecas",
-    metaTitle: "Audio e Iluminación para Eventos Corporativos en Zacatecas — Daysu.vip",
+    metaTitle: "Audio e Iluminación para Eventos Corporativos en Zacatecas",
     metaDescription: "Servicio de audio, iluminación y DJ para eventos corporativos en Zacatecas. Profesionalismo garantizado para tu empresa.",
     h1: "Audio e Iluminación para Eventos Corporativos en Zacatecas",
     subtitle: "Tecnología de audio e iluminación de nivel profesional para conferencias, cenas de empresa y eventos corporativos en Zacatecas.",
@@ -143,7 +143,7 @@ export const SERVICE_PAGES: ServicePageConfig[] = [
   },
   {
     slug: "bautizos-zacatecas",
-    metaTitle: "DJ y Entretenimiento para Bautizos en Zacatecas — Daysu.vip",
+    metaTitle: "DJ y Entretenimiento para Bautizos en Zacatecas",
     metaDescription: "DJ, sonido e iluminación para bautizos en Zacatecas. Celebra este momento especial con música y entretenimiento de calidad.",
     h1: "DJ y Entretenimiento para Bautizos en Zacatecas",
     subtitle: "Celebra el bautizo con la familia en grande. Música, sonido e iluminación profesional para que todos disfruten en Zacatecas.",
@@ -157,7 +157,7 @@ export const SERVICE_PAGES: ServicePageConfig[] = [
   },
   {
     slug: "paquetes-eventos-zacatecas",
-    metaTitle: "Paquetes para Eventos en Zacatecas — Daysu.vip",
+    metaTitle: "Paquetes para Eventos en Zacatecas",
     metaDescription: "Paquetes completos de DJ, audio, iluminación y shows para todo tipo de eventos en Zacatecas. Reserva en línea con apartado del 30%.",
     h1: "Paquetes para Eventos en Zacatecas",
     subtitle: "Todo lo que necesitas para tu evento en un solo lugar. DJ, sonido, iluminación, shows y más — con reserva en línea en Zacatecas.",

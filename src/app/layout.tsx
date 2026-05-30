@@ -86,6 +86,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     <html lang="es" className={`${bebas.variable} ${dm.variable}`}
       style={{ background: "#05051a" }}
       suppressHydrationWarning>
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+      </head>
       <body style={{
         background: "#05051a",
         color: "#f5f0e8",

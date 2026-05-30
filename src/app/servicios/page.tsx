@@ -3,7 +3,7 @@ import Link from "next/link";
 import { SERVICE_PAGES } from "@/lib/service-pages";
 
 export const metadata: Metadata = {
-  title: "Servicios para Eventos en Zacatecas — Daysu.vip",
+  title: "Servicios para Eventos en Zacatecas",
   description: "DJ, sonido, iluminación, shows y más para bodas, XV años, graduaciones y fiestas en Zacatecas. Reserva en línea con el 30% de depósito.",
 };
 

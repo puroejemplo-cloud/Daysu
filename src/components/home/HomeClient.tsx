@@ -28,6 +28,77 @@ const CARD_COLORS = [
   { bg: "linear-gradient(135deg,#0d0a00 0%,#1a1500 50%,#0d0d0d 100%)", geo: "#c9b84c", geoW: 200, geoH: 200 },
 ];
 
+const FAQ_ITEMS = [
+  {
+    q: "¿Con cuánto tiempo de anticipación debo reservar?",
+    a: "Recomendamos reservar con al menos 4–8 semanas de anticipación, especialmente en temporada alta (mayo–diciembre). Para bodas, mínimo 3 meses antes.",
+  },
+  {
+    q: "¿Qué incluye el depósito del 30%?",
+    a: "El depósito del 30% asegura tu fecha y confirma la reserva. Es deducible del total. El 70% restante se paga el día del evento o según acuerdo.",
+  },
+  {
+    q: "¿Tienen cobertura fuera de Zacatecas?",
+    a: "Sí. Cubrimos Guadalupe, Jerez, Fresnillo y municipios cercanos. Eventos a más de 30 km tienen un cargo adicional por traslado de equipo.",
+  },
+  {
+    q: "¿Puedo personalizar un paquete?",
+    a: "¡Claro! Puedes agregar servicios adicionales como robot LED, cabezones, carrito de shots, pirotecnia y más. Contáctanos por WhatsApp para armar tu paquete ideal.",
+  },
+  {
+    q: "¿Qué pasa si cancelo mi reserva?",
+    a: "Cancelaciones con más de 15 días de anticipación tienen reembolso del 100% del depósito. Menos de 15 días: 50%. Menos de 72 horas: sin reembolso.",
+  },
+  {
+    q: "¿El precio incluye instalación y desinstalación?",
+    a: "Sí. Todos nuestros paquetes incluyen traslado del equipo, instalación, servicio durante el evento y desinstalación. Tú solo disfrutas.",
+  },
+];
+
+function FaqAccordion() {
+  const [open, setOpen] = useState<number | null>(null);
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+      {FAQ_ITEMS.map((item, i) => (
+        <div key={i}
+          style={{
+            borderRadius: "0.75rem",
+            border: `1px solid ${open === i ? "rgba(232,25,138,0.3)" : "rgba(255,255,255,0.07)"}`,
+            background: open === i ? "rgba(232,25,138,0.04)" : "rgba(255,255,255,0.02)",
+            overflow: "hidden",
+            transition: "border-color 0.2s, background 0.2s",
+          }}>
+          <button
+            onClick={() => setOpen(open === i ? null : i)}
+            aria-expanded={open === i}
+            style={{
+              width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between",
+              padding: "1rem 1.25rem", background: "none", border: "none",
+              color: open === i ? "#f4f4f5" : "#a1a1aa", cursor: "pointer",
+              fontSize: "0.9rem", fontWeight: 600, textAlign: "left", gap: "1rem",
+              transition: "color 0.15s",
+            }}>
+            <span>{item.q}</span>
+            <span style={{
+              flexShrink: 0, width: 20, height: 20, borderRadius: "50%",
+              border: "1px solid rgba(232,25,138,0.4)", color: "var(--gold)",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              fontSize: "1rem", lineHeight: 1, fontWeight: 300,
+              transform: open === i ? "rotate(45deg)" : "none",
+              transition: "transform 0.2s",
+            }}>+</span>
+          </button>
+          {open === i && (
+            <p style={{ padding: "0 1.25rem 1rem", color: "#71717a", fontSize: "0.85rem", lineHeight: 1.75 }}>
+              {item.a}
+            </p>
+          )}
+        </div>
+      ))}
+    </div>
+  );
+}
+
 const TICKER_ITEMS = [
   "Paquete Básico", "Paquete Mediano", "Paquete Premium",
   "Master VIP", "Paquete Diamante", "Snack Tatoo",
@@ -404,10 +475,10 @@ export default function HomeClient({
       {/* ── STATS ──────────────────────────────────────────── */}
       <div ref={statsRef} className="stats-grid" aria-label="Estadísticas de Daysu.vip">
         {[
-          { num: packages.length, suffix: "+",    label: "Paquetes disponibles" },
-          { num: 5,               suffix: " hrs",  label: "De servicio por paquete" },
-          { num: 500,             suffix: "+",    label: "Invitados máx." },
-          { num: 100,             suffix: "%",    label: "Compromiso y calidad" },
+          { num: 8,   suffix: "+",   label: "Años de experiencia"  },
+          { num: 500, suffix: "+",   label: "Eventos realizados"   },
+          { num: 500, suffix: "+",   label: "Invitados máx."       },
+          { num: 100, suffix: "%",   label: "Clientes satisfechos" },
         ].map((s) => (
           <div key={s.label} style={{ padding: "2rem 1.25rem", background: "var(--black)", textAlign: "center" }}>
             <span className="bebas" data-target={s.num} data-suffix={s.suffix}
@@ -517,6 +588,17 @@ export default function HomeClient({
         </div>
       </section>
 
+      {/* ── FAQ ────────────────────────────────────────────── */}
+      <section style={{ padding: "5rem 1.25rem", borderTop: "1px solid rgba(255,255,255,.05)" }}>
+        <div style={{ maxWidth: 760, margin: "0 auto" }}>
+          <p className="section-label" style={{ textAlign: "center" }}>Preguntas frecuentes</p>
+          <h2 className="bebas section-title" style={{ textAlign: "center", marginBottom: "3rem" }}>
+            Todo lo que necesitas saber
+          </h2>
+          <FaqAccordion />
+        </div>
+      </section>
+
       {/* ── UBICACIÓN ──────────────────────────────────────── */}
       <section style={{ padding: "4rem 1.25rem", borderTop: "1px solid rgba(255,255,255,.05)", background: "rgba(255,255,255,.02)" }}>
         <div style={{ maxWidth: 960, margin: "0 auto", display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "3rem", alignItems: "center" }}>
@@ -607,20 +689,61 @@ export default function HomeClient({
           </div>
         </div>
 
-        {/* Datos y copyright */}
-        <div className="footer-section" style={{ borderTop: "none", padding: 0 }}>
-          <span className="bebas" style={{ fontSize: "1.3rem", color: "var(--gold)", letterSpacing: "0.12em" }}>
-            DAYSU.VIP
-          </span>
-          <p style={{ fontSize: "0.72rem", color: "var(--muted)", letterSpacing: "0.08em" }}>
-            © {new Date().getFullYear()} Daysu.vip · Sonido Daysu · DJ Iván Events
-          </p>
-          <p style={{ fontSize: "0.72rem", color: "var(--muted)", letterSpacing: "0.08em" }}>
-            {BUSINESS_ADDRESS}
-          </p>
-          <p style={{ fontSize: "0.72rem", color: "var(--muted)", letterSpacing: "0.08em" }}>
-            Instagram · TikTok · Facebook
-          </p>
+        {/* Bottom: marca + contacto + legal + redes */}
+        <div style={{ display: "flex", flexWrap: "wrap", gap: "2rem", alignItems: "flex-start", justifyContent: "space-between" }}>
+          {/* Marca */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
+            <span className="bebas" style={{ fontSize: "1.3rem", color: "var(--gold)", letterSpacing: "0.12em" }}>
+              DAYSU.VIP
+            </span>
+            <p style={{ fontSize: "0.72rem", color: "var(--muted)", letterSpacing: "0.06em" }}>
+              © {new Date().getFullYear()} Daysu.vip · Sonido Daysu · DJ Iván Events
+            </p>
+            <p style={{ fontSize: "0.72rem", color: "var(--muted)" }}>{BUSINESS_ADDRESS}</p>
+            <a href={`tel:+${whatsappNumber}`}
+              style={{ fontSize: "0.72rem", color: "var(--muted)", textDecoration: "none", display: "inline-flex", alignItems: "center", gap: "0.3rem" }}
+              onMouseEnter={(e) => (e.currentTarget.style.color = "var(--cream)")}
+              onMouseLeave={(e) => (e.currentTarget.style.color = "var(--muted)")}>
+              📞 +{whatsappNumber.replace(/(\d{2})(\d{3})(\d{3})(\d{4})/, "$1 $2 $3 $4")}
+            </a>
+          </div>
+
+          {/* Redes sociales */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+            <p style={{ fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: "#3f3f46", marginBottom: "0.25rem" }}>
+              Síguenos
+            </p>
+            {[
+              { label: "Instagram", icon: "📸", href: "https://instagram.com/daysu.vip" },
+              { label: "TikTok",    icon: "🎵", href: "https://tiktok.com/@daysu.vip"  },
+              { label: "Facebook",  icon: "👥", href: "https://facebook.com/daysu.vip" },
+            ].map((sn) => (
+              <a key={sn.label} href={sn.href} target="_blank" rel="noopener noreferrer"
+                style={{ fontSize: "0.75rem", color: "var(--muted)", textDecoration: "none", display: "flex", alignItems: "center", gap: "0.4rem" }}
+                onMouseEnter={(e) => (e.currentTarget.style.color = "var(--cream)")}
+                onMouseLeave={(e) => (e.currentTarget.style.color = "var(--muted)")}>
+                {sn.icon} {sn.label}
+              </a>
+            ))}
+          </div>
+
+          {/* Legal */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+            <p style={{ fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: "#3f3f46", marginBottom: "0.25rem" }}>
+              Legal
+            </p>
+            {[
+              { label: "Política de Privacidad", href: "/privacidad" },
+              { label: "Términos de Servicio",   href: "/terminos"   },
+            ].map((l) => (
+              <Link key={l.href} href={l.href}
+                style={{ fontSize: "0.75rem", color: "var(--muted)", textDecoration: "none" }}
+                onMouseEnter={(e) => (e.currentTarget.style.color = "var(--cream)")}
+                onMouseLeave={(e) => (e.currentTarget.style.color = "var(--muted)")}>
+                {l.label}
+              </Link>
+            ))}
+          </div>
         </div>
       </footer>
     </div>

@@ -158,8 +158,9 @@ export default function Navbar() {
                     borderColor: active ? "var(--gold)" : "rgba(255,255,255,.07)",
                     textDecoration: "none",
                     letterSpacing: "0.04em",
-                    fontSize: "0.6rem",
-                    padding: "0.45rem 0.25rem",
+                    fontSize: "0.65rem",
+                    padding: "0.65rem 0.5rem",
+                    minHeight: 44,
                   }}>
                   {l.label}
                 </Link>
