@@ -406,50 +406,55 @@ input, select, textarea {
 .admin-page {
   max-width: 80rem;
   margin: 0 auto;
-  padding: 2.5rem 1.25rem 4rem;
+  padding: 2rem 1.25rem 4rem;
 }
 @media (min-width: 640px) {
-  .admin-page { padding: 3rem 2rem 4rem; }
+  .admin-page { padding: 2.5rem 2rem 4rem; }
 }
 @media (min-width: 1024px) {
-  .admin-page { padding: 3.5rem 3rem 5rem; }
+  .admin-page { padding: 2.75rem 2.5rem 5rem; }
 }
 
-/* Admin page header — tipografía delgada y elegante */
+/* Admin page header */
 .admin-page-header {
-  margin-bottom: 2.5rem;
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
 }
 .admin-page-title {
-  font-size: 1.625rem;
-  font-weight: 500;
-  letter-spacing: -0.025em;
+  font-size: 1.5rem;
+  font-weight: 600;
+  letter-spacing: -0.03em;
   color: #f4f4f5;
   line-height: 1.2;
-  margin-top: 0.35rem;
+  margin-top: 0.3rem;
 }
 .admin-page-desc {
-  font-size: 0.85rem;
-  color: #71717a;
-  margin-top: 0.4rem;
-  line-height: 1.65;
+  font-size: 0.82rem;
+  color: #52525b;
+  margin-top: 0.35rem;
+  line-height: 1.6;
   max-width: 52ch;
 }
 
 /* ── Admin premium utilities ─────────────────────────────────────────────── */
 .admin-surface {
-  background: #09090b;
+  background: #0c0c0f;
   border: 1px solid rgba(255,255,255,0.06);
   border-radius: 0.75rem;
 }
+.admin-surface:hover {
+  border-color: rgba(255,255,255,0.09);
+}
 .admin-divider {
   border: none;
-  border-top: 1px solid rgba(255,255,255,0.06);
-  margin: 1.25rem 0;
+  border-top: 1px solid rgba(255,255,255,0.05);
+  margin: 1.5rem 0;
 }
 .admin-label {
-  font-size: 0.65rem;
+  font-size: 0.6rem;
   font-weight: 700;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   color: #52525b;
 }
@@ -457,12 +462,32 @@ input, select, textarea {
   display: inline-flex;
   align-items: center;
   gap: 0.3rem;
-  padding: 0.2rem 0.6rem;
+  padding: 0.18rem 0.55rem;
   border-radius: 999px;
-  font-size: 0.7rem;
+  font-size: 0.65rem;
   font-weight: 700;
   letter-spacing: 0.04em;
 }
+
+/* ── Admin stat card ── */
+.admin-stat-card {
+  background: #0c0c0f;
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  transition: border-color 0.15s;
+}
+.admin-stat-card:hover { border-color: rgba(255,255,255,0.1); }
+
+/* ── Admin table row ── */
+.admin-row {
+  background: #0c0c0f;
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 0.65rem;
+  padding: 0.875rem 1.25rem;
+  transition: border-color 0.15s;
+}
+.admin-row:hover { border-color: rgba(255,255,255,0.1); }
 
 /* ── DayPicker dark (uso general) ── */
 .rdp-root {

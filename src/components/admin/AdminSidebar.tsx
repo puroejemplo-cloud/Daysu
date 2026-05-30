@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
 import Link from "next/link";
@@ -8,128 +8,178 @@ import { logoutAction } from "@/app/login/actions";
 import {
   LayoutDashboard, Package, PlusCircle, Images, CalendarDays,
   CheckSquare, Users, Bell, Settings, ShieldCheck, Menu, X, Eye, LogOut,
-  TrendingUp, UserCog, Heart,
+  TrendingUp, UserCog, Heart, ChevronRight,
 } from "lucide-react";
 
-const NAV_PRIMARY = [
-  { href: "/admin",                   label: "Panel",           Icon: LayoutDashboard },
-  { href: "/admin/productos",         label: "Productos",       Icon: Package         },
-  { href: "/admin/ventas/nueva",      label: "Nueva venta",     Icon: PlusCircle      },
-  { href: "/admin/calendario",        label: "Calendario",      Icon: CalendarDays    },
-  { href: "/admin/checklists",        label: "Checklists",      Icon: CheckSquare     },
-  { href: "/admin/clientes",          label: "Clientes",        Icon: Users           },
-  { href: "/admin/recordatorios",     label: "Recordatorios",   Icon: Bell            },
-  { href: "/admin/wedding-planner",   label: "Wedding Planner", Icon: Heart           },
-];
-
-const NAV_SECONDARY = [
-  { href: "/admin/staff",         label: "Staff",         Icon: UserCog         },
-  { href: "/admin/upsell",        label: "Upsell",        Icon: TrendingUp      },
-  { href: "/admin/galeria",       label: "Galería",       Icon: Images          },
-  { href: "/admin/configuracion", label: "Configuración", Icon: Settings        },
-  { href: "/catalogo",            label: "Ver sitio",     Icon: Eye             },
+const NAV_GROUPS = [
+  {
+    label: "Principal",
+    items: [
+      { href: "/admin",              label: "Panel",          Icon: LayoutDashboard },
+      { href: "/admin/ventas/nueva", label: "Nueva venta",    Icon: PlusCircle      },
+      { href: "/admin/calendario",   label: "Calendario",     Icon: CalendarDays    },
+      { href: "/admin/productos",    label: "Productos",      Icon: Package         },
+      { href: "/admin/clientes",     label: "Clientes",       Icon: Users           },
+    ],
+  },
+  {
+    label: "Gestión",
+    items: [
+      { href: "/admin/checklists",      label: "Checklists",      Icon: CheckSquare },
+      { href: "/admin/recordatorios",   label: "Recordatorios",   Icon: Bell        },
+      { href: "/admin/wedding-planner", label: "Wedding Planner", Icon: Heart       },
+    ],
+  },
+  {
+    label: "Sistema",
+    items: [
+      { href: "/admin/staff",         label: "Staff",         Icon: UserCog    },
+      { href: "/admin/upsell",        label: "Upsell",        Icon: TrendingUp },
+      { href: "/admin/galeria",       label: "Galería",       Icon: Images     },
+      { href: "/admin/configuracion", label: "Configuración", Icon: Settings   },
+      { href: "/catalogo",            label: "Ver sitio",     Icon: Eye        },
+    ],
+  },
 ];
 
 const SIDEBAR_W = 220;
 
-function NavLink({
+function NavItem({
   href, label, Icon, active, onClick,
 }: {
   href: string; label: string;
-  Icon: React.ComponentType<{ size?: number; style?: React.CSSProperties }>;
+  Icon: React.ComponentType<{ size?: number }>;
   active: boolean; onClick?: () => void;
 }) {
   return (
     <Link href={href} onClick={onClick}
       style={{
         display: "flex", alignItems: "center", gap: "0.6rem",
-        padding: "0.5rem 0.75rem", borderRadius: "0.45rem",
-        marginBottom: "1px", textDecoration: "none",
-        background: active ? "rgba(255,255,255,0.07)" : "transparent",
-        color:      active ? "#e4e4e7" : "#52525b",
-        transition: "background 0.15s, color 0.15s",
+        padding: "0.42rem 0.6rem 0.42rem 0.75rem",
+        borderRadius: "0.5rem",
+        marginBottom: "1px",
+        textDecoration: "none",
+        background:  active ? "rgba(232,25,138,0.09)" : "transparent",
+        color:       active ? "#f4f4f5"               : "#71717a",
+        borderLeft:  `2px solid ${active ? "var(--gold)" : "transparent"}`,
+        transition:  "background 0.15s, color 0.15s, border-color 0.15s",
       }}
-      onMouseEnter={(e) => { if (!active) (e.currentTarget as HTMLElement).style.color = "#a1a1aa"; }}
-      onMouseLeave={(e) => { if (!active) (e.currentTarget as HTMLElement).style.color = "#52525b"; }}>
-      <Icon size={15} style={{ flexShrink: 0, color: active ? "#FF3DA8" : "inherit" }} />
-      <span style={{ fontSize: "0.8rem", fontWeight: active ? 500 : 400, letterSpacing: "0.01em" }}>
+      onMouseEnter={(e) => { if (!active) { (e.currentTarget as HTMLElement).style.color = "#a1a1aa"; (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.04)"; } }}
+      onMouseLeave={(e) => { if (!active) { (e.currentTarget as HTMLElement).style.color = "#71717a";  (e.currentTarget as HTMLElement).style.background = "transparent"; } }}>
+      <span style={{ flexShrink: 0, color: active ? "var(--gold)" : "inherit", display: "flex" }}>
+        <Icon size={14} />
+      </span>
+      <span style={{ fontSize: "0.78rem", fontWeight: active ? 600 : 400, letterSpacing: "0.01em", flex: 1 }}>
         {label}
       </span>
+      {active && <span style={{ color: "rgba(232,25,138,0.5)", flexShrink: 0, display: "flex" }}><ChevronRight size={11} /></span>}
     </Link>
   );
 }
 
 function SidebarInner({ onClose }: { onClose?: () => void }) {
-  const pathname   = usePathname();
+  const pathname = usePathname();
   const { data: session } = useSession();
-  const user       = session?.user as { suffix?: string; role?: string; name?: string } | undefined;
+  const user = session?.user as { suffix?: string; role?: string; name?: string } | undefined;
   const isSuperAdmin = user?.role === "superadmin";
 
   const isActive = (href: string) =>
     href === "/admin" ? pathname === "/admin" : pathname.startsWith(href);
 
+  const initials = (user?.name ?? user?.suffix ?? "?").slice(0, 2).toUpperCase();
+
   return (
     <div style={{ display: "flex", flexDirection: "column", height: "100%", overflow: "hidden" }}>
 
       {/* ── Logo ── */}
-      <div style={{ padding: "1.25rem 1rem 1rem", borderBottom: "1px solid rgba(255,255,255,0.06)", flexShrink: 0 }}>
-        <Link href="/admin" onClick={onClose}
-          style={{ textDecoration: "none", display: "flex", alignItems: "center", gap: "0.6rem" }}>
-          <img src="/logo-daysu.png" alt="Daysu.vip"
-            style={{ width: 28, height: 28, objectFit: "contain", flexShrink: 0 }} />
-          <p style={{ fontSize: "0.78rem", fontWeight: 700, color: "#e4e4e7", letterSpacing: "0.1em", textTransform: "uppercase" }}>
-            Daysu.vip
-          </p>
+      <div style={{ padding: "1rem 1rem 0.875rem", borderBottom: "1px solid rgba(255,255,255,0.05)", flexShrink: 0 }}>
+        <Link href="/admin" onClick={onClose} style={{ textDecoration: "none", display: "flex", alignItems: "center", gap: "0.6rem" }}>
+          <div style={{
+            width: 30, height: 30, borderRadius: 8, flexShrink: 0,
+            background: "linear-gradient(135deg, rgba(232,25,138,0.2), rgba(124,58,237,0.2))",
+            border: "1px solid rgba(232,25,138,0.25)",
+            display: "flex", alignItems: "center", justifyContent: "center",
+            overflow: "hidden",
+          }}>
+            <img src="/logo-daysu.png" alt="Daysu" style={{ width: 22, height: 22, objectFit: "contain" }} />
+          </div>
+          <div>
+            <p style={{ fontSize: "0.8rem", fontWeight: 700, color: "#f4f4f5", letterSpacing: "0.05em", lineHeight: 1.2 }}>
+              Daysu.vip
+            </p>
+            <p style={{ fontSize: "0.58rem", color: "#52525b", letterSpacing: "0.08em", textTransform: "uppercase", marginTop: 1 }}>
+              Admin Panel
+            </p>
+          </div>
         </Link>
       </div>
 
       {/* ── Nav ── */}
-      <nav style={{ flex: 1, padding: "0.75rem 0.625rem 0.5rem", overflowY: "auto" }}>
-        {/* Primary */}
-        {NAV_PRIMARY.map((item) => (
-          <NavLink key={item.href} {...item} active={isActive(item.href)} onClick={onClose} />
-        ))}
-
-        {/* Divider */}
-        <div style={{ height: 1, background: "rgba(255,255,255,0.05)", margin: "0.6rem 0.375rem" }} />
-
-        {/* Secondary */}
-        {NAV_SECONDARY.map((item) => (
-          <NavLink key={item.href} {...item} active={isActive(item.href)} onClick={onClose} />
+      <nav style={{ flex: 1, padding: "0.75rem 0.5rem 0.5rem", overflowY: "auto" }}>
+        {NAV_GROUPS.map((group, gi) => (
+          <div key={group.label} style={{ marginBottom: gi < NAV_GROUPS.length - 1 ? "0.5rem" : 0 }}>
+            <p style={{
+              fontSize: "0.58rem", fontWeight: 700, letterSpacing: "0.14em",
+              textTransform: "uppercase", color: "#3f3f46",
+              padding: "0 0.75rem", marginBottom: "0.3rem", marginTop: gi > 0 ? "0.75rem" : 0,
+            }}>
+              {group.label}
+            </p>
+            {group.items.map((item) => (
+              <NavItem key={item.href} {...item} active={isActive(item.href)} onClick={onClose} />
+            ))}
+          </div>
         ))}
 
         {isSuperAdmin && (
-          <NavLink
-            href="/superadmin/admins"
-            label="Administradores"
-            Icon={ShieldCheck}
-            active={pathname.startsWith("/superadmin")}
-            onClick={onClose}
-          />
+          <div style={{ marginTop: "0.75rem" }}>
+            <p style={{ fontSize: "0.58rem", fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: "#3f3f46", padding: "0 0.75rem", marginBottom: "0.3rem" }}>
+              Super
+            </p>
+            <NavItem
+              href="/superadmin/admins"
+              label="Administradores"
+              Icon={ShieldCheck}
+              active={pathname.startsWith("/superadmin")}
+              onClick={onClose}
+            />
+          </div>
         )}
       </nav>
 
-      {/* ── Usuario + Logout ── */}
-      <div style={{ padding: "0.75rem 0.625rem", borderTop: "1px solid rgba(255,255,255,0.06)", flexShrink: 0 }}>
-        {/* User badge */}
+      {/* ── Usuario ── */}
+      <div style={{ padding: "0.625rem 0.5rem 0.75rem", borderTop: "1px solid rgba(255,255,255,0.05)", flexShrink: 0 }}>
+        {/* User card */}
         <div style={{
-          display: "flex", alignItems: "center", gap: "0.5rem",
-          padding: "0.5rem 0.625rem", borderRadius: "0.45rem",
-          background: "rgba(255,255,255,0.03)", marginBottom: "0.5rem",
+          display: "flex", alignItems: "center", gap: "0.55rem",
+          padding: "0.5rem 0.625rem", borderRadius: "0.5rem",
+          background: "rgba(255,255,255,0.03)",
+          border: "1px solid rgba(255,255,255,0.05)",
+          marginBottom: "0.4rem",
         }}>
           <div style={{
-            width: 26, height: 26, borderRadius: "50%",
-            background: "var(--gold)", color: "#05051a",
+            width: 28, height: 28, borderRadius: "50%", flexShrink: 0,
+            background: "linear-gradient(135deg, var(--gold), #a21caf)",
             display: "flex", alignItems: "center", justifyContent: "center",
-            fontSize: "0.6rem", fontWeight: 700, flexShrink: 0,
+            fontSize: "0.62rem", fontWeight: 700, color: "#fff",
           }}>
-            {user?.suffix?.charAt(0) ?? "?"}
+            {initials}
           </div>
-          <div style={{ minWidth: 0 }}>
-            <p style={{ fontSize: "0.75rem", fontWeight: 500, color: "#d4d4d8", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+          <div style={{ minWidth: 0, flex: 1 }}>
+            <p style={{ fontSize: "0.75rem", fontWeight: 600, color: "#d4d4d8", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", lineHeight: 1.3 }}>
               {user?.name?.split(" ")[0] ?? "Admin"}
             </p>
-            <p style={{ fontSize: "0.6rem", color: "#52525b" }}>[{user?.suffix}]</p>
+            <div style={{ display: "flex", alignItems: "center", gap: "0.3rem", marginTop: 2 }}>
+              <span style={{
+                fontSize: "0.55rem", fontWeight: 700, letterSpacing: "0.06em",
+                background: isSuperAdmin ? "rgba(124,58,237,0.2)" : "rgba(232,25,138,0.12)",
+                color: isSuperAdmin ? "#c084fc" : "#f9a8d4",
+                padding: "0.1rem 0.35rem", borderRadius: 99,
+                border: `1px solid ${isSuperAdmin ? "rgba(124,58,237,0.3)" : "rgba(232,25,138,0.2)"}`,
+              }}>
+                {isSuperAdmin ? "SUPERADMIN" : user?.suffix ?? "ADMIN"}
+              </span>
+            </div>
           </div>
         </div>
 
@@ -138,24 +188,21 @@ function SidebarInner({ onClose }: { onClose?: () => void }) {
           <button type="submit"
             style={{
               width: "100%", display: "flex", alignItems: "center", justifyContent: "center",
-              gap: "0.4rem", padding: "0.45rem 0.75rem", borderRadius: "0.45rem",
-              background: "transparent", border: "1px solid rgba(255,255,255,0.06)",
-              color: "#52525b", fontSize: "0.75rem", cursor: "pointer", transition: "color 0.15s",
+              gap: "0.4rem", padding: "0.4rem 0.75rem", borderRadius: "0.45rem",
+              background: "transparent", border: "1px solid rgba(255,255,255,0.05)",
+              color: "#52525b", fontSize: "0.72rem", cursor: "pointer", transition: "all 0.15s",
             }}
-            onMouseEnter={(e) => (e.currentTarget.style.color = "#a1a1aa")}
-            onMouseLeave={(e) => (e.currentTarget.style.color = "#52525b")}>
-            <LogOut size={13} />
+            onFocus={(e) => { e.currentTarget.style.color = "#a1a1aa"; e.currentTarget.style.boxShadow = "0 0 0 2px rgba(232,25,138,0.4)"; }}
+            onBlur={(e) => { e.currentTarget.style.color = "#52525b"; e.currentTarget.style.boxShadow = "none"; }}
+            onMouseEnter={(e) => { e.currentTarget.style.color = "#a1a1aa"; e.currentTarget.style.background = "rgba(255,255,255,0.04)"; }}
+            onMouseLeave={(e) => { e.currentTarget.style.color = "#52525b"; e.currentTarget.style.background = "transparent"; }}>
+            <LogOut size={12} />
             Cerrar sesión
           </button>
         </form>
 
-        {/* Versión del build */}
-        <p style={{
-          textAlign: "center", marginTop: "0.6rem",
-          fontSize: "0.58rem", color: "#3f3f46", letterSpacing: "0.05em",
-          fontFamily: "monospace",
-        }}>
-          build · {process.env.NEXT_PUBLIC_APP_VERSION}
+        <p style={{ textAlign: "center", marginTop: "0.5rem", fontSize: "0.55rem", color: "#27272a", letterSpacing: "0.06em", fontFamily: "monospace" }}>
+          v{process.env.NEXT_PUBLIC_APP_VERSION}
         </p>
       </div>
     </div>
@@ -166,9 +213,8 @@ export default function AdminSidebar() {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
 
-  // Label de la página actual para el mobile topbar
-  const allLinks = [...NAV_PRIMARY, ...NAV_SECONDARY];
-  const current  = allLinks.find((l) =>
+  const allItems = NAV_GROUPS.flatMap((g) => g.items);
+  const current  = allItems.find((l) =>
     l.href === "/admin" ? pathname === "/admin" : pathname.startsWith(l.href)
   );
 
@@ -179,7 +225,7 @@ export default function AdminSidebar() {
         position: "fixed", top: 0, left: 0, bottom: 0,
         width: SIDEBAR_W,
         background: "#09090b",
-        borderRight: "1px solid rgba(255,255,255,0.06)",
+        borderRight: "1px solid rgba(255,255,255,0.05)",
         zIndex: 40,
       }} className="hidden lg:block">
         <SidebarInner />
@@ -194,48 +240,40 @@ export default function AdminSidebar() {
         display: "flex", alignItems: "center",
         padding: "0.65rem 1.25rem max(0.65rem, env(safe-area-inset-bottom))",
       }} className="lg:hidden">
-
-        {/* Botón menú — izquierda */}
-        <button
-          onClick={() => setOpen((v) => !v)}
+        <button onClick={() => setOpen((v) => !v)}
           aria-label={open ? "Cerrar menú" : "Abrir menú"}
           aria-expanded={open}
           style={{
-            background: open ? "rgba(232,25,138,0.12)" : "transparent",
-            border: `1px solid ${open ? "rgba(232,25,138,0.3)" : "rgba(255,255,255,0.08)"}`,
+            background:   open ? "rgba(232,25,138,0.12)" : "transparent",
+            border:       `1px solid ${open ? "rgba(232,25,138,0.3)" : "rgba(255,255,255,0.08)"}`,
             borderRadius: "0.45rem", padding: "0.35rem 0.5rem",
-            color: open ? "var(--gold)" : "#71717a",
-            cursor: "pointer", display: "flex", alignItems: "center",
+            color:   open ? "var(--gold)" : "#71717a",
+            cursor:  "pointer", display: "flex", alignItems: "center",
             flexShrink: 0, transition: "all 0.15s",
           }}>
           {open ? <X size={17} /> : <Menu size={17} />}
         </button>
 
-        {/* Logo + página actual — centrado */}
         <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: "0.45rem" }}>
-          <img src="/logo-daysu.png" alt="" aria-hidden="true"
-            style={{ width: 22, height: 22, objectFit: "contain", flexShrink: 0 }} />
+          <img src="/logo-daysu.png" alt="" aria-hidden="true" style={{ width: 20, height: 20, objectFit: "contain", flexShrink: 0 }} />
           <span style={{ fontSize: "0.78rem", fontWeight: 600, color: "#a1a1aa", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
             {current?.label ?? "Daysu.vip"}
           </span>
         </div>
 
-        {/* Spacer simétrico al botón izquierdo */}
         <div style={{ width: "2.5rem", flexShrink: 0 }} />
       </div>
 
-      {/* ── Mobile drawer ── z-index por encima del bottom bar para cubrirlo */}
+      {/* ── Mobile drawer ── */}
       {open && (
         <>
           <div onClick={() => setOpen(false)}
-            style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.65)", zIndex: 51, backdropFilter: "blur(3px)" }} />
+            style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.7)", zIndex: 51, backdropFilter: "blur(4px)" }} />
           <aside style={{
             position: "fixed", top: 0, left: 0, bottom: 0,
-            width: 260,
-            background: "#09090b",
-            borderRight: "1px solid rgba(255,255,255,0.06)",
-            zIndex: 52,
-            animation: "slideInLeft 0.2s ease",
+            width: 260, background: "#09090b",
+            borderRight: "1px solid rgba(255,255,255,0.05)",
+            zIndex: 52, animation: "slideInLeft 0.2s ease",
           }}>
             <SidebarInner onClose={() => setOpen(false)} />
           </aside>
