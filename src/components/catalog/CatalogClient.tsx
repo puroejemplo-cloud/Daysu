@@ -137,16 +137,26 @@ export default function CatalogClient({
       : format(range.from, "d MMMM yyyy", { locale: es })
     : "Selecciona tu fecha";
 
+  const catOrderMap = new Map(categories.map((c, i) => [c.id, i]));
+
   const shown = (catFilter
     ? assets.filter((a) => a.categoryId === catFilter || (a.extraCategoryIds ?? []).includes(catFilter))
     : assets)
     .slice()
     .sort((a, b) => {
-      if (!checked) return 0;
-      const aOk = avail[a.id]?.isAvailable ?? true;
-      const bOk = avail[b.id]?.isAvailable ?? true;
-      if (aOk && !bOk) return -1;
-      if (!aOk && bOk) return 1;
+      // En vista "Todos": ordenar por posición de categoría primero
+      if (!catFilter) {
+        const aOrd = catOrderMap.get(a.categoryId) ?? 999;
+        const bOrd = catOrderMap.get(b.categoryId) ?? 999;
+        if (aOrd !== bOrd) return aOrd - bOrd;
+      }
+      // Luego disponibles antes que no disponibles
+      if (checked) {
+        const aOk = avail[a.id]?.isAvailable ?? true;
+        const bOk = avail[b.id]?.isAvailable ?? true;
+        if (aOk && !bOk) return -1;
+        if (!aOk && bOk) return 1;
+      }
       return 0;
     });
 
