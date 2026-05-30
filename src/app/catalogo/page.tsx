@@ -134,11 +134,28 @@ const getCatalogData = unstable_cache(
 );
 
 export default async function CatalogoPage() {
-  const { categories, assets } = await getCatalogData();
+  const [{ categories, assets }, orderSetting] = await Promise.all([
+    getCatalogData(),
+    prisma.systemSetting.findUnique({ where: { key: "catalog_category_order" } }),
+  ]);
+
+  let order: number[] = [];
+  try { if (orderSetting?.value) order = JSON.parse(orderSetting.value); } catch {}
+
+  const sortedCategories = order.length > 0
+    ? [...categories].sort((a, b) => {
+        const ia = order.indexOf(a.id);
+        const ib = order.indexOf(b.id);
+        if (ia === -1 && ib === -1) return 0;
+        if (ia === -1) return 1;
+        if (ib === -1) return -1;
+        return ia - ib;
+      })
+    : categories;
 
   return (
     <Suspense fallback={<div style={{ background: "#05051a", minHeight: "100vh" }} />}>
-      <CatalogClient categories={categories} assets={assets} />
+      <CatalogClient categories={sortedCategories} assets={assets} />
     </Suspense>
   );
 }
