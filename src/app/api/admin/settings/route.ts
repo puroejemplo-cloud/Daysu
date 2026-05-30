@@ -30,6 +30,7 @@ export async function PATCH(req: NextRequest) {
   revalidatePath("/");
   revalidateTag("system-settings", "default");
   if (body.key === "homepage_packages") revalidateTag("catalog", "default");
+  if (body.key === "catalog_category_order") revalidatePath("/catalogo");
 
   return ok(updated);
 }
