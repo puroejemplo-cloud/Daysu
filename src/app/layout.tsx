@@ -5,6 +5,7 @@ import Navbar from "@/components/ui/Navbar";
 import AuthSessionProvider from "@/components/ui/SessionProvider";
 import PWARegister     from "@/components/ui/PWARegister";
 import WhatsAppButton  from "@/components/ui/WhatsAppButton";
+import CookieBanner    from "@/components/ui/CookieBanner";
 import { getWhatsAppSettings } from "@/lib/cached-settings";
 import { GoogleAnalytics } from "@next/third-parties/google";
 
@@ -104,6 +105,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           <Navbar />
           <main id="main-content">{children}</main>
           <WhatsAppButton number={waNumber} message={waMessage} />
+          <CookieBanner />
           {/* Safe area bottom — espacio para la barra home del iPhone */}
           <div style={{ height: "env(safe-area-inset-bottom)" }} />
         </AuthSessionProvider>

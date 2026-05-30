@@ -55,6 +55,10 @@ export default function BlogPage() {
                 cursor: "pointer",
               }}
               className="blog-card">
+                {/* Cover gradient */}
+                <div style={{ height: 120, borderRadius: "0.5rem", overflow: "hidden", marginBottom: "0.25rem", background: `linear-gradient(135deg, ${accent}25 0%, rgba(5,5,26,0.8) 100%)`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "3rem", flexShrink: 0 }}>
+                  {post.category === "Bodas" ? "💒" : post.category === "XV Años" ? "👑" : post.category === "Shows" ? "🤖" : post.category === "Entretenimiento" ? "📸" : "✅"}
+                </div>
                 <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
                   <span style={{ fontSize: "0.62rem", fontWeight: 700, padding: "0.2rem 0.6rem", borderRadius: 99, background: `${accent}18`, color: accent, border: `1px solid ${accent}30`, letterSpacing: "0.06em" }}>
                     {post.category}

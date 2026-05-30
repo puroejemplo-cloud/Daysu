@@ -5,12 +5,15 @@ import { prisma } from "@/lib/prisma";
 import { unstable_cache } from "next/cache";
 import type { PricingConfig } from "@/lib/product-tiers";
 
+const BASE = process.env.NEXTAUTH_URL ?? "https://daysu.vip";
 export const metadata: Metadata = {
   title: "Catálogo de paquetes y servicios",
   description: "Explora todos los paquetes de DJ, audio, iluminación, shows y entretenimiento para tu evento en Zacatecas.",
+  alternates: { canonical: `${BASE}/catalogo` },
   openGraph: {
     title: "Catálogo — Daysu.vip",
     description: "Paquetes de DJ, audio, iluminación y entretenimiento para bodas, XV Años y eventos en Zacatecas.",
+    images: [{ url: `${BASE}/api/og?title=Cat%C3%A1logo+de+Servicios`, width: 1200, height: 630 }],
   },
 };
 

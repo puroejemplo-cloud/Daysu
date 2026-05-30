@@ -104,6 +104,8 @@ export default function CatalogClient({
   const [catFilter,  setCatFilter]  = useState<number | null>(null);
   const [showPicker, setShowPicker] = useState(false);
   const [checked,    setChecked]    = useState(false);
+  const [search,     setSearch]     = useState("");
+  const [maxPrice,   setMaxPrice]   = useState<number | "">("");
 
   const teardownHour = (() => {
     const [h, m] = setupHour.split(":").map(Number);
@@ -138,10 +140,12 @@ export default function CatalogClient({
     : "Selecciona tu fecha";
 
   const catOrderMap = new Map(categories.map((c, i) => [c.id, i]));
+  const searchQ = search.trim().toLowerCase();
 
-  const shown = (catFilter
-    ? assets.filter((a) => a.categoryId === catFilter || (a.extraCategoryIds ?? []).includes(catFilter))
-    : assets)
+  const shown = assets
+    .filter((a) => !catFilter || a.categoryId === catFilter || (a.extraCategoryIds ?? []).includes(catFilter))
+    .filter((a) => !searchQ || a.name.toLowerCase().includes(searchQ) || (a.description ?? "").toLowerCase().includes(searchQ))
+    .filter((a) => !maxPrice || Number(a.dailyRate) <= maxPrice)
     .slice()
     .sort((a, b) => {
       // En vista "Todos": ordenar por posición de categoría primero
@@ -194,6 +198,46 @@ export default function CatalogClient({
         <p style={{ position: "relative", maxWidth: 480, margin: "0 auto", color: "#64748b", fontSize: "0.9rem", lineHeight: 1.6 }}>
           Selecciona la fecha de tu evento para verificar disponibilidad al instante.
         </p>
+      </div>
+
+      {/* ── BUSCADOR + PRECIO ── */}
+      <div style={{ maxWidth: 640, margin: "0 auto 1.25rem", padding: "0 1rem", display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
+        <div style={{ flex: "1 1 220px", position: "relative" }}>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#52525b" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
+            style={{ position: "absolute", left: "0.75rem", top: "50%", transform: "translateY(-50%)", pointerEvents: "none" }}>
+            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+          </svg>
+          <input
+            type="search" value={search} onChange={(e) => setSearch(e.target.value)}
+            placeholder="Buscar servicio…"
+            aria-label="Buscar en el catálogo"
+            className="aura-input"
+            style={{ paddingLeft: "2.25rem", fontSize: "0.85rem" }}
+          />
+        </div>
+        <div style={{ flex: "0 0 auto", position: "relative", minWidth: 160 }}>
+          <input
+            type="number" min={0} step={500} value={maxPrice}
+            onChange={(e) => setMaxPrice(e.target.value === "" ? "" : Number(e.target.value))}
+            placeholder="Precio máx. MXN"
+            aria-label="Precio máximo"
+            className="aura-input"
+            style={{ fontSize: "0.85rem", width: "100%" }}
+          />
+          {maxPrice !== "" && (
+            <button onClick={() => setMaxPrice("")}
+              aria-label="Limpiar filtro de precio"
+              style={{ position: "absolute", right: "0.6rem", top: "50%", transform: "translateY(-50%)", background: "none", border: "none", color: "#52525b", cursor: "pointer", fontSize: "1rem", lineHeight: 1, padding: 0 }}>
+              ×
+            </button>
+          )}
+        </div>
+        {(search || maxPrice !== "") && (
+          <button onClick={() => { setSearch(""); setMaxPrice(""); }}
+            style={{ fontSize: "0.72rem", color: "var(--gold)", background: "none", border: "none", cursor: "pointer", whiteSpace: "nowrap", padding: "0.4rem 0" }}>
+            Limpiar filtros
+          </button>
+        )}
       </div>
 
       {/* ── FILTROS DE CATEGORÍA ── */}

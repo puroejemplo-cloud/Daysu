@@ -5,6 +5,7 @@ export const metadata: Metadata = {
   title: "Términos de Servicio",
   description: "Términos y condiciones de contratación de servicios de Daysu.vip — Aura Producciones.",
   robots: { index: true, follow: true },
+  alternates: { canonical: "https://daysu.vip/terminos" },
 };
 
 const LAST_UPDATED = "30 de mayo de 2026";

@@ -733,9 +733,11 @@ export default function HomeClient({
               Explorar
             </p>
             {[
-              { label: "Galería de eventos", href: "/galeria"  },
-              { label: "Blog y guías",       href: "/blog"     },
-              { label: "Catálogo",           href: "/catalogo" },
+              { label: "Galería de eventos", href: "/galeria"   },
+              { label: "Blog y guías",       href: "/blog"      },
+              { label: "Catálogo",           href: "/catalogo"  },
+              { label: "Nosotros",           href: "/nosotros"  },
+              { label: "Contacto",           href: "/contacto"  },
             ].map((l) => (
               <Link key={l.href} href={l.href}
                 style={{ fontSize: "0.75rem", color: "var(--muted)", textDecoration: "none" }}

@@ -5,6 +5,7 @@ export const metadata: Metadata = {
   title: "Política de Privacidad",
   description: "Política de privacidad y tratamiento de datos personales de Daysu.vip — Aura Producciones.",
   robots: { index: true, follow: true },
+  alternates: { canonical: "https://daysu.vip/privacidad" },
 };
 
 const LAST_UPDATED = "30 de mayo de 2026";
