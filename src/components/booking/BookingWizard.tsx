@@ -274,20 +274,6 @@ export default function BookingWizard({ forcedAssetId, depositPercent = 30 }: { 
   const muted    = { color: "#71717a" } as React.CSSProperties;
   const gold     = { color: "#FF3DA8" } as React.CSSProperties;
   const lb       = "block text-xs font-semibold uppercase tracking-widest mb-2";
-  // Input con focus gold — aplicado inline para no depender de clase global
-  const inputStyle: React.CSSProperties = {
-    background: "#18181b",
-    border: "1px solid rgba(255,255,255,0.08)",
-    borderRadius: "0.5rem",
-    padding: "0.75rem 1rem",
-    color: "var(--cream)",
-    fontSize: "1rem",          // ≥16px → evita zoom en iOS
-    width: "100%",
-    outline: "none",
-    fontFamily: "var(--font-dm)",
-    minHeight: 48,             // touch target mínimo
-    transition: "border-color 0.2s",
-  };
   const dl       = eventDate ? format(new Date(eventDate + "T12:00:00"), "EEEE d 'de' MMMM yyyy", { locale: es }) : "";
 
   return (

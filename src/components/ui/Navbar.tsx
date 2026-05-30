@@ -188,7 +188,9 @@ export default function Navbar() {
                   className="flex items-center gap-1 text-xs font-semibold px-3 py-1.5 rounded-lg border transition-all"
                   style={{ borderColor: "rgba(255,255,255,0.07)", color: "#52525b", background: "transparent" }}
                   onMouseEnter={(e) => (e.currentTarget.style.color = "#a1a1aa")}
-                  onMouseLeave={(e) => (e.currentTarget.style.color = "#52525b")}>
+                  onMouseLeave={(e) => (e.currentTarget.style.color = "#52525b")}
+                  onFocus={(e) => { e.currentTarget.style.color = "#a1a1aa"; e.currentTarget.style.boxShadow = "0 0 0 2px rgba(232,25,138,0.5)"; }}
+                  onBlur={(e) => { e.currentTarget.style.color = "#52525b"; e.currentTarget.style.boxShadow = "none"; }}>
                   <LogOut size={12} aria-hidden="true" />
                   Salir
                 </button>

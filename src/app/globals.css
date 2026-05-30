@@ -87,7 +87,7 @@ body {
 }
 
 /* ── Bebas display ── */
-.bebas { font-family: var(--font-bebas); letter-spacing: 0.02em; }
+.bebas { font-family: var(--font-bebas); letter-spacing: 0.02em; text-wrap: balance; }
 
 /* ── Ticker ── */
 .ticker-track {
@@ -243,6 +243,11 @@ body {
   border-color: var(--gold);
   color: var(--black);
 }
+.cat-pill:focus-visible {
+  outline: 2px solid rgba(232,25,138,0.6);
+  outline-offset: 2px;
+  border-color: var(--gold);
+}
 
 /* ── Buttons ── */
 .btn-gold {
@@ -263,6 +268,7 @@ body {
   gap: 0.4rem;
 }
 .btn-gold:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(232,25,138,0.45); }
+.btn-gold:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(232,25,138,0.55), 0 8px 28px rgba(232,25,138,0.3); }
 
 .btn-ghost {
   background: transparent;
@@ -279,6 +285,7 @@ body {
   display: inline-block;
 }
 .btn-ghost:hover { border-color: var(--gold); color: var(--gold); }
+.btn-ghost:focus-visible { border-color: var(--gold); color: var(--gold); outline: 2px solid rgba(232,25,138,0.4); outline-offset: 2px; }
 
 /* ── iOS zoom fix: font-size ≥ 16px evita el auto-zoom al hacer focus en inputs ── */
 input, select, textarea {
@@ -304,10 +311,15 @@ input, select, textarea {
   font-size: .875rem;
   width: 100%;
   outline: none;
-  transition: border-color .2s;
+  transition: border-color .2s, box-shadow .2s;
   font-family: var(--font-dm);
 }
-.aura-input:focus { border-color: rgba(232,25,138,0.5); outline: none; }
+.aura-input:focus,
+.aura-input:focus-visible {
+  border-color: rgba(232,25,138,0.6);
+  box-shadow: 0 0 0 3px rgba(232,25,138,0.15);
+  outline: none;
+}
 .aura-input::placeholder { color: #52525b; }
 
 /* ── Imagen fade-in ── */
@@ -496,6 +508,7 @@ input, select, textarea {
   font-size: clamp(2.5rem, 5vw, 4rem);
   line-height: 1;
   color: var(--cream);
+  text-wrap: balance;
 }
 
 /* cursor personalizado solo en la landing — se activa via clase en el wrapper */
@@ -929,6 +942,17 @@ input, select, textarea {
   transition: top 0.15s;
 }
 .skip-link:focus { top: 0; }
+
+/* ── FOCUS VISIBLE — fallback global para elementos sin ring propio ── */
+:focus-visible {
+  outline: 2px solid rgba(232,25,138,0.65);
+  outline-offset: 3px;
+}
+/* Elementos que manejan su propio ring — suprimen el default */
+.btn-gold:focus-visible,
+.btn-ghost:focus-visible,
+.cat-pill:focus-visible,
+.aura-input:focus-visible { outline: none; }
 
 /* ── PREFERS REDUCED MOTION ────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {

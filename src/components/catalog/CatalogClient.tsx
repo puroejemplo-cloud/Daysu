@@ -27,9 +27,9 @@ function PersonCalc({ pricePerPerson, accent, minPersons = 25 }: { pricePerPerso
       </p>
       {/* Selector de personas */}
       <div style={{ display: "flex", alignItems: "center", gap: "0.4rem", marginBottom: "0.5rem" }}>
-        <button onClick={() => change(-5)}
+        <button onClick={() => change(-5)} aria-label="Restar 5 personas"
           style={{ minWidth: 28, height: 28, borderRadius: 6, background: "rgba(255,255,255,.06)", border: "1px solid rgba(255,255,255,.1)", color: "#94a3b8", fontSize: "0.75rem", cursor: "pointer", fontWeight: 700 }}>−5</button>
-        <button onClick={() => change(-1)}
+        <button onClick={() => change(-1)} aria-label="Restar 1 persona"
           style={{ minWidth: 28, height: 28, borderRadius: 6, background: "rgba(255,255,255,.06)", border: "1px solid rgba(255,255,255,.1)", color: "#94a3b8", fontSize: "0.75rem", cursor: "pointer", fontWeight: 700 }}>−</button>
         <input
           type="number" min={1} value={persons}
@@ -39,9 +39,9 @@ function PersonCalc({ pricePerPerson, accent, minPersons = 25 }: { pricePerPerso
             border: `1px solid ${accent}40`, borderRadius: 6,
             color: "#fff", fontWeight: 700, fontSize: "0.85rem", padding: "0.2rem 0.3rem",
           }} />
-        <button onClick={() => change(1)}
+        <button onClick={() => change(1)} aria-label="Sumar 1 persona"
           style={{ minWidth: 28, height: 28, borderRadius: 6, background: "rgba(255,255,255,.06)", border: "1px solid rgba(255,255,255,.1)", color: "#94a3b8", fontSize: "0.75rem", cursor: "pointer", fontWeight: 700 }}>+</button>
-        <button onClick={() => change(5)}
+        <button onClick={() => change(5)} aria-label="Sumar 5 personas"
           style={{ minWidth: 28, height: 28, borderRadius: 6, background: "rgba(255,255,255,.06)", border: "1px solid rgba(255,255,255,.1)", color: "#94a3b8", fontSize: "0.75rem", cursor: "pointer", fontWeight: 700 }}>+5</button>
         <span style={{ fontSize: "0.65rem", color: "#475569" }}>personas</span>
       </div>
