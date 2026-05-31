@@ -8,6 +8,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Nosotros — Daysu.vip",
     description: "8+ años haciendo eventos legendarios en Zacatecas.",
+    images: [{ url: "https://daysu.vip/api/og?title=Aura+Producciones%0A8%2B+a%C3%B1os+de+eventos", width: 1200, height: 630 }],
   },
 };
 

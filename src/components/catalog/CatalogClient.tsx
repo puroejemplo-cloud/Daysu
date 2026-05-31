@@ -432,19 +432,17 @@ export default function CatalogClient({
                     )}
 
                     {/* Badge disponibilidad */}
-                    {checked && (
-                      <span style={{
-                        position: "absolute", top: 10, right: 10, zIndex: 5,
-                        fontSize: "0.6rem", fontWeight: 700, padding: "0.25rem 0.7rem", borderRadius: 999,
-                        background: isAvail ? "rgba(5,40,14,0.9)" : "rgba(40,5,5,0.9)",
-                        color: isAvail ? "#4ade80" : "#f87171",
-                        border: `1px solid ${isAvail ? "rgba(74,222,128,0.4)" : "rgba(248,113,113,0.4)"}`,
-                        backdropFilter: "blur(8px)",
-                        boxShadow: isAvail ? "0 0 10px rgba(74,222,128,0.2)" : "0 0 10px rgba(248,113,113,0.2)",
-                      }}>
-                        {isAvail ? "✓ Disponible" : "✕ No disponible"}
-                      </span>
-                    )}
+                    <span style={{
+                      position: "absolute", top: 10, right: 10, zIndex: 5,
+                      fontSize: "0.6rem", fontWeight: 700, padding: "0.25rem 0.7rem", borderRadius: 999,
+                      backdropFilter: "blur(8px)",
+                      background: !checked ? "rgba(9,9,20,0.8)" : isAvail ? "rgba(5,40,14,0.9)" : "rgba(40,5,5,0.9)",
+                      color:      !checked ? "#64748b"           : isAvail ? "#4ade80"           : "#f87171",
+                      border:     `1px solid ${!checked ? "rgba(255,255,255,0.1)" : isAvail ? "rgba(74,222,128,0.4)" : "rgba(248,113,113,0.4)"}`,
+                      boxShadow:  !checked ? "none" : isAvail ? "0 0 10px rgba(74,222,128,0.2)" : "0 0 10px rgba(248,113,113,0.2)",
+                    }}>
+                      {!checked ? "Ver disponibilidad" : isAvail ? "✓ Disponible" : "✕ No disponible"}
+                    </span>
 
                     {/* Badge promo */}
                     {isPromo && (

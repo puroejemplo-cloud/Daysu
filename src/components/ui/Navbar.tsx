@@ -14,7 +14,16 @@ const PUBLIC_LINKS = [
   { href: "/catalogo",  label: "Servicios" },
   { href: "/galeria",   label: "Galería"   },
   { href: "/nosotros",  label: "Nosotros"  },
+  { href: "/blog",      label: "Blog"      },
   { href: "/reservar",  label: "Reservar"  },
+];
+
+// Móvil: solo los links más importantes en la barra inferior
+const MOBILE_NAV_LINKS = [
+  { href: "/",         label: "Inicio"    },
+  { href: "/catalogo", label: "Servicios" },
+  { href: "/galeria",  label: "Galería"   },
+  { href: "/reservar", label: "Reservar"  },
 ];
 
 const ADMIN_LINKS = [
@@ -148,7 +157,7 @@ export default function Navbar() {
         {!isLoggedIn && (
           <nav className="flex lg:hidden items-center gap-1 flex-1 min-w-0 ml-1"
             aria-label="Navegación móvil">
-            {PUBLIC_LINKS.map((l) => {
+            {MOBILE_NAV_LINKS.map((l) => {
               const active = isActive(l.href);
               return (
                 <Link key={l.href} href={l.href}

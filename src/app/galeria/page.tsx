@@ -9,6 +9,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Galería — Daysu.vip",
     description: "Momentos legendarios captados en nuestros eventos.",
+    images: [{ url: "https://daysu.vip/api/og?title=Galería+de+Eventos+Legendarios", width: 1200, height: 630 }],
   },
 };
 

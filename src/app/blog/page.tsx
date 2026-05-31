@@ -10,6 +10,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Blog — Daysu.vip",
     description: "Guías para eventos en Zacatecas.",
+    images: [{ url: "https://daysu.vip/api/og?title=Blog+y+Guías+para+Eventos", width: 1200, height: 630 }],
   },
 };
 

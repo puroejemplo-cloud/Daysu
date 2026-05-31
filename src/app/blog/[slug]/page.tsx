@@ -114,6 +114,25 @@ export default async function BlogPostPage({ params }: Props) {
                 </Link>
               </div>
             </div>
+
+            {/* Links internos SEO */}
+            <nav aria-label="Páginas relacionadas" style={{ marginTop: "2rem", padding: "1.25rem", borderRadius: "0.75rem", background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)" }}>
+              <p style={{ fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: "#52525b", marginBottom: "0.75rem" }}>
+                También puede interesarte
+              </p>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
+                {related.map((p) => (
+                  <Link key={p.slug} href={`/blog/${p.slug}`}
+                    style={{ fontSize: "0.78rem", color: "#71717a", textDecoration: "none", padding: "0.35rem 0.75rem", borderRadius: 99, border: "1px solid rgba(255,255,255,0.07)", background: "rgba(255,255,255,0.02)" }}>
+                    {p.title}
+                  </Link>
+                ))}
+                <Link href="/catalogo"
+                  style={{ fontSize: "0.78rem", color: "var(--gold)", textDecoration: "none", padding: "0.35rem 0.75rem", borderRadius: 99, border: "1px solid rgba(232,25,138,0.2)", background: "rgba(232,25,138,0.06)" }}>
+                  Ver todos los servicios →
+                </Link>
+              </div>
+            </nav>
           </div>
 
           {/* Sidebar */}
