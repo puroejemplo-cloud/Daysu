@@ -26,49 +26,99 @@ export default function CookieBanner() {
   if (!visible) return null;
 
   return (
-    <div role="dialog" aria-label="Aviso de cookies"
-      style={{
-        position: "fixed", bottom: "1.25rem", left: "50%", transform: "translateX(-50%)",
-        zIndex: 9980, width: "calc(100% - 2rem)", maxWidth: 520,
-        background: "#0f0f14", border: "1px solid rgba(232,25,138,0.25)",
-        borderRadius: "1rem", padding: "1.25rem 1.25rem 1.25rem 1.5rem",
-        boxShadow: "0 8px 40px rgba(0,0,0,0.6), 0 0 0 1px rgba(232,25,138,0.08)",
-        display: "flex", flexDirection: "column", gap: "1rem",
-        animation: "fadeUp 0.3s ease both",
-      }}>
-      <div>
-        <p style={{ fontSize: "0.88rem", fontWeight: 600, color: "#f4f4f5", marginBottom: "0.35rem" }}>
-          🍪 Usamos cookies
-        </p>
-        <p style={{ fontSize: "0.78rem", color: "#71717a", lineHeight: 1.6 }}>
-          Usamos cookies técnicas y analíticas (Google Analytics) para mejorar tu experiencia.{" "}
-          <Link href="/privacidad" style={{ color: "var(--gold)", textDecoration: "none" }}>
-            Política de privacidad
-          </Link>
-        </p>
+    <>
+      <div role="dialog" aria-label="Aviso de cookies" className="cookie-banner">
+        {/* Fila superior: icono + texto */}
+        <div style={{ display: "flex", gap: "0.75rem", alignItems: "flex-start" }}>
+          <span style={{ fontSize: "1.25rem", flexShrink: 0, lineHeight: 1.2 }}>🍪</span>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <p style={{ fontSize: "0.85rem", fontWeight: 700, color: "#f4f4f5", marginBottom: "0.3rem" }}>
+              Usamos cookies
+            </p>
+            <p style={{ fontSize: "0.76rem", color: "#71717a", lineHeight: 1.6 }}>
+              Cookies técnicas y analíticas para mejorar tu experiencia.{" "}
+              <Link href="/privacidad" style={{ color: "var(--gold)", textDecoration: "none", whiteSpace: "nowrap" }}>
+                Ver política
+              </Link>
+            </p>
+          </div>
+        </div>
+
+        {/* Botones */}
+        <div className="cookie-btns">
+          <button onClick={accept} className="cookie-accept">
+            Aceptar todo
+          </button>
+          <button onClick={reject} className="cookie-reject">
+            Solo necesarias
+          </button>
+        </div>
       </div>
-      <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
-        <button onClick={accept}
-          style={{
-            padding: "0.55rem 1.25rem", borderRadius: 8, fontSize: "0.78rem", fontWeight: 700,
-            background: "var(--gold)", color: "#05051a", border: "none", cursor: "pointer",
-            transition: "opacity 0.15s",
-          }}
-          onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.88")}
-          onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}>
-          Aceptar
-        </button>
-        <button onClick={reject}
-          style={{
-            padding: "0.55rem 1.25rem", borderRadius: 8, fontSize: "0.78rem", fontWeight: 600,
-            background: "transparent", color: "#52525b", border: "1px solid rgba(255,255,255,0.08)",
-            cursor: "pointer", transition: "color 0.15s",
-          }}
-          onMouseEnter={(e) => (e.currentTarget.style.color = "#a1a1aa")}
-          onMouseLeave={(e) => (e.currentTarget.style.color = "#52525b")}>
-          Solo necesarias
-        </button>
-      </div>
-    </div>
+
+      <style>{`
+        .cookie-banner {
+          position: fixed;
+          bottom: max(1rem, env(safe-area-inset-bottom, 1rem));
+          left: 50%;
+          transform: translateX(-50%);
+          z-index: 9980;
+          width: calc(100% - 1.5rem);
+          max-width: 500px;
+          background: #0f0f14;
+          border: 1px solid rgba(232,25,138,0.25);
+          border-radius: 1rem;
+          padding: 1rem 1.25rem;
+          box-shadow: 0 8px 40px rgba(0,0,0,0.6), 0 0 0 1px rgba(232,25,138,0.08);
+          display: flex;
+          flex-direction: column;
+          gap: 0.875rem;
+          animation: fadeUp 0.3s ease both;
+        }
+        .cookie-btns {
+          display: flex;
+          gap: 0.5rem;
+        }
+        .cookie-accept {
+          flex: 1;
+          padding: 0.65rem 1rem;
+          border-radius: 8px;
+          font-size: 0.82rem;
+          font-weight: 700;
+          background: var(--gold);
+          color: #05051a;
+          border: none;
+          cursor: pointer;
+          transition: opacity 0.15s;
+          min-height: 44px;
+        }
+        .cookie-accept:hover { opacity: 0.88; }
+        .cookie-reject {
+          flex: 1;
+          padding: 0.65rem 1rem;
+          border-radius: 8px;
+          font-size: 0.82rem;
+          font-weight: 600;
+          background: transparent;
+          color: #71717a;
+          border: 1px solid rgba(255,255,255,0.1);
+          cursor: pointer;
+          transition: color 0.15s, border-color 0.15s;
+          min-height: 44px;
+        }
+        .cookie-reject:hover { color: #a1a1aa; border-color: rgba(255,255,255,0.2); }
+
+        /* Móvil: botones apilados, ancho completo */
+        @media (max-width: 400px) {
+          .cookie-banner {
+            width: calc(100% - 1rem);
+            border-radius: 0.875rem 0.875rem 0 0;
+            bottom: 0;
+            left: 0;
+            transform: none;
+          }
+          .cookie-btns { flex-direction: column; }
+        }
+      `}</style>
+    </>
   );
 }

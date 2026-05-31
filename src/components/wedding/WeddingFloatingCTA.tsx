@@ -67,29 +67,29 @@ export function WeddingFloatingCTA({ heroImage }: Props) {
         }}>
 
           {/* ── Desktop ── */}
-          <div className="wp-desktop" style={{ display: "flex", alignItems: "center", gap: "0.875rem", padding: "0.875rem 1rem" }}>
+          <div className="wp-desktop" style={{ display: "flex", alignItems: "center", gap: "0.75rem", padding: "0.75rem 0.875rem", flexWrap: "wrap" }}>
             {heroImage && (
-              <div style={{ width: 46, height: 46, borderRadius: "50%", flexShrink: 0, background: `url('${heroImage}') center/cover`, border: "2px solid var(--gold)" }} />
+              <div style={{ width: 44, height: 44, borderRadius: "50%", flexShrink: 0, background: `url('${heroImage}') center/cover`, border: "2px solid var(--gold)" }} />
             )}
-            <div style={{ flex: 1, minWidth: 0, overflow: "hidden" }}>
-              <p style={{ fontSize: "0.62rem", color: "var(--muted)", marginBottom: 3, letterSpacing: "0.06em" }}>✨ Wedding Planner · Pao Rosales</p>
-              <div style={{ display: "flex", alignItems: "baseline", gap: "0.35rem", flexWrap: "nowrap" }}>
-                <span style={{ fontSize: "0.92rem", fontWeight: 600, color: "var(--cream)", whiteSpace: "nowrap", flexShrink: 0 }}>
-                  ¿Quieres que nos encarguemos de tu
-                </span>
+            <div style={{ flex: "1 1 200px", minWidth: 0 }}>
+              <p style={{ fontSize: "0.6rem", color: "var(--muted)", marginBottom: 2, letterSpacing: "0.06em" }}>✨ Wedding Planner · Pao Rosales</p>
+              <p style={{ fontSize: "0.88rem", fontWeight: 600, color: "var(--cream)", lineHeight: 1.35 }}>
+                ¿Nos encargamos de tu{" "}
                 <span className={`wp-word wp-word--${animState}`}
-                  style={{ color: "var(--gold)", fontWeight: 800, fontSize: "0.95rem", whiteSpace: "nowrap", display: "inline-block" }}>
+                  style={{ color: "var(--gold)", fontWeight: 800, display: "inline-block" }}>
                   {label}?
                 </span>
-              </div>
+              </p>
             </div>
-            <Link href="/wedding-planner#contacto" className="wp-cta-btn">
-              Sí, platícanos →
-              <span className="wp-shimmer" />
-            </Link>
-            <button onClick={() => setDismissed(true)} aria-label="Cerrar" style={{ background: "transparent", border: "none", color: "var(--muted)", cursor: "pointer", padding: "0.25rem", display: "flex", flexShrink: 0 }}>
-              <X size={15} />
-            </button>
+            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", flexShrink: 0 }}>
+              <Link href="/wedding-planner#contacto" className="wp-cta-btn">
+                Sí, platícanos →
+                <span className="wp-shimmer" />
+              </Link>
+              <button onClick={() => setDismissed(true)} aria-label="Cerrar" style={{ background: "transparent", border: "none", color: "var(--muted)", cursor: "pointer", padding: "0.3rem", display: "flex" }}>
+                <X size={14} />
+              </button>
+            </div>
           </div>
 
           {/* ── Mobile ── */}
