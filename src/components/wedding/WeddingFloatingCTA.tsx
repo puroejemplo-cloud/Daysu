@@ -72,7 +72,7 @@ export function WeddingFloatingCTA({ heroImage }: Props) {
               <div style={{ width: 46, height: 46, borderRadius: "50%", flexShrink: 0, background: `url('${heroImage}') center/cover`, border: "2px solid var(--gold)" }} />
             )}
             <div style={{ flex: 1, minWidth: 0, overflow: "hidden" }}>
-              <p style={{ fontSize: "0.62rem", color: "var(--muted)", marginBottom: 3, letterSpacing: "0.06em" }}>✨ Wedding Planner · Aura Producciones</p>
+              <p style={{ fontSize: "0.62rem", color: "var(--muted)", marginBottom: 3, letterSpacing: "0.06em" }}>✨ Wedding Planner · Pao Rosales</p>
               <div style={{ display: "flex", alignItems: "baseline", gap: "0.35rem", flexWrap: "nowrap" }}>
                 <span style={{ fontSize: "0.92rem", fontWeight: 600, color: "var(--cream)", whiteSpace: "nowrap", flexShrink: 0 }}>
                   ¿Quieres que nos encarguemos de tu
@@ -99,7 +99,7 @@ export function WeddingFloatingCTA({ heroImage }: Props) {
                 <div style={{ width: 38, height: 38, borderRadius: "50%", flexShrink: 0, background: `url('${heroImage}') center/cover`, border: "2px solid var(--gold)" }} />
               )}
               <div style={{ flex: 1, overflow: "hidden" }}>
-                <p style={{ fontSize: "0.62rem", color: "var(--muted)", marginBottom: 3 }}>✨ Wedding Planner</p>
+                <p style={{ fontSize: "0.62rem", color: "var(--muted)", marginBottom: 3 }}>✨ Wedding Planner · Pao Rosales</p>
                 <div style={{ display: "flex", alignItems: "baseline", gap: "0.3rem", flexWrap: "wrap" }}>
                   <span style={{ fontSize: "0.85rem", fontWeight: 600, color: "var(--cream)", whiteSpace: "nowrap" }}>
                     ¿Nos encargamos de tu
