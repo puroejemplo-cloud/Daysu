@@ -1,8 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import ContactoClient from "./ContactoClient";
 
-export { default as metadata } from "./layout";
-
 export default async function ContactoPage() {
   let waNumber = "524929496372";
   try {
