@@ -2,7 +2,7 @@
   "name": "Daysu.vip",
   "short_name": "Daysu.vip",
   "description": "Paquetes de DJ, audio, iluminación y shows para eventos en Zacatecas",
-  "start_url": "/",
+  "start_url": "/launch",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait-primary",
