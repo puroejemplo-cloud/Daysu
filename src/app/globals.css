@@ -536,6 +536,7 @@ input, select, textarea {
 .dash-kpi-value {
   font-size: 1.9rem; font-weight: 300; letter-spacing: -0.04em;
   color: #f4f4f5; line-height: 1;
+  font-variant-numeric: tabular-nums;
 }
 .dash-kpi-value.sm { font-size: 1.35rem; }
 .dash-kpi-value.is-accent { color: var(--gold2); }
@@ -586,7 +587,8 @@ input, select, textarea {
   font-variant-numeric: tabular-nums;
 }
 .dash-agenda-name { font-size: 0.82rem; font-weight: 600; color: #e4e4e7; }
-.dash-agenda-meta { font-size: 0.7rem; color: #52525b; margin-top: 0.1rem; }
+/* Contraste AA: el cliente es contenido significativo, no decorativo */
+.dash-agenda-meta { font-size: 0.7rem; color: #a1a1aa; margin-top: 0.1rem; }
 
 /* Acciones rápidas sobrias */
 .dash-quick {

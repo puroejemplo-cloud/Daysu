@@ -195,13 +195,23 @@ export default function AdminDashboard() {
     cancelTimers.current[b.id] = setTimeout(() => finalizeCancel(b.id), UNDO_MS);
   };
 
-  // ── Métricas ──
-  const pending   = allBookings.filter((b) => b.status === "pending_payment").length;
-  const confirmed = allBookings.filter((b) => b.status === "confirmed").length;
-  const revenue   = allBookings
-    .filter((b) => b.status === "confirmed")
-    .reduce((sum, b) => sum + Number(b.depositAmount), 0);
-  const total     = allBookings.length || 1;
+  // ── Métricas ── un solo recorrido, memoizado (no recalcular al teclear/buscar)
+  const metrics = useMemo(() => {
+    const counts: Record<string, number> = { all: allBookings.length };
+    let revenue = 0;
+    for (const b of allBookings) {
+      counts[b.status] = (counts[b.status] ?? 0) + 1;
+      if (b.status === "confirmed") revenue += Number(b.depositAmount);
+    }
+    return {
+      counts,
+      pending:   counts.pending_payment ?? 0,
+      confirmed: counts.confirmed ?? 0,
+      revenue,
+      total:     allBookings.length || 1,
+    };
+  }, [allBookings]);
+  const { pending, confirmed, revenue, total } = metrics;
 
   // ── Agenda: próximos eventos agrupados por día ──
   const today0 = useMemo(() => startOfDay(new Date()), []);
@@ -239,13 +249,6 @@ export default function AdminDashboard() {
     return allBookings.filter(
       (b) => b.status === "pending_payment" && b.expiresAt && new Date(b.expiresAt) < soon,
     );
-  }, [allBookings]);
-
-  // Conteo por estado para los chips de filtro (allBookings = activas)
-  const statusCounts = useMemo(() => {
-    const c: Record<string, number> = { all: allBookings.length };
-    for (const b of allBookings) c[b.status] = (c[b.status] ?? 0) + 1;
-    return c;
   }, [allBookings]);
 
   const baseList =
@@ -394,7 +397,7 @@ export default function AdminDashboard() {
                       <span className="dash-agenda-meta" style={{ display: "flex", alignItems: "center", gap: "0.35rem", flexWrap: "wrap" }}>
                         {b.client.fullName}
                         {b.venueAddress && (
-                          <span style={{ display: "inline-flex", alignItems: "center", gap: "0.2rem", color: "#3f3f46" }}>
+                          <span style={{ display: "inline-flex", alignItems: "center", gap: "0.2rem", color: "#71717a" }}>
                             <MapPin size={10} /> {b.venueAddress.split(",")[0]}
                           </span>
                         )}
@@ -433,7 +436,7 @@ export default function AdminDashboard() {
                       <button onClick={() => confirmPayment(b.id)} disabled={acting === b.id}
                         aria-label={`Confirmar pago de ${b.eventName}`}
                         style={{
-                          padding: "0.2rem 0.55rem", borderRadius: 5, fontSize: "0.64rem", fontWeight: 700,
+                          padding: "0.3rem 0.7rem", borderRadius: 5, fontSize: "0.72rem", fontWeight: 700,
                           background: "rgba(34,197,94,0.14)", color: "#4ade80",
                           border: "1px solid rgba(34,197,94,0.3)", cursor: "pointer", flexShrink: 0,
                         }}>
@@ -476,13 +479,13 @@ export default function AdminDashboard() {
                       fontSize: "0.68rem", fontWeight: active ? 600 : 400,
                       background:  active ? "rgba(232,25,138,0.12)" : "transparent",
                       border:      `1px solid ${active ? "rgba(232,25,138,0.35)" : "rgba(255,255,255,0.06)"}`,
-                      color:       active ? "#FF9AD5" : "#52525b",
+                      color:       active ? "#FF9AD5" : "#8f8f99",
                       cursor:      "pointer", transition: "all 0.15s", whiteSpace: "nowrap",
                     }}>
                     {f === "all" ? "Todas" : ST[f]?.label ?? f}
-                    {!["cancelled", "expired"].includes(f) && (statusCounts[f] ?? 0) > 0 && (
+                    {!["cancelled", "expired"].includes(f) && (metrics.counts[f] ?? 0) > 0 && (
                       <span style={{ marginLeft: "0.35rem", opacity: 0.7, fontVariantNumeric: "tabular-nums" }}>
-                        {statusCounts[f]}
+                        {metrics.counts[f]}
                       </span>
                     )}
                   </button>
@@ -505,10 +508,10 @@ export default function AdminDashboard() {
                   background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)",
                   borderRadius: 6, padding: "0.3rem 1.6rem 0.3rem 1.55rem",
                   fontSize: "0.72rem", color: "#e4e4e7", width: search ? 190 : 160,
-                  outline: "none", transition: "width 0.15s",
+                  outline: "none", transition: "width 0.15s, box-shadow 0.15s, border-color 0.15s",
                 }}
-                onFocus={(e) => { e.currentTarget.style.borderColor = "rgba(232,25,138,0.4)"; e.currentTarget.style.width = "190px"; }}
-                onBlur={(e) => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)"; }}
+                onFocus={(e) => { e.currentTarget.style.borderColor = "rgba(232,25,138,0.5)"; e.currentTarget.style.boxShadow = "0 0 0 3px rgba(232,25,138,0.18)"; e.currentTarget.style.width = "190px"; }}
+                onBlur={(e) => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)"; e.currentTarget.style.boxShadow = "none"; }}
               />
               {search && (
                 <button onClick={() => setSearch("")} aria-label="Limpiar búsqueda"
@@ -579,11 +582,11 @@ export default function AdminDashboard() {
                     </span>
                   )}
                 </div>
-                <p style={{ fontSize: "0.72rem", color: "#52525b" }}>
+                <p style={{ fontSize: "0.72rem", color: "#a1a1aa" }}>
                   {b.client.fullName}
-                  {b.client.phone && <span style={{ color: "#3f3f46" }}> · {b.client.phone}</span>}
+                  {b.client.phone && <span style={{ color: "#71717a" }}> · {b.client.phone}</span>}
                 </p>
-                <p style={{ fontSize: "0.68rem", color: "#3f3f46", marginTop: "0.15rem" }}>
+                <p style={{ fontSize: "0.68rem", color: "#71717a", marginTop: "0.15rem" }}>
                   {format(new Date(b.setupAt), "d MMM yyyy · HH:mm'h'", { locale: es })}
                   {b.expiresAt && b.status === "pending_payment" && (
                     <span style={{ marginLeft: "0.5rem", fontWeight: 600, color: isExpired ? "#ef4444" : "#f59e0b" }}>
@@ -594,7 +597,7 @@ export default function AdminDashboard() {
               </div>
               <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", flexShrink: 0, flexWrap: "wrap" }}>
                 <div style={{ textAlign: "right", minWidth: 76 }}>
-                  <p style={{ fontSize: "0.95rem", fontWeight: 600, color: "#FF3DA8", lineHeight: 1.2 }}>
+                  <p style={{ fontSize: "0.95rem", fontWeight: 600, color: "#FF3DA8", lineHeight: 1.2, fontVariantNumeric: "tabular-nums" }}>
                     ${Number(b.depositAmount).toLocaleString("es-MX", { maximumFractionDigits: 0 })}
                   </p>
                   <p className="admin-label" style={{ fontSize: "0.55rem" }}>apartado</p>
