@@ -159,7 +159,7 @@ export default function AgendaWidget({ upcoming: initUpcoming, pending: initPend
   const anyModalOpen = !!editId || !!abono;
 
   // ── Abono bottom sheet ──────────────────────────────────────────────────────
-  const AbonoSheet = () => {
+  const abonoSheet = () => {
     if (!abono) return null;
     const balance = abono.total - abono.currentDeposit;
     const newAmt  = Number(abonoAmt) || 0;
@@ -247,7 +247,7 @@ export default function AgendaWidget({ upcoming: initUpcoming, pending: initPend
   };
 
   // ── Tarjeta de evento próximo ───────────────────────────────────────────────
-  const UpcomingCard = ({ ev }: { ev: UpcomingEvent }) => {
+  const upcomingCard = (ev: UpcomingEvent) => {
     const type    = detectType(ev.eventName);
     const cfg     = EVENT_TYPE_CFG[type];
     const timeStr = format(new Date(ev.setupAt), "HH:mm");
@@ -257,7 +257,7 @@ export default function AgendaWidget({ upcoming: initUpcoming, pending: initPend
     const itemsLabel = ev.items.map((i) => i.quantity > 1 ? `${i.name} ×${i.quantity}` : i.name).join(" · ");
 
     return (
-      <div style={{
+      <div key={ev.id} style={{
         marginBottom: "0.4rem",
         borderRadius: 12,
         background: "rgba(255,255,255,0.03)",
@@ -320,7 +320,7 @@ export default function AgendaWidget({ upcoming: initUpcoming, pending: initPend
   };
 
   // ── Tarjeta de evento pendiente ─────────────────────────────────────────────
-  const PendingCard = ({ ev }: { ev: PendingEvent }) => {
+  const pendingCard = (ev: PendingEvent) => {
     const type     = detectType(ev.eventName);
     const cfg      = EVENT_TYPE_CFG[type];
     const total    = Number(ev.totalAmount);
@@ -331,7 +331,7 @@ export default function AgendaWidget({ upcoming: initUpcoming, pending: initPend
     const evDayLabel = dayLabel(ev.eventDate);
 
     return (
-      <div style={{
+      <div key={ev.id} style={{
         marginBottom: "0.4rem", borderRadius: 12, overflow: "hidden",
         background: expired ? "rgba(220,38,38,0.06)" : "rgba(202,138,4,0.06)",
         border: `1px solid ${expired ? "rgba(220,38,38,0.2)" : "rgba(202,138,4,0.2)"}`,
@@ -390,7 +390,7 @@ export default function AgendaWidget({ upcoming: initUpcoming, pending: initPend
           onSaved={() => { setEditId(null); refresh(); }}
         />
       )}
-      <AbonoSheet />
+      {abonoSheet()}
 
       {/* Header */}
       <div style={{ padding: "1.25rem 1.25rem 0.75rem", borderBottom: "1px solid rgba(255,255,255,0.06)", position: "sticky", top: 0, zIndex: 10, background: "#05051a" }}>
@@ -435,7 +435,7 @@ export default function AgendaWidget({ upcoming: initUpcoming, pending: initPend
                   </span>
                   {isHoy && <span style={{ fontSize: "0.65rem", color: "#52525b" }}>{format(parseLocal(key + "T00:00:00"), "d 'de' MMMM", { locale: es })}</span>}
                 </div>
-                {dayEvents.map((ev) => <UpcomingCard key={ev.id} ev={ev} />)}
+                {dayEvents.map((ev) => upcomingCard(ev))}
               </div>
             );
           })}
@@ -447,7 +447,7 @@ export default function AgendaWidget({ upcoming: initUpcoming, pending: initPend
             <p style={{ fontSize: "0.6rem", fontWeight: 800, letterSpacing: "0.1em", textTransform: "uppercase", color: "#ca8a04", margin: "0 0 0.75rem" }}>
               Por confirmar · {pending.length}
             </p>
-            {pending.map((ev) => <PendingCard key={ev.id} ev={ev} />)}
+            {pending.map((ev) => pendingCard(ev))}
           </div>
         )}
       </div>
