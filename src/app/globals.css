@@ -402,6 +402,13 @@ input, select, textarea {
   }
 }
 
+/* ── Bottom navigation (móvil) — oculta en desktop ──────────────────────────
+   El display se controla por clase (no inline): un `display:flex` inline
+   gana por especificidad y anula `lg:hidden`, dejando la barra visible en
+   escritorio. Por eso la ocultación va en el media query de esta clase. */
+.admin-bottom-nav { display: flex; }
+@media (min-width: 1024px) { .admin-bottom-nav { display: none; } }
+
 /* ── Toast — sobre el bottom bar en móvil ───────────────────────────────── */
 .admin-toast-container {
   bottom: calc(3.5rem + env(safe-area-inset-bottom) + 0.75rem);

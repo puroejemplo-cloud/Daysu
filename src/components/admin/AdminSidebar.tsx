@@ -243,9 +243,9 @@ export default function AdminSidebar() {
         background: "rgba(9,9,11,0.97)",
         borderTop: "1px solid rgba(255,255,255,0.06)",
         backdropFilter: "blur(16px)",
-        display: "flex", alignItems: "stretch",
+        alignItems: "stretch",
         padding: "0.3rem 0.25rem max(0.3rem, env(safe-area-inset-bottom))",
-      }} className="lg:hidden">
+      }} className="admin-bottom-nav">
         {BOTTOM_NAV.map((item) => {
           const active = isActive(item.href);
           return (
