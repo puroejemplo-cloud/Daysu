@@ -8,7 +8,10 @@ import "react-day-picker/style.css";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import Link from "next/link";
-import { CalendarDays, PackageSearch, Sparkles } from "lucide-react";
+import {
+  CalendarDays, PackageSearch, Sparkles, Camera, Volume2, Lightbulb,
+  Drama, User, Armchair, LayoutGrid, PartyPopper, Flame,
+} from "lucide-react";
 
 // Calculador interactivo de precio por persona (necesita su propio estado)
 function PersonCalc({ pricePerPerson, accent, minPersons = 25 }: { pricePerPerson: number; accent: string; minPersons?: number }) {
@@ -74,11 +77,11 @@ interface AssetAvail {
 
 const ACCENT_PALETTE = ["#e879f9", "#f472b6", "#38bdf8", "#f59e0b", "#a78bfa", "#4ade80", "#fb923c"];
 
-// Iconos por categoría
-const CAT_ICONS: Record<string, string> = {
-  "Paquetes": "🎉", "Sonido": "🔊", "Iluminación": "💡", "Entretenimiento": "🎭",
-  "Fotografía": "📷", "Staff": "👤", "Mobiliario": "🪑", "Cabinas": "📸",
-  "Todos": "✦",
+// Iconos por categoría (SVG, no emojis)
+const CAT_ICONS: Record<string, React.ComponentType<{ size?: number }>> = {
+  "Paquetes": PartyPopper, "Sonido": Volume2, "Iluminación": Lightbulb, "Entretenimiento": Drama,
+  "Fotografía": Camera, "Staff": User, "Mobiliario": Armchair, "Cabinas": Camera,
+  "Todos": LayoutGrid,
 };
 
 export default function CatalogClient({
@@ -248,7 +251,7 @@ export default function CatalogClient({
         {[{ id: null, name: "Todos" }, ...categories].map((c, ci) => {
           const isActive = catFilter === c.id;
           const accent   = c.id ? ACCENT_PALETTE[ci % ACCENT_PALETTE.length] : "#E8198A";
-          const icon     = CAT_ICONS[c.name] ?? "✦";
+          const Icon     = CAT_ICONS[c.name] ?? Sparkles;
           return (
             <button key={c.id ?? "all"}
               onClick={() => setCatFilter(c.id)}
@@ -263,7 +266,7 @@ export default function CatalogClient({
                 color: isActive ? "#05051a" : "#71717a",
                 boxShadow: isActive ? `0 0 16px ${accent}50` : "none",
               }}>
-              <span>{icon}</span>
+              <Icon size={14} />
               {c.name}
             </button>
           );
@@ -377,6 +380,16 @@ export default function CatalogClient({
               const isPromo   = !!asset.originalPrice && Number(asset.originalPrice) > Number(asset.dailyRate);
               const discount  = isPromo ? Math.round((1 - Number(asset.dailyRate) / Number(asset.originalPrice!)) * 100) : 0;
 
+              // Precio "desde" para mostrar de un vistazo en la tarjeta
+              const hT        = getHourlyTiers(asset.sku, asset.pricingTiers);
+              const cT        = getCapacityTiers(asset.sku, asset.pricingTiers);
+              const cTPriced  = cT?.filter((t) => t.price > 0) ?? [];
+              const perPers   = isPerPerson(asset.pricingTiers ?? null);
+              const fromPrice = hT ? Math.min(...hT.map((t) => t.price))
+                : cTPriced.length ? Math.min(...cTPriced.map((t) => t.price))
+                : Number(asset.dailyRate);
+              const fromUnit  = perPers ? "/persona" : "";
+
               const cardHref = range.from
                 ? `/catalogo/${asset.sku.toLowerCase()}?start=${range.from.toISOString()}&sh=${setupHour}`
                 : `/catalogo/${asset.sku.toLowerCase()}`;
@@ -416,7 +429,7 @@ export default function CatalogClient({
                             color: "rgba(255,255,255,0.8)", border: "1px solid rgba(255,255,255,0.12)",
                             display: "flex", alignItems: "center", gap: "0.25rem",
                           }}>
-                            📷 {gallery.length} fotos
+                            <Camera size={10} /> {gallery.length} fotos
                           </span>
                         )}
                       </div>
@@ -451,8 +464,9 @@ export default function CatalogClient({
                         fontSize: "0.6rem", fontWeight: 700, padding: "0.25rem 0.7rem", borderRadius: 999,
                         background: "#dc2626", color: "#fff",
                         boxShadow: "0 0 10px rgba(220,38,38,0.4)",
+                        display: "inline-flex", alignItems: "center", gap: "0.25rem",
                       }}>
-                        🔥 -{discount}%
+                        <Flame size={11} /> -{discount}%
                       </span>
                     )}
 
@@ -473,11 +487,15 @@ export default function CatalogClient({
                             {asset.categoryName}
                           </p>
                         )}
-                        {gallery.length > 1 && (
-                          <span style={{ fontSize: "0.55rem", color: "rgba(255,255,255,0.4)", flexShrink: 0, marginLeft: "auto" }}>
-                            {gallery.length} fotos
-                          </span>
-                        )}
+                        <span style={{
+                          fontFamily: "var(--font-bebas)", fontSize: "1.3rem", color: "#fff",
+                          letterSpacing: "0.02em", display: "flex", alignItems: "baseline", gap: 4,
+                          textShadow: "0 1px 12px rgba(0,0,0,0.9)", flexShrink: 0, marginLeft: "auto",
+                        }}>
+                          <span style={{ fontFamily: "var(--font-dm)", fontSize: "0.5rem", fontWeight: 700, letterSpacing: "0.14em", color: "rgba(255,255,255,0.65)" }}>DESDE</span>
+                          ${fromPrice.toLocaleString("es-MX")}
+                          {fromUnit && <span style={{ fontFamily: "var(--font-dm)", fontSize: "0.5rem", color: "rgba(255,255,255,0.6)" }}>{fromUnit}</span>}
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -501,7 +519,7 @@ export default function CatalogClient({
                     {/* Features */}
                     {features.length > 0 && (
                       <ul style={{ listStyle: "none", margin: 0, padding: 0, display: "flex", flexDirection: "column", gap: "0.3rem" }}>
-                        {features.slice(0, 4).map((line, li) => (
+                        {features.slice(0, 3).map((line, li) => (
                           <li key={li} style={{
                             fontSize: "0.76rem", color: "#71717a",
                             display: "flex", alignItems: "flex-start", gap: "0.45rem", lineHeight: 1.5,
