@@ -23,11 +23,12 @@ interface AbonoTarget {
   total: number; currentDeposit: number;
 }
 
+// Mismos colores de estado que el dashboard (ST) — consistencia entre pantallas
 const STATUS_DOT: Record<string, string> = {
-  pending_payment: "#ca8a04",
-  confirmed:       "#16a34a",
+  pending_payment: "#f59e0b",
+  confirmed:       "#22c55e",
   in_progress:     "#3b82f6",
-  completed:       "#52525b",
+  completed:       "#6b7280",
 };
 const STATUS_LABEL: Record<string, string> = {
   pending_payment: "Pendiente",
@@ -118,7 +119,7 @@ export default function CalendarView({ bookings: initBookings }: { bookings: Boo
   const grouped  = groupByDate(upcoming);
   const dateKeys = Array.from(grouped.keys());
 
-  const ListView = () => (
+  const listView = () => (
     <div className="space-y-2">
       {dateKeys.length === 0 && (
         <div className="aura-card p-8 text-center">
@@ -162,9 +163,9 @@ export default function CalendarView({ bookings: initBookings }: { bookings: Boo
                       <p style={{ margin: 0, fontSize: "0.85rem", fontWeight: 600, color: "#e4e4e7", overflow: "hidden", whiteSpace: "nowrap", textOverflow: "ellipsis" }}>
                         {b.eventName}
                       </p>
-                      <p style={{ margin: 0, fontSize: "0.7rem", color: "#52525b" }}>{b.clientName}</p>
+                      <p style={{ margin: 0, fontSize: "0.7rem", color: "#a1a1aa" }}>{b.clientName}</p>
                       {itemsLabel && (
-                        <p style={{ margin: "0.1rem 0 0", fontSize: "0.62rem", color: "#3f3f46", overflow: "hidden", whiteSpace: "nowrap", textOverflow: "ellipsis" }}>
+                        <p style={{ margin: "0.1rem 0 0", fontSize: "0.62rem", color: "#71717a", overflow: "hidden", whiteSpace: "nowrap", textOverflow: "ellipsis" }}>
                           {itemsLabel}
                         </p>
                       )}
@@ -181,7 +182,7 @@ export default function CalendarView({ bookings: initBookings }: { bookings: Boo
                       {total > 0 && <>
                         <span style={{ color: "var(--gold)" }}>${total.toLocaleString("es-MX", { maximumFractionDigits: 0 })}</span>
                         {deposit > 0 && <span style={{ color: "#16a34a" }}>+${deposit.toLocaleString("es-MX", { maximumFractionDigits: 0 })} pagado</span>}
-                        {balance > 0 && <span style={{ color: "#ca8a04" }}>saldo ${balance.toLocaleString("es-MX", { maximumFractionDigits: 0 })}</span>}
+                        {balance > 0 && <span style={{ color: "#f59e0b" }}>saldo ${balance.toLocaleString("es-MX", { maximumFractionDigits: 0 })}</span>}
                       </>}
                     </div>
                     <div style={{ display: "flex", gap: "0.4rem" }}>
@@ -215,7 +216,7 @@ export default function CalendarView({ bookings: initBookings }: { bookings: Boo
 
   const selectedBookings = selected ? bookingsForDay(selected) : [];
 
-  const CalendarGrid = () => (
+  const calendarGrid = () => (
     <div className="space-y-5">
       <div className="flex items-center justify-between gap-2">
         <button onClick={() => setCurrent(subMonths(current, 1))}
@@ -262,7 +263,7 @@ export default function CalendarView({ bookings: initBookings }: { bookings: Boo
           return (
             <div key={day.toISOString()}
               onClick={() => setSelected(isSel ? null : day)}
-              style={{ minHeight: 72, borderRadius: 8, padding: "0.4rem", cursor: hasEvents ? "pointer" : "default", background: isSel ? "rgba(212,175,55,0.08)" : isHoy ? "rgba(255,255,255,0.04)" : "transparent", border: isSel ? "1px solid rgba(212,175,55,0.3)" : isHoy ? "1px solid rgba(255,255,255,0.1)" : "1px solid rgba(255,255,255,0.04)", transition: "all 0.15s" }}>
+              style={{ minHeight: 72, borderRadius: 8, padding: "0.4rem", cursor: hasEvents ? "pointer" : "default", background: isSel ? "rgba(232,25,138,0.08)" : isHoy ? "rgba(255,255,255,0.04)" : "transparent", border: isSel ? "1px solid rgba(232,25,138,0.3)" : isHoy ? "1px solid rgba(255,255,255,0.1)" : "1px solid rgba(255,255,255,0.04)", transition: "all 0.15s" }}>
               <p className="text-xs font-semibold mb-1" style={{ color: isHoy ? "#e4e4e7" : isSameMonth(day, current) ? "#71717a" : "#27272a" }}>
                 {format(day, "d")}
               </p>
@@ -305,7 +306,7 @@ export default function CalendarView({ bookings: initBookings }: { bookings: Boo
                       <span style={{ flexShrink: 0, fontSize: "0.6rem", fontWeight: 800, padding: "2px 6px", borderRadius: 4, background: cfg.color + "22", color: cfg.color, border: `1px solid ${cfg.color}55` }}>{cfg.label}</span>
                       <div className="min-w-0">
                         <p className="text-sm font-semibold" style={{ color: "#e4e4e7" }}>{b.eventName}</p>
-                        <p className="text-xs mt-0.5" style={{ color: "#52525b" }}>{b.clientName} · {setupTime}h</p>
+                        <p className="text-xs mt-0.5" style={{ color: "#a1a1aa" }}>{b.clientName} · {setupTime}h</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-2 flex-shrink-0">
@@ -322,7 +323,7 @@ export default function CalendarView({ bookings: initBookings }: { bookings: Boo
                       <div style={{ display: "flex", gap: "0.7rem", fontSize: "0.65rem" }}>
                         <span style={{ color: "var(--gold)" }}>${total.toLocaleString("es-MX", { maximumFractionDigits: 0 })}</span>
                         {deposit > 0 && <span style={{ color: "#16a34a" }}>+${deposit.toLocaleString("es-MX", { maximumFractionDigits: 0 })} pagado</span>}
-                        {balance > 0 && <span style={{ color: "#ca8a04" }}>saldo ${balance.toLocaleString("es-MX", { maximumFractionDigits: 0 })}</span>}
+                        {balance > 0 && <span style={{ color: "#f59e0b" }}>saldo ${balance.toLocaleString("es-MX", { maximumFractionDigits: 0 })}</span>}
                       </div>
                       <div style={{ display: "flex", gap: "0.4rem" }}>
                         <button onClick={() => openAbono(b)}
@@ -361,7 +362,7 @@ export default function CalendarView({ bookings: initBookings }: { bookings: Boo
   );
 
   // ── MODAL ABONO ──────────────────────────────────────────────────────────────
-  const AbonoModal = () => {
+  const abonoModal = () => {
     if (!abono) return null;
     const balance    = abono.total - abono.currentDeposit;
     const newAmt     = Number(abonoAmt) || 0;
@@ -384,7 +385,7 @@ export default function CalendarView({ bookings: initBookings }: { bookings: Boo
             {[
               { label: "Total",  value: abono.total,          color: "var(--gold)" },
               { label: "Pagado", value: abono.currentDeposit, color: "#16a34a" },
-              { label: "Saldo",  value: balance,              color: "#ca8a04" },
+              { label: "Saldo",  value: balance,              color: "#f59e0b" },
             ].map(({ label, value, color }) => (
               <div key={label} style={{ background: "rgba(255,255,255,0.04)", borderRadius: 10, padding: "0.6rem 0.5rem", textAlign: "center" }}>
                 <p style={{ margin: 0, fontSize: "0.9rem", fontWeight: 700, color }}>${value.toLocaleString("es-MX", { maximumFractionDigits: 0 })}</p>
@@ -435,7 +436,7 @@ export default function CalendarView({ bookings: initBookings }: { bookings: Boo
           onSaved={() => { setEditId(null); router.refresh(); }}
         />
       )}
-      <AbonoModal />
+      {abonoModal()}
 
       {/* Toggle vista */}
       <div style={{ display: "flex", gap: "0.5rem" }}>
@@ -456,7 +457,7 @@ export default function CalendarView({ bookings: initBookings }: { bookings: Boo
         })}
       </div>
 
-      {view === "list" ? <ListView /> : <CalendarGrid />}
+      {view === "list" ? listView() : calendarGrid()}
     </div>
   );
 }
