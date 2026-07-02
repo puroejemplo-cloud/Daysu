@@ -12,6 +12,7 @@ import {
   Package, PlusCircle, Users, CheckSquare, CalendarDays, Eye,
   RefreshCw, CalendarX, Pencil, TrendingUp, Clock, DollarSign,
   CalendarClock, ArrowRight, AlertTriangle, MapPin, ChevronRight,
+  Search, X, RotateCcw,
 } from "lucide-react";
 import NotificationPermission from "@/components/ui/NotificationPermission";
 import EditBookingModal from "@/components/admin/EditBookingModal";
@@ -25,7 +26,12 @@ interface Booking {
   notifications: { id: string }[];
 }
 
-interface Toast { id: number; message: string; type: "success" | "error" }
+interface Toast {
+  id: number; message: string; type: "success" | "error";
+  action?: { label: string; onClick: () => void };
+}
+
+const UNDO_MS = 5000;
 
 // Estado → etiqueta + color semántico (el color SOLO significa estado)
 const ST: Record<string, { label: string; color: string; dot: string; bg: string }> = {
@@ -74,19 +80,38 @@ export default function AdminDashboard() {
   const [lastSync,      setLastSync]      = useState<Date | null>(null);
   const [editId,        setEditId]        = useState<string | null>(null);
   const [extraBookings, setExtraBookings] = useState<Booking[]>([]);
-  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const [search,        setSearch]        = useState("");
+  const intervalRef    = useRef<ReturnType<typeof setInterval> | null>(null);
+  const cancelTimers   = useRef<Record<string, ReturnType<typeof setTimeout>>>({});
+  const pendingCancel  = useRef<Record<string, string>>({}); // id → estado previo (undo)
 
-  const addToast = useCallback((message: string, type: Toast["type"] = "success") => {
+  const addToast = useCallback((
+    message: string,
+    type: Toast["type"] = "success",
+    opts?: { action?: Toast["action"]; duration?: number },
+  ) => {
     const id = ++toastId;
-    setToasts((prev) => [...prev, { id, message, type }]);
-    setTimeout(() => setToasts((prev) => prev.filter((t) => t.id !== id)), 3500);
+    setToasts((prev) => [...prev, { id, message, type, action: opts?.action }]);
+    setTimeout(() => setToasts((prev) => prev.filter((t) => t.id !== id)), opts?.duration ?? 3500);
+    return id;
+  }, []);
+
+  const removeToast = useCallback((id: number) => {
+    setToasts((prev) => prev.filter((t) => t.id !== id));
   }, []);
 
   const load = useCallback(async (silent = false) => {
     if (!silent) setLoading(true);
     const res  = await fetch("/api/admin/bookings");
     const json = await res.json();
-    setAllBookings(json.data ?? []);
+    const data: Booking[] = json.data ?? [];
+    // Preserva cancelaciones optimistas dentro de la ventana de "Deshacer"
+    const ov = pendingCancel.current;
+    setAllBookings(
+      Object.keys(ov).length
+        ? data.map((b) => (ov[b.id] ? { ...b, status: "cancelled" } : b))
+        : data,
+    );
     setLastSync(new Date());
     if (!silent) setLoading(false);
   }, []);
@@ -104,7 +129,11 @@ export default function AdminDashboard() {
   useEffect(() => {
     load();
     intervalRef.current = setInterval(() => load(true), 60_000);
-    return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
+    const timers = cancelTimers.current;
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+      Object.values(timers).forEach(clearTimeout);
+    };
   }, [load]);
 
   const setFilterAndUrl = useCallback((f: FilterKey) => {
@@ -115,13 +144,14 @@ export default function AdminDashboard() {
     router.replace(`/admin?${params.toString()}`, { scroll: false });
   }, [router, searchParams]);
 
-  const act = async (id: string, action: "confirm" | "cancel") => {
+  // Confirmar pago — acción positiva, inmediata
+  const confirmPayment = async (id: string) => {
     setActing(id);
-    setAllBookings((prev) => prev.map((b) => b.id === id ? { ...b, status: action === "confirm" ? "confirmed" : "cancelled" } : b));
+    setAllBookings((prev) => prev.map((b) => b.id === id ? { ...b, status: "confirmed" } : b));
     try {
-      const res = await fetch(`/api/bookings/${id}/${action}`, { method: "POST" });
+      const res = await fetch(`/api/bookings/${id}/confirm`, { method: "POST" });
       if (!res.ok) throw new Error();
-      addToast(action === "confirm" ? "Pago confirmado" : "Reserva cancelada", action === "confirm" ? "success" : "error");
+      addToast("Pago confirmado");
       await load(true);
     } catch {
       addToast("Error al procesar. Intenta de nuevo.", "error");
@@ -129,6 +159,40 @@ export default function AdminDashboard() {
     } finally {
       setActing(null);
     }
+  };
+
+  // Cancelar — destructiva: se aplica optimista y solo llega a la API tras
+  // la ventana de "Deshacer". Un clic accidental no cancela una reserva real.
+  const finalizeCancel = async (id: string) => {
+    delete cancelTimers.current[id];
+    delete pendingCancel.current[id];
+    try {
+      const res = await fetch(`/api/bookings/${id}/cancel`, { method: "POST" });
+      if (!res.ok) throw new Error();
+      await load(true);
+    } catch {
+      addToast("Error al cancelar. Intenta de nuevo.", "error");
+      await load(true);
+    }
+  };
+
+  const undoCancel = (id: string) => {
+    const t = cancelTimers.current[id];
+    if (t) { clearTimeout(t); delete cancelTimers.current[id]; }
+    const prev = pendingCancel.current[id];
+    delete pendingCancel.current[id];
+    if (prev) setAllBookings((list) => list.map((x) => x.id === id ? { ...x, status: prev } : x));
+  };
+
+  const requestCancel = (b: Booking) => {
+    if (cancelTimers.current[b.id]) return; // ya en ventana de deshacer
+    pendingCancel.current[b.id] = b.status;
+    setAllBookings((list) => list.map((x) => x.id === b.id ? { ...x, status: "cancelled" } : x));
+    const tId = addToast(`"${b.eventName}" cancelada`, "error", {
+      duration: UNDO_MS,
+      action: { label: "Deshacer", onClick: () => { removeToast(tId); undoCancel(b.id); } },
+    });
+    cancelTimers.current[b.id] = setTimeout(() => finalizeCancel(b.id), UNDO_MS);
   };
 
   // ── Métricas ──
@@ -177,12 +241,28 @@ export default function AdminDashboard() {
     );
   }, [allBookings]);
 
-  const displayedBookings =
+  // Conteo por estado para los chips de filtro (allBookings = activas)
+  const statusCounts = useMemo(() => {
+    const c: Record<string, number> = { all: allBookings.length };
+    for (const b of allBookings) c[b.status] = (c[b.status] ?? 0) + 1;
+    return c;
+  }, [allBookings]);
+
+  const baseList =
     filter === "all"
       ? allBookings
       : filter === "cancelled" || filter === "expired"
       ? extraBookings
       : allBookings.filter((b) => b.status === filter);
+
+  const q = search.trim().toLowerCase();
+  const displayedBookings = q
+    ? baseList.filter((b) =>
+        b.eventName.toLowerCase().includes(q) ||
+        b.client.fullName.toLowerCase().includes(q) ||
+        (b.client.phone ?? "").toLowerCase().includes(q) ||
+        (b.client.email ?? "").toLowerCase().includes(q))
+    : baseList;
 
   const KPIS = [
     { label: "Holds activos", value: pending,        Icon: Clock,        cls: pending > 0 ? "is-warn" : "is-muted", pct: Math.round(pending / total * 100) },
@@ -200,13 +280,26 @@ export default function AdminDashboard() {
         {toasts.map((t) => (
           <div key={t.id} role="status"
             style={{
-              padding: "0.65rem 1rem", borderRadius: 8, fontSize: "0.82rem", fontWeight: 500,
+              display: "flex", alignItems: "center", gap: "0.75rem",
+              padding: "0.65rem 0.75rem 0.65rem 1rem", borderRadius: 8, fontSize: "0.82rem", fontWeight: 500,
               background: t.type === "success" ? "#14532d" : "#450a0a",
               border: `1px solid ${t.type === "success" ? "rgba(22,163,74,.3)" : "rgba(220,38,38,.3)"}`,
               color: t.type === "success" ? "#86efac" : "#fca5a5",
               pointerEvents: "auto", boxShadow: "0 8px 24px rgba(0,0,0,0.5)",
             }}>
-            {t.message}
+            <span>{t.message}</span>
+            {t.action && (
+              <button onClick={t.action.onClick}
+                style={{
+                  display: "inline-flex", alignItems: "center", gap: "0.3rem", flexShrink: 0,
+                  padding: "0.25rem 0.55rem", borderRadius: 6, cursor: "pointer",
+                  fontSize: "0.72rem", fontWeight: 700,
+                  background: "rgba(255,255,255,0.1)", border: "1px solid rgba(255,255,255,0.2)",
+                  color: "#fff",
+                }}>
+                <RotateCcw size={11} /> {t.action.label}
+              </button>
+            )}
           </div>
         ))}
       </div>
@@ -337,7 +430,7 @@ export default function AdminDashboard() {
                       <span style={{ flex: 1, minWidth: 0, fontSize: "0.72rem", color: "#d4d4d8", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                         {b.eventName}
                       </span>
-                      <button onClick={() => act(b.id, "confirm")} disabled={acting === b.id}
+                      <button onClick={() => confirmPayment(b.id)} disabled={acting === b.id}
                         aria-label={`Confirmar pago de ${b.eventName}`}
                         style={{
                           padding: "0.2rem 0.55rem", borderRadius: 5, fontSize: "0.64rem", fontWeight: 700,
@@ -387,20 +480,54 @@ export default function AdminDashboard() {
                       cursor:      "pointer", transition: "all 0.15s", whiteSpace: "nowrap",
                     }}>
                     {f === "all" ? "Todas" : ST[f]?.label ?? f}
+                    {!["cancelled", "expired"].includes(f) && (statusCounts[f] ?? 0) > 0 && (
+                      <span style={{ marginLeft: "0.35rem", opacity: 0.7, fontVariantNumeric: "tabular-nums" }}>
+                        {statusCounts[f]}
+                      </span>
+                    )}
                   </button>
                 );
               })}
             </div>
           </div>
-          {lastSync && (
-            <button onClick={() => load()} title="Actualizar"
-              style={{ display: "flex", alignItems: "center", gap: "0.4rem", background: "transparent", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 6, padding: "0.28rem 0.65rem", color: "#52525b", fontSize: "0.68rem", cursor: "pointer" }}
-              onMouseEnter={(e) => (e.currentTarget.style.color = "#a1a1aa")}
-              onMouseLeave={(e) => (e.currentTarget.style.color = "#52525b")}>
-              <RefreshCw size={11} />
-              {formatDistanceToNow(lastSync, { locale: es, addSuffix: true })}
-            </button>
-          )}
+
+          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", flexWrap: "wrap" }}>
+            {/* Buscador */}
+            <div style={{ position: "relative", display: "flex", alignItems: "center" }}>
+              <Search size={12} style={{ position: "absolute", left: 8, color: "#52525b", pointerEvents: "none" }} />
+              <input
+                type="text"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Buscar evento o cliente…"
+                aria-label="Buscar reservas"
+                style={{
+                  background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)",
+                  borderRadius: 6, padding: "0.3rem 1.6rem 0.3rem 1.55rem",
+                  fontSize: "0.72rem", color: "#e4e4e7", width: search ? 190 : 160,
+                  outline: "none", transition: "width 0.15s",
+                }}
+                onFocus={(e) => { e.currentTarget.style.borderColor = "rgba(232,25,138,0.4)"; e.currentTarget.style.width = "190px"; }}
+                onBlur={(e) => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)"; }}
+              />
+              {search && (
+                <button onClick={() => setSearch("")} aria-label="Limpiar búsqueda"
+                  style={{ position: "absolute", right: 6, display: "flex", background: "transparent", border: "none", color: "#71717a", cursor: "pointer", padding: 0 }}>
+                  <X size={12} />
+                </button>
+              )}
+            </div>
+
+            {lastSync && (
+              <button onClick={() => load()} title="Actualizar"
+                style={{ display: "flex", alignItems: "center", gap: "0.4rem", background: "transparent", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 6, padding: "0.28rem 0.65rem", color: "#52525b", fontSize: "0.68rem", cursor: "pointer" }}
+                onMouseEnter={(e) => (e.currentTarget.style.color = "#a1a1aa")}
+                onMouseLeave={(e) => (e.currentTarget.style.color = "#52525b")}>
+                <RefreshCw size={11} />
+                {formatDistanceToNow(lastSync, { locale: es, addSuffix: true })}
+              </button>
+            )}
+          </div>
         </div>
 
         {loading && (
@@ -412,9 +539,11 @@ export default function AdminDashboard() {
         {!loading && displayedBookings.length === 0 && (
           <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "3rem 1rem", gap: "0.6rem" }}>
             <CalendarX size={20} style={{ color: "#3f3f46" }} />
-            <p style={{ fontSize: "0.82rem", color: "#71717a" }}>Sin reservas</p>
+            <p style={{ fontSize: "0.82rem", color: "#71717a" }}>{q ? "Sin coincidencias" : "Sin reservas"}</p>
             <p style={{ fontSize: "0.72rem", color: "#3f3f46", textAlign: "center" }}>
-              {filter === "all" ? "No hay reservas registradas." : `No hay reservas con estado "${ST[filter]?.label ?? filter}".`}
+              {q
+                ? `Ninguna reserva coincide con "${search.trim()}".`
+                : filter === "all" ? "No hay reservas registradas." : `No hay reservas con estado "${ST[filter]?.label ?? filter}".`}
             </p>
           </div>
         )}
@@ -479,12 +608,12 @@ export default function AdminDashboard() {
                 </button>
                 {b.status === "pending_payment" && (
                   <>
-                    <button onClick={() => act(b.id, "confirm")} disabled={isActing}
+                    <button onClick={() => confirmPayment(b.id)} disabled={isActing}
                       aria-label={`Confirmar pago de ${b.eventName}`}
                       style={{ padding: "0.35rem 0.7rem", borderRadius: 6, fontSize: "0.68rem", fontWeight: 600, background: "rgba(34,197,94,0.12)", color: "#4ade80", border: "1px solid rgba(34,197,94,0.25)", cursor: "pointer" }}>
                       {isActing ? "…" : "✓ Confirmar"}
                     </button>
-                    <button onClick={() => act(b.id, "cancel")} disabled={isActing}
+                    <button onClick={() => requestCancel(b)} disabled={isActing}
                       aria-label={`Cancelar ${b.eventName}`}
                       style={{ padding: "0.35rem 0.6rem", borderRadius: 6, fontSize: "0.68rem", background: "transparent", color: "#6b7280", border: "1px solid rgba(255,255,255,0.07)", cursor: "pointer" }}>
                       Cancelar
@@ -492,7 +621,7 @@ export default function AdminDashboard() {
                   </>
                 )}
                 {b.status === "confirmed" && (
-                  <button onClick={() => act(b.id, "cancel")} disabled={isActing}
+                  <button onClick={() => requestCancel(b)} disabled={isActing}
                     aria-label={`Cancelar ${b.eventName}`}
                     style={{ padding: "0.35rem 0.6rem", borderRadius: 6, fontSize: "0.68rem", background: "transparent", color: "#6b7280", border: "1px solid rgba(255,255,255,0.07)", cursor: "pointer" }}>
                     Cancelar
