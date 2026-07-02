@@ -37,7 +37,8 @@ export async function GET(req: NextRequest) {
     where,
     select: {
       id: true, eventName: true, status: true,
-      setupAt: true, expiresAt: true,
+      eventDate: true, setupAt: true, expiresAt: true,
+      venueAddress: true,
       totalAmount: true, depositAmount: true,
       client: { select: { fullName: true, email: true, phone: true } },
       // Solo las notificaciones sin leer — eficiente y exacto

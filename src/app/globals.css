@@ -489,6 +489,111 @@ input, select, textarea {
 }
 .admin-row:hover { border-color: rgba(255,255,255,0.1); }
 
+/* ── Dashboard / Panel de control ──────────────────────────────────────────
+   Sistema sobrio: un solo acento de marca (--gold). El color solo aparece
+   para significar estado (dot/badge de reserva) o alerta. */
+.dash-stack { display: flex; flex-direction: column; gap: 1.25rem; }
+
+.dash-greet-date {
+  font-size: 0.78rem; color: #71717a; text-transform: capitalize;
+}
+
+/* KPIs */
+.dash-kpis { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem; }
+@media (min-width: 768px) { .dash-kpis { grid-template-columns: repeat(4, 1fr); } }
+.dash-kpi {
+  background: #0c0c0f; border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 0.75rem; padding: 1.1rem 1.15rem;
+  display: flex; flex-direction: column; gap: 0.55rem;
+  transition: border-color 0.15s;
+}
+.dash-kpi:hover { border-color: rgba(255,255,255,0.11); }
+.dash-kpi-top { display: flex; align-items: center; justify-content: space-between; }
+.dash-kpi-icon {
+  width: 30px; height: 30px; border-radius: 8px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(255,255,255,0.05); color: #71717a;
+}
+.dash-kpi-value {
+  font-size: 1.9rem; font-weight: 300; letter-spacing: -0.04em;
+  color: #f4f4f5; line-height: 1;
+}
+.dash-kpi-value.sm { font-size: 1.35rem; }
+.dash-kpi-value.is-accent { color: var(--gold2); }
+.dash-kpi-value.is-warn { color: #fbbf24; }
+.dash-kpi-value.is-muted { color: #52525b; }
+
+/* Layout de dos columnas (agenda + aside) */
+.dash-cols { display: grid; grid-template-columns: 1fr; gap: 1.25rem; }
+@media (min-width: 1024px) {
+  .dash-cols { grid-template-columns: minmax(0, 1.9fr) minmax(0, 1fr); align-items: start; }
+}
+.dash-aside { display: flex; flex-direction: column; gap: 1rem; }
+
+/* Panel con cabecera */
+.dash-panel {
+  background: #0c0c0f; border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 0.85rem; overflow: hidden;
+}
+.dash-panel-head {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 0.6rem; padding: 0.85rem 1.1rem;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.dash-panel-title {
+  font-size: 0.68rem; font-weight: 700; letter-spacing: 0.12em;
+  text-transform: uppercase; color: #a1a1aa;
+  display: flex; align-items: center; gap: 0.45rem;
+}
+
+/* Agenda de próximos eventos */
+.dash-daterow {
+  padding: 0.5rem 1.1rem; background: rgba(255,255,255,0.015);
+  font-size: 0.62rem; font-weight: 700; letter-spacing: 0.1em;
+  text-transform: uppercase; color: #52525b;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+.dash-daterow.is-today { color: var(--gold2); }
+.dash-agenda-item {
+  display: flex; align-items: center; gap: 0.85rem;
+  padding: 0.8rem 1.1rem; text-decoration: none;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  transition: background 0.15s;
+}
+.dash-agenda-item:hover { background: rgba(255,255,255,0.025); }
+.dash-agenda-time {
+  font-size: 0.72rem; font-weight: 700; color: #d4d4d8;
+  width: 3.4rem; flex-shrink: 0; text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+.dash-agenda-name { font-size: 0.82rem; font-weight: 600; color: #e4e4e7; }
+.dash-agenda-meta { font-size: 0.7rem; color: #52525b; margin-top: 0.1rem; }
+
+/* Acciones rápidas sobrias */
+.dash-quick {
+  display: flex; align-items: center; gap: 0.6rem;
+  padding: 0.6rem 0.8rem; border-radius: 0.6rem;
+  border: 1px solid rgba(255,255,255,0.06); background: transparent;
+  color: #a1a1aa; text-decoration: none;
+  font-size: 0.78rem; font-weight: 500;
+  transition: border-color 0.15s, background 0.15s, color 0.15s;
+}
+.dash-quick:hover { border-color: rgba(232,25,138,0.35); background: rgba(232,25,138,0.06); color: #f4f4f5; }
+.dash-quick.is-primary {
+  background: var(--gold); border-color: var(--gold); color: #fff; font-weight: 600;
+  justify-content: center;
+}
+.dash-quick.is-primary:hover { background: var(--gold2); color: #fff; }
+
+/* Alerta accionable */
+.dash-alert {
+  display: flex; gap: 0.6rem; padding: 0.8rem 0.9rem;
+  border-radius: 0.7rem;
+  background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.22);
+}
+.dash-alert-title { font-size: 0.76rem; font-weight: 700; color: #fbbf24; }
+.dash-alert-desc { font-size: 0.7rem; color: #a1a1aa; margin-top: 0.15rem; }
+
 /* ── DayPicker dark (uso general) ── */
 .rdp-root {
   --rdp-accent-color: var(--purple);
