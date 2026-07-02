@@ -44,6 +44,19 @@
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 html { scroll-behavior: smooth; }
 
+/* ── Accesibilidad: respeta prefers-reduced-motion ────────────────────────────
+   Neutraliza animaciones/transiciones y oculta el cursor personalizado para
+   usuarios con sensibilidad al movimiento (marquee, líneas, contadores, etc.). */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .cursor, .cursor-ring { display: none !important; }
+}
+
 /* ── TRANSICIÓN DE PÁGINA ──────────────────────────── */
 /* Solo opacity — transform en main crea un containing block para position:fixed
    lo que rompe el cursor personalizado (lo hace relativo a main en vez del viewport) */

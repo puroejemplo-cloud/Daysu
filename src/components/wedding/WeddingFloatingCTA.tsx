@@ -1,7 +1,10 @@
 "use client";
 import { useState, useEffect } from "react";
-import { X } from "lucide-react";
+import { X, Sparkles } from "lucide-react";
 import Link from "next/link";
+
+const DISMISS_KEY = "wp_cta_dismissed";
+const DISMISS_MS  = 7 * 24 * 60 * 60 * 1000; // recuerda el cierre 7 días
 
 const EVENT_LABELS = [
   "Fiesta",
@@ -22,9 +25,18 @@ export function WeddingFloatingCTA({ heroImage }: Props) {
   const [animState,    setAnimState]    = useState<"in" | "out">("in");
 
   useEffect(() => {
+    try {
+      const ts = localStorage.getItem(DISMISS_KEY);
+      if (ts && Date.now() - Number(ts) < DISMISS_MS) { setDismissed(true); return; }
+    } catch { /* localStorage no disponible */ }
     const t = setTimeout(() => setVisible(true), 3000);
     return () => clearTimeout(t);
   }, []);
+
+  const dismiss = () => {
+    setDismissed(true);
+    try { localStorage.setItem(DISMISS_KEY, String(Date.now())); } catch { /* noop */ }
+  };
 
   useEffect(() => {
     if (!visible) return;
@@ -72,7 +84,7 @@ export function WeddingFloatingCTA({ heroImage }: Props) {
               <div style={{ width: 44, height: 44, borderRadius: "50%", flexShrink: 0, background: `url('${heroImage}') center/cover`, border: "2px solid var(--gold)" }} />
             )}
             <div style={{ flex: "1 1 200px", minWidth: 0 }}>
-              <p style={{ fontSize: "0.6rem", color: "var(--muted)", marginBottom: 2, letterSpacing: "0.06em" }}>✨ Wedding Planner · Pao Rosales</p>
+              <p style={{ fontSize: "0.6rem", color: "var(--muted)", marginBottom: 2, letterSpacing: "0.06em" }}><Sparkles size={10} style={{ display: "inline", verticalAlign: "-1px", marginRight: 3, color: "var(--gold)" }} />Wedding Planner · Pao Rosales</p>
               <p style={{ fontSize: "0.88rem", fontWeight: 600, color: "var(--cream)", lineHeight: 1.35 }}>
                 ¿Nos encargamos de tu{" "}
                 <span className={`wp-word wp-word--${animState}`}
@@ -86,7 +98,7 @@ export function WeddingFloatingCTA({ heroImage }: Props) {
                 Sí, platícanos →
                 <span className="wp-shimmer" />
               </Link>
-              <button onClick={() => setDismissed(true)} aria-label="Cerrar" style={{ background: "transparent", border: "none", color: "var(--muted)", cursor: "pointer", padding: "0.3rem", display: "flex" }}>
+              <button onClick={dismiss} aria-label="Cerrar" style={{ background: "transparent", border: "none", color: "var(--muted)", cursor: "pointer", padding: "0.3rem", display: "flex" }}>
                 <X size={14} />
               </button>
             </div>
@@ -99,7 +111,7 @@ export function WeddingFloatingCTA({ heroImage }: Props) {
                 <div style={{ width: 38, height: 38, borderRadius: "50%", flexShrink: 0, background: `url('${heroImage}') center/cover`, border: "2px solid var(--gold)" }} />
               )}
               <div style={{ flex: 1, overflow: "hidden" }}>
-                <p style={{ fontSize: "0.62rem", color: "var(--muted)", marginBottom: 3 }}>✨ Wedding Planner · Pao Rosales</p>
+                <p style={{ fontSize: "0.62rem", color: "var(--muted)", marginBottom: 3 }}><Sparkles size={10} style={{ display: "inline", verticalAlign: "-1px", marginRight: 3, color: "var(--gold)" }} />Wedding Planner · Pao Rosales</p>
                 <div style={{ display: "flex", alignItems: "baseline", gap: "0.3rem", flexWrap: "wrap" }}>
                   <span style={{ fontSize: "0.85rem", fontWeight: 600, color: "var(--cream)", whiteSpace: "nowrap" }}>
                     ¿Nos encargamos de tu
@@ -110,7 +122,7 @@ export function WeddingFloatingCTA({ heroImage }: Props) {
                   </span>
                 </div>
               </div>
-              <button onClick={() => setDismissed(true)} aria-label="Cerrar" style={{ background: "transparent", border: "none", color: "var(--muted)", cursor: "pointer", padding: "0.1rem", flexShrink: 0 }}>
+              <button onClick={dismiss} aria-label="Cerrar" style={{ background: "transparent", border: "none", color: "var(--muted)", cursor: "pointer", padding: "0.1rem", flexShrink: 0 }}>
                 <X size={15} />
               </button>
             </div>

@@ -7,6 +7,9 @@ import PackageComparison from "./PackageComparison";
 import CardCarousel     from "@/components/catalog/CardCarousel";
 import type { PlaceInfo } from "@/lib/google-places";
 import { SERVICE_PAGES } from "@/lib/service-pages";
+import {
+  Calendar, PartyPopper, CreditCard, Star, MapPin, Phone, Globe, Flame,
+} from "lucide-react";
 
 const MAPS_URL   = "https://maps.app.goo.gl/jECw9oHjjJikhovE8";
 // TODO: actualizar con dirección completa cuando el usuario la proporcione
@@ -389,13 +392,13 @@ export default function HomeClient({
 
                   {/* Badges sobre la imagen */}
                   {isPromo && (
-                    <div style={{ position: "absolute", top: 12, right: 12, zIndex: 5, background: "#dc2626", color: "#fff", fontSize: "0.6rem", letterSpacing: "0.12em", textTransform: "uppercase", padding: "0.3rem 0.7rem", fontWeight: 800, borderRadius: 6, boxShadow: "0 2px 8px rgba(0,0,0,0.4)" }}>
-                      🔥 -{discount}%
+                    <div style={{ position: "absolute", top: 12, right: 12, zIndex: 5, background: "#dc2626", color: "#fff", fontSize: "0.6rem", letterSpacing: "0.12em", textTransform: "uppercase", padding: "0.3rem 0.7rem", fontWeight: 800, borderRadius: 6, boxShadow: "0 2px 8px rgba(0,0,0,0.4)", display: "inline-flex", alignItems: "center", gap: "0.25rem" }}>
+                      <Flame size={10} /> -{discount}%
                     </div>
                   )}
                   {!isPromo && isPopular && (
-                    <div style={{ position: "absolute", top: 12, right: 12, zIndex: 5, background: "var(--gold)", color: "#05051a", fontSize: "0.6rem", letterSpacing: "0.12em", textTransform: "uppercase", padding: "0.3rem 0.7rem", fontWeight: 800, borderRadius: 6, boxShadow: "0 2px 8px rgba(0,0,0,0.4)" }}>
-                      ⭐ Popular
+                    <div style={{ position: "absolute", top: 12, right: 12, zIndex: 5, background: "var(--gold)", color: "#05051a", fontSize: "0.6rem", letterSpacing: "0.12em", textTransform: "uppercase", padding: "0.3rem 0.7rem", fontWeight: 800, borderRadius: 6, boxShadow: "0 2px 8px rgba(0,0,0,0.4)", display: "inline-flex", alignItems: "center", gap: "0.25rem" }}>
+                      <Star size={10} /> Popular
                     </div>
                   )}
 
@@ -407,7 +410,7 @@ export default function HomeClient({
                 <div className="pkg-hcard-body">
 
                   {/* Brand */}
-                  <p style={{ fontSize: "0.62rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "#52525b", fontWeight: 700 }}>
+                  <p style={{ fontSize: "0.62rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "#71717a", fontWeight: 700 }}>
                     {brand} · Zacatecas
                   </p>
 
@@ -417,14 +420,14 @@ export default function HomeClient({
                   {/* Precio */}
                   <div style={{ display: "flex", alignItems: "baseline", gap: "0.5rem", flexWrap: "wrap", margin: "0.65rem 0 0.9rem" }}>
                     {isPromo && (
-                      <span style={{ fontSize: "0.82rem", color: "#52525b", textDecoration: "line-through" }}>
+                      <span style={{ fontSize: "0.82rem", color: "#71717a", textDecoration: "line-through" }}>
                         ${Number(pkg.originalPrice).toLocaleString("es-MX")}
                       </span>
                     )}
                     <span className="bebas" style={{ fontSize: "clamp(1.8rem,4vw,2.4rem)", color: isPromo ? "#f87171" : "var(--gold)", WebkitTextFillColor: isPromo ? "#f87171" : "var(--gold)", lineHeight: 1 }}>
                       ${Number(pkg.dailyRate).toLocaleString("es-MX")}
                     </span>
-                    <span style={{ fontSize: "0.75rem", color: "#52525b", fontWeight: 400 }}>MXN</span>
+                    <span style={{ fontSize: "0.75rem", color: "#71717a", fontWeight: 400 }}>MXN</span>
                   </div>
 
                   {/* Separador */}
@@ -440,7 +443,7 @@ export default function HomeClient({
                   {/* Componentes BOM — solo cuando la descripción ya ocupa las features */}
                   {descLines.length > 0 && pkg.componentNames.length > 0 && (
                     <div style={{ marginTop: "1rem" }}>
-                      <p style={{ fontSize: "0.62rem", letterSpacing: "0.12em", textTransform: "uppercase", color: "#52525b", fontWeight: 700, marginBottom: "0.45rem" }}>
+                      <p style={{ fontSize: "0.62rem", letterSpacing: "0.12em", textTransform: "uppercase", color: "#71717a", fontWeight: 700, marginBottom: "0.45rem" }}>
                         Incluye equipo
                       </p>
                       <div style={{ display: "flex", flexWrap: "wrap", gap: "0.35rem" }}>
@@ -513,28 +516,28 @@ export default function HomeClient({
             {[
               {
                 step: "01",
-                icon: "📅",
+                Icon: Calendar,
                 title: "Elige tu fecha",
                 desc: "Selecciona el día de tu evento y verifica la disponibilidad en tiempo real. Sin compromisos todavía.",
                 color: "#9333ea",
               },
               {
                 step: "02",
-                icon: "🎉",
+                Icon: PartyPopper,
                 title: "Escoge tu paquete",
                 desc: "Selecciona el paquete que mejor se adapta a tu evento y número de invitados. Personaliza con extras.",
                 color: "#f59e0b",
               },
               {
                 step: "03",
-                icon: "💳",
+                Icon: CreditCard,
                 title: "Aparta con depósito",
                 desc: "Asegura tu fecha con solo el 30% de depósito. Tu reserva queda confirmada por 48 horas.",
                 color: "#38bdf8",
               },
               {
                 step: "04",
-                icon: "⭐",
+                Icon: Star,
                 title: "Vive tu evento",
                 desc: "Nosotros nos encargamos de todo. Tú disfruta — nosotros hacemos que sea legendario.",
                 color: "#22c55e",
@@ -558,11 +561,11 @@ export default function HomeClient({
                 }}>
                   {item.step}
                 </span>
-                <div style={{ fontSize: "2.2rem", marginBottom: "1rem" }}>{item.icon}</div>
+                <div style={{ marginBottom: "1rem", color: item.color, display: "flex" }}><item.Icon size={30} strokeWidth={1.75} /></div>
                 <h3 style={{ color: "#fff", fontWeight: 800, fontSize: "1.05rem", marginBottom: "0.6rem" }}>
                   {item.title}
                 </h3>
-                <p style={{ color: "#94a3b8", fontSize: "0.85rem", lineHeight: 1.65 }}>
+                <p style={{ color: "#a1a1aa", fontSize: "0.85rem", lineHeight: 1.65 }}>
                   {item.desc}
                 </p>
                 {/* Línea de acento */}
@@ -582,8 +585,8 @@ export default function HomeClient({
               Hablar por WhatsApp
             </a>
           </div>
-          <p style={{ textAlign: "center", marginTop: "1rem", fontSize: "0.72rem", color: "#475569" }}>
-            📞 Zona conurbada Zacatecas–Guadalupe
+          <p style={{ textAlign: "center", marginTop: "1rem", fontSize: "0.72rem", color: "#71717a", display: "flex", alignItems: "center", justifyContent: "center", gap: "0.35rem" }}>
+            <Phone size={12} /> Zona conurbada Zacatecas–Guadalupe
           </p>
         </div>
       </section>
@@ -608,14 +611,14 @@ export default function HomeClient({
             <h2 className="bebas section-title" style={{ marginBottom: "1.5rem" }}>Nuestra ubicación</h2>
             <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
               <div style={{ display: "flex", gap: "0.75rem", alignItems: "flex-start" }}>
-                <span style={{ color: "var(--gold)", fontSize: "1.1rem", marginTop: "0.1rem", flexShrink: 0 }}>📍</span>
+                <span style={{ color: "var(--gold)", marginTop: "0.1rem", flexShrink: 0, display: "flex" }}><MapPin size={18} /></span>
                 <div>
                   <p style={{ color: "#fff", fontWeight: 600, fontSize: "0.9rem", marginBottom: "0.15rem" }}>Dirección</p>
                   <p style={{ color: "var(--muted)", fontSize: "0.85rem", lineHeight: 1.6 }}>{BUSINESS_ADDRESS}</p>
                 </div>
               </div>
               <div style={{ display: "flex", gap: "0.75rem", alignItems: "flex-start" }}>
-                <span style={{ color: "var(--gold)", fontSize: "1.1rem", marginTop: "0.1rem", flexShrink: 0 }}>📞</span>
+                <span style={{ color: "var(--gold)", marginTop: "0.1rem", flexShrink: 0, display: "flex" }}><Phone size={18} /></span>
                 <div>
                   <p style={{ color: "#fff", fontWeight: 600, fontSize: "0.9rem", marginBottom: "0.15rem" }}>Teléfono / WhatsApp</p>
                   <a href={`https://wa.me/${whatsappNumber}`} target="_blank" rel="noopener noreferrer"
@@ -625,7 +628,7 @@ export default function HomeClient({
                 </div>
               </div>
               <div style={{ display: "flex", gap: "0.75rem", alignItems: "flex-start" }}>
-                <span style={{ color: "var(--gold)", fontSize: "1.1rem", marginTop: "0.1rem", flexShrink: 0 }}>🌐</span>
+                <span style={{ color: "var(--gold)", marginTop: "0.1rem", flexShrink: 0, display: "flex" }}><Globe size={18} /></span>
                 <div>
                   <p style={{ color: "#fff", fontWeight: 600, fontSize: "0.9rem", marginBottom: "0.15rem" }}>Zona de servicio</p>
                   <p style={{ color: "var(--muted)", fontSize: "0.85rem" }}>Zacatecas · Guadalupe · Zona Conurbada</p>
@@ -704,7 +707,7 @@ export default function HomeClient({
               style={{ fontSize: "0.72rem", color: "var(--muted)", textDecoration: "none", display: "inline-flex", alignItems: "center", gap: "0.3rem" }}
               onMouseEnter={(e) => (e.currentTarget.style.color = "var(--cream)")}
               onMouseLeave={(e) => (e.currentTarget.style.color = "var(--muted)")}>
-              📞 +{whatsappNumber.replace(/(\d{2})(\d{3})(\d{3})(\d{4})/, "$1 $2 $3 $4")}
+              <Phone size={12} /> +{whatsappNumber.replace(/(\d{2})(\d{3})(\d{3})(\d{4})/, "$1 $2 $3 $4")}
             </a>
           </div>
 
@@ -714,15 +717,21 @@ export default function HomeClient({
               Síguenos
             </p>
             {[
-              { label: "Instagram", icon: "📸", href: "https://instagram.com/daysu.vip" },
-              { label: "TikTok",    icon: "🎵", href: "https://tiktok.com/@daysu.vip"  },
-              { label: "Facebook",  icon: "👥", href: "https://facebook.com/daysu.vip" },
+              { label: "Instagram", href: "https://instagram.com/daysu.vip", svg: (
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.16c3.2 0 3.58.01 4.85.07 1.17.05 1.8.25 2.23.41.56.22.96.48 1.38.9.42.42.68.82.9 1.38.16.42.36 1.06.41 2.23.06 1.27.07 1.65.07 4.85s-.01 3.58-.07 4.85c-.05 1.17-.25 1.8-.41 2.23-.22.56-.48.96-.9 1.38-.42.42-.82.68-1.38.9-.42.16-1.06.36-2.23.41-1.27.06-1.65.07-4.85.07s-3.58-.01-4.85-.07c-1.17-.05-1.8-.25-2.23-.41a3.7 3.7 0 0 1-1.38-.9 3.7 3.7 0 0 1-.9-1.38c-.16-.42-.36-1.06-.41-2.23C2.17 15.58 2.16 15.2 2.16 12s.01-3.58.07-4.85c.05-1.17.25-1.8.41-2.23.22-.56.48-.96.9-1.38.42-.42.82-.68 1.38-.9.42-.16 1.06-.36 2.23-.41C8.42 2.17 8.8 2.16 12 2.16Zm0 3.68A6.16 6.16 0 1 0 18.16 12 6.16 6.16 0 0 0 12 5.84Zm0 10.16A4 4 0 1 1 16 12a4 4 0 0 1-4 4Zm6.4-10.4a1.44 1.44 0 1 1-1.44-1.44 1.44 1.44 0 0 1 1.44 1.44Z"/></svg>
+              ) },
+              { label: "TikTok", href: "https://tiktok.com/@daysu.vip", svg: (
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16.6 5.82a4.28 4.28 0 0 1-1.06-2.82h-3.3v13.2a2.34 2.34 0 1 1-2.34-2.34c.13 0 .26.01.38.03v-3.4a5.9 5.9 0 0 0-.38-.01 5.74 5.74 0 1 0 5.74 5.74V8.9a7.55 7.55 0 0 0 4.4 1.41V6.9a4.28 4.28 0 0 1-3.44-1.08Z"/></svg>
+              ) },
+              { label: "Facebook", href: "https://facebook.com/daysu.vip", svg: (
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M22 12a10 10 0 1 0-11.56 9.88v-6.99H7.9V12h2.54V9.8c0-2.5 1.49-3.89 3.78-3.89 1.09 0 2.24.2 2.24.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56V12h2.78l-.44 2.89h-2.34v6.99A10 10 0 0 0 22 12Z"/></svg>
+              ) },
             ].map((sn) => (
               <a key={sn.label} href={sn.href} target="_blank" rel="noopener noreferrer"
-                style={{ fontSize: "0.75rem", color: "var(--muted)", textDecoration: "none", display: "flex", alignItems: "center", gap: "0.4rem" }}
+                style={{ fontSize: "0.75rem", color: "var(--muted)", textDecoration: "none", display: "flex", alignItems: "center", gap: "0.5rem" }}
                 onMouseEnter={(e) => (e.currentTarget.style.color = "var(--cream)")}
                 onMouseLeave={(e) => (e.currentTarget.style.color = "var(--muted)")}>
-                {sn.icon} {sn.label}
+                {sn.svg} {sn.label}
               </a>
             ))}
           </div>
