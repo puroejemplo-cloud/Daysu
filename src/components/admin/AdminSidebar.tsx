@@ -44,6 +44,14 @@ const NAV_GROUPS = [
 
 const SIDEBAR_W = 220;
 
+// Barra de navegación inferior (móvil) — máx 5 destinos top + "Menú"
+const BOTTOM_NAV = [
+  { href: "/admin",            label: "Panel",    Icon: LayoutDashboard },
+  { href: "/admin/calendario", label: "Agenda",   Icon: CalendarDays    },
+  { href: "/admin/clientes",   label: "Clientes", Icon: Users           },
+  { href: "/admin/productos",  label: "Productos", Icon: Package         },
+];
+
 function NavItem({
   href, label, Icon, active, onClick,
 }: {
@@ -213,10 +221,8 @@ export default function AdminSidebar() {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
 
-  const allItems = NAV_GROUPS.flatMap((g) => g.items);
-  const current  = allItems.find((l) =>
-    l.href === "/admin" ? pathname === "/admin" : pathname.startsWith(l.href)
-  );
+  const isActive = (href: string) =>
+    href === "/admin" ? pathname === "/admin" : pathname.startsWith(href);
 
   return (
     <>
@@ -231,38 +237,46 @@ export default function AdminSidebar() {
         <SidebarInner />
       </aside>
 
-      {/* ── Mobile bottom bar ── */}
-      <div style={{
+      {/* ── Mobile bottom navigation ── */}
+      <nav aria-label="Navegación principal" style={{
         position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 50,
         background: "rgba(9,9,11,0.97)",
         borderTop: "1px solid rgba(255,255,255,0.06)",
         backdropFilter: "blur(16px)",
-        display: "flex", alignItems: "center",
-        padding: "0.65rem 1.25rem max(0.65rem, env(safe-area-inset-bottom))",
+        display: "flex", alignItems: "stretch",
+        padding: "0.3rem 0.25rem max(0.3rem, env(safe-area-inset-bottom))",
       }} className="lg:hidden">
+        {BOTTOM_NAV.map((item) => {
+          const active = isActive(item.href);
+          return (
+            <Link key={item.href} href={item.href}
+              aria-current={active ? "page" : undefined}
+              style={{
+                flex: 1, display: "flex", flexDirection: "column", alignItems: "center",
+                justifyContent: "center", gap: "0.18rem", minHeight: 44,
+                textDecoration: "none", borderRadius: 10,
+                color: active ? "var(--gold)" : "#71717a", transition: "color 0.15s",
+              }}>
+              <item.Icon size={19} />
+              <span style={{ fontSize: "0.6rem", fontWeight: active ? 700 : 500, letterSpacing: "0.01em" }}>
+                {item.label}
+              </span>
+            </Link>
+          );
+        })}
+        {/* Menú → drawer completo */}
         <button onClick={() => setOpen((v) => !v)}
-          aria-label={open ? "Cerrar menú" : "Abrir menú"}
-          aria-expanded={open}
+          aria-label={open ? "Cerrar menú" : "Abrir menú"} aria-expanded={open}
           style={{
-            background:   open ? "rgba(232,25,138,0.12)" : "transparent",
-            border:       `1px solid ${open ? "rgba(232,25,138,0.3)" : "rgba(255,255,255,0.08)"}`,
-            borderRadius: "0.45rem", padding: "0.35rem 0.5rem",
-            color:   open ? "var(--gold)" : "#71717a",
-            cursor:  "pointer", display: "flex", alignItems: "center",
-            flexShrink: 0, transition: "all 0.15s",
+            flex: 1, display: "flex", flexDirection: "column", alignItems: "center",
+            justifyContent: "center", gap: "0.18rem", minHeight: 44,
+            background: "transparent", border: "none", cursor: "pointer",
+            color: open ? "var(--gold)" : "#71717a", transition: "color 0.15s",
           }}>
-          {open ? <X size={17} /> : <Menu size={17} />}
+          {open ? <X size={19} /> : <Menu size={19} />}
+          <span style={{ fontSize: "0.6rem", fontWeight: open ? 700 : 500, letterSpacing: "0.01em" }}>Menú</span>
         </button>
-
-        <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: "0.45rem" }}>
-          <img src="/logo-daysu.png" alt="" aria-hidden="true" style={{ width: 20, height: 20, objectFit: "contain", flexShrink: 0 }} />
-          <span style={{ fontSize: "0.78rem", fontWeight: 600, color: "#a1a1aa", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-            {current?.label ?? "Daysu.vip"}
-          </span>
-        </div>
-
-        <div style={{ width: "2.5rem", flexShrink: 0 }} />
-      </div>
+      </nav>
 
       {/* ── Mobile drawer ── */}
       {open && (
