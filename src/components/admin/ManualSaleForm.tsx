@@ -90,7 +90,7 @@ export default function ManualSaleForm({ categories }: { categories: Category[] 
                 className="px-3 py-1.5 rounded-lg text-sm font-bold transition-all"
                 style={{
                   background: active ? "var(--gold)" : "rgba(255,255,255,0.05)",
-                  color:      active ? "#05051a"     : "#94A3B8",
+                  color:      active ? "#05051a"     : "#a1a1aa",
                   border:     active ? "1.5px solid var(--gold)" : "1.5px solid rgba(255,255,255,0.1)",
                 }}>
                 {type}
@@ -100,22 +100,22 @@ export default function ManualSaleForm({ categories }: { categories: Category[] 
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-xs font-bold uppercase tracking-widest mb-1" style={{ color: "#94A3B8" }}>Nombre / detalle</label>
+            <label className="block text-xs font-bold uppercase tracking-widest mb-1" style={{ color: "#a1a1aa" }}>Nombre / detalle</label>
             <input value={form.eventName} onChange={(e) => setForm((f) => ({ ...f, eventName: e.target.value }))}
               className="aura-input" placeholder="Ej: Boda García-López" />
           </div>
           <div>
-            <label className="block text-xs font-bold uppercase tracking-widest mb-1" style={{ color: "#94A3B8" }}>Fecha *</label>
+            <label className="block text-xs font-bold uppercase tracking-widest mb-1" style={{ color: "#a1a1aa" }}>Fecha *</label>
             <input type="date" value={form.eventDate} onChange={(e) => setForm((f) => ({ ...f, eventDate: e.target.value }))}
               required className="aura-input" />
           </div>
           <div>
-            <label className="block text-xs font-bold uppercase tracking-widest mb-1" style={{ color: "#94A3B8" }}>Hora de inicio</label>
+            <label className="block text-xs font-bold uppercase tracking-widest mb-1" style={{ color: "#a1a1aa" }}>Hora de inicio</label>
             <input type="time" value={form.setupHour} onChange={(e) => setForm((f) => ({ ...f, setupHour: e.target.value }))}
               className="aura-input" />
           </div>
           <div>
-            <label className="block text-xs font-bold uppercase tracking-widest mb-1" style={{ color: "#94A3B8" }}>Dirección (opcional)</label>
+            <label className="block text-xs font-bold uppercase tracking-widest mb-1" style={{ color: "#a1a1aa" }}>Dirección (opcional)</label>
             <input value={form.venueAddress} onChange={(e) => setForm((f) => ({ ...f, venueAddress: e.target.value }))}
               className="aura-input" placeholder="Calle, colonia, ciudad..." />
           </div>
@@ -130,19 +130,19 @@ export default function ManualSaleForm({ categories }: { categories: Category[] 
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
-            <label className="block text-xs font-bold uppercase tracking-widest mb-1" style={{ color: "#94A3B8" }}>Nombre completo</label>
+            <label className="block text-xs font-bold uppercase tracking-widest mb-1" style={{ color: "#a1a1aa" }}>Nombre completo</label>
             <input type="text" value={client.fullName}
               onChange={(e) => setClient((c) => ({ ...c, fullName: e.target.value }))}
               placeholder="Juan Pérez" className="aura-input" />
           </div>
           <div>
-            <label className="block text-xs font-bold uppercase tracking-widest mb-1" style={{ color: "#94A3B8" }}>Email</label>
+            <label className="block text-xs font-bold uppercase tracking-widest mb-1" style={{ color: "#a1a1aa" }}>Email</label>
             <input type="email" value={client.email}
               onChange={(e) => setClient((c) => ({ ...c, email: e.target.value }))}
               placeholder="juan@correo.com" className="aura-input" />
           </div>
           <div>
-            <label className="block text-xs font-bold uppercase tracking-widest mb-1" style={{ color: "#94A3B8" }}>Teléfono</label>
+            <label className="block text-xs font-bold uppercase tracking-widest mb-1" style={{ color: "#a1a1aa" }}>Teléfono</label>
             <input type="tel" value={client.phone}
               onChange={(e) => setClient((c) => ({ ...c, phone: e.target.value }))}
               placeholder="+52 492 123 4567" className="aura-input" />
@@ -171,11 +171,11 @@ export default function ManualSaleForm({ categories }: { categories: Category[] 
                 </div>
                 {sel && (
                   <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
-                    <span className="text-xs" style={{ color: "#94A3B8" }}>Precio:</span>
+                    <span className="text-xs" style={{ color: "#a1a1aa" }}>Precio:</span>
                     <input type="number" min={0} value={sel.unitPrice}
                       onChange={(e) => setSelected((prev) => prev.map((s) => s.assetId === a.id ? { ...s, unitPrice: Number(e.target.value) } : s))}
                       className="aura-input text-center" style={{ width: 90 }} />
-                    <span className="text-xs" style={{ color: "#94A3B8" }}>×</span>
+                    <span className="text-xs" style={{ color: "#a1a1aa" }}>×</span>
                     <input type="number" min={1} value={sel.quantity}
                       onChange={(e) => setSelected((prev) => prev.map((s) => s.assetId === a.id ? { ...s, quantity: Number(e.target.value) } : s))}
                       className="aura-input text-center" style={{ width: 60 }} />
@@ -196,7 +196,7 @@ export default function ManualSaleForm({ categories }: { categories: Category[] 
           <div>
             <p className="text-xs font-black uppercase tracking-widest mb-2" style={{ color: "var(--gold)" }}>Total acordado</p>
             <div className="flex items-center gap-3">
-              <span className="text-sm" style={{ color: "#94A3B8" }}>Auto: ${autoTotal.toLocaleString("es-MX")}</span>
+              <span className="text-sm" style={{ color: "#a1a1aa" }}>Auto: ${autoTotal.toLocaleString("es-MX")}</span>
               <input type="number" min={0} value={form.customTotal}
                 onChange={(e) => setForm((f) => ({ ...f, customTotal: e.target.value }))}
                 placeholder={String(autoTotal)} className="aura-input text-right font-black"
@@ -204,7 +204,7 @@ export default function ManualSaleForm({ categories }: { categories: Category[] 
             </div>
           </div>
           <div>
-            <p className="text-xs font-black uppercase tracking-widest mb-2" style={{ color: "#94A3B8" }}>Anticipo recibido</p>
+            <p className="text-xs font-black uppercase tracking-widest mb-2" style={{ color: "#a1a1aa" }}>Anticipo recibido</p>
             <input type="number" min={0} value={form.depositAmount}
               onChange={(e) => setForm((f) => ({ ...f, depositAmount: e.target.value }))}
               placeholder="0" className="aura-input text-right font-black"
@@ -212,7 +212,7 @@ export default function ManualSaleForm({ categories }: { categories: Category[] 
           </div>
         </div>
         <div>
-          <label className="block text-xs font-bold uppercase tracking-widest mb-1" style={{ color: "#94A3B8" }}>Notas internas</label>
+          <label className="block text-xs font-bold uppercase tracking-widest mb-1" style={{ color: "#a1a1aa" }}>Notas internas</label>
           <textarea value={form.notes} onChange={(e) => setForm((f) => ({ ...f, notes: e.target.value }))}
             rows={2} className="aura-input resize-none" placeholder="Condiciones especiales, detalles del evento..." />
         </div>
@@ -222,7 +222,7 @@ export default function ManualSaleForm({ categories }: { categories: Category[] 
 
       <div className="flex items-center justify-between flex-wrap gap-4">
         <div>
-          <p className="text-xs uppercase tracking-widest" style={{ color: "#94A3B8" }}>Total a registrar</p>
+          <p className="text-xs uppercase tracking-widest" style={{ color: "#a1a1aa" }}>Total a registrar</p>
           <p className="text-2xl font-black" style={{ color: "var(--gold)" }}>${total.toLocaleString("es-MX")} MXN</p>
           {deposit > 0 && (
             <p className="text-sm mt-0.5" style={{ color: "#16a34a" }}>

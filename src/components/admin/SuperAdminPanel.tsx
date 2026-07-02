@@ -109,7 +109,7 @@ export default function SuperAdminPanel() {
                   <span className="flex items-center gap-1 text-xs px-2 py-0.5 rounded"
                     style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.07)", color: "#71717a" }}>
                     {a.role === "superadmin"
-                      ? <ShieldCheck size={11} style={{ color: "#d4af37" }} />
+                      ? <ShieldCheck size={11} style={{ color: "#FF3DA8" }} />
                       : <User size={11} />}
                     {a.role}
                   </span>

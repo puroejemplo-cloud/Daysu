@@ -247,7 +247,7 @@ export default function GalleryBlurManager() {
     setCarouselSaving(false);
   };
 
-  if (loading) return <p className="text-sm" style={{ color: "#94a3b8" }}>Cargando imágenes...</p>;
+  if (loading) return <p className="text-sm" style={{ color: "#a1a1aa" }}>Cargando imágenes...</p>;
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "3rem" }}>
@@ -311,7 +311,7 @@ export default function GalleryBlurManager() {
               style={{
                 position: "relative", borderRadius: 8, overflow: "hidden",
                 aspectRatio: "4/3", cursor: "pointer",
-                border: img.regions.length > 0 ? "2px solid #9333ea" : "2px solid rgba(255,255,255,.08)",
+                border: img.regions.length > 0 ? "2px solid #7C3AED" : "2px solid rgba(255,255,255,.08)",
                 transition: "transform 0.15s",
               }}
               onClick={() => openEditor(img)}
@@ -328,12 +328,12 @@ export default function GalleryBlurManager() {
               </button>
 
               {img.regions.length > 0 && (
-                <div style={{ position: "absolute", top: 6, right: 6, background: "#9333ea", color: "#fff", borderRadius: 999, fontSize: "0.6rem", fontWeight: 700, padding: "2px 7px" }}>
+                <div style={{ position: "absolute", top: 6, right: 6, background: "#7C3AED", color: "#fff", borderRadius: 999, fontSize: "0.6rem", fontWeight: 700, padding: "2px 7px" }}>
                   {img.regions.length} zona{img.regions.length > 1 ? "s" : ""} 🔵
                 </div>
               )}
               {img.regions.length === 0 && (
-                <div style={{ position: "absolute", top: 6, right: 6, background: "rgba(0,0,0,.6)", color: "#94a3b8", borderRadius: 999, fontSize: "0.6rem", padding: "2px 7px" }}>
+                <div style={{ position: "absolute", top: 6, right: 6, background: "rgba(0,0,0,.6)", color: "#a1a1aa", borderRadius: 999, fontSize: "0.6rem", padding: "2px 7px" }}>
                   Sin difuminar
                 </div>
               )}
@@ -448,7 +448,7 @@ export default function GalleryBlurManager() {
             <div style={{ padding: "1rem 1.5rem", borderBottom: "1px solid rgba(255,255,255,.08)", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
               <div>
                 <p style={{ color: "#fff", fontWeight: 700 }}>{editing.name}</p>
-                <p style={{ color: "#94a3b8", fontSize: "0.75rem" }}>Arrastra sobre los rostros para difuminarlos. Clic en × para quitar una zona.</p>
+                <p style={{ color: "#a1a1aa", fontSize: "0.75rem" }}>Arrastra sobre los rostros para difuminarlos. Clic en × para quitar una zona.</p>
               </div>
               <button onClick={() => setEditing(null)} style={{ color: "#ef4444", background: "none", border: "none", fontSize: "1.4rem", cursor: "pointer", lineHeight: 1 }}>✕</button>
             </div>
@@ -476,7 +476,7 @@ export default function GalleryBlurManager() {
                   <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", pointerEvents: "none" }}>
                     <div style={{ background: "rgba(0,0,0,.7)", padding: "0.75rem 1.25rem", borderRadius: 10, textAlign: "center" }}>
                       <p style={{ color: "#fff", fontSize: "0.85rem", fontWeight: 700 }}>🖱️ Arrastra sobre los rostros para difuminarlos</p>
-                      <p style={{ color: "#94a3b8", fontSize: "0.72rem", marginTop: "0.2rem" }}>Puedes marcar varias zonas</p>
+                      <p style={{ color: "#a1a1aa", fontSize: "0.72rem", marginTop: "0.2rem" }}>Puedes marcar varias zonas</p>
                     </div>
                   </div>
                 )}
@@ -489,7 +489,7 @@ export default function GalleryBlurManager() {
                   style={{ borderColor: "rgba(239,68,68,.4)", color: "#ef4444", background: "rgba(239,68,68,.08)" }}>
                   🗑 Quitar todo
                 </button>
-                <span style={{ color: "#94a3b8", fontSize: "0.85rem", lineHeight: "2.2rem" }}>
+                <span style={{ color: "#a1a1aa", fontSize: "0.85rem", lineHeight: "2.2rem" }}>
                   {regions.length} zona{regions.length !== 1 ? "s" : ""} marcada{regions.length !== 1 ? "s" : ""}
                 </span>
               </div>

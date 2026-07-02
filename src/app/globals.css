@@ -11,6 +11,25 @@
   --purple: #7C3AED;
   --border: rgba(232,25,138,0.18);
 
+  /* ── Admin: escala única (zinc) + superficies + estado ──────────────────
+     Fuente de verdad para el panel. Un solo acento de marca (--gold);
+     el color solo significa estado. No mezclar otras familias de gris. */
+  --admin-surface:   #0c0c0f;   /* card base            */
+  --admin-surface-2: #0f0f13;   /* card elevada         */
+  --admin-border:       rgba(255,255,255,0.06);
+  --admin-border-hover: rgba(255,255,255,0.11);
+  --admin-t1: #f4f4f5;  /* texto principal            */
+  --admin-t2: #d4d4d8;  /* texto fuerte               */
+  --admin-t3: #a1a1aa;  /* texto secundario           */
+  --admin-t4: #71717a;  /* texto terciario            */
+  --admin-t5: #52525b;  /* texto muted / labels       */
+  --admin-t6: #3f3f46;  /* texto faint                */
+  --st-warn:    #f59e0b;  /* pendiente / hold          */
+  --st-ok:      #22c55e;  /* confirmada / éxito        */
+  --st-danger:  #ef4444;  /* vencida / cancelar        */
+  --st-info:    #3b82f6;  /* en curso / informativo    */
+  --st-neutral: #6b7280;  /* completada / inactivo     */
+
   --font-bebas: 'Bebas Neue', sans-serif;
   --font-dm:    'DM Sans', system-ui, sans-serif;
 }

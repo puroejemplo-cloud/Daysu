@@ -153,25 +153,25 @@ export default function EditBookingModal({ bookingId, onClose, onSaved }: Props)
               <p className="text-xs font-black uppercase tracking-widest" style={{ color: "var(--gold)" }}>Evento</p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <div className="md:col-span-2">
-                  <label className="block text-xs font-bold uppercase tracking-widest mb-1" style={{ color: "#94A3B8" }}>Nombre</label>
+                  <label className="block text-xs font-bold uppercase tracking-widest mb-1" style={{ color: "#a1a1aa" }}>Nombre</label>
                   <input value={form.eventName}
                     onChange={(e) => setForm((f) => ({ ...f, eventName: e.target.value }))}
                     className="aura-input" />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-widest mb-1" style={{ color: "#94A3B8" }}>Fecha</label>
+                  <label className="block text-xs font-bold uppercase tracking-widest mb-1" style={{ color: "#a1a1aa" }}>Fecha</label>
                   <input type="date" value={form.eventDate}
                     onChange={(e) => setForm((f) => ({ ...f, eventDate: e.target.value }))}
                     className="aura-input" />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-widest mb-1" style={{ color: "#94A3B8" }}>Hora inicio</label>
+                  <label className="block text-xs font-bold uppercase tracking-widest mb-1" style={{ color: "#a1a1aa" }}>Hora inicio</label>
                   <input type="time" value={form.setupHour}
                     onChange={(e) => setForm((f) => ({ ...f, setupHour: e.target.value }))}
                     className="aura-input" />
                 </div>
                 <div className="md:col-span-2">
-                  <label className="block text-xs font-bold uppercase tracking-widest mb-1" style={{ color: "#94A3B8" }}>Dirección (opcional)</label>
+                  <label className="block text-xs font-bold uppercase tracking-widest mb-1" style={{ color: "#a1a1aa" }}>Dirección (opcional)</label>
                   <input value={form.venueAddress}
                     onChange={(e) => setForm((f) => ({ ...f, venueAddress: e.target.value }))}
                     className="aura-input" placeholder="Calle, colonia, ciudad..." />
@@ -184,19 +184,19 @@ export default function EditBookingModal({ bookingId, onClose, onSaved }: Props)
               <p className="text-xs font-black uppercase tracking-widest" style={{ color: "var(--gold)" }}>Cliente</p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-widest mb-1" style={{ color: "#94A3B8" }}>Nombre</label>
+                  <label className="block text-xs font-bold uppercase tracking-widest mb-1" style={{ color: "#a1a1aa" }}>Nombre</label>
                   <input value={client.fullName}
                     onChange={(e) => setClient((c) => ({ ...c, fullName: e.target.value }))}
                     className="aura-input" />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-widest mb-1" style={{ color: "#94A3B8" }}>Teléfono</label>
+                  <label className="block text-xs font-bold uppercase tracking-widest mb-1" style={{ color: "#a1a1aa" }}>Teléfono</label>
                   <input type="tel" value={client.phone}
                     onChange={(e) => setClient((c) => ({ ...c, phone: e.target.value }))}
                     className="aura-input" placeholder="Opcional" />
                 </div>
                 <div className="md:col-span-2">
-                  <p className="text-xs font-bold uppercase tracking-widest mb-1" style={{ color: "#94A3B8" }}>Email</p>
+                  <p className="text-xs font-bold uppercase tracking-widest mb-1" style={{ color: "#a1a1aa" }}>Email</p>
                   <p className="text-sm" style={{ color: "#52525b" }}>{booking.client.email}</p>
                 </div>
               </div>
@@ -207,13 +207,13 @@ export default function EditBookingModal({ bookingId, onClose, onSaved }: Props)
               <p className="text-xs font-black uppercase tracking-widest" style={{ color: "var(--gold)" }}>Finanzas y estado</p>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-widest mb-1" style={{ color: "#94A3B8" }}>Total acordado</label>
+                  <label className="block text-xs font-bold uppercase tracking-widest mb-1" style={{ color: "#a1a1aa" }}>Total acordado</label>
                   <input type="number" min={0} value={form.totalAmount}
                     onChange={(e) => setForm((f) => ({ ...f, totalAmount: e.target.value }))}
                     className="aura-input font-black" style={{ color: "var(--gold)" }} />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-widest mb-1" style={{ color: "#94A3B8" }}>Anticipo recibido</label>
+                  <label className="block text-xs font-bold uppercase tracking-widest mb-1" style={{ color: "#a1a1aa" }}>Anticipo recibido</label>
                   <input type="number" min={0} value={form.depositAmount}
                     onChange={(e) => setForm((f) => ({ ...f, depositAmount: e.target.value }))}
                     className="aura-input font-black" style={{ color: "#16a34a" }} />
@@ -228,7 +228,7 @@ export default function EditBookingModal({ bookingId, onClose, onSaved }: Props)
                   </div>
                 )}
                 <div className="col-span-2">
-                  <label className="block text-xs font-bold uppercase tracking-widest mb-1" style={{ color: "#94A3B8" }}>Estado</label>
+                  <label className="block text-xs font-bold uppercase tracking-widest mb-1" style={{ color: "#a1a1aa" }}>Estado</label>
                   <select value={form.status}
                     onChange={(e) => setForm((f) => ({ ...f, status: e.target.value }))}
                     className="aura-input">
@@ -242,7 +242,7 @@ export default function EditBookingModal({ bookingId, onClose, onSaved }: Props)
 
             {/* Notas */}
             <div className="aura-card p-4 space-y-2">
-              <label className="block text-xs font-bold uppercase tracking-widest" style={{ color: "#94A3B8" }}>Notas internas</label>
+              <label className="block text-xs font-bold uppercase tracking-widest" style={{ color: "#a1a1aa" }}>Notas internas</label>
               <textarea value={form.notes}
                 onChange={(e) => setForm((f) => ({ ...f, notes: e.target.value }))}
                 rows={3} className="aura-input resize-none"

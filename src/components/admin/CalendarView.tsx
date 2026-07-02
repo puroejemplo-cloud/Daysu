@@ -394,7 +394,7 @@ export default function CalendarView({ bookings: initBookings }: { bookings: Boo
           </div>
 
           <div style={{ marginBottom: "0.75rem" }}>
-            <label className="block text-xs font-bold uppercase tracking-widest mb-1" style={{ color: "#94A3B8" }}>Monto del abono</label>
+            <label className="block text-xs font-bold uppercase tracking-widest mb-1" style={{ color: "#a1a1aa" }}>Monto del abono</label>
             <div style={{ position: "relative" }}>
               <span style={{ position: "absolute", left: "0.85rem", top: "50%", transform: "translateY(-50%)", color: "#52525b", fontSize: "0.9rem", fontWeight: 600 }}>$</span>
               <input type="number" min={1} value={abonoAmt} onChange={(e) => setAbonoAmt(e.target.value)}

@@ -74,7 +74,7 @@ export default function ChecklistView({ bookingId }: { bookingId: string }) {
   };
 
   if (!salida || !entrada) return (
-    <div className="text-center py-16" style={{ color: "#94A3B8" }}>Cargando checklist...</div>
+    <div className="text-center py-16" style={{ color: "#a1a1aa" }}>Cargando checklist...</div>
   );
 
   const equipo = current?.items.filter((i) => i.category === "equipo") ?? [];
@@ -117,7 +117,7 @@ export default function ChecklistView({ bookingId }: { bookingId: string }) {
         </div>
         <div className="w-full h-1.5 rounded-full" style={{ background: "rgba(255,255,255,0.06)" }}>
           <div className="h-1.5 rounded-full transition-all duration-500"
-            style={{ width: `${pct}%`, background: current?.completedAt ? "#16a34a" : "#d4af37" }} />
+            style={{ width: `${pct}%`, background: current?.completedAt ? "#16a34a" : "#FF3DA8" }} />
         </div>
         {current?.completedAt && (
           <p className="text-xs mt-1" style={{ color: "#52525b" }}>
@@ -170,7 +170,7 @@ export default function ChecklistView({ bookingId }: { bookingId: string }) {
               className="w-full flex items-center gap-3 px-5 py-3 text-left transition-colors"
               style={{ background: "transparent", cursor: current?.completedAt ? "default" : "pointer" }}>
               <div className="w-5 h-5 rounded flex-shrink-0 flex items-center justify-center border transition-all"
-                style={{ borderColor: item.checked ? "#d4af37" : "rgba(255,255,255,0.15)", background: item.checked ? "#d4af37" : "transparent" }}>
+                style={{ borderColor: item.checked ? "#FF3DA8" : "rgba(255,255,255,0.15)", background: item.checked ? "#FF3DA8" : "transparent" }}>
                 {item.checked && <span style={{ fontSize: "0.6rem", color: "#05051a", fontWeight: 700 }}>✓</span>}
               </div>
               <p className="text-sm flex-1" style={{ color: item.checked ? "#52525b" : "#d4d4d8", textDecoration: item.checked ? "line-through" : "none" }}>

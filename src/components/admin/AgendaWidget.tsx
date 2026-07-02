@@ -208,7 +208,7 @@ export default function AgendaWidget({ upcoming: initUpcoming, pending: initPend
 
           {/* Input abono */}
           <div style={{ marginBottom: "0.75rem" }}>
-            <label style={{ display: "block", fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", color: "#94A3B8", marginBottom: "0.4rem" }}>
+            <label style={{ display: "block", fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", color: "#a1a1aa", marginBottom: "0.4rem" }}>
               Monto del abono
             </label>
             <div style={{ position: "relative" }}>

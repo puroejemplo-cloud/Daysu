@@ -16,7 +16,7 @@ export default function AdminPage() {
         <h1 className="admin-page-title">Panel de Administración</h1>
         <p className="admin-page-desc">Gestión de reservas, holds activos y notificaciones en tiempo real.</p>
       </header>
-      <Suspense fallback={<div style={{ color: "#475569", fontSize: "0.9rem" }}>Cargando panel...</div>}>
+      <Suspense fallback={<div style={{ color: "#52525b", fontSize: "0.9rem" }}>Cargando panel...</div>}>
         <AdminDashboard />
       </Suspense>
     </div>

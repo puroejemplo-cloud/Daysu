@@ -39,7 +39,7 @@ export default async function ChecklistsPage() {
       </header>
 
       {bookings.length === 0 && (
-        <div className="aura-card p-12 text-center" style={{ color: "#475569" }}>
+        <div className="aura-card p-12 text-center" style={{ color: "#52525b" }}>
           No hay eventos confirmados próximos.
         </div>
       )}
@@ -65,11 +65,11 @@ export default async function ChecklistsPage() {
                   )}
                   <h3 className="font-black text-white truncate">{b.eventName}</h3>
                 </div>
-                <p className="text-sm" style={{ color: "#94A3B8" }}>
+                <p className="text-sm" style={{ color: "#a1a1aa" }}>
                   {b.client.fullName}
                   {b.client.phone && ` · ${b.client.phone}`}
                 </p>
-                <p className="text-xs mt-1" style={{ color: "#475569" }}>
+                <p className="text-xs mt-1" style={{ color: "#52525b" }}>
                   📅 {format(new Date(b.setupAt), "EEEE d MMM yyyy · HH:mm'h'", { locale: es })}
                 </p>
               </div>
@@ -95,12 +95,12 @@ export default async function ChecklistsPage() {
                           </div>
                         </>
                       ) : (
-                        <div className="text-xs" style={{ color: "#475569" }}>Pendiente</div>
+                        <div className="text-xs" style={{ color: "#52525b" }}>Pendiente</div>
                       )}
                     </div>
                   );
                 })}
-                <div className="flex items-center" style={{ color: "#475569" }}>→</div>
+                <div className="flex items-center" style={{ color: "#52525b" }}>→</div>
               </div>
             </Link>
           );

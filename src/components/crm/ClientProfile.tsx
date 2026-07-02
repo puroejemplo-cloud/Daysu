@@ -98,7 +98,7 @@ export default function ClientProfile({ client: initial }: { client: Client }) {
             <p className="admin-label">Eventos</p>
           </div>
           <div>
-            <p className="text-xl font-bold" style={{ color: "#d4af37" }}>${totalGastado.toLocaleString("es-MX")}</p>
+            <p className="text-xl font-bold" style={{ color: "#FF3DA8" }}>${totalGastado.toLocaleString("es-MX")}</p>
             <p className="admin-label">Total</p>
           </div>
         </div>
@@ -208,7 +208,7 @@ export default function ClientProfile({ client: initial }: { client: Client }) {
           )}
 
           {client.specialDates.length === 0 && !addingDate && (
-            <p className="text-sm" style={{ color: "#475569" }}>Sin fechas especiales registradas.</p>
+            <p className="text-sm" style={{ color: "#52525b" }}>Sin fechas especiales registradas.</p>
           )}
 
           {client.specialDates.map((d) => {
@@ -222,8 +222,8 @@ export default function ClientProfile({ client: initial }: { client: Client }) {
               <div key={d.id} className="aura-card flex items-center gap-3 p-3">
                 <div className="w-9 h-9 rounded-lg flex flex-col items-center justify-center flex-shrink-0"
                   style={{ background: soon ? "rgba(212,175,55,0.12)" : "#18181b", border: `1px solid ${soon ? "rgba(212,175,55,0.25)" : "rgba(255,255,255,0.07)"}` }}>
-                  <span className="text-xs leading-none" style={{ color: soon ? "#d4af37" : "#52525b" }}>{MONTHS[d.month - 1]}</span>
-                  <span className="text-sm font-bold leading-none" style={{ color: soon ? "#d4af37" : "#a1a1aa" }}>{d.day}</span>
+                  <span className="text-xs leading-none" style={{ color: soon ? "#FF3DA8" : "#52525b" }}>{MONTHS[d.month - 1]}</span>
+                  <span className="text-sm font-bold leading-none" style={{ color: soon ? "#FF3DA8" : "#a1a1aa" }}>{d.day}</span>
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium" style={{ color: "#d4d4d8" }}>{d.label}</p>
@@ -259,7 +259,7 @@ export default function ClientProfile({ client: initial }: { client: Client }) {
                   </p>
                 </div>
                 <div className="text-right flex-shrink-0">
-                  <p className="text-sm font-semibold" style={{ color: "#d4af37" }}>
+                  <p className="text-sm font-semibold" style={{ color: "#FF3DA8" }}>
                     ${Number(b.totalAmount).toLocaleString("es-MX")}
                   </p>
                   <p className="text-xs flex items-center justify-end gap-1 mt-0.5">

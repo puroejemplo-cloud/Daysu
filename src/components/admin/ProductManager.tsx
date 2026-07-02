@@ -268,7 +268,7 @@ export default function ProductManager({ categories, userSuffix }: { categories:
     { key: "paquetes",    label: `Mis paquetes [${userSuffix ?? "?"}]`,  count: myPaquetes.length,   color: "var(--gold)" },
     { key: "productos",   label: "Mis productos individuales",            count: myProductos.length,  color: "#38bdf8"     },
     { key: "componentes", label: "Mis componentes internos",              count: myComponents.length, color: "#7C3AED"     },
-    { key: "otros",       label: "De otros admins",                       count: others.length,       color: "#94A3B8"     },
+    { key: "otros",       label: "De otros admins",                       count: others.length,       color: "#a1a1aa"     },
   ];
 
   return (
@@ -288,7 +288,7 @@ export default function ProductManager({ categories, userSuffix }: { categories:
         <div className="flex items-center justify-between">
           <p className="text-xs font-black uppercase tracking-widest" style={{ color: "var(--gold)" }}>Nuevo activo</p>
           <button type="button" onClick={() => { setShowForm(false); setForm(emptyForm); setMsg(null); }}
-            className="text-sm font-bold" style={{ color: "#475569" }}>✕ Cancelar</button>
+            className="text-sm font-bold" style={{ color: "#52525b" }}>✕ Cancelar</button>
         </div>
 
         {/* Selector 3-vías de tipo */}
@@ -303,13 +303,13 @@ export default function ProductManager({ categories, userSuffix }: { categories:
               className="flex-1 py-2.5 rounded-lg text-xs font-black transition-all"
               style={{
                 background: form.assetType === t.key ? t.color : "transparent",
-                color:      form.assetType === t.key ? t.tc    : "#94A3B8",
+                color:      form.assetType === t.key ? t.tc    : "#a1a1aa",
               }}>
               {t.label}
             </button>
           ))}
         </div>
-        <div className="rounded-xl px-4 py-2 text-xs" style={{ background: "rgba(255,255,255,.03)", color: "#94A3B8" }}>
+        <div className="rounded-xl px-4 py-2 text-xs" style={{ background: "rgba(255,255,255,.03)", color: "#a1a1aa" }}>
           {form.assetType === "package"   && "Bundle completo con varios servicios. Incluye 5 hrs de servicio. Aparece en catálogo."}
           {form.assetType === "product"   && "Servicio individual (Cabina, Maruchan). Rentable solo O dentro de paquetes. Aparece en catálogo."}
           {form.assetType === "component" && "Equipo interno (cables, luces, bases). NO aparece en catálogo. Solo dentro de paquetes BOM."}
@@ -317,30 +317,30 @@ export default function ProductManager({ categories, userSuffix }: { categories:
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <div>
-            <label className="block text-xs font-bold uppercase tracking-widest mb-1" style={{ color: "#94A3B8" }}>Categoría</label>
+            <label className="block text-xs font-bold uppercase tracking-widest mb-1" style={{ color: "#a1a1aa" }}>Categoría</label>
             <select value={form.categoryId} onChange={(e) => setForm((f) => ({ ...f, categoryId: e.target.value }))} required className="aura-select">
               <option value="">— Seleccionar —</option>
               {categories.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
             </select>
           </div>
           <div>
-            <label className="block text-xs font-bold uppercase tracking-widest mb-1" style={{ color: "#94A3B8" }}>Nombre</label>
+            <label className="block text-xs font-bold uppercase tracking-widest mb-1" style={{ color: "#a1a1aa" }}>Nombre</label>
             <input value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} required
               placeholder={form.isRentable ? "Paquete Premium" : "Cable XLR 10m"} className="aura-input" />
           </div>
           <div>
-            <label className="block text-xs font-bold uppercase tracking-widest mb-1" style={{ color: "#94A3B8" }}>SKU</label>
+            <label className="block text-xs font-bold uppercase tracking-widest mb-1" style={{ color: "#a1a1aa" }}>SKU</label>
             <input value={form.sku} onChange={(e) => setForm((f) => ({ ...f, sku: e.target.value }))} required
               placeholder={form.isRentable ? "PKG-PREM-01" : "COMP-CABLE-XLR"} className="aura-input" />
           </div>
           <div>
-            <label className="block text-xs font-bold uppercase tracking-widest mb-1" style={{ color: "#94A3B8" }}>Unidades disponibles</label>
+            <label className="block text-xs font-bold uppercase tracking-widest mb-1" style={{ color: "#a1a1aa" }}>Unidades disponibles</label>
             <input type="number" min={1} value={form.totalUnits}
               onChange={(e) => setForm((f) => ({ ...f, totalUnits: e.target.value }))} className="aura-input" />
           </div>
           <div>
-            <label className="block text-xs font-bold uppercase tracking-widest mb-1" style={{ color: "#94A3B8" }}>
-              Precio MXN {!form.isRentable && <span style={{ color: "#475569" }}>(puede ser $0)</span>}
+            <label className="block text-xs font-bold uppercase tracking-widest mb-1" style={{ color: "#a1a1aa" }}>
+              Precio MXN {!form.isRentable && <span style={{ color: "#52525b" }}>(puede ser $0)</span>}
             </label>
             <input type="number" min={0} value={form.dailyRate}
               onChange={(e) => setForm((f) => ({ ...f, dailyRate: e.target.value }))} className="aura-input" />
@@ -363,7 +363,7 @@ export default function ProductManager({ categories, userSuffix }: { categories:
             className="flex-1 min-w-[120px] py-2.5 rounded-lg text-xs font-black uppercase tracking-wider transition-all"
             style={{
               background: tab === t.key ? t.color : "transparent",
-              color:      tab === t.key ? (t.key === "paquetes" ? "#05051a" : "#fff") : "#94A3B8",
+              color:      tab === t.key ? (t.key === "paquetes" ? "#05051a" : "#fff") : "#a1a1aa",
             }}>
             {t.label} ({t.count})
           </button>
@@ -372,22 +372,22 @@ export default function ProductManager({ categories, userSuffix }: { categories:
 
       {/* Descripción de la tab activa */}
       {tab === "componentes" && (
-        <div className="rounded-xl px-4 py-3 text-sm" style={{ background: "rgba(124,58,237,.08)", border: "1px solid rgba(124,58,237,.2)", color: "#94A3B8" }}>
+        <div className="rounded-xl px-4 py-3 text-sm" style={{ background: "rgba(124,58,237,.08)", border: "1px solid rgba(124,58,237,.2)", color: "#a1a1aa" }}>
           🔧 Los componentes no aparecen en el catálogo. Se agregan al BOM de un paquete o producto
           y se bloquean automáticamente al reservar.
         </div>
       )}
       {tab === "productos" && (
-        <div className="rounded-xl px-4 py-3 text-sm" style={{ background: "rgba(56,189,248,.06)", border: "1px solid rgba(56,189,248,.2)", color: "#94A3B8" }}>
+        <div className="rounded-xl px-4 py-3 text-sm" style={{ background: "rgba(56,189,248,.06)", border: "1px solid rgba(56,189,248,.2)", color: "#a1a1aa" }}>
           🎭 Los productos individuales aparecen en el catálogo. También puedes agregarlos al BOM de
           un paquete — si el paquete se reserva, el producto queda bloqueado automáticamente en esa fecha.
         </div>
       )}
 
-      {loading && <p className="text-sm" style={{ color: "#94A3B8" }}>Cargando...</p>}
+      {loading && <p className="text-sm" style={{ color: "#a1a1aa" }}>Cargando...</p>}
 
       {!loading && shown.length === 0 && (
-        <div className="aura-card p-10 text-center" style={{ color: "#475569" }}>
+        <div className="aura-card p-10 text-center" style={{ color: "#52525b" }}>
           {tab === "paquetes"    ? 'Sin paquetes. Crea uno arriba seleccionando "Paquete".' :
            tab === "productos"   ? 'Sin productos individuales. Crea uno seleccionando "Producto".' :
            tab === "componentes" ? 'Sin componentes. Crea uno seleccionando "Componente".' :
@@ -410,23 +410,23 @@ export default function ProductManager({ categories, userSuffix }: { categories:
               {/* Fila principal */}
               <div className="p-5 flex items-center gap-4">
                 <div className="w-10 h-10 rounded-xl flex-shrink-0 flex items-center justify-center font-black text-xs"
-                  style={{ background: asset.isRentable ? "rgba(212,175,55,.2)" : "rgba(124,58,237,.2)", color: asset.isRentable ? "var(--gold)" : "#9333EA" }}>
+                  style={{ background: asset.isRentable ? "rgba(212,175,55,.2)" : "rgba(124,58,237,.2)", color: asset.isRentable ? "var(--gold)" : "#7C3AED" }}>
                   {asset.ownerSuffix ?? "—"}
                 </div>
 
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap mb-0.5">
                     <p className="font-black text-white">{asset.displayName}</p>
-                    <span className="text-xs px-2 py-0.5 rounded-full" style={{ background: "rgba(124,58,237,.12)", color: "#9333EA" }}>
+                    <span className="text-xs px-2 py-0.5 rounded-full" style={{ background: "rgba(124,58,237,.12)", color: "#7C3AED" }}>
                       {asset.category.name}
                     </span>
                     <span className="text-xs px-2 py-0.5 rounded-full font-bold"
-                      style={{ background: asset.isRentable ? "rgba(212,175,55,.12)" : "rgba(124,58,237,.15)", color: asset.isRentable ? "var(--gold)" : "#9333EA" }}>
+                      style={{ background: asset.isRentable ? "rgba(212,175,55,.12)" : "rgba(124,58,237,.15)", color: asset.isRentable ? "var(--gold)" : "#7C3AED" }}>
                       {asset.isRentable ? "Rentable" : "🔧 Componente"}
                     </span>
                     {!asset.isActive && <span className="text-xs font-bold" style={{ color: "#EF4444" }}>Inactivo</span>}
                   </div>
-                  <p className="text-sm" style={{ color: "#94A3B8" }}>
+                  <p className="text-sm" style={{ color: "#a1a1aa" }}>
                     SKU: {asset.sku} · {asset.totalUnits} ud ·{" "}
                     {asset.originalPrice && Number(asset.originalPrice) > Number(asset.dailyRate) && (
                       <span style={{ textDecoration: "line-through", color: "#6b7280", marginRight: "0.3rem" }}>
@@ -441,7 +441,7 @@ export default function ProductManager({ categories, userSuffix }: { categories:
                     )}
                   </p>
                   {asset.components.length > 0 && (
-                    <p className="text-xs mt-0.5" style={{ color: "#475569" }}>
+                    <p className="text-xs mt-0.5" style={{ color: "#52525b" }}>
                       {asset.components.length} componente{asset.components.length !== 1 ? "s" : ""} en BOM
                       {compTotal > 0 && ` · suma $${compTotal.toLocaleString("es-MX")} MXN`}
                       {savings > 0 && <span style={{ color: "#22c55e" }}> · ahorro ${savings.toLocaleString("es-MX")} ({savingsPct}%)</span>}
@@ -458,7 +458,7 @@ export default function ProductManager({ categories, userSuffix }: { categories:
                   {asset.isRentable && (
                     <button onClick={() => setEditBomId(isBomOpen ? null : asset.id)}
                       className="text-xs font-bold px-3 py-1.5 rounded-lg border transition-colors"
-                      style={{ borderColor: isBomOpen ? "#7C3AED" : "rgba(124,58,237,.3)", color: "#9333EA", background: isBomOpen ? "rgba(124,58,237,.1)" : "transparent" }}>
+                      style={{ borderColor: isBomOpen ? "#7C3AED" : "rgba(124,58,237,.3)", color: "#7C3AED", background: isBomOpen ? "rgba(124,58,237,.1)" : "transparent" }}>
                       {isBomOpen ? "✕ BOM" : "⚙ BOM"}
                     </button>
                   )}
@@ -486,7 +486,7 @@ export default function ProductManager({ categories, userSuffix }: { categories:
                     .filter(({ alwaysShow }) => alwaysShow || editPricingType === "none")
                     .map(({ label, key, type, ph }) => (
                       <div key={key}>
-                        <label className="block text-xs font-bold uppercase tracking-widest mb-1" style={{ color: "#94A3B8" }}>{label}</label>
+                        <label className="block text-xs font-bold uppercase tracking-widest mb-1" style={{ color: "#a1a1aa" }}>{label}</label>
                         <input type={type} min={type === "number" ? 0 : undefined}
                           value={String(editForm[key] ?? "")}
                           placeholder={ph}
@@ -497,7 +497,7 @@ export default function ProductManager({ categories, userSuffix }: { categories:
                     <div className="flex flex-col gap-3">
                       {/* Toggle rentable/componente */}
                       <div>
-                        <label className="block text-xs font-bold uppercase tracking-widest mb-2" style={{ color: "#94A3B8" }}>
+                        <label className="block text-xs font-bold uppercase tracking-widest mb-2" style={{ color: "#a1a1aa" }}>
                           Tipo de producto
                         </label>
                         {/* Selector 3-vías de tipo */}
@@ -521,13 +521,13 @@ export default function ProductManager({ categories, userSuffix }: { categories:
                                     className="flex-1 py-2 text-xs font-black transition-all"
                                     style={{
                                       background: curType === t.key ? t.color : "transparent",
-                                      color:      curType === t.key ? t.textColor : "#94A3B8",
+                                      color:      curType === t.key ? t.textColor : "#a1a1aa",
                                     }}>
                                     {t.label}
                                   </button>
                                 ))}
                               </div>
-                              <p className="text-xs mt-1" style={{ color: "#475569" }}>{active.hint}</p>
+                              <p className="text-xs mt-1" style={{ color: "#52525b" }}>{active.hint}</p>
                             </>
                           );
                         })()}
@@ -545,11 +545,11 @@ export default function ProductManager({ categories, userSuffix }: { categories:
 
                   {/* ── CATEGORÍAS ── */}
                   <div className="rounded-xl p-4 space-y-3" style={{ background: "rgba(255,255,255,.02)", border: "1px solid rgba(255,255,255,.07)" }}>
-                    <p className="text-xs font-black uppercase tracking-widest" style={{ color: "#94A3B8" }}>Categorías</p>
+                    <p className="text-xs font-black uppercase tracking-widest" style={{ color: "#a1a1aa" }}>Categorías</p>
 
                     {/* Categoría principal */}
                     <div>
-                      <label className="block text-xs font-semibold mb-1" style={{ color: "#64748b" }}>Principal *</label>
+                      <label className="block text-xs font-semibold mb-1" style={{ color: "#71717a" }}>Principal *</label>
                       <select
                         value={String(editForm.categoryId ?? asset.categoryId)}
                         onChange={(e) => setEditForm((f) => ({ ...f, categoryId: e.target.value }))}
@@ -563,7 +563,7 @@ export default function ProductManager({ categories, userSuffix }: { categories:
 
                     {/* Categorías adicionales */}
                     <div>
-                      <label className="block text-xs font-semibold mb-2" style={{ color: "#64748b" }}>
+                      <label className="block text-xs font-semibold mb-2" style={{ color: "#71717a" }}>
                         Adicionales <span style={{ fontWeight: 400 }}>(el producto aparece en todas)</span>
                       </label>
                       <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
@@ -578,7 +578,7 @@ export default function ProductManager({ categories, userSuffix }: { categories:
                                   padding: "0.3rem 0.7rem", borderRadius: 999, cursor: "pointer",
                                   border: `1px solid ${checked ? "rgba(124,58,237,.6)" : "rgba(255,255,255,.1)"}`,
                                   background: checked ? "rgba(124,58,237,.2)" : "transparent",
-                                  fontSize: "0.78rem", color: checked ? "#c4b5fd" : "#64748b",
+                                  fontSize: "0.78rem", color: checked ? "#c4b5fd" : "#71717a",
                                   transition: "all 0.15s",
                                 }}>
                                 <input
@@ -601,8 +601,8 @@ export default function ProductManager({ categories, userSuffix }: { categories:
 
                   {/* ── DESCRIPCIÓN ── */}
                   <div>
-                    <label className="block text-xs font-bold uppercase tracking-widest mb-1" style={{ color: "#94A3B8" }}>
-                      Descripción <span style={{ color: "#475569", textTransform: "none", fontWeight: 400 }}>(aparece en las tarjetas del catálogo)</span>
+                    <label className="block text-xs font-bold uppercase tracking-widest mb-1" style={{ color: "#a1a1aa" }}>
+                      Descripción <span style={{ color: "#52525b", textTransform: "none", fontWeight: 400 }}>(aparece en las tarjetas del catálogo)</span>
                     </label>
                     <textarea
                       rows={4}
@@ -612,16 +612,16 @@ export default function ProductManager({ categories, userSuffix }: { categories:
                       className="aura-input"
                       style={{ resize: "vertical", lineHeight: 1.6 }}
                     />
-                    <p className="text-xs mt-1" style={{ color: "#334155" }}>
+                    <p className="text-xs mt-1" style={{ color: "#3f3f46" }}>
                       Cada línea del texto = un punto en la tarjeta. Los componentes del BOM se muestran automáticamente después.
                     </p>
                   </div>
 
                   {/* ── GALERÍA DE IMÁGENES (carrusel) ── */}
                   <div>
-                    <label className="block text-xs font-bold uppercase tracking-widest mb-2" style={{ color: "#94A3B8" }}>
+                    <label className="block text-xs font-bold uppercase tracking-widest mb-2" style={{ color: "#a1a1aa" }}>
                       Fotos del producto
-                      <span className="ml-2 normal-case font-normal" style={{ color: "#334155" }}>
+                      <span className="ml-2 normal-case font-normal" style={{ color: "#3f3f46" }}>
                         — se muestran como carrusel en la tarjeta
                       </span>
                     </label>
@@ -661,7 +661,7 @@ export default function ProductManager({ categories, userSuffix }: { categories:
                     )}
 
                     {editGallery.length === 0 && (
-                      <p style={{ fontSize: "0.75rem", color: "#475569", marginBottom: "0.75rem" }}>
+                      <p style={{ fontSize: "0.75rem", color: "#52525b", marginBottom: "0.75rem" }}>
                         Sin fotos asignadas. Usa el selector para escoger de la Galería.
                       </p>
                     )}
@@ -707,15 +707,15 @@ export default function ProductManager({ categories, userSuffix }: { categories:
                     {showPicker && (
                       <div style={{ border: "1px solid rgba(124,58,237,.25)", borderRadius: 12,
                         padding: "1rem", background: "rgba(124,58,237,.04)" }}>
-                        <p style={{ fontSize: "0.68rem", color: "#94a3b8", marginBottom: "0.75rem" }}>
+                        <p style={{ fontSize: "0.68rem", color: "#a1a1aa", marginBottom: "0.75rem" }}>
                           Haz clic en una imagen para agregarla o quitarla del carrusel.
                           La primera de la lista = imagen principal del producto.
                         </p>
                         {loadingGallery && (
-                          <p style={{ color: "#475569", fontSize: "0.8rem" }}>Cargando galería...</p>
+                          <p style={{ color: "#52525b", fontSize: "0.8rem" }}>Cargando galería...</p>
                         )}
                         {!loadingGallery && galleryImages.length === 0 && (
-                          <p style={{ color: "#475569", fontSize: "0.8rem" }}>
+                          <p style={{ color: "#52525b", fontSize: "0.8rem" }}>
                             La galería está vacía. Sube imágenes en{" "}
                             <a href="/admin/galeria" target="_blank" style={{ color: "var(--gold)" }}>
                               /admin/galeria
@@ -776,7 +776,7 @@ export default function ProductManager({ categories, userSuffix }: { categories:
                       </div>
                     )}
 
-                    <p style={{ fontSize: "0.68rem", color: "#334155", marginTop: "0.5rem" }}>
+                    <p style={{ fontSize: "0.68rem", color: "#3f3f46", marginTop: "0.5rem" }}>
                       El orden de las fotos en el carrusel = orden en que las seleccionaste.
                       Para reordenar: quita y vuelve a agregar.
                     </p>
@@ -803,7 +803,7 @@ export default function ProductManager({ categories, userSuffix }: { categories:
                                 padding: "0.4rem 1rem", borderRadius: 999,
                                 border: `1px solid ${active ? "#7C3AED" : "rgba(124,58,237,.3)"}`,
                                 background: active ? "rgba(124,58,237,.3)" : "transparent",
-                                color: active ? "#fff" : "#94a3b8",
+                                color: active ? "#fff" : "#a1a1aa",
                                 fontSize: "0.78rem", fontWeight: 700, cursor: "pointer",
                               }}>
                               {labels[t]}
@@ -817,11 +817,11 @@ export default function ProductManager({ categories, userSuffix }: { categories:
                         <div style={{ background: "rgba(124,58,237,.08)", borderRadius: 10, padding: "0.75rem", display: "flex", flexDirection: "column", gap: "0.75rem" }}>
                           {/* Precio unitario */}
                           <div>
-                            <label htmlFor="price-per-person" className="text-xs font-bold uppercase tracking-widest block mb-2" style={{ color: "#9333EA" }}>
+                            <label htmlFor="price-per-person" className="text-xs font-bold uppercase tracking-widest block mb-2" style={{ color: "#7C3AED" }}>
                               Precio por persona (MXN) *
                             </label>
                             <div className="flex items-center gap-2">
-                              <span style={{ color: "#64748b", fontWeight: 700 }}>$</span>
+                              <span style={{ color: "#71717a", fontWeight: 700 }}>$</span>
                               <input
                                 id="price-per-person"
                                 type="number" min={0}
@@ -831,12 +831,12 @@ export default function ProductManager({ categories, userSuffix }: { categories:
                                 className="aura-input"
                                 style={{ maxWidth: 140 }}
                               />
-                              <span style={{ fontSize: "0.78rem", color: "#64748b" }}>MXN / persona</span>
+                              <span style={{ fontSize: "0.78rem", color: "#71717a" }}>MXN / persona</span>
                             </div>
                           </div>
                           {/* Mínimo de personas */}
                           <div>
-                            <label htmlFor="min-persons" className="text-xs font-bold uppercase tracking-widest block mb-2" style={{ color: "#9333EA" }}>
+                            <label htmlFor="min-persons" className="text-xs font-bold uppercase tracking-widest block mb-2" style={{ color: "#7C3AED" }}>
                               Mínimo de personas
                             </label>
                             <div className="flex items-center gap-2">
@@ -848,9 +848,9 @@ export default function ProductManager({ categories, userSuffix }: { categories:
                                 className="aura-input"
                                 style={{ maxWidth: 100 }}
                               />
-                              <span style={{ fontSize: "0.78rem", color: "#64748b" }}>personas (default: 25)</span>
+                              <span style={{ fontSize: "0.78rem", color: "#71717a" }}>personas (default: 25)</span>
                             </div>
-                            <p className="text-xs mt-1" style={{ color: "#64748b" }}>
+                            <p className="text-xs mt-1" style={{ color: "#71717a" }}>
                               El calculador y el wizard de reservas arrancan desde este mínimo.
                             </p>
                           </div>
@@ -860,7 +860,7 @@ export default function ProductManager({ categories, userSuffix }: { categories:
                       {/* Editor de filas */}
                       {editPricingType !== "none" && editPricingType !== "per_person" && (
                         <div className="space-y-2">
-                          <p className="text-xs" style={{ color: "#475569" }}>
+                          <p className="text-xs" style={{ color: "#52525b" }}>
                             {editPricingType === "hourly"
                               ? "Define cada opción de horas con su precio."
                               : "Define cada capacidad con su multiplicador (1 = precio base × 1)."}
@@ -904,11 +904,11 @@ export default function ProductManager({ categories, userSuffix }: { categories:
                     <div className="rounded-xl p-4 flex flex-wrap items-center justify-between gap-4"
                       style={{ background: "rgba(34,197,94,.07)", border: "1px solid rgba(34,197,94,.2)" }}>
                       <div className="space-y-1 text-sm">
-                        <p style={{ color: "#94A3B8" }}>
+                        <p style={{ color: "#a1a1aa" }}>
                           Suma de componentes:{" "}
                           <span className="font-black text-white">${compTotal.toLocaleString("es-MX")} MXN</span>
                         </p>
-                        <p style={{ color: "#94A3B8" }}>
+                        <p style={{ color: "#a1a1aa" }}>
                           Precio del paquete:{" "}
                           <span className="font-black" style={{ color: "var(--gold)" }}>
                             ${Number(editForm.dailyRate ?? asset.dailyRate).toLocaleString("es-MX")} MXN
@@ -943,7 +943,7 @@ export default function ProductManager({ categories, userSuffix }: { categories:
                     {Boolean(editForm.isRecommended) && (
                       <div className="space-y-3 pl-6">
                         <div>
-                          <label className="text-xs font-bold uppercase tracking-widest block mb-1" style={{ color: "#94A3B8" }}>Tipo de promoción</label>
+                          <label className="text-xs font-bold uppercase tracking-widest block mb-1" style={{ color: "#a1a1aa" }}>Tipo de promoción</label>
                           <div className="flex gap-2 flex-wrap">
                             {(["fixed", "guests", "hours"] as const).map((t) => (
                               <button key={t} type="button"
@@ -952,7 +952,7 @@ export default function ProductManager({ categories, userSuffix }: { categories:
                                 style={{
                                   borderColor: editForm.promoType === t ? "var(--gold)" : "rgba(212,175,55,.25)",
                                   background:  editForm.promoType === t ? "rgba(212,175,55,.12)" : "transparent",
-                                  color:       editForm.promoType === t ? "var(--gold)" : "#94A3B8",
+                                  color:       editForm.promoType === t ? "var(--gold)" : "#a1a1aa",
                                 }}>
                                 {t === "fixed" ? "💰 Precio fijo" : t === "guests" ? "👥 Por invitados" : "⏱ Por horas"}
                               </button>
@@ -962,7 +962,7 @@ export default function ProductManager({ categories, userSuffix }: { categories:
 
                         {(editForm.promoType === "guests" || editForm.promoType === "hours") && (
                           <div>
-                            <label className="text-xs font-bold uppercase tracking-widest block mb-1" style={{ color: "#94A3B8" }}>
+                            <label className="text-xs font-bold uppercase tracking-widest block mb-1" style={{ color: "#a1a1aa" }}>
                               {editForm.promoType === "guests" ? "Mínimo de invitados" : "Número de horas incluidas"}
                             </label>
                             <input type="number" min="1"
@@ -975,15 +975,15 @@ export default function ProductManager({ categories, userSuffix }: { categories:
 
                         <div className="grid grid-cols-2 gap-3">
                           <div>
-                            <label className="text-xs font-bold uppercase tracking-widest block mb-1" style={{ color: "#94A3B8" }}>Precio promo (MXN)</label>
+                            <label className="text-xs font-bold uppercase tracking-widest block mb-1" style={{ color: "#a1a1aa" }}>Precio promo (MXN)</label>
                             <input type="number" min="0"
                               value={String(editForm.dailyRate ?? "")}
                               onChange={(e) => setEditForm((f) => ({ ...f, dailyRate: e.target.value }))}
                               className="aura-input" />
-                            <p className="text-xs mt-1" style={{ color: "#475569" }}>Este es el precio que verá el cliente</p>
+                            <p className="text-xs mt-1" style={{ color: "#52525b" }}>Este es el precio que verá el cliente</p>
                           </div>
                           <div>
-                            <label className="text-xs font-bold uppercase tracking-widest block mb-1" style={{ color: "#94A3B8" }}>Precio original (tachado)</label>
+                            <label className="text-xs font-bold uppercase tracking-widest block mb-1" style={{ color: "#a1a1aa" }}>Precio original (tachado)</label>
                             <input type="number" min="0"
                               value={String(editForm.originalPrice ?? "")}
                               onChange={(e) => setEditForm((f) => ({ ...f, originalPrice: e.target.value }))}
@@ -1003,7 +1003,7 @@ export default function ProductManager({ categories, userSuffix }: { categories:
                     </button>
                     <button onClick={() => { setEditingId(null); setEditDetail(null); setShowPicker(false); }}
                       className="text-sm px-4 py-2 rounded-lg border"
-                      style={{ borderColor: "rgba(255,255,255,.1)", color: "#94A3B8" }}>
+                      style={{ borderColor: "rgba(255,255,255,.1)", color: "#a1a1aa" }}>
                       Cancelar
                     </button>
                   </div>
@@ -1013,7 +1013,7 @@ export default function ProductManager({ categories, userSuffix }: { categories:
                     <div style={{ borderTop: "1px solid rgba(124,58,237,.2)", paddingTop: "1.25rem" }}>
                       <p className="text-xs font-black uppercase tracking-widest mb-3" style={{ color: "#7C3AED" }}>
                         ✦ Productos / Componentes incluidos
-                        <span className="ml-2 normal-case font-normal" style={{ color: "#475569" }}>
+                        <span className="ml-2 normal-case font-normal" style={{ color: "#52525b" }}>
                           — se bloquean automáticamente al reservar este{" "}
                           {String(editForm.assetType ?? asset.assetType) === "package" ? "paquete" : "producto"}
                         </span>
@@ -1021,7 +1021,7 @@ export default function ProductManager({ categories, userSuffix }: { categories:
 
                       {/* Lista de items BOM actuales */}
                       {asset.components.length === 0 && (
-                        <p className="text-sm mb-3" style={{ color: "#475569" }}>
+                        <p className="text-sm mb-3" style={{ color: "#52525b" }}>
                           Sin items aún. Agrega productos o componentes abajo.
                         </p>
                       )}
@@ -1036,7 +1036,7 @@ export default function ProductManager({ categories, userSuffix }: { categories:
                               <span className="text-white font-bold">
                                 {c.childAsset.ownerSuffix ? `${c.childAsset.name} [${c.childAsset.ownerSuffix}]` : c.childAsset.name}
                               </span>
-                              <span className="ml-2" style={{ color: "#94A3B8" }}>
+                              <span className="ml-2" style={{ color: "#a1a1aa" }}>
                                 ×{c.quantity}
                                 {c.overridePrice != null && (
                                   <span className="ml-1 text-xs px-1.5 py-0.5 rounded" style={{ background: "rgba(124,58,237,.2)", color: "#a78bfa" }}>
@@ -1093,7 +1093,7 @@ export default function ProductManager({ categories, userSuffix }: { categories:
                             {/* Selector de tier si el producto lo tiene (no aplica a per_person) */}
                             {tierConfig && tierConfig.type !== "per_person" && (
                               <div style={{ padding: "0.75rem", borderRadius: 10, background: "rgba(124,58,237,.06)", border: "1px solid rgba(124,58,237,.2)" }}>
-                                <p style={{ fontSize: "0.68rem", color: "#94a3b8", marginBottom: "0.5rem", fontWeight: 700 }}>
+                                <p style={{ fontSize: "0.68rem", color: "#a1a1aa", marginBottom: "0.5rem", fontWeight: 700 }}>
                                   {tierConfig.type === "hourly" ? "¿Cuántas horas incluye el paquete?" : "¿Para cuántas personas?"}
                                 </p>
                                 <div style={{ display: "flex", flexWrap: "wrap", gap: "0.4rem" }}>
@@ -1106,7 +1106,7 @@ export default function ProductManager({ categories, userSuffix }: { categories:
                                           padding: "0.4rem 0.85rem", borderRadius: 8,
                                           border: `1px solid ${active ? "#7C3AED" : "rgba(124,58,237,.3)"}`,
                                           background: active ? "rgba(124,58,237,.35)" : "rgba(124,58,237,.08)",
-                                          color: active ? "#fff" : "#94a3b8",
+                                          color: active ? "#fff" : "#a1a1aa",
                                           fontWeight: 700, fontSize: "0.78rem", cursor: "pointer",
                                         }}>
                                         {tier.label}
@@ -1140,7 +1140,7 @@ export default function ProductManager({ categories, userSuffix }: { categories:
                   <p className="text-xs font-black uppercase tracking-widest" style={{ color: "#7C3AED" }}>Componentes del paquete</p>
 
                   {asset.components.length === 0 && (
-                    <p className="text-sm" style={{ color: "#475569" }}>Sin componentes todavía. Agrega componentes internos abajo.</p>
+                    <p className="text-sm" style={{ color: "#52525b" }}>Sin componentes todavía. Agrega componentes internos abajo.</p>
                   )}
 
                   {asset.components.map((c) => (
@@ -1150,7 +1150,7 @@ export default function ProductManager({ categories, userSuffix }: { categories:
                         <span className="text-white font-bold">
                           {c.childAsset.ownerSuffix ? `${c.childAsset.name} [${c.childAsset.ownerSuffix}]` : c.childAsset.name}
                         </span>
-                        <span className="ml-2" style={{ color: "#94A3B8" }}>
+                        <span className="ml-2" style={{ color: "#a1a1aa" }}>
                           ×{c.quantity}
                           {Number(c.childAsset.dailyRate) > 0 && ` · $${(Number(c.childAsset.dailyRate) * c.quantity).toLocaleString("es-MX")} MXN`}
                         </span>
@@ -1164,7 +1164,7 @@ export default function ProductManager({ categories, userSuffix }: { categories:
                   ))}
 
                   {asset.components.length > 0 && (
-                    <p className="text-sm text-right" style={{ color: "#475569" }}>
+                    <p className="text-sm text-right" style={{ color: "#52525b" }}>
                       Subtotal:{" "}
                       <span className="font-black" style={{ color: "var(--gold)" }}>
                         ${asset.components.reduce((s, c) => s + Number(c.childAsset.dailyRate) * c.quantity, 0).toLocaleString("es-MX")} MXN
@@ -1192,7 +1192,7 @@ export default function ProductManager({ categories, userSuffix }: { categories:
                   </div>
 
                   {avComps.length === 0 && (
-                    <p className="text-xs" style={{ color: "#475569" }}>
+                    <p className="text-xs" style={{ color: "#52525b" }}>
                       No hay productos disponibles para agregar al BOM.
                       Crea uno con el formulario de arriba seleccionando "Componente interno".
                     </p>

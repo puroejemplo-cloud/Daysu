@@ -170,7 +170,7 @@ export default function ClientList() {
         ))}
       </div>
 
-      {loading && <p className="text-sm" style={{ color: "#94A3B8" }}>Buscando...</p>}
+      {loading && <p className="text-sm" style={{ color: "#a1a1aa" }}>Buscando...</p>}
 
       {!loading && clients.length === 0 && (
         <div className="empty-state">
