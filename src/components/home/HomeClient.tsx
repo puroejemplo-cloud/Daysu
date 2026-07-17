@@ -504,7 +504,7 @@ export default function HomeClient({
           { num: 500,  suffix: "",  label: "Invitados por evento"    },
           { num: 3600, suffix: "+", label: "Seguidores en redes"     },
         ].map((s) => (
-          <div key={s.label} style={{ padding: "2rem 1.25rem", background: "var(--black)", textAlign: "center" }}>
+          <div key={s.label} style={{ padding: "2rem 1.25rem", background: "radial-gradient(circle at 50% 0%, rgba(232,25,138,0.06), var(--black) 70%)", textAlign: "center" }}>
             <span className="bebas" data-target={s.num} data-suffix={s.suffix}
               aria-live="polite" aria-atomic="true"
               style={{ fontSize: "clamp(2.5rem,6vw,4rem)", color: "var(--gold)", display: "block", lineHeight: 1 }}>

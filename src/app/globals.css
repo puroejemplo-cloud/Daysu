@@ -283,7 +283,9 @@ body {
 
 /* ── Buttons ── */
 .btn-gold {
-  background: var(--gold);
+  /* Gradiente + luz interior superior: el botón "recibe luz" desde arriba,
+     lo que lo despega del fondo plano */
+  background: linear-gradient(180deg, var(--gold2) 0%, var(--gold) 45%, #c01377 100%);
   color: var(--black);
   border: none;
   padding: 0.85rem 2.2rem;
@@ -297,8 +299,9 @@ body {
   align-items: center;
   justify-content: center;
   gap: 0.4rem;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.3), 0 4px 16px rgba(232,25,138,0.28);
 }
-.btn-gold:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(232,25,138,0.45); }
+.btn-gold:hover { transform: translateY(-2px); box-shadow: inset 0 1px 0 rgba(255,255,255,0.3), 0 8px 28px rgba(232,25,138,0.45); }
 .btn-gold:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(232,25,138,0.55), 0 8px 28px rgba(232,25,138,0.3); }
 
 .btn-ghost {
@@ -324,16 +327,22 @@ input, select, textarea {
 
 /* ── Aura card (dark UI) — admin premium ── */
 .aura-card {
-  background: #0f0f13;
+  /* Superficie con gradiente vertical + borde superior iluminado + sombra en
+     reposo: tres capas que dan volumen sin cambiar la paleta */
+  background: linear-gradient(180deg, #15151d 0%, #0d0d12 100%);
   border: 1px solid rgba(255,255,255,0.07);
   border-radius: 0.75rem;
-  transition: border-color 0.2s;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), 0 10px 30px rgba(0,0,0,0.35);
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
 .aura-card:hover {
-  border-color: rgba(255,255,255,0.11);
+  border-color: rgba(255,255,255,0.12);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), 0 14px 40px rgba(0,0,0,0.45);
 }
 .aura-input {
-  background: #18181b;
+  /* Sombra interior: el campo se "hunde" en la superficie, al contrario de las
+     cards que se elevan — refuerza la jerarquía táctil */
+  background: #121216;
   border: 1px solid rgba(255,255,255,0.08);
   border-radius: .5rem;
   padding: .5rem .75rem;
@@ -341,6 +350,7 @@ input, select, textarea {
   font-size: .875rem;
   width: 100%;
   outline: none;
+  box-shadow: inset 0 2px 6px rgba(0,0,0,0.4);
   transition: border-color .2s, box-shadow .2s;
   font-family: var(--font-dm);
 }
@@ -368,9 +378,10 @@ input, select, textarea {
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  background: #0c0c10;
+  background: linear-gradient(180deg, #131319 0%, #0a0a0e 100%);
   border: 1px solid rgba(255,255,255,0.08);
   border-radius: 1rem;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), 0 10px 28px rgba(0,0,0,0.35);
   transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 }
 .pkg-card-v2:hover {
@@ -730,11 +741,12 @@ input, select, textarea {
 .pkg-inner-small {
   display: flex;
   flex-direction: column;
-  background: #0a0a18;
+  background: linear-gradient(180deg, #10101f 0%, #08081a 100%);
   border: 1px solid rgba(255,255,255,0.07);
   overflow: hidden;
   position: relative;
   text-decoration: none;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.04), 0 12px 32px rgba(0,0,0,0.4);
   transition: box-shadow 0.35s, transform 0.35s;
 }
 .pkg-inner-small:active {
@@ -761,11 +773,12 @@ input, select, textarea {
 .pkg-inner-large {
   display: flex;
   flex-direction: column;
-  background: #0a0a18;
+  background: linear-gradient(180deg, #10101f 0%, #08081a 100%);
   border: 1px solid rgba(255,255,255,0.07);
   overflow: hidden;
   position: relative;
   text-decoration: none;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.04), 0 16px 44px rgba(0,0,0,0.45);
   transition: box-shadow 0.35s, transform 0.35s;
 }
 @media (min-width: 1024px) {
