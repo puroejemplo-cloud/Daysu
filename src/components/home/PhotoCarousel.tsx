@@ -111,9 +111,9 @@ export default function PhotoCarousel({ images = [] }: { images?: CarouselPhoto[
         {/* Redes sociales */}
         <div style={{ display: "flex", gap: "0.75rem", justifyContent: "center", marginTop: "2rem", flexWrap: "wrap" }}>
           {[
-            { label: "Instagram", icon: "📸", href: "https://instagram.com" },
-            { label: "TikTok",    icon: "🎵", href: "https://tiktok.com"    },
-            { label: "Facebook",  icon: "👥", href: "https://facebook.com"  },
+            { label: "Instagram", icon: "📸", href: "https://instagram.com/daysu.vip" },
+            { label: "TikTok",    icon: "🎵", href: "https://tiktok.com/@daysu.vip"    },
+            { label: "Facebook",  icon: "👥", href: "https://www.facebook.com/profile.php?id=100051778765950" },
           ].map((sn) => (
             <a key={sn.label} href={sn.href} target="_blank" rel="noopener noreferrer"
               className="btn-ghost"

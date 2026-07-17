@@ -32,7 +32,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-async function getPackages(filter: ServiceDbFilter): Promise<ServicePackage[]> {
+/** `isFallback: true` significa que el servicio de la landing no tiene activos
+ *  propios en BD y se están mostrando los paquetes generales. ServicePage usa
+ *  esta bandera para presentarlos honestamente como "paquetes donde puedes
+ *  agregarlo" en lugar de fingir que son paquetes del servicio. */
+async function getPackages(filter: ServiceDbFilter): Promise<{ packages: ServicePackage[]; isFallback: boolean }> {
   const baseWhere = { isActive: true, isRentable: true, assetType: "package" as const };
 
   try {
@@ -60,22 +64,26 @@ async function getPackages(filter: ServiceDbFilter): Promise<ServicePackage[]> {
     });
 
     if (assets.length === 0 && filter.type !== "packages_all") {
-      return getPackages({ type: "packages_all" });
+      const general = await getPackages({ type: "packages_all" });
+      return { packages: general.packages, isFallback: true };
     }
 
-    return assets.map((a) => ({
-      id:             a.id,
-      name:           a.name,
-      sku:            a.sku,
-      dailyRate:      a.dailyRate.toString(),
-      description:    a.description,
-      imageUrl:       a.imageUrl,
-      componentNames: [...a.components]
-        .sort((x, y) => Number(y.childAsset.dailyRate) - Number(x.childAsset.dailyRate))
-        .map((c) => c.childAsset.name),
-    }));
+    return {
+      isFallback: false,
+      packages: assets.map((a) => ({
+        id:             a.id,
+        name:           a.name,
+        sku:            a.sku,
+        dailyRate:      a.dailyRate.toString(),
+        description:    a.description,
+        imageUrl:       a.imageUrl,
+        componentNames: [...a.components]
+          .sort((x, y) => Number(y.childAsset.dailyRate) - Number(x.childAsset.dailyRate))
+          .map((c) => c.childAsset.name),
+      })),
+    };
   } catch {
-    return [];
+    return { packages: [], isFallback: false };
   }
 }
 
@@ -86,7 +94,7 @@ export default async function ServiceLandingPage({ params }: Props) {
 
   const BASE_URL = process.env.NEXTAUTH_URL ?? "https://daysu.vip";
 
-  const [packages, { number: waNumber }] = await Promise.all([
+  const [{ packages, isFallback }, { number: waNumber }] = await Promise.all([
     getPackages(config.dbFilter),
     getWhatsAppSettings(),
   ]);
@@ -117,6 +125,7 @@ export default async function ServiceLandingPage({ params }: Props) {
       <ServicePage
         config={config}
         packages={packages}
+        isFallback={isFallback}
         waNumber={waNumber ?? "524929496372"}
       />
     </>

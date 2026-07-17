@@ -46,8 +46,10 @@ const CAT_ICON: Record<string, string> = {
   "Fotografía": "📷", "Staff": "👤", "Mobiliario": "🪑", "Cabinas": "📸",
 };
 
-const STEPS_PKG    = ["Tus datos", "Fecha y hora", "Complementos", "Confirmar"];
-const STEPS_NO_PKG = ["Tus datos", "Fecha y hora", "Elige paquete", "Confirmar"];
+// El orden pide primero fecha y paquete (lo que el visitante quiere ver) y deja
+// los datos personales al final, cuando ya decidió — menos fricción de entrada.
+const STEPS_PKG    = ["Fecha y hora", "Complementos", "Tus datos", "Confirmar"];
+const STEPS_NO_PKG = ["Fecha y hora", "Elige paquete", "Tus datos", "Confirmar"];
 
 const EVENT_ICONS: Record<string, string> = {
   "Boda": "💍", "XV Años": "👑", "Quinceañera": "👑",
@@ -168,7 +170,7 @@ export default function BookingWizard({ forcedAssetId, depositPercent = 30 }: { 
     setLoadingProducts(false);
   }, [eventDate, setupHour, teardownHour]);
 
-  useEffect(() => { if (step === 2 && eventDate) loadProducts(); }, [step, eventDate, loadProducts]);
+  useEffect(() => { if (step === 1 && eventDate) loadProducts(); }, [step, eventDate, loadProducts]);
 
   // ── Helpers ───────────────────────────────────────────────────────────────
   const toggle = (p: AssetDetail) => {
@@ -210,7 +212,9 @@ export default function BookingWizard({ forcedAssetId, depositPercent = 30 }: { 
     if (SERVICE_CATS.includes(p.category?.name ?? "")) return true;
     // Recomendados fuera de SERVICE_CATS: mostrar si condición cumplida
     if (p.isRecommended) {
-      if (p.promoType === "guests" && p.promoMinValue != null) return guestNum >= p.promoMinValue;
+      // guestNum === 0: los invitados aún no se capturan (van en el paso de datos,
+      // posterior a complementos) — mostrar la promo en vez de ocultarla
+      if (p.promoType === "guests" && p.promoMinValue != null) return guestNum === 0 || guestNum >= p.promoMinValue;
       return true; // "fixed" u "hours" siempre visible
     }
     return false;
@@ -351,7 +355,8 @@ export default function BookingWizard({ forcedAssetId, depositPercent = 30 }: { 
       <div key={step} className={stepDir === "forward" ? "wizard-slide-in" : "wizard-slide-back"}>
 
       {/* ══ PASO 0: DATOS ══ */}
-      {step === 0 && (
+      {/* ══ PASO 2: TUS DATOS ══ */}
+      {step === 2 && (
         <div className="aura-card p-6 space-y-5">
           <p className="text-xs font-semibold uppercase tracking-widest mb-1" style={{ color: "#52525b" }}>Tus datos</p>
           {prefillError && (
@@ -542,16 +547,16 @@ export default function BookingWizard({ forcedAssetId, depositPercent = 30 }: { 
           </div>
 
           <div className="flex justify-between items-center pt-2">
-            <button onClick={() => router.back()} className="text-sm font-bold" style={muted}>← Volver</button>
-            <button onClick={() => goStep(1)} disabled={!canNext0} className="btn-gold disabled:opacity-40 px-8 py-3 text-sm">
-              Siguiente →
+            <button onClick={() => goStep(1)} className="text-sm font-bold" style={muted}>← Atrás</button>
+            <button onClick={() => goStep(3)} disabled={!canNext0} className="btn-gold disabled:opacity-40 px-8 py-3 text-sm">
+              Revisar →
             </button>
           </div>
         </div>
       )}
 
-      {/* ══ PASO 1: FECHA ══ */}
-      {step === 1 && (
+      {/* ══ PASO 0: FECHA ══ */}
+      {step === 0 && (
         <div className="aura-card p-6 space-y-5">
           <p className="text-xs font-bold uppercase tracking-widest mb-1" style={gold}>📅 ¿Cuándo es tu evento?</p>
           <div>
@@ -578,16 +583,16 @@ export default function BookingWizard({ forcedAssetId, depositPercent = 30 }: { 
             )}
           </div>
           <div className="flex justify-between pt-2">
-            <button onClick={() => goStep(0)} className="text-sm font-bold" style={muted}>← Atrás</button>
-            <button onClick={() => goStep(2)} disabled={!canNext1} className="btn-gold disabled:opacity-40 px-8 py-3 text-sm">
+            <button onClick={() => router.back()} className="text-sm font-bold" style={muted}>← Volver</button>
+            <button onClick={() => goStep(1)} disabled={!canNext1} className="btn-gold disabled:opacity-40 px-8 py-3 text-sm">
               {preselectedPkg ? "Ver complementos →" : "Ver paquetes →"}
             </button>
           </div>
         </div>
       )}
 
-      {/* ══ PASO 2-A: COMPLEMENTOS ══ */}
-      {step === 2 && preselectedPkg && (
+      {/* ══ PASO 1-A: COMPLEMENTOS ══ */}
+      {step === 1 && preselectedPkg && (
         <div className="space-y-4">
 
           {/* Alerta de capacidad + recomendación */}
@@ -944,23 +949,23 @@ export default function BookingWizard({ forcedAssetId, depositPercent = 30 }: { 
           )}
 
           <div className="flex justify-between">
-            <button onClick={() => goStep(1)} className="text-sm font-bold" style={muted}>← Atrás</button>
-            <button onClick={() => goStep(3)} className="btn-gold px-8 py-3 text-sm">
+            <button onClick={() => goStep(0)} className="text-sm font-bold" style={muted}>← Atrás</button>
+            <button onClick={() => goStep(2)} className="btn-gold px-8 py-3 text-sm">
               {selected.length > 1 ? `Continuar (${selected.length - 1} extra${selected.length > 2 ? "s" : ""}) →` : "Continuar sin extras →"}
             </button>
           </div>
         </div>
       )}
 
-      {/* ══ PASO 2-B: SIN PRE-SELECCIÓN ══ */}
-      {step === 2 && !preselectedPkg && (
+      {/* ══ PASO 1-B: SIN PRE-SELECCIÓN ══ */}
+      {step === 1 && !preselectedPkg && (
         <div className="space-y-4">
           {dl && (
             <div className="rounded-xl px-4 py-3 flex items-center gap-3 text-sm"
               style={{ background: "rgba(212,175,55,.08)", border: "1px solid rgba(212,175,55,.2)" }}>
               <span style={gold}>📅</span>
               <span style={muted}>{dl} · {setupHour}h · {guestNum > 0 ? `${guestNum} invitados` : ""}</span>
-              <button onClick={() => goStep(1)} className="ml-auto text-xs font-bold" style={gold}>Cambiar</button>
+              <button onClick={() => goStep(0)} className="ml-auto text-xs font-bold" style={gold}>Cambiar</button>
             </div>
           )}
           <div className="aura-card p-5">
@@ -989,8 +994,8 @@ export default function BookingWizard({ forcedAssetId, depositPercent = 30 }: { 
               })}
           </div>
           <div className="flex justify-between">
-            <button onClick={() => goStep(1)} className="text-sm font-bold" style={muted}>← Atrás</button>
-            <button onClick={() => goStep(3)} disabled={!canNext2} className="btn-gold disabled:opacity-40 px-8 py-3 text-sm">Revisar →</button>
+            <button onClick={() => goStep(0)} className="text-sm font-bold" style={muted}>← Atrás</button>
+            <button onClick={() => goStep(2)} disabled={!canNext2} className="btn-gold disabled:opacity-40 px-8 py-3 text-sm">Siguiente →</button>
           </div>
         </div>
       )}

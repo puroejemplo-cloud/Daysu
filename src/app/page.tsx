@@ -1,9 +1,13 @@
+import type { Metadata } from "next";
 import HomeClient from "@/components/home/HomeClient";
-import { WeddingFloatingCTA } from "@/components/wedding/WeddingFloatingCTA";
 import { prisma } from "@/lib/prisma";
 import { fetchGoogleReviews } from "@/lib/google-places";
 import { extname, basename } from "path";
 import { getHomepagePackageIds } from "@/lib/cached-settings";
+
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+};
 
 function toWebpName(name: string): string {
   return basename(name, extname(name))
@@ -157,7 +161,11 @@ export default async function HomePage() {
       "addressCountry": "MX"
     },
     "priceRange": "$$",
-    "sameAs": []
+    "sameAs": [
+      "https://www.facebook.com/profile.php?id=100051778765950",
+      "https://instagram.com/daysu.vip",
+      "https://tiktok.com/@daysu.vip"
+    ]
   };
 
   return (
@@ -179,8 +187,8 @@ export default async function HomePage() {
         imageGallery:   galleryMap.get(p.id) ?? [],
         componentNames: compMap.get(p.id) ?? [],
       }))}
+      weddingPlannerImage={wpPlannerPhoto ?? wpHeroImage}
     />
-    <WeddingFloatingCTA heroImage={wpPlannerPhoto ?? wpHeroImage} />
     </>
   );
 }

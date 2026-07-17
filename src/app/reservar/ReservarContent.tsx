@@ -81,7 +81,7 @@ export default function ReservarContent({
         </div>
         <span style={{
           color: "var(--gold)", fontSize: "1.4rem", lineHeight: 1,
-          animation: "arrowBounce 1.4s ease-in-out infinite",
+          animation: "arrowBounce 1.4s ease-in-out 8",
           flexShrink: 0,
         }}>↓</span>
       </div>

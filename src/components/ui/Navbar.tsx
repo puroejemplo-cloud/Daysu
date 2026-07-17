@@ -38,10 +38,6 @@ const ADMIN_LINKS = [
   { href: "/admin/configuracion", label: "Configuración", Icon: Wrench          },
 ];
 
-// Texto del marquee — se duplica para loop continuo
-const MARQUEE_TEXT =
-  "✦ Bodas · XV Años · Cumpleaños VIP · Eventos Corporativos · Zacatecas · Guadalupe · Sonido Profesional · Shows Únicos · DJ Versátil · Robot LED · Cabezones · Pirotecnia · Vals en las Nubes · Paquetes Todo Incluido  ";
-
 export default function Navbar() {
   const path = usePathname();
   const { data: session, status } = useSession();
@@ -61,39 +57,6 @@ export default function Navbar() {
   return (
     <header className="sticky top-0 z-50 safe-top"
       style={{ background: "rgba(5,5,26,0.97)", backdropFilter: "blur(20px)", borderBottom: "1px solid rgba(255,255,255,0.07)" }}>
-
-      {/* ── BARRA DE ANUNCIO (marquee) — solo para visitantes no logueados ── */}
-      {!isLoggedIn && path !== "/login" && (
-        <div style={{
-          background: "linear-gradient(90deg, rgba(232,25,138,0.12), rgba(124,58,237,0.08), rgba(232,25,138,0.12))",
-          borderBottom: "1px solid rgba(232,25,138,0.15)",
-          overflow: "hidden",
-          height: "2rem",
-          display: "flex",
-          alignItems: "center",
-        }}>
-          <div style={{
-            display: "flex",
-            width: "max-content",
-            animation: "marqueeScroll 40s linear infinite",
-          }}>
-            {/* Duplicado dos veces para loop continuo */}
-            {[0, 1].map((i) => (
-              <span key={i} style={{
-                fontSize: "0.65rem",
-                fontWeight: 700,
-                color: "rgba(232,25,138,0.75)",
-                letterSpacing: "0.1em",
-                textTransform: "uppercase",
-                whiteSpace: "nowrap",
-                paddingRight: "4rem",
-              }}>
-                {MARQUEE_TEXT}
-              </span>
-            ))}
-          </div>
-        </div>
-      )}
 
       {/* ── BARRA PRINCIPAL ── */}
       <div className="max-w-7xl mx-auto px-4 flex items-center gap-4"

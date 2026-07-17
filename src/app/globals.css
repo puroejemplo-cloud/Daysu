@@ -288,9 +288,8 @@ body {
   border: none;
   padding: 0.85rem 2.2rem;
   font-family: var(--font-dm);
-  font-size: 0.78rem;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: 0.02em;
   font-weight: 700;
   cursor: pointer;
   transition: transform 0.2s, box-shadow 0.2s;
@@ -308,9 +307,8 @@ body {
   border: 1px solid rgba(245,240,232,0.2);
   padding: 0.85rem 2.2rem;
   font-family: var(--font-dm);
-  font-size: 0.78rem;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: 0.02em;
   cursor: pointer;
   transition: border-color 0.2s, color 0.2s;
   text-decoration: none;
@@ -1067,12 +1065,6 @@ input, select, textarea {
   box-shadow: 0 0 0 1px rgba(232,25,138,0.4);
 }
 
-/* Marquee de la barra de anuncio del Navbar */
-@keyframes marqueeScroll {
-  from { transform: translateX(0); }
-  to   { transform: translateX(-50%); }
-}
-
 /* Arrow bounce para el CTA de comparador en /reservar */
 @keyframes arrowBounce {
   0%, 100% { transform: translateY(0); }
@@ -1084,7 +1076,9 @@ input, select, textarea {
   0%, 100% { box-shadow: 0 4px 24px rgba(37,211,102,.45), 0 1px 4px rgba(0,0,0,.3); }
   50%       { box-shadow: 0 4px 32px rgba(37,211,102,.75), 0 0 0 7px rgba(37,211,102,.12); }
 }
-.whatsapp-float { animation: waPulse 2.5s ease-in-out infinite; }
+/* 6 pulsos (~15 s) y se detiene — llama la atención al llegar sin quedarse
+   parpadeando toda la sesión */
+.whatsapp-float { animation: waPulse 2.5s ease-in-out 6; }
 
 /* Hide custom cursor on touch devices */
 @media (hover: none) {

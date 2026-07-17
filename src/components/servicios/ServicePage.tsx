@@ -16,10 +16,13 @@ export interface ServicePackage {
 interface ServicePageProps {
   config: ServicePageConfig;
   packages: ServicePackage[];
+  /** true cuando los paquetes mostrados son los generales (el servicio no tiene
+   *  activos propios en BD) y deben presentarse como base para agregar el servicio */
+  isFallback?: boolean;
   waNumber: string;
 }
 
-export default function ServicePage({ config, packages, waNumber }: ServicePageProps) {
+export default function ServicePage({ config, packages, isFallback = false, waNumber }: ServicePageProps) {
   const waUrl = `https://wa.me/${waNumber}?text=${encodeURIComponent(`Hola, me interesa: ${config.h1}`)}`;
 
   return (
@@ -51,9 +54,18 @@ export default function ServicePage({ config, packages, waNumber }: ServicePageP
       {/* Packages */}
       {packages.length > 0 && (
         <section style={{ paddingBottom: "3rem" }}>
-          <h2 style={{ fontSize: "1.5rem", fontWeight: 500, marginBottom: "1.5rem", textAlign: "center" }}>
-            Paquetes disponibles
+          <h2 style={{ fontSize: "1.5rem", fontWeight: 500, marginBottom: isFallback ? "0.5rem" : "1.5rem", textAlign: "center" }}>
+            {isFallback ? "Agrégalo a cualquiera de nuestros paquetes" : "Paquetes disponibles"}
           </h2>
+          {isFallback && (
+            <p style={{ fontSize: "0.9rem", color: "var(--muted)", textAlign: "center", maxWidth: "38rem", margin: "0 auto 1.5rem" }}>
+              Este servicio se cotiza como complemento de tu evento.{" "}
+              <a href={waUrl} target="_blank" rel="noopener noreferrer" style={{ color: "var(--gold)", textDecoration: "none", fontWeight: 600 }}>
+                Pide tu cotización por WhatsApp
+              </a>{" "}
+              o súmalo a uno de estos paquetes:
+            </p>
+          )}
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "1.25rem" }}>
             {packages.map((pkg) => (
               <Link key={pkg.id} href={`/catalogo/${pkg.sku.toLowerCase()}`} style={{ textDecoration: "none" }}>

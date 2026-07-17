@@ -5,6 +5,7 @@ import PhotoCarousel, { type CarouselPhoto } from "./PhotoCarousel";
 import Testimonials     from "./Testimonials";
 import PackageComparison from "./PackageComparison";
 import CardCarousel     from "@/components/catalog/CardCarousel";
+import WeddingPlannerBanner from "@/components/wedding/WeddingPlannerBanner";
 import type { PlaceInfo } from "@/lib/google-places";
 import { SERVICE_PAGES } from "@/lib/service-pages";
 import {
@@ -114,11 +115,13 @@ export default function HomeClient({
   carouselImages = [],
   whatsappNumber = "524929496372",
   googleReviews = null,
+  weddingPlannerImage = null,
 }: {
   packages: Package[];
   carouselImages?: CarouselPhoto[];
   whatsappNumber?: string;
   googleReviews?: PlaceInfo | null;
+  weddingPlannerImage?: string | null;
 }) {
   const cursorRef     = useRef<HTMLDivElement>(null);
   const ringRef       = useRef<HTMLDivElement>(null);
@@ -133,6 +136,27 @@ export default function HomeClient({
   const ryRef = useRef(0);
 
   useEffect(() => {
+    // Dispositivos táctiles: no hay cursor que seguir — evitar el bucle por completo
+    if (!window.matchMedia("(pointer: fine)").matches) return;
+
+    // Ring — interpolación suave via rAF. El bucle solo corre mientras el anillo
+    // persigue al cursor; al alcanzarlo se detiene hasta el próximo mousemove.
+    // (Un rAF permanente mantiene el compositor despierto y gasta batería.)
+    let raf = 0;
+    let running = false;
+    const animate = () => {
+      rxRef.current += (mxRef.current - rxRef.current) * 0.12;
+      ryRef.current += (myRef.current - ryRef.current) * 0.12;
+      if (ringRef.current) {
+        ringRef.current.style.transform = `translate(${rxRef.current - 18}px,${ryRef.current - 18}px)`;
+      }
+      if (Math.abs(mxRef.current - rxRef.current) + Math.abs(myRef.current - ryRef.current) < 0.2) {
+        running = false;
+        return;
+      }
+      raf = requestAnimationFrame(animate);
+    };
+
     const onMove = (e: MouseEvent) => {
       mxRef.current = e.clientX;
       myRef.current = e.clientY;
@@ -141,20 +165,9 @@ export default function HomeClient({
       }
       // Primera vez que se mueve: activar cursor personalizado
       setCursorReady(true);
+      if (!running) { running = true; raf = requestAnimationFrame(animate); }
     };
     window.addEventListener("mousemove", onMove, { passive: true });
-
-    // Ring — interpolación suave via rAF
-    let raf: number;
-    const animate = () => {
-      rxRef.current += (mxRef.current - rxRef.current) * 0.12;
-      ryRef.current += (myRef.current - ryRef.current) * 0.12;
-      if (ringRef.current) {
-        ringRef.current.style.transform = `translate(${rxRef.current - 18}px,${ryRef.current - 18}px)`;
-      }
-      raf = requestAnimationFrame(animate);
-    };
-    raf = requestAnimationFrame(animate);
 
     return () => {
       window.removeEventListener("mousemove", onMove);
@@ -162,7 +175,9 @@ export default function HomeClient({
     };
   }, []); // sin dependencias — nunca se re-ejecuta
 
-  // Falling lines — máximo 6, solo se crean una vez
+  // Falling lines — máximo 6, solo se crean una vez.
+  // Se pausan cuando el hero sale de pantalla: la página es larga y no tiene
+  // sentido animar un fondo que nadie ve (CPU/batería en móviles).
   useEffect(() => {
     const el = linesRef.current;
     if (!el || el.children.length > 0) return;
@@ -171,6 +186,12 @@ export default function HomeClient({
       s.style.cssText = `position:absolute;will-change:transform;width:1px;background:#E8198A;animation:linefall ${8 + Math.random() * 6}s linear ${Math.random() * 10}s infinite;opacity:0;left:${10 + Math.random() * 80}%;height:${60 + Math.random() * 120}px;`;
       el.appendChild(s);
     }
+    const io = new IntersectionObserver(([entry]) => {
+      const state = entry.isIntersecting ? "running" : "paused";
+      for (const child of el.children) (child as HTMLElement).style.animationPlayState = state;
+    });
+    io.observe(el);
+    return () => io.disconnect();
   }, []);
 
   // Counter animation — arranca al montar (sin IntersectionObserver, más confiable en móvil)
@@ -478,10 +499,10 @@ export default function HomeClient({
       {/* ── STATS ──────────────────────────────────────────── */}
       <div ref={statsRef} className="stats-grid" aria-label="Estadísticas de Daysu.vip">
         {[
-          { num: 8,   suffix: "+",   label: "Años de experiencia"  },
-          { num: 500, suffix: "+",   label: "Eventos realizados"   },
-          { num: 500, suffix: "+",   label: "Invitados máx."       },
-          { num: 100, suffix: "%",   label: "Clientes satisfechos" },
+          { num: 8,    suffix: "+", label: "Años de experiencia"     },
+          { num: 500,  suffix: "+", label: "Eventos realizados"      },
+          { num: 500,  suffix: "",  label: "Invitados por evento"    },
+          { num: 3600, suffix: "+", label: "Seguidores en redes"     },
         ].map((s) => (
           <div key={s.label} style={{ padding: "2rem 1.25rem", background: "var(--black)", textAlign: "center" }}>
             <span className="bebas" data-target={s.num} data-suffix={s.suffix}
@@ -590,6 +611,9 @@ export default function HomeClient({
           </p>
         </div>
       </section>
+
+      {/* ── WEDDING PLANNER ────────────────────────────────── */}
+      <WeddingPlannerBanner image={weddingPlannerImage} />
 
       {/* ── FAQ ────────────────────────────────────────────── */}
       <section style={{ padding: "5rem 1.25rem", borderTop: "1px solid rgba(255,255,255,.05)" }}>
@@ -723,7 +747,7 @@ export default function HomeClient({
               { label: "TikTok", href: "https://tiktok.com/@daysu.vip", svg: (
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16.6 5.82a4.28 4.28 0 0 1-1.06-2.82h-3.3v13.2a2.34 2.34 0 1 1-2.34-2.34c.13 0 .26.01.38.03v-3.4a5.9 5.9 0 0 0-.38-.01 5.74 5.74 0 1 0 5.74 5.74V8.9a7.55 7.55 0 0 0 4.4 1.41V6.9a4.28 4.28 0 0 1-3.44-1.08Z"/></svg>
               ) },
-              { label: "Facebook", href: "https://facebook.com/daysu.vip", svg: (
+              { label: "Facebook", href: "https://www.facebook.com/profile.php?id=100051778765950", svg: (
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M22 12a10 10 0 1 0-11.56 9.88v-6.99H7.9V12h2.54V9.8c0-2.5 1.49-3.89 3.78-3.89 1.09 0 2.24.2 2.24.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56V12h2.78l-.44 2.89h-2.34v6.99A10 10 0 0 0 22 12Z"/></svg>
               ) },
             ].map((sn) => (
