@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { unstable_cache } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { getDepositPercent } from "@/lib/bookings";
 import ReservarContent from "./ReservarContent";
@@ -12,6 +13,22 @@ export const metadata: Metadata = {
   },
 };
 
+const getReservarData = unstable_cache(
+  async () => {
+    const [packages, depositPercent] = await Promise.all([
+      prisma.asset.findMany({
+        where: { isActive: true, isRentable: true, assetType: "package" },
+        select: { id: true, name: true, sku: true, dailyRate: true, maxGuests: true, isRecommended: true },
+        orderBy: { dailyRate: "asc" },
+      }),
+      getDepositPercent(),
+    ]);
+    return { packages, depositPercent };
+  },
+  ["reservar-data"],
+  { revalidate: 300, tags: ["catalog", "system-settings"] }
+);
+
 export default async function ReservarPage({
   searchParams,
 }: {
@@ -19,14 +36,7 @@ export default async function ReservarPage({
 }) {
   const sp = await searchParams;
 
-  const [packages, depositPercent] = await Promise.all([
-    prisma.asset.findMany({
-      where: { isActive: true, isRentable: true, assetType: "package" },
-      select: { id: true, name: true, sku: true, dailyRate: true, maxGuests: true, isRecommended: true },
-      orderBy: { dailyRate: "asc" },
-    }),
-    getDepositPercent(),
-  ]);
+  const { packages, depositPercent } = await getReservarData();
 
   const initialAssetId = sp.asset ? parseInt(sp.asset, 10) || null : null;
 
