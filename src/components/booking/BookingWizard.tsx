@@ -10,7 +10,7 @@ import UpsellBanner from "./UpsellBanner";
 
 interface AssetAvail  { assetId: number; isAvailable: boolean; availableUnits: number }
 interface AssetDetail {
-  id: number; name: string; dailyRate: string; sku: string;
+  id: number; name: string; dailyRate: string; sku: string; assetType: string;
   maxGuests: number | null; category: { id: number; name: string }; description: string | null;
   pricingTiers?: PricingConfig | null;
   originalPrice?: string | null;
@@ -200,7 +200,7 @@ export default function BookingWizard({ forcedAssetId, depositPercent = 30 }: { 
   const recommendation = (() => {
     if (!capacityWarn) return null;
     return allProducts
-      .filter((p) => SERVICE_CATS.indexOf(p.category?.name ?? "") === -1) // solo paquetes
+      .filter((p) => p.assetType === "package") // solo paquetes
       .filter((p) => (p.maxGuests ?? 0) >= guestNum && p.id !== preselectedPkg?.id)
       .sort((a, b) => Number(a.dailyRate) - Number(b.dailyRate))[0] ?? null;
   })();
@@ -972,7 +972,7 @@ export default function BookingWizard({ forcedAssetId, depositPercent = 30 }: { 
             <p className="text-xs font-bold uppercase tracking-widest mb-4" style={gold}>🎉 Elige tu paquete</p>
             {loadingProducts && <p className="text-sm text-center py-6" style={muted}>Cargando...</p>}
             {!loadingProducts && allProducts
-              .filter((p) => !SERVICE_CATS.includes(p.category?.name ?? "") && availability[p.id]?.isAvailable)
+              .filter((p) => p.assetType === "package" && availability[p.id]?.isAvailable)
               .map((p) => {
                 const sel = selected.find((s) => s.assetId === p.id);
                 const insufficiente = p.maxGuests !== null && guestNum > 0 && guestNum > (p.maxGuests ?? 0);
