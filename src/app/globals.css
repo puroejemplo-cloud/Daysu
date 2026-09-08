@@ -1025,9 +1025,9 @@ input, select, textarea {
   border-color: rgba(232,25,138,0.5);
 }
 
-/* Mobile: imagen compacta (no 1:1 square) */
+/* Mobile: imagen cuadrada completa, sin recorte forzado por una altura fija */
 @media (max-width: 639px) {
-  .pkg-hcard-img { aspect-ratio: unset; height: 200px; }
+  .pkg-hcard-img { aspect-ratio: 1 / 1; height: auto; }
 }
 @media (min-width: 640px) {
   .pkg-hcard { flex-direction: row; }
@@ -1136,7 +1136,7 @@ input, select, textarea {
 .catalog-card-img {
   position: relative;
   width: 100%;
-  aspect-ratio: 3 / 2;
+  aspect-ratio: 1 / 1;
   overflow: hidden;
   flex-shrink: 0;
 }
