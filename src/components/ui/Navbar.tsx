@@ -115,17 +115,7 @@ export default function Navbar() {
               return (
                 <Link key={l.href} href={l.href}
                   aria-current={active ? "page" : undefined}
-                  className="flex-1 text-center rounded-lg font-black uppercase transition-all border"
-                  style={{
-                    color:       active ? "#05051a" : "#71717a",
-                    background:  active ? "var(--gold)" : "rgba(255,255,255,.04)",
-                    borderColor: active ? "var(--gold)" : "rgba(255,255,255,.07)",
-                    textDecoration: "none",
-                    letterSpacing: "0.04em",
-                    fontSize: "0.65rem",
-                    padding: "0.65rem 0.5rem",
-                    minHeight: 44,
-                  }}>
+                  className={`nav-pill-mobile${active ? " is-active" : ""}`}>
                   {l.label}
                 </Link>
               );
@@ -197,14 +187,7 @@ export default function Navbar() {
             return (
               <Link key={l.href} href={l.href} onClick={() => setMobileOpen(false)}
                 aria-current={active ? "page" : undefined}
-                className="flex items-center gap-2.5 px-4 py-3 rounded-xl font-bold border transition-all"
-                style={{
-                  color:          active ? "#05051a"     : "#94A3B8",
-                  background:     active ? "var(--gold)" : "rgba(255,255,255,.04)",
-                  borderColor:    active ? "var(--gold)" : "rgba(255,255,255,.07)",
-                  textDecoration: "none",
-                  fontSize: "0.875rem",
-                }}>
+                className={`nav-link-mobile${active ? " is-active" : ""}`}>
                 {Icon && <Icon size={16} aria-hidden="true" />}
                 {l.label}
               </Link>
