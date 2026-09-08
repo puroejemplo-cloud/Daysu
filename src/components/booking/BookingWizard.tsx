@@ -73,6 +73,7 @@ export default function BookingWizard({ forcedAssetId, depositPercent = 30 }: { 
   const [setupHour, setSetupHour] = useState("19:00");
   const [eventName, setEventName] = useState("");
   const [venue,     setVenue]     = useState("");
+  const [notes,     setNotes]     = useState("");
 
   const [preselectedPkg,  setPreselectedPkg]  = useState<PkgInfo | null>(null);
   const [allProducts,     setAllProducts]     = useState<AssetDetail[]>([]);
@@ -242,6 +243,7 @@ export default function BookingWizard({ forcedAssetId, depositPercent = 30 }: { 
           eventName: eventName || `Evento de ${client.fullName}`,
           eventDate: start.toISOString(), setupAt: start.toISOString(), teardownAt: end.toISOString(),
           venueAddress: venue,
+          notes: notes.trim() || undefined,
           items: selected.map((s) => ({ assetId: s.assetId, quantity: s.quantity, overridePrice: s.overridePrice })),
         }),
       });
@@ -581,6 +583,12 @@ export default function BookingWizard({ forcedAssetId, depositPercent = 30 }: { 
                 🚗 <strong>Aviso de traslado:</strong> Tu evento parece estar fuera de la zona Zacatecas–Guadalupe. Los costos podrían aumentar por gastos de traslado. Te confirmaremos el costo adicional al contactarte.
               </div>
             )}
+          </div>
+          <div>
+            <label className={lb} style={muted}>Notas para tu evento <span className="normal-case font-normal ml-1" style={{ color: "#475569" }}>(opcional)</span></label>
+            <textarea value={notes} onChange={(e) => setNotes(e.target.value)} rows={3}
+              placeholder="Detalles que quieras contarnos: hora exacta del salón, restricciones de acceso, algo especial que quieras pedir..."
+              className="aura-input" style={{ resize: "vertical" }} />
           </div>
           <div className="flex justify-between pt-2">
             <button onClick={() => router.back()} className="text-sm font-bold" style={muted}>← Volver</button>
