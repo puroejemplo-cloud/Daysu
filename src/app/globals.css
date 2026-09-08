@@ -320,6 +320,40 @@ body {
 .btn-ghost:hover { border-color: var(--gold); color: var(--gold); }
 .btn-ghost:focus-visible { border-color: var(--gold); color: var(--gold); outline: 2px solid rgba(232,25,138,0.4); outline-offset: 2px; }
 
+/* ── Navbar: links de navegación principal ─────────────────────────── */
+.nav-link {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: #8b8b96;
+  text-decoration: none;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.6rem 0.9rem;
+  border-radius: 8px;
+  transition: color 0.2s ease, background 0.2s ease;
+}
+.nav-link::after {
+  content: '';
+  position: absolute;
+  left: 0.9rem; right: 0.9rem; bottom: 0.3rem;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--gold) 0%, var(--purple) 100%);
+  transform: scaleX(0);
+  transform-origin: center;
+  opacity: 0.7;
+  transition: transform 0.25s ease, opacity 0.25s ease;
+}
+.nav-link:hover { color: #e4e4e7; background: rgba(255,255,255,0.05); }
+.nav-link:hover::after { transform: scaleX(0.55); }
+.nav-link.is-active { color: var(--cream); background: rgba(232,25,138,0.09); }
+.nav-link.is-active::after { transform: scaleX(1); opacity: 1; }
+.nav-link:focus-visible { outline: none; box-shadow: 0 0 0 2px rgba(232,25,138,0.5); }
+
 /* ── iOS zoom fix: font-size ≥ 16px evita el auto-zoom al hacer focus en inputs ── */
 input, select, textarea {
   font-size: max(1rem, 16px);

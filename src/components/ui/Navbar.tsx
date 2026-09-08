@@ -85,7 +85,7 @@ export default function Navbar() {
         </Link>
 
         {/* Nav links — desktop */}
-        <nav className="hidden lg:flex items-center gap-0.5 flex-1 ml-2"
+        <nav className="hidden lg:flex items-center gap-1 flex-1 ml-2"
           aria-label="Navegación principal">
           {navLinks.map((l) => {
             const active = isActive(l.href);
@@ -93,24 +93,14 @@ export default function Navbar() {
             return (
               <Link key={l.href} href={l.href}
                 aria-current={active ? "page" : undefined}
-                className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg font-semibold transition-all"
-                style={{
-                  color:          active ? "#e4e4e7" : "#71717a",
-                  background:     active ? "rgba(255,255,255,0.07)" : "transparent",
-                  textDecoration: "none",
-                  letterSpacing:  "0.09em",
-                  textTransform:  "uppercase",
-                  fontSize:       "0.75rem",
-                }}>
+                className={`nav-link${active ? " is-active" : ""}`}>
                 {Icon && <Icon size={13} aria-hidden="true" />}
                 {l.label}
               </Link>
             );
           })}
           {isSuperAdmin && (
-            <Link href="/superadmin/admins"
-              className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg font-semibold transition-all"
-              style={{ color: "#71717a", textDecoration: "none", letterSpacing: "0.09em", textTransform: "uppercase", fontSize: "0.75rem" }}>
+            <Link href="/superadmin/admins" className="nav-link">
               Admins
             </Link>
           )}
