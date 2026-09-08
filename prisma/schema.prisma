@@ -81,6 +81,7 @@ model Asset {
   bookingItems       BookingItem[]
   upsellAsSource     UpsellRule[]           @relation("UpsellSource")
   upsellAsSuggestion UpsellRule[]           @relation("UpsellSuggestion")
+  galleryVideos      GalleryVideo[]
 
   @@map("assets")
 }
@@ -366,6 +367,22 @@ model PushSubscription {
   adminUser AdminUser @relation(fields: [adminUserId], references: [id], onDelete: Cascade)
 
   @@map("push_subscriptions")
+}
+
+// ─── GALERÍA — VIDEOS (YouTube, no se aloja el archivo en el sitio) ──────────
+
+model GalleryVideo {
+  id             Int      @id @default(autoincrement())
+  youtubeId      String   @map("youtube_id")   @db.VarChar(20)
+  title          String?  @db.VarChar(200)
+  eventType      String?  @map("event_type")   @db.VarChar(100)
+  packageAssetId Int?     @map("package_asset_id")
+  order          Int      @default(0)
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  packageAsset Asset? @relation(fields: [packageAssetId], references: [id])
+
+  @@map("gallery_videos")
 }
 
 // ─── CONFIGURACIÓN DEL SISTEMA ────────────────────────────────────────────────

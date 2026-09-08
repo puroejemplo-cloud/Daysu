@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { extname, basename } from "path";
+import { prisma } from "@/lib/prisma";
+import VideoGrid from "@/components/gallery/VideoGrid";
 
 export const metadata: Metadata = {
   title: "Galería de Eventos",
@@ -63,8 +65,26 @@ async function loadGalleryImages(): Promise<{ src: string; alt: string }[]> {
   }
 }
 
+async function loadGalleryVideos() {
+  try {
+    const videos = await prisma.galleryVideo.findMany({
+      orderBy: [{ order: "asc" }, { createdAt: "desc" }],
+      include: { packageAsset: { select: { name: true } } },
+    });
+    return videos.map((v) => ({
+      id: v.id,
+      youtubeId: v.youtubeId,
+      title: v.title,
+      eventType: v.eventType,
+      packageName: v.packageAsset?.name ?? null,
+    }));
+  } catch {
+    return [];
+  }
+}
+
 export default async function GaleriaPage() {
-  const images = await loadGalleryImages();
+  const [images, videos] = await Promise.all([loadGalleryImages(), loadGalleryVideos()]);
 
   return (
     <div style={{ minHeight: "100vh", background: "var(--black)", color: "var(--cream)" }}>
@@ -130,6 +150,16 @@ export default async function GaleriaPage() {
                 )}
               </div>
             ))}
+          </div>
+        )}
+
+        {/* Videos */}
+        {videos.length > 0 && (
+          <div style={{ marginTop: "3.5rem" }}>
+            <h2 className="bebas" style={{ fontSize: "clamp(1.6rem,4vw,2.2rem)", color: "var(--cream)", marginBottom: "1.25rem" }}>
+              Videos de nuestros eventos
+            </h2>
+            <VideoGrid videos={videos} />
           </div>
         )}
 
