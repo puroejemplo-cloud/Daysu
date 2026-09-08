@@ -1,16 +1,22 @@
 import { NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { ok, err } from "@/lib/api";
+import { auth } from "@/auth";
+import { getAdminScope, bookingOwnerWhere } from "@/lib/adminScope";
 
 type Params = { params: Promise<{ id: string }> };
 
 // PATCH /api/checklists/:id/complete  → marcar fase como completada + guardar notas
 export async function PATCH(req: NextRequest, { params }: Params) {
+  const session = await auth();
+  if (!session) return err("No autorizado", 401);
+  const scope = getAdminScope(session);
+
   const { id } = await params;
   const body = await req.json().catch(() => ({}));
 
-  const checklist = await prisma.eventChecklist.findUnique({
-    where: { id: Number(id) },
+  const checklist = await prisma.eventChecklist.findFirst({
+    where: { id: Number(id), booking: bookingOwnerWhere(scope) },
     include: { items: true },
   });
   if (!checklist) return err("Checklist no encontrado", 404);
@@ -33,10 +39,16 @@ export async function PATCH(req: NextRequest, { params }: Params) {
 
 // Forzar completar aunque haya ítems sin marcar
 export async function POST(req: NextRequest, { params }: Params) {
+  const session = await auth();
+  if (!session) return err("No autorizado", 401);
+  const scope = getAdminScope(session);
+
   const { id } = await params;
   const body = await req.json().catch(() => ({}));
 
-  const checklist = await prisma.eventChecklist.findUnique({ where: { id: Number(id) } });
+  const checklist = await prisma.eventChecklist.findFirst({
+    where: { id: Number(id), booking: bookingOwnerWhere(scope) },
+  });
   if (!checklist) return err("Checklist no encontrado", 404);
 
   const updated = await prisma.eventChecklist.update({

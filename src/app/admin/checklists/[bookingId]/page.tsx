@@ -1,16 +1,22 @@
 import ChecklistView from "@/components/checklist/ChecklistView";
 import { prisma } from "@/lib/prisma";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import Link from "next/link";
+import { auth } from "@/auth";
+import { getAdminScope, bookingOwnerWhere } from "@/lib/adminScope";
 
 
 export default async function ChecklistPage({ params }: { params: Promise<{ bookingId: string }> }) {
   const { bookingId } = await params;
 
-  const booking = await prisma.booking.findUnique({
-    where: { id: bookingId },
+  const session = await auth();
+  if (!session) redirect("/login");
+  const scope = getAdminScope(session);
+
+  const booking = await prisma.booking.findFirst({
+    where: { id: bookingId, ...bookingOwnerWhere(scope) },
     include: {
       client: { select: { fullName: true, phone: true, email: true } },
       items: {

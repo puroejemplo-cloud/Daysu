@@ -1,5 +1,8 @@
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
+import { auth } from "@/auth";
+import { redirect } from "next/navigation";
+import { getAdminScope, clientOwnerWhere } from "@/lib/adminScope";
 
 
 const MONTHS = ["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"];
@@ -12,7 +15,12 @@ const SECTIONS = [
 ] as const;
 
 export default async function RecordatoriosPage() {
+  const session = await auth();
+  if (!session) redirect("/login");
+  const scope = getAdminScope(session);
+
   const allDates = await prisma.clientSpecialDate.findMany({
+    where: { client: clientOwnerWhere(scope) },
     include: { client: { select: { id: true, fullName: true, phone: true, email: true } } },
   });
 

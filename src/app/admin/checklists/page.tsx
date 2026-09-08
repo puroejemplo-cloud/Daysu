@@ -2,12 +2,19 @@
 import Link from "next/link";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
+import { auth } from "@/auth";
+import { redirect } from "next/navigation";
+import { getAdminScope, bookingOwnerWhere } from "@/lib/adminScope";
 
 
 export default async function ChecklistsPage() {
+  const session = await auth();
+  if (!session) redirect("/login");
+  const scope = getAdminScope(session);
+
   // Eventos confirmados o en curso, ordenados por fecha más próxima
   const bookings = await prisma.booking.findMany({
-    where: { status: { in: ["confirmed", "in_progress"] } },
+    where: { status: { in: ["confirmed", "in_progress"] }, ...bookingOwnerWhere(scope) },
     include: {
       client: { select: { fullName: true, phone: true } },
       items: {

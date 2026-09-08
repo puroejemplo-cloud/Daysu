@@ -3,15 +3,17 @@ import { prisma } from "@/lib/prisma";
 import { ok, err } from "@/lib/api";
 import { auth } from "@/auth";
 import { BookingStatus } from "@/generated/prisma";
+import { getAdminScope, bookingOwnerWhere } from "@/lib/adminScope";
 
 // GET — detalle completo de una reserva (para el modal de edición)
 export async function GET(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const session = await auth();
   if (!session) return err("No autenticado", 401);
+  const scope = getAdminScope(session);
 
   const { id } = await params;
-  const booking = await prisma.booking.findUnique({
-    where: { id },
+  const booking = await prisma.booking.findFirst({
+    where: { id, ...bookingOwnerWhere(scope) },
     include: {
       client: { select: { id: true, fullName: true, email: true, phone: true } },
       items: {
@@ -29,6 +31,7 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ id:
 export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const session = await auth();
   if (!session) return err("No autenticado", 401);
+  const scope = getAdminScope(session);
 
   const { id } = await params;
 
@@ -49,8 +52,8 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
   const { eventName, eventDate, setupAt: setupAtStr, teardownAt: teardownAtStr,
           venueAddress, notes, totalAmount, depositAmount, status, client } = body;
 
-  const existing = await prisma.booking.findUnique({
-    where:  { id },
+  const existing = await prisma.booking.findFirst({
+    where:  { id, ...bookingOwnerWhere(scope) },
     select: { id: true, clientId: true, setupAt: true, teardownAt: true, eventDate: true },
   });
   if (!existing) return err("Reserva no encontrada", 404);

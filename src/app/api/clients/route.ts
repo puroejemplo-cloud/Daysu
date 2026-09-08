@@ -2,28 +2,32 @@ import { NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { ok, err } from "@/lib/api";
 import { auth } from "@/auth";
+import { getAdminScope, clientOwnerWhere, bookingOwnerWhere } from "@/lib/adminScope";
 
 // GET /api/clients?q=búsqueda
 export async function GET(req: NextRequest) {
   const session = await auth();
   if (!session) return err("No autenticado", 401);
+  const scope = getAdminScope(session);
 
   const q = new URL(req.url).searchParams.get("q")?.trim();
 
+  const searchWhere = q ? {
+    OR: [
+      { fullName: { contains: q, mode: "insensitive" as const } },
+      { email:    { contains: q, mode: "insensitive" as const } },
+      { phone:    { contains: q, mode: "insensitive" as const } },
+      { company:  { contains: q, mode: "insensitive" as const } },
+    ],
+  } : {};
+
   const clients = await prisma.client.findMany({
-    where: q ? {
-      OR: [
-        { fullName: { contains: q, mode: "insensitive" } },
-        { email:    { contains: q, mode: "insensitive" } },
-        { phone:    { contains: q, mode: "insensitive" } },
-        { company:  { contains: q, mode: "insensitive" } },
-      ],
-    } : undefined,
+    where: { ...searchWhere, ...clientOwnerWhere(scope) },
     include: {
-      _count: { select: { bookings: true } },
+      _count: { select: { bookings: { where: bookingOwnerWhere(scope) } } },
       specialDates: { orderBy: [{ month: "asc" }, { day: "asc" }] },
       bookings: {
-        where:   { status: { in: ["confirmed", "completed"] } },
+        where:   { status: { in: ["confirmed", "completed"] }, ...bookingOwnerWhere(scope) },
         orderBy: { createdAt: "desc" },
         take:    1,
         select:  { eventName: true, setupAt: true, status: true },

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/auth";
+import { getAdminScope, bookingOwnerWhere } from "@/lib/adminScope";
 
 function toICalDate(date: Date): string {
   return date.toISOString().replace(/[-:.]/g, "").slice(0, 15) + "Z";
@@ -19,10 +20,12 @@ export async function GET(req: NextRequest) {
   if (!session) {
     return new NextResponse("No autenticado", { status: 401 });
   }
+  const scope = getAdminScope(session);
 
   const bookings = await prisma.booking.findMany({
     where: {
       status: { in: ["confirmed", "in_progress", "pending_payment"] },
+      ...bookingOwnerWhere(scope),
     },
     include: {
       client: { select: { fullName: true } },

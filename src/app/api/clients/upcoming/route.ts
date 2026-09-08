@@ -1,8 +1,14 @@
 import { prisma } from "@/lib/prisma";
-import { ok } from "@/lib/api";
+import { ok, err } from "@/lib/api";
+import { auth } from "@/auth";
+import { getAdminScope, clientOwnerWhere } from "@/lib/adminScope";
 
 // GET /api/clients/upcoming — clientes con fechas especiales en los próximos 60 días
 export async function GET() {
+  const session = await auth();
+  if (!session) return err("No autenticado", 401);
+  const scope = getAdminScope(session);
+
   const today = new Date();
   const results: {
     clientId: number; clientName: string; phone: string | null; email: string;
@@ -11,6 +17,7 @@ export async function GET() {
   }[] = [];
 
   const allDates = await prisma.clientSpecialDate.findMany({
+    where: { client: clientOwnerWhere(scope) },
     include: { client: { select: { id: true, fullName: true, phone: true, email: true } } },
   });
 
