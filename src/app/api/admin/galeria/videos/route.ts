@@ -1,4 +1,5 @@
 import { NextRequest } from "next/server";
+import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { ok, err } from "@/lib/api";
 import { auth } from "@/auth";
@@ -52,5 +53,6 @@ export async function POST(req: NextRequest) {
     },
     include: { packageAsset: { select: { id: true, name: true } } },
   });
+  revalidatePath("/galeria");
   return ok(video, 201);
 }
